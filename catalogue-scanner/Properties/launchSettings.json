@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CatalogueScanner": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
