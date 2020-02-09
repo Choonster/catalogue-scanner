@@ -1,0 +1,8 @@
+﻿                                                                        
+                                                                                              Durable function orchestration
+                                                                        |=============================================================================|
+Timer Trigger -> Check Coles Catalogue ---------|                       |                                                                             |
+                                                |                       |                                                                             |
+Timer Trigger -> Check Woolworths Catalogue --------(queue trigger)---> | Download Catalogue ---(fan out)---> Filter Items ---(fan in)---> Send email |
+                                                                        |                                                                             | 
+                                                                        |=============================================================================|
