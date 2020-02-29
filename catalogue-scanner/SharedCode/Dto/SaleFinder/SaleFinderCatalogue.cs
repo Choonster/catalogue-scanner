@@ -7,9 +7,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
-namespace CatalogueScanner.SalesFinder
+namespace CatalogueScanner.Dto.SaleFinder
 {
-    public partial class SalesFinderData
+    /// <summary>
+    /// Returned from the SaleFinder Catalogue SVG Data request:
+    /// https://embed.salefinder.com.au/catalogue/svgData/{saleId}/?format=json
+    /// </summary>
+    public partial class Catalogue
     {
         [JsonProperty("content")]
         public string Content { get; set; }
@@ -21,7 +25,7 @@ namespace CatalogueScanner.SalesFinder
         public string AreaName { get; set; }
 
         [JsonProperty("catalogue", ItemConverterType = typeof(PageConverter))]
-        public List<Page> Catalogue { get; set; }
+        public List<Page> Pages { get; set; }
 
         [JsonProperty("saleDescription")]
         public string SaleDescription { get; set; }
@@ -116,14 +120,14 @@ namespace CatalogueScanner.SalesFinder
 
     public enum Shape { Rectangle };
 
-    public partial class SalesFinderData
+    public partial class Catalogue
     {
-        public static SalesFinderData FromJson(string json) => JsonConvert.DeserializeObject<SalesFinderData>(json, Converter.Settings);
+        public static Catalogue FromJson(string json) => JsonConvert.DeserializeObject<Catalogue>(json, Converter.Settings);
     }
 
     public static class Serialize
     {
-        public static string ToJson(this SalesFinderData self) => JsonConvert.SerializeObject(self, Converter.Settings);
+        public static string ToJson(this Catalogue self) => JsonConvert.SerializeObject(self, Converter.Settings);
     }
 
     internal static class Converter
@@ -207,7 +211,7 @@ namespace CatalogueScanner.SalesFinder
             // Add the values from the Items collection as numeric property name
             for (int i = 0; i < value.Items.Count; i++)
             {
-                pageObject.Add(i.ToString(), JObject.FromObject(value.Items[i]));
+                pageObject.Add(i.ToString("d", NumberFormatInfo.InvariantInfo), JObject.FromObject(value.Items[i]));
             }
 
             // Serialise the JObject to JSON
