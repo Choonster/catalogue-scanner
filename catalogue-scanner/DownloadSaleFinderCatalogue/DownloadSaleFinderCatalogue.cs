@@ -12,13 +12,11 @@ namespace CatalogueScanner.DownloadSaleFinderCatalogue
 {
     public class DownloadSaleFinderCatalogue
     {
-        private const string SaleFinderUrl = "https://embed.salefinder.com.au/catalogue/svgData/{0}/?format=json";
+        private readonly SaleFinderService saleFinderService;
 
-        private readonly HttpClient HttpClient;
-
-        public DownloadSaleFinderCatalogue(IHttpClientFactory httpClientFactory)
+        public DownloadSaleFinderCatalogue(SaleFinderService saleFinderService)
         {
-            HttpClient = httpClientFactory.CreateClient();
+            this.saleFinderService = saleFinderService;
         }
 
         [FunctionName("DownloadSalesFinderData")]
@@ -32,11 +30,7 @@ namespace CatalogueScanner.DownloadSaleFinderCatalogue
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
-            var response = await HttpClient.GetAsync(new Uri(string.Format(CultureInfo.InvariantCulture, SaleFinderUrl, downloadInformation.SaleId))).ConfigureAwait(false);
-
-            response.EnsureSuccessStatusCode();
-
-            var result = await response.Content.ReadSaleFinderResponseAsAync<Catalogue>().ConfigureAwait(false);
+            var result = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId).ConfigureAwait(false);
 
             log.LogInformation($"Successfully downloaded and parsed catalogue with {result.Pages.Count} pages");
 

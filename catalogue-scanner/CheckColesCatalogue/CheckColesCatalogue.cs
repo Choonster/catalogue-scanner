@@ -1,4 +1,4 @@
-using CatalogueScanner.SharedCode.Dto.SaleFinder;
+using CatalogueScanner.Dto.SaleFinder;
 using CatalogueScanner.SharedCode.Dto.StorageEntity;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
@@ -6,20 +6,19 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.CheckColesCatalogue
 {
     public class CheckColesCatalogue
     {
-        private const string SaleFinderUrl = "https://embed.salefinder.com.au/catalogues/view/148/?format=json&locationId={0}";
+        private const int ColesStoreId = 148;
 
-        private readonly HttpClient httpClient;
+        private readonly SaleFinderService saleFinderService;
 
-        public CheckColesCatalogue(IHttpClientFactory httpClientFactory)
+        public CheckColesCatalogue(SaleFinderService saleFinderService)
         {
-            httpClient = httpClientFactory.CreateClient();
+            this.saleFinderService = saleFinderService;
         }
 
         [FunctionName("CheckColesCatalogue")]
@@ -42,13 +41,9 @@ namespace CatalogueScanner.CheckColesCatalogue
             }
             #endregion
 
-            var locationId = Environment.GetEnvironmentVariable(Constants.AppSettings.ColesSaleFinderLocationId);
+            var locationId = int.Parse(Environment.GetEnvironmentVariable(Constants.AppSettings.ColesSaleFinderLocationId), CultureInfo.InvariantCulture);
 
-            var response = await httpClient.GetAsync(new Uri(string.Format(CultureInfo.InvariantCulture, SaleFinderUrl, locationId))).ConfigureAwait(false);
-
-            response.EnsureSuccessStatusCode();
-
-            var viewResponse = await response.Content.ReadSaleFinderResponseAsAync<CatalogueViewResponse>().ConfigureAwait(false);
+            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(ColesStoreId, locationId).ConfigureAwait(false);
 
             var saleId = FindSaleId(viewResponse);
 

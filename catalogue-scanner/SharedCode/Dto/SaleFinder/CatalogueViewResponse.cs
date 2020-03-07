@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CatalogueScanner.SharedCode.Dto.SaleFinder
+namespace CatalogueScanner.Dto.SaleFinder
 {
     /// <summary>
     /// Returned from the SaleFinder Catalogue View request:

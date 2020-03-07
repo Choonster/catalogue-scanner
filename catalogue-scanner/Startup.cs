@@ -21,6 +21,7 @@ namespace CatalogueScanner
             #endregion
 
             builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient<SaleFinderService>();
         }
     }
 }
