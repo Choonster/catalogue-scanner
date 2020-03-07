@@ -28,6 +28,23 @@ namespace CatalogueScanner.DownloadSaleFinderCatalogue
             ICollector<Item> collector
         )
         {
+            #region null checks
+            if (downloadInformation is null)
+            {
+                throw new ArgumentNullException(nameof(downloadInformation));
+            }
+
+            if (log is null)
+            {
+                throw new ArgumentNullException(nameof(log));
+            }
+
+            if (collector is null)
+            {
+                throw new ArgumentNullException(nameof(collector));
+            }
+            #endregion
+
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
             var result = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId).ConfigureAwait(false);
