@@ -1,4 +1,5 @@
 using CatalogueScanner.Dto.SaleFinder;
+using CatalogueScanner.SharedCode.Dto.StorageEntity;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
@@ -22,15 +23,16 @@ namespace CatalogueScanner.DownloadSaleFinderCatalogue
 
         [FunctionName("DownloadSalesFinderData")]
         public async Task RunAsync(
-            [TimerTrigger("0 */1 * * * *")]
-            TimerInfo myTimer,
+            [QueueTrigger(Constants.QueueNames.CataloguesToDownload)]
+            SaleFinderCatalogueDownloadInformation downloadInformation,
             ILogger log,
-            [Queue(Constants.QueueNames.DownloadedItems, Connection = "StorageAccountConnectionString")] ICollector<Item> collector
+            [Queue(Constants.QueueNames.DownloadedItems)]
+            ICollector<Item> collector
         )
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
 
-            var response = await HttpClient.GetAsync(new Uri(string.Format(CultureInfo.InvariantCulture, SaleFinderUrl, 31610))).ConfigureAwait(false);
+            var response = await HttpClient.GetAsync(new Uri(string.Format(CultureInfo.InvariantCulture, SaleFinderUrl, downloadInformation.SaleId))).ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
 
