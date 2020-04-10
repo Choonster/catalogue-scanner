@@ -25,7 +25,7 @@ namespace CatalogueScanner.Dto.SaleFinder
         public string AreaName { get; set; }
 
         [JsonProperty("catalogue", ItemConverterType = typeof(PageConverter))]
-        public List<Page> Pages { get; set; }
+        public List<Page> Pages { get; } = new List<Page>();
 
         [JsonProperty("saleDescription")]
         public string SaleDescription { get; set; }
@@ -49,7 +49,7 @@ namespace CatalogueScanner.Dto.SaleFinder
     public partial class Page
     {
         [JsonIgnore]
-        public List<Item> Items { get; set; } = new List<Item>();
+        public List<Item> Items { get; } = new List<Item>();
 
         [JsonProperty("imagefile")]
         public string Imagefile { get; set; }
@@ -70,7 +70,7 @@ namespace CatalogueScanner.Dto.SaleFinder
         public Shape Shape { get; set; }
 
         [JsonProperty("coords")]
-        public List<long> Coords { get; set; }
+        public List<long> Coords { get; } = new List<long>();
 
         [JsonProperty("itemId", NullValueHandling = NullValueHandling.Ignore)]
         public long? ItemId { get; set; }

@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner
+namespace CatalogueScanner.Serialisation
 {
     public class WrappedReadStream : Stream
     {
@@ -47,7 +45,7 @@ namespace CatalogueScanner
         {
             if (Position + count >= Length)
             {
-                return (int)Math.Max((Position + count) - Length, 0);
+                return (int)Math.Max(Position + count - Length, 0);
             }
 
             return count;

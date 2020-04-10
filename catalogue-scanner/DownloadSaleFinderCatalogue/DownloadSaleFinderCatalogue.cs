@@ -1,15 +1,17 @@
-using CatalogueScanner.Dto.SaleFinder;
+using CatalogueScanner.Dto.StorageEntity;
 using CatalogueScanner.SharedCode.Dto.StorageEntity;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.DownloadSaleFinderCatalogue
+namespace CatalogueScanner
 {
+    /// <summary>
+    /// Downloads a SaleFinder catalogue and outputs the items.
+    /// </summary>
     public class DownloadSaleFinderCatalogue
     {
         private readonly SaleFinderService saleFinderService;
@@ -21,11 +23,11 @@ namespace CatalogueScanner.DownloadSaleFinderCatalogue
 
         [FunctionName("DownloadSalesFinderData")]
         public async Task RunAsync(
-            [QueueTrigger(Constants.QueueNames.CataloguesToDownload)]
+            [QueueTrigger(Constants.QueueNames.SaleFinderCataloguesToDownload)]
             SaleFinderCatalogueDownloadInformation downloadInformation,
             ILogger log,
             [Queue(Constants.QueueNames.DownloadedItems)]
-            ICollector<Item> collector
+            ICollector<CatalogueItem> collector
         )
         {
             #region null checks
@@ -45,15 +47,23 @@ namespace CatalogueScanner.DownloadSaleFinderCatalogue
             }
             #endregion
 
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            var catalogue = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId).ConfigureAwait(false);
 
-            var result = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId).ConfigureAwait(false);
+            log.LogInformation($"Successfully downloaded and parsed catalogue with {catalogue.Pages.Count} pages");
 
-            log.LogInformation($"Successfully downloaded and parsed catalogue with {result.Pages.Count} pages");
+            var items = catalogue.Pages
+                .SelectMany(page => page.Items)
+                .Where(item => item.ItemId.HasValue);
 
             Parallel.ForEach(
-                result.Pages.SelectMany(page => page.Items),
-                item => collector.Add(item)
+                items,
+                item => collector.Add(new CatalogueItem
+                {
+                    Id = item.ItemId.Value.ToString(CultureInfo.InvariantCulture),
+                    Name = item.ItemName,
+                    Sku = item.Sku,
+                    Uri = new Uri(downloadInformation.BaseUri, item.ItemUrl),
+                })
             );
         }
     }

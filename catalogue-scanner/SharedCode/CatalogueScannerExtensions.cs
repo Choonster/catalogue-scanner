@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CatalogueScanner.Serialisation;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

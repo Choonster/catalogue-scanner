@@ -1,28 +1,44 @@
+using CatalogueScanner.Dto.Config;
 using CatalogueScanner.Dto.SaleFinder;
 using CatalogueScanner.SharedCode.Dto.StorageEntity;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.CheckColesCatalogue
+namespace CatalogueScanner
 {
+    /// <summary>
+    /// Checks for new Coles catalogues and queues them for download.
+    /// </summary>
     public class CheckColesCatalogue
     {
         private const int ColesStoreId = 148;
 
-        private readonly SaleFinderService saleFinderService;
+        private static readonly Uri CatalagoueBaseUri = new Uri("https://www.coles.com.au/catalogues-and-specials/view-all-available-catalogues");
 
-        public CheckColesCatalogue(SaleFinderService saleFinderService)
+        private readonly SaleFinderService saleFinderService;
+        private readonly ColesSettings settings;
+
+        public CheckColesCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<CatalogueScannerSettings> settings)
         {
-            this.saleFinderService = saleFinderService;
+            #region null checks
+            if (settings is null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+            #endregion
+
+            this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
+            this.settings = settings.Value.Coles;
         }
 
         [FunctionName("CheckColesCatalogue")]
-        [return: Queue(Constants.QueueNames.CataloguesToDownload)]
+        [return: Queue(Constants.QueueNames.SaleFinderCataloguesToDownload)]
         public async Task<SaleFinderCatalogueDownloadInformation> RunAsync(
             [TimerTrigger("0 */5 * * * *")]
             TimerInfo myTimer,
@@ -41,9 +57,7 @@ namespace CatalogueScanner.CheckColesCatalogue
             }
             #endregion
 
-            var locationId = int.Parse(Environment.GetEnvironmentVariable(Constants.AppSettings.ColesSaleFinderLocationId), CultureInfo.InvariantCulture);
-
-            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(ColesStoreId, locationId).ConfigureAwait(false);
+            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(ColesStoreId, settings.SaleFinderLocationId).ConfigureAwait(false);
 
             var saleId = FindSaleId(viewResponse);
 
@@ -52,6 +66,7 @@ namespace CatalogueScanner.CheckColesCatalogue
             return new SaleFinderCatalogueDownloadInformation
             {
                 SaleId = saleId,
+                BaseUri = CatalagoueBaseUri,
             };
         }
 

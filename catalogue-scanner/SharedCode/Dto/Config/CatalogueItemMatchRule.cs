@@ -1,0 +1,25 @@
+﻿namespace CatalogueScanner.Dto.Config
+{
+    public class CatalogueItemMatchRule
+    {
+        public CatalogueItemProperty Property { get; set; }
+        public MatchType MatchType { get; set; }
+        public string Value { get; set; }
+    }
+
+    public enum CatalogueItemProperty
+    {
+        Id,
+        Sku,
+        Uri,
+        Name,
+    }
+
+    public enum MatchType
+    {
+        Exact,
+        Contains,
+        ContainsIgnoreCase,
+        Regex,
+    }
+}
