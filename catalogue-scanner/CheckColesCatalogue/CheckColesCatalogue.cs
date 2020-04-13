@@ -1,6 +1,6 @@
 using CatalogueScanner.Dto.Config;
 using CatalogueScanner.Dto.SaleFinder;
-using CatalogueScanner.SharedCode.Dto.StorageEntity;
+using CatalogueScanner.Dto.StorageEntity;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -13,13 +13,13 @@ using System.Threading.Tasks;
 namespace CatalogueScanner
 {
     /// <summary>
-    /// Checks for new Coles catalogues and queues them for download.
+    /// Checks for new Coles catalogues and queues them for scanning.
     /// </summary>
     public class CheckColesCatalogue
     {
         private const int ColesStoreId = 148;
-
-        private static readonly Uri CatalagoueBaseUri = new Uri("https://www.coles.com.au/catalogues-and-specials/view-all-available-catalogues");
+        private const string ColesStoreName = "Coles";
+        private static readonly Uri CatalaogueBaseUri = new Uri("https://www.coles.com.au/catalogues-and-specials/view-all-available-catalogues");
 
         private readonly SaleFinderService saleFinderService;
         private readonly ColesSettings settings;
@@ -37,18 +37,17 @@ namespace CatalogueScanner
             this.settings = settings.Value.Coles;
         }
 
-        [FunctionName("CheckColesCatalogue")]
-        [return: Queue(Constants.QueueNames.SaleFinderCataloguesToDownload)]
+        [FunctionName(Constants.FunctionNames.CheckColesCatalogue)]
+        [return: Queue(Constants.QueueNames.SaleFinderCataloguesToScan)]
         public async Task<SaleFinderCatalogueDownloadInformation> RunAsync(
-            [TimerTrigger("0 */5 * * * *")]
-            TimerInfo myTimer,
+            [TimerTrigger("0 */5 * * * *")] TimerInfo timer,
             ILogger log
         )
         {
             #region null checks
-            if (myTimer is null)
+            if (timer is null)
             {
-                throw new ArgumentNullException(nameof(myTimer));
+                throw new ArgumentNullException(nameof(timer));
             }
 
             if (log is null)
@@ -63,11 +62,7 @@ namespace CatalogueScanner
 
             log.LogInformation($"Found sale ID: {saleId}");
 
-            return new SaleFinderCatalogueDownloadInformation
-            {
-                SaleId = saleId,
-                BaseUri = CatalagoueBaseUri,
-            };
+            return new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName);
         }
 
         private static int FindSaleId(CatalogueViewResponse viewResponse)

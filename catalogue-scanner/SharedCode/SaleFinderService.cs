@@ -23,9 +23,9 @@ namespace CatalogueScanner
             return GetAsync<CatalogueViewResponse>($"/catalogues/view/{storeId}/?format=json&locationId={locationId}");
         }
 
-        public Task<Catalogue> GetCatalogueAsync(int saleId)
+        public Task<SaleFinderCatalogue> GetCatalogueAsync(int saleId)
         {
-            return GetAsync<Catalogue>($"/catalogue/svgData/{saleId}/?format=json");
+            return GetAsync<SaleFinderCatalogue>($"/catalogue/svgData/{saleId}/?format=json");
         }
 
         private async Task<T> GetAsync<T>(string path)

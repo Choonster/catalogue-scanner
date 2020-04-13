@@ -24,7 +24,7 @@ namespace CatalogueScanner
             builder.Services.AddHttpClient();
             builder.Services.AddHttpClient<SaleFinderService>();
 
-            IConfigurationRefresher configurationRefresher = null;
+            IConfigurationRefresher? configurationRefresher = null;
 
             // Load configuration from Azure App Configuration
             var configurationBuilder = new ConfigurationBuilder();
@@ -39,10 +39,17 @@ namespace CatalogueScanner
                         );
 
                 configurationRefresher = options.GetRefresher();
+
             });
 
             // Make settings and configuration refresher available through DI
             IConfigurationRoot configurationRoot = configurationBuilder.Build();
+
+            if (configurationRefresher is null)
+            {
+                throw new InvalidOperationException($"{nameof(IConfigurationRefresher)} instance wasn't created");
+            }
+
             IConfigurationSection config = configurationRoot.GetSection("CatalogueScanner:Settings");
             builder.Services.Configure<CatalogueScannerSettings>(config);
             builder.Services.AddSingleton(configurationRefresher);

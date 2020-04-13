@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 namespace CatalogueScanner
 {
     /// <summary>
-    /// Determines if a <see cref="CatalogueItem"/> matches any of the user-configured <see cref="CatalogueItemMatchRule"/> values and outputs the item if it does.
+    /// Determines if a <see cref="CatalogueItem"/> matches any of the user-configured <see cref="CatalogueItemMatchRule"/> values and outputs the item if it does, or null if it doesn't.
     /// </summary>
     public class FilterCatalogueItem
     {
@@ -23,7 +23,7 @@ namespace CatalogueScanner
             .Cast<CatalogueItemProperty>()
             .ToImmutableDictionary(
                 property => property,
-                property => typeof(CatalogueItem).GetProperty(property.ToString())
+                property => typeof(CatalogueItem).GetProperty(property.ToString()) ?? throw new InvalidOperationException($"Couldn't find property with name \"{property}\" on type {typeof(CatalogueItem).FullName}")
             );
 
         private readonly List<CatalogueItemMatchRule> rules;
@@ -40,13 +40,10 @@ namespace CatalogueScanner
             rules = settings.Value.Rules;
         }
 
-        [FunctionName("FilterCatalogueItem")]
-        public void Run(
-            [QueueTrigger(Constants.QueueNames.DownloadedItems)]
-            CatalogueItem catalogueItem,
-            ILogger log,
-            [Queue(Constants.QueueNames.MatchedItems)]
-            ICollector<CatalogueItem> collector
+        [FunctionName(Constants.FunctionNames.FilterCatalogueItem)]
+        public CatalogueItem? Run(
+            [ActivityTrigger] CatalogueItem catalogueItem,
+            ILogger log
         )
         {
             #region null checks
@@ -59,17 +56,9 @@ namespace CatalogueScanner
             {
                 throw new ArgumentNullException(nameof(log));
             }
-
-            if (collector is null)
-            {
-                throw new ArgumentNullException(nameof(collector));
-            }
             #endregion
 
-            if (rules.Any(rule => ItemMatches(catalogueItem, rule)))
-            {
-                collector.Add(catalogueItem);
-            }
+            return rules.Any(rule => ItemMatches(catalogueItem, rule)) ? catalogueItem : null;
         }
 
         private static bool ItemMatches(CatalogueItem item, CatalogueItemMatchRule rule)

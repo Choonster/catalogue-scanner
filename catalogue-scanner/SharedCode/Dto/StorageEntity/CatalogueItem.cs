@@ -9,12 +9,12 @@ namespace CatalogueScanner.Dto.StorageEntity
     [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
     public class CatalogueItem
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
-        public string Sku { get; set; }
+        public string? Sku { get; set; }
 
-        public Uri Uri { get; set; }
+        public Uri? Uri { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }

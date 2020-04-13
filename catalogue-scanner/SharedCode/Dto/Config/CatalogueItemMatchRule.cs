@@ -4,7 +4,7 @@
     {
         public CatalogueItemProperty Property { get; set; }
         public MatchType MatchType { get; set; }
-        public string Value { get; set; }
+        public string Value { get; set; } = null!;
     }
 
     public enum CatalogueItemProperty

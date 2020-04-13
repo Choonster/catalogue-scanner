@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CatalogueScanner.SharedCode.Dto.StorageEntity
+namespace CatalogueScanner.Dto.StorageEntity
 {
     /// <summary>
-    /// Represents a SaleFinder catalogue to be downloaded.
+    /// Represents a SaleFinder catalogue to be scanned.
     /// </summary>
     [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
     public class SaleFinderCatalogueDownloadInformation
@@ -21,5 +21,17 @@ namespace CatalogueScanner.SharedCode.Dto.StorageEntity
         /// The base URI of the SaleFinder catalogue page.
         /// </summary>
         public Uri BaseUri { get; set; }
+
+        /// <summary>
+        /// The store that the SaleFinder catalogue belongs to.
+        /// </summary>
+        public string Store { get; set; }
+
+        public SaleFinderCatalogueDownloadInformation(int saleId, Uri baseUri, string store)
+        {
+            SaleId = saleId;
+            BaseUri = baseUri;
+            Store = store;
+        }
     }
 }

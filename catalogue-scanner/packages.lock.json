@@ -34,6 +34,26 @@
           "Microsoft.Extensions.DependencyInjection": "2.2.0"
         }
       },
+      "Microsoft.Azure.WebJobs.Extensions.DurableTask": {
+        "type": "Direct",
+        "requested": "[1.8.3, )",
+        "resolved": "1.8.3",
+        "contentHash": "ZH29BZKyCznVGfD+iJ9vcNDwEnUQfikCUjoflq8ZaeOU/z7oM0bJbpN4QDez7UkQhhc8higaLy1IfO2tvruKrQ==",
+        "dependencies": {
+          "Microsoft.Azure.DurableTask.AzureStorage": "1.6.3",
+          "Microsoft.Azure.WebJobs": "3.0.0"
+        }
+      },
+      "Microsoft.Azure.WebJobs.Extensions.SendGrid": {
+        "type": "Direct",
+        "requested": "[3.0.0, )",
+        "resolved": "3.0.0",
+        "contentHash": "rePYEvp6q4EnluZbhEPJVgy5tmMayimXNhc+y2yRGtyIhbczOomDCq3UwfT7tI+Xnm/8eBJfGthZynzWXgp14g==",
+        "dependencies": {
+          "Microsoft.Azure.WebJobs": "3.0.0",
+          "SendGrid": "9.9.0"
+        }
+      },
       "Microsoft.Azure.WebJobs.Extensions.Storage": {
         "type": "Direct",
         "requested": "[3.0.10, )",
@@ -124,6 +144,26 @@
           "System.Memory": "4.5.3",
           "System.Text.Json": "4.6.0",
           "System.Threading.Tasks.Extensions": "4.5.2"
+        }
+      },
+      "Dynamitey": {
+        "type": "Transitive",
+        "resolved": "2.0.9.136",
+        "contentHash": "SzGWOl8nKR4r7WYiyMgJ0n/MuncdtPSyjxe1+znH8KVKOFQAckXFOeqOXgcWSMLHT+ehAYtZHPWjX+GsH7eI4Q==",
+        "dependencies": {
+          "Microsoft.CSharp": "4.4.1",
+          "NETStandard.Library": "1.6.1",
+          "System.ComponentModel": "4.3.0"
+        }
+      },
+      "ImpromptuInterface": {
+        "type": "Transitive",
+        "resolved": "7.0.1",
+        "contentHash": "9w44OsRuNJoAX0dbVoNqdljCqQIk33Hha5W+BcnWVwawFCEuVBDZbPQafgE1gVvvRaQhc1FOIKuJIIhXZmadvA==",
+        "dependencies": {
+          "Dynamitey": "2.0.9.136",
+          "Microsoft.CSharp": "4.4.1",
+          "System.Reflection.Emit": "4.3.0"
         }
       },
       "Microsoft.AspNetCore.Authentication.Abstractions": {
@@ -317,6 +357,25 @@
         "dependencies": {
           "Microsoft.Net.Http.Headers": "2.1.0",
           "System.Text.Encodings.Web": "4.5.0"
+        }
+      },
+      "Microsoft.Azure.DurableTask.AzureStorage": {
+        "type": "Transitive",
+        "resolved": "1.6.3",
+        "contentHash": "TiW8BHSxul59M+FRYIQkw4QZSaa0KvdepPJbKigM/0ORv/qefXX2kzAvKSglzEE+JyrSD+Kz+z6f/zLJDXuvjw==",
+        "dependencies": {
+          "Microsoft.Azure.DurableTask.Core": "2.1.2",
+          "Newtonsoft.Json": "11.0.2",
+          "WindowsAzure.Storage": "8.6.0"
+        }
+      },
+      "Microsoft.Azure.DurableTask.Core": {
+        "type": "Transitive",
+        "resolved": "2.1.2",
+        "contentHash": "a6yPthnn7NKE4J0tqcTMT8SMgI866MvfZlxBk47xXMX6XTcgmSbK4EBUMEl0dVXhemUjXycUNAzF0/+6cZBzWw==",
+        "dependencies": {
+          "ImpromptuInterface": "7.0.1",
+          "Newtonsoft.Json": "11.0.2"
         }
       },
       "Microsoft.Azure.WebJobs": {
@@ -821,6 +880,16 @@
         "resolved": "4.3.0",
         "contentHash": "VB5cn/7OzUfzdnC8tqAIMQciVLiq2epm2NrAm1E9OjNRyG4lVhfR61SMcLizejzQP8R8Uf/0l5qOIbUEi+RdEg=="
       },
+      "Sendgrid": {
+        "type": "Transitive",
+        "resolved": "9.9.0",
+        "contentHash": "3v4aIYXqTvhnozBvpCyf+U9DMiZzN9s4m7tpl8RjVHRN0IUKSFwJ0eio7GVjT03vTTUOXhOY8M+15zLYzQGhYQ==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Abstractions": "1.1.0",
+          "NETStandard.Library": "1.6.1",
+          "Newtonsoft.Json": "9.0.1"
+        }
+      },
       "System.AppContext": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -859,6 +928,14 @@
           "System.Runtime.Extensions": "4.3.0",
           "System.Threading": "4.3.0",
           "System.Threading.Tasks": "4.3.0"
+        }
+      },
+      "System.ComponentModel": {
+        "type": "Transitive",
+        "resolved": "4.3.0",
+        "contentHash": "VyGn1jGRZVfxnh8EdvDCi71v3bMXrsu8aYJOwoV7SNDLVhiEqwP86pPMyRGsDsxhXAm2b3o9OIqeETfN5qfezw==",
+        "dependencies": {
+          "System.Runtime": "4.3.0"
         }
       },
       "System.ComponentModel.Annotations": {

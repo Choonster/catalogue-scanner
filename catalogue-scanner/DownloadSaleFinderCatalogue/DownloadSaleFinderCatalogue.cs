@@ -1,5 +1,4 @@
 using CatalogueScanner.Dto.StorageEntity;
-using CatalogueScanner.SharedCode.Dto.StorageEntity;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,13 +20,10 @@ namespace CatalogueScanner
             this.saleFinderService = saleFinderService;
         }
 
-        [FunctionName("DownloadSalesFinderData")]
-        public async Task RunAsync(
-            [QueueTrigger(Constants.QueueNames.SaleFinderCataloguesToDownload)]
-            SaleFinderCatalogueDownloadInformation downloadInformation,
-            ILogger log,
-            [Queue(Constants.QueueNames.DownloadedItems)]
-            ICollector<CatalogueItem> collector
+        [FunctionName(Constants.FunctionNames.DownloadSaleFinderCatalogue)]
+        public async Task<Catalogue> RunAsync(
+            [ActivityTrigger] SaleFinderCatalogueDownloadInformation downloadInformation,
+            ILogger log
         )
         {
             #region null checks
@@ -40,11 +36,6 @@ namespace CatalogueScanner
             {
                 throw new ArgumentNullException(nameof(log));
             }
-
-            if (collector is null)
-            {
-                throw new ArgumentNullException(nameof(collector));
-            }
             #endregion
 
             var catalogue = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId).ConfigureAwait(false);
@@ -53,18 +44,17 @@ namespace CatalogueScanner
 
             var items = catalogue.Pages
                 .SelectMany(page => page.Items)
-                .Where(item => item.ItemId.HasValue);
-
-            Parallel.ForEach(
-                items,
-                item => collector.Add(new CatalogueItem
+                .Where(item => item.ItemId.HasValue)
+                .Select(item => new CatalogueItem
                 {
-                    Id = item.ItemId.Value.ToString(CultureInfo.InvariantCulture),
+                    Id = item.ItemId!.Value.ToString(CultureInfo.InvariantCulture),
                     Name = item.ItemName,
                     Sku = item.Sku,
-                    Uri = new Uri(downloadInformation.BaseUri, item.ItemUrl),
+                    Uri = item.ItemUrl != null ? new Uri(downloadInformation.BaseUri, item.ItemUrl) : null,
                 })
-            );
+                .ToList();
+
+            return new Catalogue(downloadInformation.Store, catalogue.StartDate, catalogue.EndDate, items);
         }
     }
 }

@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace CatalogueScanner.Dto.SaleFinder
 {
@@ -13,175 +13,86 @@ namespace CatalogueScanner.Dto.SaleFinder
     /// Returned from the SaleFinder Catalogue SVG Data request:
     /// https://embed.salefinder.com.au/catalogue/svgData/{saleId}/?format=json
     /// </summary>
-    public partial class Catalogue
+    [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
+    public partial class SaleFinderCatalogue
     {
-        [JsonProperty("content")]
-        public string Content { get; set; }
-
-        [JsonProperty("breadcrumb")]
-        public string Breadcrumb { get; set; }
-
-        [JsonProperty("areaName")]
-        public string AreaName { get; set; }
+        public string? Content { get; set; }
+        public string? Breadcrumb { get; set; }
+        public string? AreaName { get; set; }
+        public string? SaleDescription { get; set; }
+        public string? SaleName { get; set; }
+        public string? YoutubeId { get; set; }
+        public DateTimeOffset PublishDate { get; set; }
+        public DateTimeOffset StartDate { get; set; }
+        public DateTimeOffset EndDate { get; set; }
 
         [JsonProperty("catalogue", ItemConverterType = typeof(PageConverter))]
         public List<Page> Pages { get; } = new List<Page>();
-
-        [JsonProperty("saleDescription")]
-        public string SaleDescription { get; set; }
-
-        [JsonProperty("saleName")]
-        public string SaleName { get; set; }
-
-        [JsonProperty("youtubeId")]
-        public string YoutubeId { get; set; }
-
-        [JsonProperty("publishDate")]
-        public DateTimeOffset PublishDate { get; set; }
-
-        [JsonProperty("startDate")]
-        public DateTimeOffset StartDate { get; set; }
-
-        [JsonProperty("endDate")]
-        public DateTimeOffset EndDate { get; set; }
     }
 
+    [JsonObject(NamingStrategyType = typeof(SnakeCaseNamingStrategy))]
     public partial class Page
     {
         [JsonIgnore]
         public List<Item> Items { get; } = new List<Item>();
 
         [JsonProperty("imagefile")]
-        public string Imagefile { get; set; }
+        public string? ImageFile { get; set; }
 
-        [JsonProperty("image_width")]
-        public long ImageWidth { get; set; }
-
-        [JsonProperty("image_height")]
-        public double ImageHeight { get; set; }
+        public long? ImageWidth { get; set; }
+        public double? ImageHeight { get; set; }
     }
 
+    [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
     public partial class Item
     {
-        [JsonProperty("videoId")]
-        public string VideoId { get; set; }
-
-        [JsonProperty("shape")]
+        public string? VideoId { get; set; }
         public Shape Shape { get; set; }
-
-        [JsonProperty("coords")]
         public List<long> Coords { get; } = new List<long>();
 
-        [JsonProperty("itemId", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public long? ItemId { get; set; }
 
-        [JsonProperty("href", NullValueHandling = NullValueHandling.Ignore)]
-        public string Href { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string? Href { get; set; }
 
         [JsonProperty("SKU", NullValueHandling = NullValueHandling.Ignore)]
-        public string Sku { get; set; }
+        public string? Sku { get; set; }
 
-        [JsonProperty("systemId")]
         public long? SystemId { get; set; }
-
-        [JsonProperty("extraId")]
-        public object ExtraId { get; set; }
-
-        [JsonProperty("extra2Id")]
-        public object Extra2Id { get; set; }
+        public object? ExtraId { get; set; }
+        public object? Extra2Id { get; set; }
 
         [JsonProperty("extraURL", NullValueHandling = NullValueHandling.Ignore)]
-        public string ExtraUrl { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder may not output valid URIs for this property")]
+        public string? ExtraUrl { get; set; }
 
         [JsonProperty("extraURLText", NullValueHandling = NullValueHandling.Ignore)]
-        public string ExtraUrlText { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "This property probably isn't a URI")]
+        public string? ExtraUrlText { get; set; }
 
         [JsonProperty("itemURL", NullValueHandling = NullValueHandling.Ignore)]
-        public string ItemUrl { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder does not output full URIs for this property")]
+        public string? ItemUrl { get; set; }
 
-        [JsonProperty("itemName", NullValueHandling = NullValueHandling.Ignore)]
-        public string ItemName { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string? ItemName { get; set; }
 
-        [JsonProperty("skuCount", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public long? SkuCount { get; set; }
 
-        [JsonProperty("x")]
         public double X { get; set; }
-
-        [JsonProperty("y")]
         public double Y { get; set; }
-
-        [JsonProperty("width")]
         public double Width { get; set; }
-
-        [JsonProperty("height")]
         public double Height { get; set; }
     }
 
     public enum Shape { Rectangle };
 
-    public partial class Catalogue
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Instantiated by JSON.NET using reflection")]
+    internal class PageConverter : JsonConverter<Page?>
     {
-        public static Catalogue FromJson(string json) => JsonConvert.DeserializeObject<Catalogue>(json, Converter.Settings);
-    }
-
-    public static class Serialize
-    {
-        public static string ToJson(this Catalogue self) => JsonConvert.SerializeObject(self, Converter.Settings);
-    }
-
-    internal static class Converter
-    {
-        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
-        {
-            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-            DateParseHandling = DateParseHandling.None,
-            Converters =
-            {
-                ShapeConverter.Singleton,
-                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-            },
-        };
-    }
-
-    internal class ShapeConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(Shape) || t == typeof(Shape?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
-            if (value == "rectangle")
-            {
-                return Shape.Rectangle;
-            }
-            throw new Exception("Cannot unmarshal type Shape");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (Shape)untypedValue;
-            if (value == Shape.Rectangle)
-            {
-                serializer.Serialize(writer, "rectangle");
-                return;
-            }
-            throw new Exception("Cannot marshal type Shape");
-        }
-
-        public static readonly ShapeConverter Singleton = new ShapeConverter();
-    }
-
-    internal class PageConverter : JsonConverter<Page>
-    {
-
-        public override Page ReadJson(JsonReader reader, Type objectType, Page existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override Page? ReadJson(JsonReader reader, Type objectType, Page? existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null) return null;
 
@@ -203,8 +114,14 @@ namespace CatalogueScanner.Dto.SaleFinder
             return page;
         }
 
-        public override void WriteJson(JsonWriter writer, Page value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, Page? value, JsonSerializer serializer)
         {
+            if (value == null)
+            {
+                writer.WriteNull();
+                return;
+            }
+
             // Create a JObject and populate the standard (non-numeric) property names
             var pageObject = JObject.FromObject(value, serializer);
 
@@ -217,7 +134,5 @@ namespace CatalogueScanner.Dto.SaleFinder
             // Serialise the JObject to JSON
             pageObject.WriteTo(writer);
         }
-
-        public static readonly PageConverter Singleton = new PageConverter();
     }
 }

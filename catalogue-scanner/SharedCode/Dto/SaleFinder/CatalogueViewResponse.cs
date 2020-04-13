@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Newtonsoft.Json.Serialization;
 
 namespace CatalogueScanner.Dto.SaleFinder
 {
@@ -9,18 +7,12 @@ namespace CatalogueScanner.Dto.SaleFinder
     /// Returned from the SaleFinder Catalogue View request:
     /// https://embed.salefinder.com.au/catalogues/view/{storeId}/?locationId={locationId}
     /// </summary>
+    [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
     public partial class CatalogueViewResponse
     {
-        [JsonProperty("content")]
-        public string Content { get; set; }
-
-        [JsonProperty("breadcrumb")]
-        public string Breadcrumb { get; set; }
-
-        [JsonProperty("region")]
-        public string Region { get; set; }
-
-        [JsonProperty("redirect")]
-        public string Redirect { get; set; }
+        public string? Content { get; set; }
+        public string? Breadcrumb { get; set; }
+        public string? Region { get; set; }
+        public string? Redirect { get; set; }
     }
 }
