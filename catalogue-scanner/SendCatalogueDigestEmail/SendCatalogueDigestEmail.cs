@@ -11,6 +11,25 @@ namespace CatalogueScanner
     {
         private readonly EmailSettings settings;
 
+        private static string FromEmail
+        {
+            get
+            {
+                var hostName = Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME");
+
+                if (hostName is null)
+                {
+                    throw new InvalidOperationException("WEBSITE_HOSTNAME environment variable not set");
+                }
+
+                var hostUri = new UriBuilder(Uri.UriSchemeHttps + Uri.SchemeDelimiter + hostName).Uri;
+
+                return $"catalogue-scanner@{hostUri.Host}";
+            }
+        }
+
+        private static string FromName => "Catalogue Scanner";
+
         public SendCatalogueDigestEmail(IOptionsSnapshot<CatalogueScannerSettings> settings)
         {
             #region null checks
@@ -36,7 +55,7 @@ namespace CatalogueScanner
 
             var message = new SendGridMessage()
             {
-                From = new EmailAddress(settings.FromEmail, settings.FromName),
+                From = new EmailAddress(FromEmail, FromName),
                 Subject = $"Catalogue Scanner found {catalogue.Items.Count} matching item(s) at {catalogue.Store}",
             };
 

@@ -6,9 +6,6 @@ namespace CatalogueScanner.Dto.Config
 {
     public class EmailSettings
     {
-        public string FromEmail { get; set; } = null!;
-        public string FromName { get; set; } = null!;
-
         public string ToEmail { get; set; } = null!;
         public string ToName { get; set; } = null!;
 
