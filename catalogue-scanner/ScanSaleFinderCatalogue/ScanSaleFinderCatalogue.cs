@@ -1,4 +1,6 @@
 using CatalogueScanner.Dto.FunctionResult;
+using CatalogueScanner.Entity;
+using CatalogueScanner.Entity.Implementation;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
@@ -10,39 +12,86 @@ namespace CatalogueScanner
 {
     public static class ScanSaleFinderCatalogue
     {
+        private const string CatalogueType = "SaleFinder";
+
         /// <summary>
         /// Orchestrator function that downloads a SaleFinder catalogue, filters the items using the configured rules and sends an email digest.
         /// </summary>
         [FunctionName(Constants.FunctionNames.ScanSaleFinderCatalogue)]
-        public static async Task RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
+        public static async Task RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
         {
             #region null checks
             if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
+
+            if (log is null)
+            {
+                throw new ArgumentNullException(nameof(log));
+            }
             #endregion
+
+            log = context.CreateReplaySafeLogger(log);
 
             var catalogueDownloadInfo = context.GetInput<SaleFinderCatalogueDownloadInformation>();
 
-            // TODO: Check for duplicates
+            var scanStateId = new EntityId(nameof(CatalogueScanState), $"{CatalogueType}|{catalogueDownloadInfo.Store}|{catalogueDownloadInfo.SaleId}");
+            var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
 
-            var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(Constants.FunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
+            using (await context.LockAsync(scanStateId).ConfigureAwait(true))
+            {
+                #region Check and update the catalogue's scan state
+                context.SetCustomStatus("CheckingState");
 
-            var itemTasks = downloadedCatalogue.Items
-                .Select(item => context.CallActivityAsync<CatalogueItem?>(Constants.FunctionNames.FilterCatalogueItem, item))
-                .ToList();
+                var state = await scanState.GetState().ConfigureAwait(true);
+                if (state != ScanState.NotStarted)
+                {
+                    log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
+                    context.SetCustomStatus("Skipped");
+                    return;
+                }
 
-            await Task.WhenAll(itemTasks).ConfigureAwait(true);
+                await scanState.UpdateState(ScanState.InProgress).ConfigureAwait(true);
+                #endregion
 
-            var filteredItems = itemTasks
-                .Where(task => task.Result != null)
-                .Select(task => task.Result!)
-                .ToList();
+                #region Download catalogue
+                context.SetCustomStatus("Downloading");
 
-            var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
+                var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(Constants.FunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
+                #endregion
 
-            await context.CallActivityAsync(Constants.FunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
+                #region Filter catalouge items
+                context.SetCustomStatus("Filtering");
+
+                var itemTasks = downloadedCatalogue.Items
+                    .Select(item => context.CallActivityAsync<CatalogueItem?>(Constants.FunctionNames.FilterCatalogueItem, item))
+                    .ToList();
+
+                await Task.WhenAll(itemTasks).ConfigureAwait(true);
+                #endregion
+
+                #region Send digest email
+                context.SetCustomStatus("SendingDigestEmail");
+
+                var filteredItems = itemTasks
+                    .Where(task => task.Result != null)
+                    .Select(task => task.Result!)
+                    .ToList();
+
+                var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
+
+                await context.CallActivityAsync(Constants.FunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
+                #endregion
+
+                #region Update catalogue's scan state
+                context.SetCustomStatus("UpdatingState");
+
+                await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
+                #endregion
+
+                context.SetCustomStatus("Completed");
+            }
         }
 
         /// <summary>
