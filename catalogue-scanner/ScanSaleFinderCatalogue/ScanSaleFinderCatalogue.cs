@@ -1,6 +1,6 @@
 using CatalogueScanner.Dto.FunctionResult;
-using CatalogueScanner.Dto.FunctionResult;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace CatalogueScanner
         /// Orchestrator function that downloads a SaleFinder catalogue, filters the items using the configured rules and sends an email digest.
         /// </summary>
         [FunctionName(Constants.FunctionNames.ScanSaleFinderCatalogue)]
-        public static async Task RunOrchestrator([OrchestrationTrigger] DurableOrchestrationContext context)
+        public static async Task RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             #region null checks
             if (context is null)
@@ -51,7 +51,7 @@ namespace CatalogueScanner
         [FunctionName(Constants.FunctionNames.ScanSaleFinderCatalogue_QueueStart)]
         public static async Task QueueStart(
             [QueueTrigger(Constants.QueueNames.SaleFinderCataloguesToScan)] SaleFinderCatalogueDownloadInformation downloadInformation,
-            [OrchestrationClient] DurableOrchestrationClient starter,
+            [DurableClient] IDurableClient starter,
             ILogger log
         )
         {

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CatalogueScanner.Dto.SaleFinder;
+using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using CatalogueScanner.Dto.SaleFinder;
 
 namespace CatalogueScanner
 {

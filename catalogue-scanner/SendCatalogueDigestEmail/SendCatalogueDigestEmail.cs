@@ -1,6 +1,7 @@
 using CatalogueScanner.Dto.Config;
 using CatalogueScanner.Dto.FunctionResult;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Options;
 using SendGrid.Helpers.Mail;
 using System;

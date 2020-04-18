@@ -1,10 +1,8 @@
 ﻿using CatalogueScanner.Serialisation;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Formatting;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner

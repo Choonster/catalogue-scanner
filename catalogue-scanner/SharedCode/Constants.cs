@@ -34,7 +34,7 @@
             /// <summary>
             /// The name of the <see cref="CatalogueScanner.SendCatalogueDigestEmail"/> activity function.
             /// </summary>
-            public const string SendCatalogueDigestEmail = "SendCatalogueDigestEmail";            
+            public const string SendCatalogueDigestEmail = "SendCatalogueDigestEmail";
         }
 
         public static class QueueNames
