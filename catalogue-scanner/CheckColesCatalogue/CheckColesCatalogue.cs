@@ -1,6 +1,6 @@
 using CatalogueScanner.Dto.Config;
 using CatalogueScanner.Dto.SaleFinder;
-using CatalogueScanner.Dto.StorageEntity;
+using CatalogueScanner.Dto.FunctionResult;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;

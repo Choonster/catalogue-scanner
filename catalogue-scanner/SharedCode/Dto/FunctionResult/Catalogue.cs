@@ -3,7 +3,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 
-namespace CatalogueScanner.Dto.StorageEntity
+namespace CatalogueScanner.Dto.FunctionResult
 {
     [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
     public class Catalogue

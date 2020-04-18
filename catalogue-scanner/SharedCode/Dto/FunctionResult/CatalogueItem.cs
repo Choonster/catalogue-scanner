@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CatalogueScanner.Dto.StorageEntity
+namespace CatalogueScanner.Dto.FunctionResult
 {
     [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
     public class CatalogueItem

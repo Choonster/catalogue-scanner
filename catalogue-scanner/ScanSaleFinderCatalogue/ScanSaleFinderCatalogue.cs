@@ -1,4 +1,5 @@
-using CatalogueScanner.Dto.StorageEntity;
+using CatalogueScanner.Dto.FunctionResult;
+using CatalogueScanner.Dto.FunctionResult;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
