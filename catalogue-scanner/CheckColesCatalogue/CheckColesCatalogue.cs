@@ -3,6 +3,7 @@ using CatalogueScanner.Dto.FunctionResult;
 using CatalogueScanner.Dto.SaleFinder;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -23,8 +24,9 @@ namespace CatalogueScanner
 
         private readonly SaleFinderService saleFinderService;
         private readonly ColesSettings settings;
+        private readonly IStringLocalizer<CheckColesCatalogue> S;
 
-        public CheckColesCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<CatalogueScannerSettings> settings)
+        public CheckColesCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<CatalogueScannerSettings> settings, IStringLocalizer<CheckColesCatalogue> stringLocalizer)
         {
             #region null checks
             if (settings is null)
@@ -35,6 +37,7 @@ namespace CatalogueScanner
 
             this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
             this.settings = settings.Value.Coles;
+            S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
         }
 
         [FunctionName(Constants.FunctionNames.CheckColesCatalogue)]
@@ -60,12 +63,12 @@ namespace CatalogueScanner
 
             var saleId = FindSaleId(viewResponse);
 
-            log.LogInformation($"Found sale ID: {saleId}");
+            log.LogInformation(S["Found sale ID: {0}", saleId]);
 
             return new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName);
         }
 
-        private static int FindSaleId(CatalogueViewResponse viewResponse)
+        private int FindSaleId(CatalogueViewResponse viewResponse)
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(viewResponse.Content);
@@ -78,7 +81,7 @@ namespace CatalogueScanner
 
             if (thisWeeksCatalogueHeader is null)
             {
-                throw new UnableToFindSaleIdException("Didn't find \"This week's catalogue\" cell in HTML content.\n\n" + viewResponse.Content);
+                throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" cell in HTML content.", "This week's catalogue"]}\n\n{viewResponse.Content}");
             }
 
             var viewLink = thisWeeksCatalogueHeader.ParentNode
@@ -90,7 +93,7 @@ namespace CatalogueScanner
 
             if (viewLink is null)
             {
-                throw new UnableToFindSaleIdException("Didn't find \"View\" link in HTML content.\n\n" + viewResponse.Content);
+                throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" link in HTML content.", "View"]}\n\n{viewResponse.Content}");
             }
 
             var paramsString = viewLink.Attributes["href"].Value.TrimStart('#');
@@ -113,7 +116,7 @@ namespace CatalogueScanner
                 }
             }
 
-            throw new UnableToFindSaleIdException("Didn't find saleId parameter in View link in HTML content.\n\n" + viewResponse.Content);
+            throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" parameter in \"{1}\" link in HTML content.", "saleId", "View"]}\n\n{viewResponse.Content}");
         }
     }
 }

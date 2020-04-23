@@ -119,6 +119,15 @@
           "Newtonsoft.Json": "11.0.2"
         }
       },
+      "OrchardCore.Localization.Core": {
+        "type": "Direct",
+        "requested": "[1.0.0-rc1-12821, )",
+        "resolved": "1.0.0-rc1-12821",
+        "contentHash": "3jAEerL+gHMj/k34GtECLhvGRFgvACz5Qi9qRSoq6uMdiBtaoCB83BeNprK6o9GnuR4BOWwt2ewg1zAKpHHj8w==",
+        "dependencies": {
+          "OrchardCore.Localization.Abstractions": "1.0.0-rc1-12821"
+        }
+      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.0.1",
@@ -906,6 +915,11 @@
           "NETStandard.Library": "1.6.1",
           "Newtonsoft.Json": "10.0.1"
         }
+      },
+      "OrchardCore.Localization.Abstractions": {
+        "type": "Transitive",
+        "resolved": "1.0.0-rc1-12821",
+        "contentHash": "8r61Plx7jL7jfu36snQUeaaHT4t86SAO1RkUQtOczs9A78vzWT/nzPiyJmEX9x2a3O6LJuJeAggs4RWu4MJdvg=="
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
