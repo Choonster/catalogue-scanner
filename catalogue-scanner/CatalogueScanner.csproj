@@ -34,7 +34,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Localisation\" />
-  </ItemGroup>
 </Project>

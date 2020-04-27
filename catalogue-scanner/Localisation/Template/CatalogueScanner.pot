@@ -1,0 +1,50 @@
+#: catalogue-scanner\CheckColesCatalogue\CheckColesCatalogue.cs:66
+#. log.LogInformation(S["Found sale ID: {0}", saleId]);
+msgctxt "CatalogueScanner.CheckColesCatalogue"
+msgid "Found sale ID: {0}"
+msgstr ""
+
+#: catalogue-scanner\CheckColesCatalogue\CheckColesCatalogue.cs:84
+#. throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" cell in HTML content.", "This week's catalogue"]}\n\n{viewResponse.Content}");
+msgctxt "CatalogueScanner.CheckColesCatalogue"
+msgid "Didn't find \"{0}\" cell in HTML content."
+msgstr ""
+
+#: catalogue-scanner\CheckColesCatalogue\CheckColesCatalogue.cs:96
+#. throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" link in HTML content.", "View"]}\n\n{viewResponse.Content}");
+msgctxt "CatalogueScanner.CheckColesCatalogue"
+msgid "Didn't find \"{0}\" link in HTML content."
+msgstr ""
+
+#: catalogue-scanner\CheckColesCatalogue\CheckColesCatalogue.cs:119
+#. throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" parameter in \"{1}\" link in HTML content.", "saleId", "View"]}\n\n{viewResponse.Content}");
+msgctxt "CatalogueScanner.CheckColesCatalogue"
+msgid "Didn't find \"{0}\" parameter in \"{1}\" link in HTML content."
+msgstr ""
+
+#: catalogue-scanner\DownloadSaleFinderCatalogue\DownloadSaleFinderCatalogue.cs:47
+#. log.LogInformation(S.Plural(catalogue.Pages.Count, "Successfully downloaded and parsed catalogue with 1 page", "Successfully downloaded and parsed catalogue with {0} pages", catalogue.Pages.Count));
+msgctxt "CatalogueScanner.DownloadSaleFinderCatalogue"
+msgid "Successfully downloaded and parsed catalogue with 1 page"
+msgid_plural "Successfully downloaded and parsed catalogue with {0} pages"
+msgstr[0] ""
+
+#: catalogue-scanner\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:25
+#. throw new InvalidOperationException(S["WEBSITE_HOSTNAME environment variable not set"]);
+msgctxt "CatalogueScanner.SendCatalogueDigestEmail"
+msgid "WEBSITE_HOSTNAME environment variable not set"
+msgstr ""
+
+#: catalogue-scanner\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:60
+#. var summary = S.Plural(catalogue.Items.Count, "Catalogue Scanner found 1 matching item at {1}", "Catalogue Scanner found {0} matching items at {1}", catalogue.Store);
+msgctxt "CatalogueScanner.SendCatalogueDigestEmail"
+msgid "Catalogue Scanner found 1 matching item at {1}"
+msgid_plural "Catalogue Scanner found {0} matching items at {1}"
+msgstr[0] ""
+
+#: catalogue-scanner\Entity\Implementation\CatalogueScanState.cs:73
+#. throw new ArgumentException(S["Invalid Entity Key, must be in the form <CatalogueType>|<Store>|<CatalogueId>"]);
+msgctxt "CatalogueScanner.Entity.Implementation.CatalogueScanState"
+msgid "Invalid Entity Key, must be in the form <CatalogueType>|<Store>|<CatalogueId>"
+msgstr ""
+

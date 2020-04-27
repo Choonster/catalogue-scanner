@@ -1,6 +1,7 @@
 using CatalogueScanner.Dto.FunctionResult;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
@@ -15,10 +16,12 @@ namespace CatalogueScanner
     public class DownloadSaleFinderCatalogue
     {
         private readonly SaleFinderService saleFinderService;
+        private readonly IStringLocalizer<DownloadSaleFinderCatalogue> S;
 
-        public DownloadSaleFinderCatalogue(SaleFinderService saleFinderService)
+        public DownloadSaleFinderCatalogue(SaleFinderService saleFinderService, IStringLocalizer<DownloadSaleFinderCatalogue> stringLocalizer)
         {
             this.saleFinderService = saleFinderService;
+            S = stringLocalizer;
         }
 
         [FunctionName(Constants.FunctionNames.DownloadSaleFinderCatalogue)]
@@ -41,7 +44,7 @@ namespace CatalogueScanner
 
             var catalogue = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId).ConfigureAwait(false);
 
-            log.LogInformation($"Successfully downloaded and parsed catalogue with {catalogue.Pages.Count} pages");
+            log.LogInformation(S.Plural(catalogue.Pages.Count, "Successfully downloaded and parsed catalogue with 1 page", "Successfully downloaded and parsed catalogue with {0} pages", catalogue.Pages.Count));
 
             var items = catalogue.Pages
                 .SelectMany(page => page.Items)

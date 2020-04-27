@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CatalogueScanner.Localisation
+﻿namespace CatalogueScanner.Localisation
 {
     public class FunctionsPathOptions
     {

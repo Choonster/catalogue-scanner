@@ -1,13 +1,10 @@
-﻿using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.FileProviders;
+﻿using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using OrchardCore.Localization;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace CatalogueScanner.Localisation
 {
