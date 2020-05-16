@@ -79,9 +79,16 @@ namespace CatalogueScanner
                     .Select(task => task.Result!)
                     .ToList();
 
-                var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
+                if (filteredItems.Any())
+                {
+                    var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
 
-                await context.CallActivityAsync(Constants.FunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
+                    await context.CallActivityAsync(Constants.FunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
+                }
+                else
+                {
+                    log.LogInformation($"Catalogue {scanStateId.EntityKey} had no matching items, skipping digest email.");
+                }
                 #endregion
 
                 #region Update catalogue's scan state
