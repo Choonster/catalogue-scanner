@@ -1,9 +1,11 @@
 ﻿using CatalogueScanner.Dto.Config;
 using CatalogueScanner.Localisation;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using OrchardCore.Localization;
 using System;
 using System.Globalization;
@@ -31,8 +33,13 @@ namespace CatalogueScanner
             builder.Services.AddPortableObjectLocalization(o => o.ResourcesPath = "Localisation");
             builder.Services.AddSingleton<ILocalizationFileLocationProvider, FunctionsRootPoFileLocationProvider>();
 
-            var rootDirectory = Environment.CurrentDirectory;
-            builder.Services.Configure<FunctionsPathOptions>(o => o.RootDirectory = rootDirectory);
+            builder.Services.Configure<FunctionsPathOptions>(o =>
+            {
+                // https://github.com/Azure/azure-functions-dotnet-extensions/issues/17#issuecomment-499086297
+                var executionContextOptions = builder.Services.BuildServiceProvider().GetService<IOptions<ExecutionContextOptions>>().Value;
+                var appDirectory = executionContextOptions.AppDirectory;
+                o.RootDirectory = appDirectory;
+            });
 
             var localisationCulture = Environment.GetEnvironmentVariable("LocalisationCulture");
             if (localisationCulture != null)
