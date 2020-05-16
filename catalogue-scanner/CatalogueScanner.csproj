@@ -34,4 +34,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="SendCatalogueDigestEmail\EmailTemplates.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EmailTemplates.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="SendCatalogueDigestEmail\EmailTemplates.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>EmailTemplates.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>CatalogueScanner</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
