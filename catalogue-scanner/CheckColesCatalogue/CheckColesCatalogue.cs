@@ -20,6 +20,7 @@ namespace CatalogueScanner
     {
         private const int ColesStoreId = 148;
         private const string ColesStoreName = "Coles";
+        private const string ThisWeeksCatalogue = "This week's catalogue";
         private static readonly Uri CatalaogueBaseUri = new Uri("https://www.coles.com.au/catalogues-and-specials/view-all-available-catalogues");
 
         private readonly SaleFinderService saleFinderService;
@@ -74,21 +75,30 @@ namespace CatalogueScanner
             doc.LoadHtml(viewResponse.Content);
 
             var thisWeeksCatalogueHeader = doc.DocumentNode
-                .Descendants("div")
+                .Descendants("h3")
                 .Where(node => node.HasClass("sale-name-cell"))
-                .Where(node => node.InnerText == "This week&#39;s catalogue")
+                .Where(node => HtmlEntity.DeEntitize(node.InnerText) == ThisWeeksCatalogue)
                 .FirstOrDefault();
 
             if (thisWeeksCatalogueHeader is null)
             {
-                throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" cell in HTML content.", "This week's catalogue"]}\n\n{viewResponse.Content}");
+                throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" cell in HTML content.", ThisWeeksCatalogue]}\n\n{viewResponse.Content}");
             }
 
-            var viewLink = thisWeeksCatalogueHeader.ParentNode
+            var parentTile = thisWeeksCatalogueHeader
+                .Ancestors("div")
+                .Where(node => node.HasClass("sf-catalogues-tile"))
+                .FirstOrDefault();
+
+            if (parentTile is null)
+            {
+                throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" parent tile in HTML content.", ThisWeeksCatalogue]}\n\n{viewResponse.Content}");
+            }
+
+            var viewLink = parentTile
                 .Descendants("a")
                 .Where(node => node.Attributes["href"] != null)
                 .Where(node => node.HasClass("sf-view-button"))
-                .Where(node => node.HasClass("button-secondary"))
                 .FirstOrDefault();
 
             if (viewLink is null)
@@ -96,9 +106,9 @@ namespace CatalogueScanner
                 throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" link in HTML content.", "View"]}\n\n{viewResponse.Content}");
             }
 
-            var paramsString = viewLink.Attributes["href"].Value.TrimStart('#');
+            var url = new Uri(CatalaogueBaseUri, viewLink.Attributes["href"].Value);
 
-            foreach (var param in paramsString.Split('&'))
+            foreach (var param in url.Fragment.Split('&'))
             {
                 var parts = param.Split('=');
 
