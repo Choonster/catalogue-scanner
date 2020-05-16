@@ -9,6 +9,11 @@
             /// </summary>
             public const string CheckColesCatalogue = "CheckColesCatalogue";
 
+            /// <summary>
+            /// The name of the <see cref="CatalogueScanner.CheckWoolworthsCatalogue"/> function.
+            /// </summary>
+            public const string CheckWoolworthsCatalogue = "CheckWoolworthsCatalogue";
+
 
             /// <summary>
             /// The name of the <see cref="CatalogueScanner.ScanSaleFinderCatalogue"/> orchestrator function.
