@@ -1,1 +1,2 @@
-﻿- Implement email template
+﻿- Add prices?
+- Create config GUI
