@@ -49,4 +49,7 @@
       <CustomToolNamespace>CatalogueScanner</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet tool restore&#xD;&#xA;dotnet tool run extractpo -- . .\Localisation\Template" />
+  </Target>
 </Project>
