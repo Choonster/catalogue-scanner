@@ -93,12 +93,14 @@ namespace CatalogueScanner.Serialisation
 
         protected override void Dispose(bool disposing)
         {
-            stream.Dispose();
+            base.Dispose(disposing);
+            stream.Dispose();            
         }
 
-        public override ValueTask DisposeAsync()
+        public override async ValueTask DisposeAsync()
         {
-            return stream.DisposeAsync();
+            await base.DisposeAsync().ConfigureAwait(false);
+            await stream.DisposeAsync().ConfigureAwait(false);
         }
     }
 }
