@@ -46,5 +46,13 @@
         {
             public const string SaleFinderCataloguesToScan = "catalogue-scanner-sale-finder-catalogues-to-scan";
         }
+
+        public static class AppSettingNames
+        {
+            /// <summary>
+            /// The CRON expression used for the timer triggers of the Check[Store]Catalogue functions.
+            /// </summary>
+            public const string CheckCatalogueFunctionCronExpression = "CheckCatalogueFunctionCronExpression";
+        }
     }
 }

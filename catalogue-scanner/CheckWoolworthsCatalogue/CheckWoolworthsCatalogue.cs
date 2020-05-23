@@ -40,7 +40,7 @@ namespace CatalogueScanner
         [FunctionName(Constants.FunctionNames.CheckWoolworthsCatalogue)]
         [return: Queue(Constants.QueueNames.SaleFinderCataloguesToScan)]
         public async Task<SaleFinderCatalogueDownloadInformation> RunAsync(
-            [TimerTrigger("0 */5 * * * *")] TimerInfo timer,
+            [TimerTrigger("%" + Constants.AppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
             ILogger log
         )
         {
