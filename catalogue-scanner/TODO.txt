@@ -1,3 +1,2 @@
 ﻿- Add prices?
-- Different scan intervals for dev/prod? e.g. 30 seconds in dev, 1 hour in prod
 - Create config GUI
