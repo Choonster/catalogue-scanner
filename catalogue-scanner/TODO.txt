@@ -1,2 +1,4 @@
 ﻿- Add prices?
-- Create config GUI
+- Create config GUI (Blazor?)
+- Split into separate projects: Core, SaleFinder, App/Host?
+- Add plugin/module system with Host Builder pattern to register config, services, etc.
