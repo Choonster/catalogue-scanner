@@ -1,7 +1,9 @@
-﻿namespace CatalogueScanner.Core.Dto.Config
+﻿namespace CatalogueScanner.Core.Options
 {
-    public class EmailSettings
+    public class EmailOptions
     {
+        public const string Email = "Email";
+
         public string ToEmail { get; set; } = null!;
         public string ToName { get; set; } = null!;
 

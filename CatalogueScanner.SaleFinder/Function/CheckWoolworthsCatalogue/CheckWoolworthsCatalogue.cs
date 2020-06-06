@@ -1,6 +1,6 @@
-using CatalogueScanner.SaleFinder.DTO.Config;
-using CatalogueScanner.SaleFinder.DTO.FunctionResult;
-using CatalogueScanner.SaleFinder.DTO.SaleFinder;
+using CatalogueScanner.SaleFinder.Dto.FunctionResult;
+using CatalogueScanner.SaleFinder.Dto.SaleFinder;
+using CatalogueScanner.SaleFinder.Options;
 using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
@@ -21,20 +21,20 @@ namespace CatalogueScanner.SaleFinder.Function
         private static readonly Uri CatalaogueBaseUri = new Uri("https://www.woolworths.com.au/shop/catalogue");
 
         private readonly SaleFinderService saleFinderService;
-        private readonly WoolworthsSettings settings;
+        private readonly WoolworthsOptions options;
         private readonly IStringLocalizer<CheckWoolworthsCatalogue> S;
 
-        public CheckWoolworthsCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<WoolworthsSettings> settings, IStringLocalizer<CheckWoolworthsCatalogue> stringLocalizer)
+        public CheckWoolworthsCatalogue(SaleFinderService saleFinderService, IOptions<WoolworthsOptions> optionsAccessor, IStringLocalizer<CheckWoolworthsCatalogue> stringLocalizer)
         {
             #region null checks
-            if (settings is null)
+            if (optionsAccessor is null)
             {
-                throw new ArgumentNullException(nameof(settings));
+                throw new ArgumentNullException(nameof(optionsAccessor));
             }
             #endregion
 
             this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
-            this.settings = settings.Value;
+            options = optionsAccessor.Value;
             S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
         }
 
@@ -57,7 +57,7 @@ namespace CatalogueScanner.SaleFinder.Function
             }
             #endregion
 
-            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(WoolworthsStoreId, settings.SaleFinderLocationId).ConfigureAwait(false);
+            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(WoolworthsStoreId, options.SaleFinderLocationId).ConfigureAwait(false);
 
             var saleId = FindSaleId(viewResponse);
 

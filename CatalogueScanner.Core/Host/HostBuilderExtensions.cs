@@ -1,10 +1,4 @@
-﻿using CatalogueScanner.Core.Localisation;
-using Microsoft.Azure.WebJobs.Host.Bindings;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using OrchardCore.Localization;
-using System;
-using System.Globalization;
+﻿using System;
 
 namespace CatalogueScanner.Core.Host
 {
@@ -19,38 +13,7 @@ namespace CatalogueScanner.Core.Host
             }
             #endregion
 
-            new T().Register(builder);
-
-            return builder;
-        }
-
-        public static ICatalogueScannerHostBuilder AddLocalisation(this ICatalogueScannerHostBuilder builder)
-        {
-            #region null checks
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-            #endregion
-
-            builder.Services.AddMemoryCache();
-            builder.Services.AddPortableObjectLocalization(o => o.ResourcesPath = "Localisation");
-            builder.Services.AddSingleton<ILocalizationFileLocationProvider, FunctionsRootPoFileLocationProvider>();
-            builder.Services.Configure<FunctionsPathOptions>(o =>
-            {
-                // https://github.com/Azure/azure-functions-dotnet-extensions/issues/17#issuecomment-499086297
-                var executionContextOptions = builder.Services.BuildServiceProvider().GetService<IOptions<ExecutionContextOptions>>().Value;
-                var appDirectory = executionContextOptions.AppDirectory;
-                o.RootDirectory = appDirectory;
-            });
-
-            var localisationCulture = Environment.GetEnvironmentVariable("LocalisationCulture");
-            if (localisationCulture != null)
-            {
-                var localisationCultureInfo = CultureInfo.GetCultureInfo(localisationCulture);
-                CultureInfo.DefaultThreadCurrentCulture = localisationCultureInfo;
-                CultureInfo.DefaultThreadCurrentUICulture = localisationCultureInfo;
-            }
+            new T().Configure(builder);
 
             return builder;
         }

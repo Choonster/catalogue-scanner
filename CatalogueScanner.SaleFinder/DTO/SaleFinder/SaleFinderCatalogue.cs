@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace CatalogueScanner.SaleFinder.DTO.SaleFinder
+namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
 {
     /// <summary>
     /// Returned from the SaleFinder Catalogue SVG Data request:

@@ -1,6 +1,6 @@
-using CatalogueScanner.SaleFinder.DTO.Config;
-using CatalogueScanner.SaleFinder.DTO.FunctionResult;
-using CatalogueScanner.SaleFinder.DTO.SaleFinder;
+using CatalogueScanner.SaleFinder.Dto.FunctionResult;
+using CatalogueScanner.SaleFinder.Dto.SaleFinder;
+using CatalogueScanner.SaleFinder.Options;
 using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
@@ -25,20 +25,20 @@ namespace CatalogueScanner.SaleFinder.Function
         private static readonly Uri CatalaogueBaseUri = new Uri("https://www.coles.com.au/catalogues-and-specials/view-all-available-catalogues");
 
         private readonly SaleFinderService saleFinderService;
-        private readonly ColesSettings settings;
+        private readonly ColesOptions options;
         private readonly IStringLocalizer<CheckColesCatalogue> S;
 
-        public CheckColesCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<ColesSettings> settings, IStringLocalizer<CheckColesCatalogue> stringLocalizer)
+        public CheckColesCatalogue(SaleFinderService saleFinderService, IOptions<ColesOptions> optionsAccessor, IStringLocalizer<CheckColesCatalogue> stringLocalizer)
         {
             #region null checks
-            if (settings is null)
+            if (optionsAccessor is null)
             {
-                throw new ArgumentNullException(nameof(settings));
+                throw new ArgumentNullException(nameof(optionsAccessor));
             }
             #endregion
 
             this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
-            this.settings = settings.Value;
+            options = optionsAccessor.Value;
             S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
         }
 
@@ -61,7 +61,7 @@ namespace CatalogueScanner.SaleFinder.Function
             }
             #endregion
 
-            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(ColesStoreId, settings.SaleFinderLocationId).ConfigureAwait(false);
+            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(ColesStoreId, options.SaleFinderLocationId).ConfigureAwait(false);
 
             var saleId = FindSaleId(viewResponse);
 

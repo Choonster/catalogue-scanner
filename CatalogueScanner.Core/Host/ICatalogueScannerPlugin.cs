@@ -2,6 +2,6 @@
 {
     public interface ICatalogueScannerPlugin
     {
-        void Register(ICatalogueScannerHostBuilder hostBuilder);
+        void Configure(ICatalogueScannerHostBuilder builder);
     }
 }

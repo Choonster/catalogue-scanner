@@ -14,8 +14,12 @@ namespace CatalogueScanner.Core.Host
         {
             FunctionsHostBuilder = functionsHostBuilder ?? throw new ArgumentNullException(nameof(functionsHostBuilder));
             Services = functionsHostBuilder.Services;
-            
-            configurationRoot = BuildConfigurationRoot(Services);
+
+            (var configurationRoot, var configurationRefresher) = BuildConfiguration();
+
+            this.configurationRoot = configurationRoot;
+            Services.AddSingleton(configurationRefresher);
+
             Configuration = configurationRoot.GetSection("CatalogueScanner");
         }
 
@@ -25,7 +29,7 @@ namespace CatalogueScanner.Core.Host
 
         public IServiceCollection Services { get; }
 
-        private static IConfigurationRoot BuildConfigurationRoot(IServiceCollection services)
+        private static (IConfigurationRoot, IConfigurationRefresher) BuildConfiguration()
         {
             IConfigurationRefresher? configurationRefresher = null;
 
@@ -33,18 +37,17 @@ namespace CatalogueScanner.Core.Host
             var configurationBuilder = new ConfigurationBuilder();
             configurationBuilder.AddAzureAppConfiguration(options =>
             {
-                options.Connect(Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString"))
+                options.Connect(Environment.GetEnvironmentVariable(CoreAppSettingNames.AzureAppConfigurationConnectionString))
                        // Load all keys that start with `CatalogueScanner:`
                        .Select("CatalogueScanner:*")
                        // Configure to reload configuration if the registered 'Sentinel' key is modified
                        .ConfigureRefresh(refreshOptions =>
-                            refreshOptions.Register("CatalogueScanner:Settings:Sentinel", refreshAll: true)
+                            refreshOptions.Register("CatalogueScanner:Sentinel", refreshAll: true)
                         );
 
                 configurationRefresher = options.GetRefresher();
             });
 
-            // Make configuration refresher available through DI
             var configurationRoot = configurationBuilder.Build();
 
             if (configurationRefresher is null)
@@ -55,9 +58,7 @@ namespace CatalogueScanner.Core.Host
 #pragma warning restore CA1303 // Do not pass literals as localized parameters
             }
 
-            services.AddSingleton(configurationRefresher);
-
-            return configurationRoot;
+            return (configurationRoot, configurationRefresher);
         }
     }
 }

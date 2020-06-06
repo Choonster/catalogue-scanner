@@ -1,5 +1,5 @@
 using CatalogueScanner.Core.Dto.FunctionResult;
-using CatalogueScanner.SaleFinder.DTO.FunctionResult;
+using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using CatalogueScanner.SaleFinder.Service;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;

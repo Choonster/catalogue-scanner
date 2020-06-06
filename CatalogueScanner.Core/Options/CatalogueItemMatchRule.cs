@@ -1,4 +1,4 @@
-﻿namespace CatalogueScanner.Core.Dto.Config
+﻿namespace CatalogueScanner.Core.Options
 {
     public class CatalogueItemMatchRule
     {

@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using System;
 
-namespace CatalogueScanner.SaleFinder.DTO.FunctionResult
+namespace CatalogueScanner.SaleFinder.Dto.FunctionResult
 {
     /// <summary>
     /// Represents a SaleFinder catalogue to be scanned.

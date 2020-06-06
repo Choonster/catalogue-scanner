@@ -1,4 +1,5 @@
-﻿using CatalogueScanner.Core.Host;
+﻿using CatalogueScanner.Core;
+using CatalogueScanner.Core.Host;
 using CatalogueScanner.DefaultHost;
 using CatalogueScanner.SaleFinder;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ namespace CatalogueScanner.DefaultHost
             ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(builder);
 
             catalogueScannerHostBuilder
-                .AddLocalisation()
+                .AddPlugin<CoreCatalogueScannerPlugin>()
                 .AddPlugin<SaleFinderCatalogueScannerPlugin>();
         }
     }

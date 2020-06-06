@@ -1,5 +1,6 @@
-using CatalogueScanner.Core.Dto.Config;
+using CatalogueScanner.Core.Config;
 using CatalogueScanner.Core.Dto.FunctionResult;
+using CatalogueScanner.Core.Options;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
@@ -29,16 +30,16 @@ namespace CatalogueScanner.Core.Function
 
         private readonly List<CatalogueItemMatchRule> rules;
 
-        public FilterCatalogueItem(IOptionsSnapshot<CatalogueScannerSettings> settings)
+        public FilterCatalogueItem(IOptions<MatchingOptions> optionsAccessor)
         {
             #region null checks
-            if (settings is null)
+            if (optionsAccessor is null)
             {
-                throw new ArgumentNullException(nameof(settings));
+                throw new ArgumentNullException(nameof(optionsAccessor));
             }
             #endregion
 
-            rules = settings.Value.Rules;
+            rules = optionsAccessor.Value.Rules;
         }
 
         [FunctionName(CoreFunctionNames.FilterCatalogueItem)]

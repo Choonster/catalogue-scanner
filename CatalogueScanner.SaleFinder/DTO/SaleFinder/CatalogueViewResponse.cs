@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace CatalogueScanner.SaleFinder.DTO.SaleFinder
+namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
 {
     /// <summary>
     /// Returned from the SaleFinder Catalogue View request:

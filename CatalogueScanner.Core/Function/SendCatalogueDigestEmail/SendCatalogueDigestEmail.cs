@@ -1,6 +1,6 @@
-using CatalogueScanner.Core.Dto.Config;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Function.SendCatalogueDigestEmailTemplate;
+using CatalogueScanner.Core.Options;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -17,7 +17,7 @@ namespace CatalogueScanner.Core.Function
 {
     public class SendCatalogueDigestEmail
     {
-        private readonly EmailSettings settings;
+        private readonly EmailOptions options;
         private readonly IStringLocalizer<SendCatalogueDigestEmail> S;
 
         private string FromEmail
@@ -39,16 +39,16 @@ namespace CatalogueScanner.Core.Function
 
         private static string FromName => "Catalogue Scanner";
 
-        public SendCatalogueDigestEmail(IOptionsSnapshot<CatalogueScannerSettings> settings, IStringLocalizer<SendCatalogueDigestEmail> stringLocalizer)
+        public SendCatalogueDigestEmail(IOptions<EmailOptions> optionsAccessor, IStringLocalizer<SendCatalogueDigestEmail> stringLocalizer)
         {
             #region null checks
-            if (settings is null)
+            if (optionsAccessor is null)
             {
-                throw new ArgumentNullException(nameof(settings));
+                throw new ArgumentNullException(nameof(optionsAccessor));
             }
             #endregion
 
-            this.settings = settings.Value.Email;
+            options = optionsAccessor.Value;
             S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
         }
 
@@ -71,7 +71,7 @@ namespace CatalogueScanner.Core.Function
                 Subject = summary,
             };
 
-            message.AddTo(settings.ToEmail, settings.ToName);
+            message.AddTo(options.ToEmail, options.ToName);
 
             message.AddContent(MimeType.Html, GetHtmlContent(summary, filteredCatalogue));
             message.AddContent(MimeType.Text, GetPlainTextContent(summary, filteredCatalogue));

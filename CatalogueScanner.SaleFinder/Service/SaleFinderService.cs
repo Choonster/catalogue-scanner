@@ -1,4 +1,4 @@
-﻿using CatalogueScanner.SaleFinder.DTO.SaleFinder;
+﻿using CatalogueScanner.SaleFinder.Dto.SaleFinder;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;

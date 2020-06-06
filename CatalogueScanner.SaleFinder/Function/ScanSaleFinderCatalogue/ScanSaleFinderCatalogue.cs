@@ -2,7 +2,7 @@ using CatalogueScanner.Core;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Entity;
 using CatalogueScanner.Core.Entity.Implementation;
-using CatalogueScanner.SaleFinder.DTO.FunctionResult;
+using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
