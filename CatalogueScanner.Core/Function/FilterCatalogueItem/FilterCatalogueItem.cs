@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace CatalogueScanner.Core.Function.FilterCatalogueItem
+namespace CatalogueScanner.Core.Function
 {
     /// <summary>
     /// Determines if a <see cref="CatalogueItem"/> matches any of the user-configured <see cref="CatalogueItemMatchRule"/> values and outputs the item if it does, or null if it doesn't.
@@ -41,7 +41,7 @@ namespace CatalogueScanner.Core.Function.FilterCatalogueItem
             rules = settings.Value.Rules;
         }
 
-        [FunctionName(CoreConstants.FunctionNames.FilterCatalogueItem)]
+        [FunctionName(CoreFunctionNames.FilterCatalogueItem)]
         public CatalogueItem? Run(
             [ActivityTrigger] CatalogueItem catalogueItem,
             ILogger log

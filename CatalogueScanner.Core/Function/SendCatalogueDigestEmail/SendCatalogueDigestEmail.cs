@@ -1,5 +1,6 @@
 using CatalogueScanner.Core.Dto.Config;
 using CatalogueScanner.Core.Dto.FunctionResult;
+using CatalogueScanner.Core.Function.SendCatalogueDigestEmailTemplate;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -12,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace CatalogueScanner.Core.Function.SendCatalogueDigestEmail
+namespace CatalogueScanner.Core.Function
 {
     public class SendCatalogueDigestEmail
     {

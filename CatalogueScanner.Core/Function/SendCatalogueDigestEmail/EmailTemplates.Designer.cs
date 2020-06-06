@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CatalogueScanner.Core.Function.SendCatalogueDigestEmail {
+namespace CatalogueScanner.Core.Function.SendCatalogueDigestEmailTemplate {
     using System;
     
     

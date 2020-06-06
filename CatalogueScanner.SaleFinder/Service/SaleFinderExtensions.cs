@@ -1,4 +1,4 @@
-﻿using CatalogueScanner.Serialisation;
+﻿using CatalogueScanner.SaleFinder.Serialisation;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;

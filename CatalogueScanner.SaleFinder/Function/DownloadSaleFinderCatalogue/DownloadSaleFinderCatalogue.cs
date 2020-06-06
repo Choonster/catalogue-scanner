@@ -1,5 +1,4 @@
 using CatalogueScanner.Core.Dto.FunctionResult;
-using CatalogueScanner.SaleFinder;
 using CatalogueScanner.SaleFinder.DTO.FunctionResult;
 using CatalogueScanner.SaleFinder.Service;
 using Microsoft.Azure.WebJobs;
@@ -11,7 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner
+namespace CatalogueScanner.SaleFinder.Function
 {
     /// <summary>
     /// Downloads a SaleFinder catalogue and outputs the items.
@@ -27,7 +26,7 @@ namespace CatalogueScanner
             S = stringLocalizer;
         }
 
-        [FunctionName(SaleFinderConstants.FunctionNames.DownloadSaleFinderCatalogue)]
+        [FunctionName(SaleFinderFunctionNames.DownloadSaleFinderCatalogue)]
         public async Task<Catalogue> RunAsync(
             [ActivityTrigger] SaleFinderCatalogueDownloadInformation downloadInformation,
             ILogger log

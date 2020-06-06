@@ -12,6 +12,13 @@ namespace CatalogueScanner.Core.Host
     {
         public static ICatalogueScannerHostBuilder AddPlugin<T>(this ICatalogueScannerHostBuilder builder) where T : ICatalogueScannerPlugin, new()
         {
+            #region null checks
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            #endregion
+
             new T().Register(builder);
 
             return builder;
@@ -19,6 +26,13 @@ namespace CatalogueScanner.Core.Host
 
         public static ICatalogueScannerHostBuilder AddLocalisation(this ICatalogueScannerHostBuilder builder)
         {
+            #region null checks
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            #endregion
+
             builder.Services.AddMemoryCache();
             builder.Services.AddPortableObjectLocalization(o => o.ResourcesPath = "Localisation");
             builder.Services.AddSingleton<ILocalizationFileLocationProvider, FunctionsRootPoFileLocationProvider>();

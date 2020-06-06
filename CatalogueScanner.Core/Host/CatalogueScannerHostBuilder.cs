@@ -12,7 +12,7 @@ namespace CatalogueScanner.Core.Host
 
         public CatalogueScannerHostBuilder(IFunctionsHostBuilder functionsHostBuilder)
         {
-            FunctionsHostBuilder = functionsHostBuilder;
+            FunctionsHostBuilder = functionsHostBuilder ?? throw new ArgumentNullException(nameof(functionsHostBuilder));
             Services = functionsHostBuilder.Services;
             
             configurationRoot = BuildConfigurationRoot(Services);
@@ -25,7 +25,7 @@ namespace CatalogueScanner.Core.Host
 
         public IServiceCollection Services { get; }
 
-        private IConfigurationRoot BuildConfigurationRoot(IServiceCollection services)
+        private static IConfigurationRoot BuildConfigurationRoot(IServiceCollection services)
         {
             IConfigurationRefresher? configurationRefresher = null;
 

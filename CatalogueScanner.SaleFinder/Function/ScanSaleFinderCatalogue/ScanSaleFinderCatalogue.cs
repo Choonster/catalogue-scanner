@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.SaleFinder.Functions.ScanSaleFinderCatalogue
+namespace CatalogueScanner.SaleFinder.Function
 {
     public static class ScanSaleFinderCatalogue
     {
@@ -19,7 +19,7 @@ namespace CatalogueScanner.SaleFinder.Functions.ScanSaleFinderCatalogue
         /// <summary>
         /// Orchestrator function that downloads a SaleFinder catalogue, filters the items using the configured rules and sends an email digest.
         /// </summary>
-        [FunctionName(SaleFinderConstants.FunctionNames.ScanSaleFinderCatalogue)]
+        [FunctionName(SaleFinderFunctionNames.ScanSaleFinderCatalogue)]
         public static async Task RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
         {
             #region null checks
@@ -60,14 +60,14 @@ namespace CatalogueScanner.SaleFinder.Functions.ScanSaleFinderCatalogue
                 #region Download catalogue
                 context.SetCustomStatus("Downloading");
 
-                var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderConstants.FunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
+                var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderFunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
                 #endregion
 
                 #region Filter catalouge items
                 context.SetCustomStatus("Filtering");
 
                 var itemTasks = downloadedCatalogue.Items
-                    .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreConstants.FunctionNames.FilterCatalogueItem, item))
+                    .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
                     .ToList();
 
                 await Task.WhenAll(itemTasks).ConfigureAwait(true);
@@ -85,7 +85,7 @@ namespace CatalogueScanner.SaleFinder.Functions.ScanSaleFinderCatalogue
                 {
                     var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
 
-                    await context.CallActivityAsync(CoreConstants.FunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
+                    await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
                 }
                 else
                 {
@@ -106,9 +106,9 @@ namespace CatalogueScanner.SaleFinder.Functions.ScanSaleFinderCatalogue
         /// <summary>
         /// Function that triggers the <see cref="RunOrchestrator"/> orchestrator function when a SaleFinder catalogue is queued for scanning.
         /// </summary>
-        [FunctionName(SaleFinderConstants.FunctionNames.ScanSaleFinderCatalogue_QueueStart)]
+        [FunctionName(SaleFinderFunctionNames.ScanSaleFinderCatalogue_QueueStart)]
         public static async Task QueueStart(
-            [QueueTrigger(SaleFinderConstants.QueueNames.SaleFinderCataloguesToScan)] SaleFinderCatalogueDownloadInformation downloadInformation,
+            [QueueTrigger(SaleFinderQueueNames.SaleFinderCataloguesToScan)] SaleFinderCatalogueDownloadInformation downloadInformation,
             [DurableClient] IDurableClient starter,
             ILogger log
         )
@@ -130,9 +130,9 @@ namespace CatalogueScanner.SaleFinder.Functions.ScanSaleFinderCatalogue
             }
             #endregion
 
-            string instanceId = await starter.StartNewAsync(SaleFinderConstants.FunctionNames.ScanSaleFinderCatalogue, downloadInformation).ConfigureAwait(false);
+            string instanceId = await starter.StartNewAsync(SaleFinderFunctionNames.ScanSaleFinderCatalogue, downloadInformation).ConfigureAwait(false);
 
-            log.LogInformation($"Started {SaleFinderConstants.FunctionNames.ScanSaleFinderCatalogue} orchestration with ID = '{instanceId}'.");
+            log.LogInformation($"Started {SaleFinderFunctionNames.ScanSaleFinderCatalogue} orchestration with ID = '{instanceId}'.");
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.Serialisation
+namespace CatalogueScanner.SaleFinder.Serialisation
 {
     /// <summary>
     /// Supports deserialising SaleFinder JSON responses (which are really JSONP).

@@ -1,25 +1,25 @@
-#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:30
+#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:31
 #. throw new InvalidOperationException(S["WEBSITE_HOSTNAME environment variable not set"]);
-msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail.SendCatalogueDigestEmail"
+msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail"
 msgid "WEBSITE_HOSTNAME environment variable not set"
 msgstr ""
 
-#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:65
+#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:66
 #. var summary = S.Plural(filteredCatalogue.Items.Count, "Catalogue Scanner found 1 matching item at {1}", "Catalogue Scanner found {0} matching items at {1}", filteredCatalogue.Store);
-msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail.SendCatalogueDigestEmail"
+msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail"
 msgid "Catalogue Scanner found 1 matching item at {1}"
 msgid_plural "Catalogue Scanner found {0} matching items at {1}"
 msgstr[0] ""
 
-#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:114
+#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:115
 #. headerRow.AppendChild(ElementWithText("th", S["Product Name"]));
-msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail.SendCatalogueDigestEmail"
+msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail"
 msgid "Product Name"
 msgstr ""
 
-#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:189
+#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:190
 #. private string ItemName(CatalogueItem catalogueItem) => catalogueItem.Name ?? S["Unknown Item"];
-msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail.SendCatalogueDigestEmail"
+msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail"
 msgid "Unknown Item"
 msgstr ""
 

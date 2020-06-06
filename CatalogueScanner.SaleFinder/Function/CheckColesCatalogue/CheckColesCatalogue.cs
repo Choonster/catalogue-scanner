@@ -12,7 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.SaleFinder.Functions.CheckColesCatalogue
+namespace CatalogueScanner.SaleFinder.Function
 {
     /// <summary>
     /// Checks for new Coles catalogues and queues them for scanning.
@@ -42,10 +42,10 @@ namespace CatalogueScanner.SaleFinder.Functions.CheckColesCatalogue
             S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
         }
 
-        [FunctionName(SaleFinderConstants.FunctionNames.CheckColesCatalogue)]
-        [return: Queue(SaleFinderConstants.QueueNames.SaleFinderCataloguesToScan)]
+        [FunctionName(SaleFinderFunctionNames.CheckColesCatalogue)]
+        [return: Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)]
         public async Task<SaleFinderCatalogueDownloadInformation> RunAsync(
-            [TimerTrigger("%" + SaleFinderConstants.AppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
+            [TimerTrigger("%" + SaleFinderAppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
             ILogger log
         )
         {
