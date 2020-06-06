@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Localisation\**\*.po" >
+      <Link>Localisation\CatalogueScanner.SaleFinder\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet tool restore&#xD;&#xA;dotnet tool run extractpo -- . .\Localisation\Template" />
+  </Target>
+</Project>
