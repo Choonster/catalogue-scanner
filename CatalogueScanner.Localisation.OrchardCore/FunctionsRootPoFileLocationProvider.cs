@@ -18,7 +18,7 @@ namespace CatalogueScanner.Localisation.OrchardCore
         private readonly IFileProvider fileProvider;
         private readonly string resourcesContainer;
 
-        public FunctionsRootPoFileLocationProvider(IOptions<FunctionsPathOptions> pathOptions, IOptions<LocalizationOptions> localisationOptions)
+        public FunctionsRootPoFileLocationProvider(IOptionsSnapshot<FunctionsPathOptions> pathOptions, IOptionsSnapshot<LocalizationOptions> localisationOptions)
         {
             #region null checks
             if (pathOptions is null)

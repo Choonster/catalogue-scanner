@@ -24,7 +24,7 @@ namespace CatalogueScanner.SaleFinder.Function
         private readonly WoolworthsOptions options;
         private readonly IStringLocalizer<CheckWoolworthsCatalogue> S;
 
-        public CheckWoolworthsCatalogue(SaleFinderService saleFinderService, IOptions<WoolworthsOptions> optionsAccessor, IStringLocalizer<CheckWoolworthsCatalogue> stringLocalizer)
+        public CheckWoolworthsCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<WoolworthsOptions> optionsAccessor, IStringLocalizer<CheckWoolworthsCatalogue> stringLocalizer)
         {
             #region null checks
             if (optionsAccessor is null)

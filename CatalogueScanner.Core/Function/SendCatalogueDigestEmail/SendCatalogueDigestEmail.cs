@@ -39,7 +39,7 @@ namespace CatalogueScanner.Core.Function
 
         private static string FromName => "Catalogue Scanner";
 
-        public SendCatalogueDigestEmail(IOptions<EmailOptions> optionsAccessor, IPluralStringLocalizer<SendCatalogueDigestEmail> pluralStringLocalizer)
+        public SendCatalogueDigestEmail(IOptionsSnapshot<EmailOptions> optionsAccessor, IPluralStringLocalizer<SendCatalogueDigestEmail> pluralStringLocalizer)
         {
             #region null checks
             if (optionsAccessor is null)

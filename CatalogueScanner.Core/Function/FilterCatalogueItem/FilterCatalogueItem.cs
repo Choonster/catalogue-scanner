@@ -30,7 +30,7 @@ namespace CatalogueScanner.Core.Function
 
         private readonly List<CatalogueItemMatchRule> rules;
 
-        public FilterCatalogueItem(IOptions<MatchingOptions> optionsAccessor)
+        public FilterCatalogueItem(IOptionsSnapshot<MatchingOptions> optionsAccessor)
         {
             #region null checks
             if (optionsAccessor is null)

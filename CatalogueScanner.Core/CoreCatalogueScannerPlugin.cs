@@ -42,7 +42,7 @@ namespace CatalogueScanner.Core
             builder.Services.Configure<FunctionsPathOptions>(o =>
             {
                 // https://github.com/Azure/azure-functions-dotnet-extensions/issues/17#issuecomment-499086297
-                var executionContextOptions = builder.Services.BuildServiceProvider().GetService<IOptions<ExecutionContextOptions>>().Value;
+                var executionContextOptions = builder.Services.BuildServiceProvider().GetService<IOptionsSnapshot<ExecutionContextOptions>>().Value;
                 var appDirectory = executionContextOptions.AppDirectory;
                 o.RootDirectory = appDirectory;
             });

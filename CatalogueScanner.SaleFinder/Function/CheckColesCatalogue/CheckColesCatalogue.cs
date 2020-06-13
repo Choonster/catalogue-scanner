@@ -28,7 +28,7 @@ namespace CatalogueScanner.SaleFinder.Function
         private readonly ColesOptions options;
         private readonly IStringLocalizer<CheckColesCatalogue> S;
 
-        public CheckColesCatalogue(SaleFinderService saleFinderService, IOptions<ColesOptions> optionsAccessor, IStringLocalizer<CheckColesCatalogue> stringLocalizer)
+        public CheckColesCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<ColesOptions> optionsAccessor, IStringLocalizer<CheckColesCatalogue> stringLocalizer)
         {
             #region null checks
             if (optionsAccessor is null)
