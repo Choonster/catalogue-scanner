@@ -1,6 +1,7 @@
 ﻿using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.DefaultHost;
+using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using System;
@@ -24,6 +25,7 @@ namespace CatalogueScanner.DefaultHost
 
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
+                .AddPlugin<OrchardCoreLocalisationCatalogueScannerPlugin>()
                 .AddPlugin<SaleFinderCatalogueScannerPlugin>();
         }
     }

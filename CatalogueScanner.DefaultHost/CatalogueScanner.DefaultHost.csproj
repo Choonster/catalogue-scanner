@@ -16,6 +16,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
+    <ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
     <ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
   </ItemGroup>
   

@@ -1,9 +1,9 @@
 using CatalogueScanner.Core.Dto.FunctionResult;
+using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using CatalogueScanner.SaleFinder.Service;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
@@ -18,12 +18,12 @@ namespace CatalogueScanner.SaleFinder.Function
     public class DownloadSaleFinderCatalogue
     {
         private readonly SaleFinderService saleFinderService;
-        private readonly IStringLocalizer<DownloadSaleFinderCatalogue> S;
+        private readonly IPluralStringLocalizer<DownloadSaleFinderCatalogue> S;
 
-        public DownloadSaleFinderCatalogue(SaleFinderService saleFinderService, IStringLocalizer<DownloadSaleFinderCatalogue> stringLocalizer)
+        public DownloadSaleFinderCatalogue(SaleFinderService saleFinderService, IPluralStringLocalizer<DownloadSaleFinderCatalogue> pluralStringLocalizer)
         {
             this.saleFinderService = saleFinderService;
-            S = stringLocalizer;
+            S = pluralStringLocalizer;
         }
 
         [FunctionName(SaleFinderFunctionNames.DownloadSaleFinderCatalogue)]

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.FileProviders;
+﻿using CatalogueScanner.Core.Localisation;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using OrchardCore.Localization;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CatalogueScanner.Core.Localisation
+namespace CatalogueScanner.Localisation.OrchardCore
 {
     /// <summary>
     /// Provides localisation files from the root directory of the Functions app.

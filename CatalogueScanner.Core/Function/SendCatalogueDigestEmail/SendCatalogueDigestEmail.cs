@@ -1,10 +1,10 @@
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Function.SendCatalogueDigestEmailTemplate;
+using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.Core.Options;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -18,7 +18,7 @@ namespace CatalogueScanner.Core.Function
     public class SendCatalogueDigestEmail
     {
         private readonly EmailOptions options;
-        private readonly IStringLocalizer<SendCatalogueDigestEmail> S;
+        private readonly IPluralStringLocalizer<SendCatalogueDigestEmail> S;
 
         private string FromEmail
         {
@@ -39,7 +39,7 @@ namespace CatalogueScanner.Core.Function
 
         private static string FromName => "Catalogue Scanner";
 
-        public SendCatalogueDigestEmail(IOptions<EmailOptions> optionsAccessor, IStringLocalizer<SendCatalogueDigestEmail> stringLocalizer)
+        public SendCatalogueDigestEmail(IOptions<EmailOptions> optionsAccessor, IPluralStringLocalizer<SendCatalogueDigestEmail> pluralStringLocalizer)
         {
             #region null checks
             if (optionsAccessor is null)
@@ -49,7 +49,7 @@ namespace CatalogueScanner.Core.Function
             #endregion
 
             options = optionsAccessor.Value;
-            S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
+            S = pluralStringLocalizer ?? throw new ArgumentNullException(nameof(pluralStringLocalizer));
         }
 
         [FunctionName("SendCatalogueDigestEmail")]

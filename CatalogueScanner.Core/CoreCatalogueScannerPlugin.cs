@@ -5,7 +5,6 @@ using CatalogueScanner.Core.Options;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using OrchardCore.Localization;
 using System;
 using System.Globalization;
 
@@ -22,24 +21,13 @@ namespace CatalogueScanner.Core
             }
             #endregion
 
-            AddLocalisation(builder);
+            SetLocalisationCulture();
+            AddFunctionsPathOptions(builder);
             AddConfigurationOptions(builder);
         }
 
-        private static void AddLocalisation(ICatalogueScannerHostBuilder builder)
+        private static void SetLocalisationCulture()
         {
-            builder.Services
-                .AddMemoryCache()
-                .AddPortableObjectLocalization(o => o.ResourcesPath = "Localisation")
-                .AddSingleton<ILocalizationFileLocationProvider, FunctionsRootPoFileLocationProvider>()
-                .Configure<FunctionsPathOptions>(o =>
-                {
-                    // https://github.com/Azure/azure-functions-dotnet-extensions/issues/17#issuecomment-499086297
-                    var executionContextOptions = builder.Services.BuildServiceProvider().GetService<IOptions<ExecutionContextOptions>>().Value;
-                    var appDirectory = executionContextOptions.AppDirectory;
-                    o.RootDirectory = appDirectory;
-                });
-
             var localisationCulture = Environment.GetEnvironmentVariable(CoreAppSettingNames.LocalisationCulture);
             if (localisationCulture != null)
             {
@@ -47,6 +35,17 @@ namespace CatalogueScanner.Core
                 CultureInfo.DefaultThreadCurrentCulture = localisationCultureInfo;
                 CultureInfo.DefaultThreadCurrentUICulture = localisationCultureInfo;
             }
+        }
+
+        private static void AddFunctionsPathOptions(ICatalogueScannerHostBuilder builder)
+        {
+            builder.Services.Configure<FunctionsPathOptions>(o =>
+            {
+                // https://github.com/Azure/azure-functions-dotnet-extensions/issues/17#issuecomment-499086297
+                var executionContextOptions = builder.Services.BuildServiceProvider().GetService<IOptions<ExecutionContextOptions>>().Value;
+                var appDirectory = executionContextOptions.AppDirectory;
+                o.RootDirectory = appDirectory;
+            });
         }
 
         private static void AddConfigurationOptions(ICatalogueScannerHostBuilder builder)
