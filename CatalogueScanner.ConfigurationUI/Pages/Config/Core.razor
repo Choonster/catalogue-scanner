@@ -1,0 +1,31 @@
+﻿@page "/config/core"
+
+@using Microsoft.Extensions.Options
+@using CatalogueScanner.Core.Config
+@inject IOptions<MatchingOptions> MatchingOptions
+
+<h3>Core Options</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Match Type</th>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rule in MatchingOptions.Value.Rules)
+        {
+            <tr>
+                <td>@rule.MatchType</td>
+                <td>@rule.Property</td>
+                <td>@rule.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+}
