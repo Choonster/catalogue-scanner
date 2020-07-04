@@ -12,7 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace CatalogueScanner.Core.Function
+namespace CatalogueScanner.Core.Functions
 {
     /// <summary>
     /// Determines if a <see cref="CatalogueItem"/> matches any of the user-configured <see cref="CatalogueItemMatchRule"/> values and outputs the item if it does, or null if it doesn't.

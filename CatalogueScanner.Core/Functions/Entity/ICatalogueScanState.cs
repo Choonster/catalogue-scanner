@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace CatalogueScanner.Core.Entity
+namespace CatalogueScanner.Core.Functions.Entity
 {
     /// <summary>
     /// Durable entity that stores the scan state of an individual catalogue, so that each catalogue is only scanned once.

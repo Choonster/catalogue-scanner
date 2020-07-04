@@ -1,4 +1,4 @@
-﻿namespace CatalogueScanner.Core.Entity
+﻿namespace CatalogueScanner.Core.Functions.Entity
 {
     public enum ScanState
     {

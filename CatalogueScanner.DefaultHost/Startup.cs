@@ -22,8 +22,18 @@ namespace CatalogueScanner.DefaultHost
             }
             #endregion
 
+            var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                // Localisation isn't available at this stage
+#pragma warning disable CA1303 // Do not pass literals as localized parameters
+                throw new InvalidOperationException("AzureAppConfigurationConnectionString app setting is required");
+#pragma warning restore CA1303 // Do not pass literals as localized parameters
+            }
+
             var configuration = new ConfigurationBuilder()
-                .AddCatalogueScannerAzureAppConfiguration(Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString"))
+                .AddCatalogueScannerAzureAppConfiguration(connectionString)
                 .Build();
 
             ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(builder, configuration);

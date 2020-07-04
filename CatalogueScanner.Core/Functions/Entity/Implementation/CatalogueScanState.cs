@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.Core.Entity.Implementation
+namespace CatalogueScanner.Core.Functions.Entity.Implementation
 {
     /// <summary>
     /// Durable entity that stores the scan state of an individual catalogue, so that each catalogue is only scanned once.

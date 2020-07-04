@@ -1,31 +1,31 @@
-#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:31
+#: .\Functions\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:31
 #. throw new InvalidOperationException(S["WEBSITE_HOSTNAME environment variable not set"]);
-msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail"
+msgctxt "CatalogueScanner.Core.Functions.SendCatalogueDigestEmail"
 msgid "WEBSITE_HOSTNAME environment variable not set"
 msgstr ""
 
-#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:66
+#: .\Functions\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:66
 #. var summary = S.Plural(filteredCatalogue.Items.Count, "Catalogue Scanner found 1 matching item at {1}", "Catalogue Scanner found {0} matching items at {1}", filteredCatalogue.Store);
-msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail"
+msgctxt "CatalogueScanner.Core.Functions.SendCatalogueDigestEmail"
 msgid "Catalogue Scanner found 1 matching item at {1}"
 msgid_plural "Catalogue Scanner found {0} matching items at {1}"
 msgstr[0] ""
 
-#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:115
+#: .\Functions\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:115
 #. headerRow.AppendChild(ElementWithText("th", S["Product Name"]));
-msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail"
+msgctxt "CatalogueScanner.Core.Functions.SendCatalogueDigestEmail"
 msgid "Product Name"
 msgstr ""
 
-#: .\Function\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:190
+#: .\Functions\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:190
 #. private string ItemName(CatalogueItem catalogueItem) => catalogueItem.Name ?? S["Unknown Item"];
-msgctxt "CatalogueScanner.Core.Function.SendCatalogueDigestEmail"
+msgctxt "CatalogueScanner.Core.Functions.SendCatalogueDigestEmail"
 msgid "Unknown Item"
 msgstr ""
 
-#: .\Function\Entity\Implementation\CatalogueScanState.cs:73
+#: .\Functions\Entity\Implementation\CatalogueScanState.cs:73
 #. throw new ArgumentException(S["Invalid Entity Key, must be in the form <CatalogueType>|<Store>|<CatalogueId>"]);
-msgctxt "CatalogueScanner.Core.Entity.Implementation.CatalogueScanState"
+msgctxt "CatalogueScanner.Core.Functions.Entity.Implementation.CatalogueScanState"
 msgid "Invalid Entity Key, must be in the form <CatalogueType>|<Store>|<CatalogueId>"
 msgstr ""
 

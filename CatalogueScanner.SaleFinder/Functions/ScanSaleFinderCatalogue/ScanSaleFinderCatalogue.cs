@@ -1,7 +1,7 @@
 using CatalogueScanner.Core;
 using CatalogueScanner.Core.Dto.FunctionResult;
-using CatalogueScanner.Core.Entity;
-using CatalogueScanner.Core.Entity.Implementation;
+using CatalogueScanner.Core.Functions.Entity;
+using CatalogueScanner.Core.Functions.Entity.Implementation;
 using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.SaleFinder.Function
+namespace CatalogueScanner.SaleFinder.Functions
 {
     public static class ScanSaleFinderCatalogue
     {

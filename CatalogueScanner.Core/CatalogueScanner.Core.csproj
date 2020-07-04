@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Function\SendCatalogueDigestEmail\EmailTemplates.Designer.cs">
+    <Compile Update="Functions\SendCatalogueDigestEmail\EmailTemplates.Designer.cs">
       <DependentUpon>EmailTemplates.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -32,10 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Function\SendCatalogueDigestEmail\EmailTemplates.resx">
+    <EmbeddedResource Update="Functions\SendCatalogueDigestEmail\EmailTemplates.resx">
       <LastGenOutput>EmailTemplates.Designer.cs</LastGenOutput>
       <Generator>ResXFileCodeGenerator</Generator>
-      <CustomToolNamespace>CatalogueScanner.Core.Function.SendCatalogueDigestEmailTemplate</CustomToolNamespace>
+      <CustomToolNamespace>CatalogueScanner.Core.Functions.SendCatalogueDigestEmailTemplate</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
 

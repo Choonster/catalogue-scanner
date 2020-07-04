@@ -1,5 +1,5 @@
 using CatalogueScanner.Core.Dto.FunctionResult;
-using CatalogueScanner.Core.Function.SendCatalogueDigestEmailTemplate;
+using CatalogueScanner.Core.Functions.SendCatalogueDigestEmailTemplate;
 using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.Core.Options;
 using HtmlAgilityPack;
@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace CatalogueScanner.Core.Function
+namespace CatalogueScanner.Core.Functions
 {
     public class SendCatalogueDigestEmail
     {

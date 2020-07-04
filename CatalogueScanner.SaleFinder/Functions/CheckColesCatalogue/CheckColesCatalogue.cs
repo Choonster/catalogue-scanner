@@ -12,7 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.SaleFinder.Function
+namespace CatalogueScanner.SaleFinder.Functions
 {
     /// <summary>
     /// Checks for new Coles catalogues and queues them for scanning.

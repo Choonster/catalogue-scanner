@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CatalogueScanner.Core.Function.SendCatalogueDigestEmailTemplate {
+namespace CatalogueScanner.Core.Functions.SendCatalogueDigestEmailTemplate {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace CatalogueScanner.Core.Function.SendCatalogueDigestEmailTemplate {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CatalogueScanner.Core.Function.SendCatalogueDigestEmail.EmailTemplates", typeof(EmailTemplates).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CatalogueScanner.Core.Functions.SendCatalogueDigestEmail.EmailTemplates", typeof(EmailTemplates).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
