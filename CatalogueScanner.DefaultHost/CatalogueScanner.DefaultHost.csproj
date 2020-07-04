@@ -4,22 +4,21 @@
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
     <FunctionsInDependencies>true</FunctionsInDependencies>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.7" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.8" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
     <ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
     <ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -29,4 +28,5 @@
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
+
 </Project>
