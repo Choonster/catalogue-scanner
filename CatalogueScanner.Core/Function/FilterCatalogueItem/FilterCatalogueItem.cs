@@ -25,7 +25,8 @@ namespace CatalogueScanner.Core.Function
             .Cast<CatalogueItemProperty>()
             .ToImmutableDictionary(
                 property => property,
-                property => typeof(CatalogueItem).GetProperty(property.ToString()) ?? throw new InvalidOperationException($"Couldn't find property with name \"{property}\" on type {typeof(CatalogueItem).FullName}")
+                property => typeof(CatalogueItem).GetProperty(property.ToString()) ??
+                    throw new InvalidOperationException($"Couldn't find property with name \"{property}\" on type {typeof(CatalogueItem).FullName}")
             );
 
         private readonly List<CatalogueItemMatchRule> rules;
