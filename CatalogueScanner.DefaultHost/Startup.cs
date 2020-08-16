@@ -1,4 +1,5 @@
-﻿using CatalogueScanner.Core;
+﻿using CatalogueScanner.Configuration;
+using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.DefaultHost;
 using CatalogueScanner.Localisation.OrchardCore;

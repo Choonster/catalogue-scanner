@@ -1,4 +1,5 @@
-﻿using CatalogueScanner.Core.Config;
+﻿using CatalogueScanner.Configuration;
+using CatalogueScanner.Core.Config;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.Core.Options;
@@ -53,8 +54,8 @@ namespace CatalogueScanner.Core
             var coreSection = builder.Configuration.GetSection("Core");
 
             builder.Services
-                .Configure<MatchingOptions>(coreSection.GetSection(MatchingOptions.Matching))
-                .Configure<EmailOptions>(coreSection.GetSection(EmailOptions.Email));
+                .ConfigureOptions<MatchingOptions>(coreSection.GetSection(MatchingOptions.Matching))
+                .ConfigureOptions<EmailOptions>(coreSection.GetSection(EmailOptions.Email));
         }
     }
 }

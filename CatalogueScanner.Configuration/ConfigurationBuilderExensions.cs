@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CatalogueScanner.Configuration.Options;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace CatalogueScanner.Core.Host
+namespace CatalogueScanner.Configuration
 {
     public static class ConfigurationBuilderExensions
     {
@@ -17,7 +19,17 @@ namespace CatalogueScanner.Core.Host
                         );
             });
 
+
+
             return configurationBuilder;
+        }
+
+        public static IServiceCollection SetAzureAppConfigurationConnectionString(this IServiceCollection services, string connectionString)
+        {
+            services.AddOptions<AzureAppConfigurationOptions>()
+                .Configure(options => options.ConnectionString = connectionString);
+
+            return services;
         }
     }
 }

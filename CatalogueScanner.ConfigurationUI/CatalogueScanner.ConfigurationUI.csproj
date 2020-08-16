@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj" />
     <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
     <ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
   </ItemGroup>

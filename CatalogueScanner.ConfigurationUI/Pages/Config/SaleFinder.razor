@@ -1,0 +1,26 @@
+﻿@page "/config/salefinder"
+
+@using CatalogueScanner.Configuration;
+@using CatalogueScanner.SaleFinder.Options;
+@using Microsoft.Extensions.Options;
+
+@inject IConfigurationService<ColesOptions> ConfigurationService;
+@inject IOptionsSnapshot<ColesOptions> OptionsAccessor;
+
+<h3>Coles</h3>
+
+<EditForm Model="OptionsAccessor.Value" OnValidSubmit="HandleValidSubmit">
+
+    <InputNumber @bind-Value="OptionsAccessor.Value.SaleFinderLocationId"></InputNumber>
+    
+    <button type="submit">Save</button>
+</EditForm>
+
+
+@code {
+    
+    private async Task HandleValidSubmit()
+    {
+        await ConfigurationService.SaveAsync(OptionsAccessor.Value);
+    }
+}
