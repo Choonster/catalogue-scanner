@@ -4,23 +4,49 @@
 @using CatalogueScanner.SaleFinder.Options;
 @using Microsoft.Extensions.Options;
 
-@inject IConfigurationService<ColesOptions> ConfigurationService;
-@inject IOptionsSnapshot<ColesOptions> OptionsAccessor;
+@inject IConfigurationSaver<ColesOptions> ColesConfigurationSaver;
+@inject IOptionsSnapshot<ColesOptions> ColesOptionsAccessor;
+@inject IConfigurationSaver<WoolworthsOptions> WoolworthsConfigurationSaver;
+@inject IOptionsSnapshot<WoolworthsOptions> WoolworthsOptionsAccessor;
 
-<h3>Coles</h3>
+<section>
+    <h3>Coles</h3>
 
-<EditForm Model="OptionsAccessor.Value" OnValidSubmit="HandleValidSubmit">
+    <EditForm Model="ColesOptions" OnValidSubmit="SaveColesOptions">
+        <label>
+            Sale Finder Location ID:
+            <InputNumber @bind-Value="ColesOptions.SaleFinderLocationId"></InputNumber>
+        </label>
 
-    <InputNumber @bind-Value="OptionsAccessor.Value.SaleFinderLocationId"></InputNumber>
-    
-    <button type="submit">Save</button>
-</EditForm>
+        <button type="submit">Save</button>
+    </EditForm>
+</section>
+
+<section>
+    <h3>Woolworths</h3>
+
+    <EditForm Model="WoolworthsOptions" OnValidSubmit="SaveWoolworthsOptions">
+        <label>
+            Sale Finder Location ID:
+            <InputNumber @bind-Value="WoolworthsOptions.SaleFinderLocationId"></InputNumber>
+        </label>
+
+        <button type="submit">Save</button>
+    </EditForm>
+</section>
 
 
 @code {
-    
-    private async Task HandleValidSubmit()
+    private ColesOptions ColesOptions => ColesOptionsAccessor.Value;
+    private WoolworthsOptions WoolworthsOptions => WoolworthsOptionsAccessor.Value;
+
+    private async Task SaveColesOptions()
     {
-        await ConfigurationService.SaveAsync(OptionsAccessor.Value);
+        await ColesConfigurationSaver.SaveAsync(ColesOptions);
+    }
+
+    private async Task SaveWoolworthsOptions()
+    {
+        await WoolworthsConfigurationSaver.SaveAsync(WoolworthsOptions);
     }
 }

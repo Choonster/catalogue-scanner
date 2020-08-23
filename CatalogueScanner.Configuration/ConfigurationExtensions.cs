@@ -13,7 +13,7 @@ namespace CatalogueScanner.Configuration
                 new TypedConfiguration<TOptions>(configuration)
             );
 
-            services.AddScoped<IConfigurationService<TOptions>, ConfigurationService<TOptions>>();
+            services.AddScoped<IConfigurationSaver<TOptions>, ConfigurationSaver<TOptions>>();
 
             return services;
         }
