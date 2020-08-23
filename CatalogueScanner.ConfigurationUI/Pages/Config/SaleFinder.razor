@@ -40,13 +40,13 @@
     private ColesOptions ColesOptions => ColesOptionsAccessor.Value;
     private WoolworthsOptions WoolworthsOptions => WoolworthsOptionsAccessor.Value;
 
-    private async Task SaveColesOptions()
+    private async Task SaveColesOptions(EditContext editContext)
     {
-        await ColesConfigurationSaver.SaveAsync(ColesOptions);
+        await ColesConfigurationSaver.SaveAsync((ColesOptions)editContext.Model);
     }
 
-    private async Task SaveWoolworthsOptions()
+    private async Task SaveWoolworthsOptions(EditContext editContext)
     {
-        await WoolworthsConfigurationSaver.SaveAsync(WoolworthsOptions);
+        await WoolworthsConfigurationSaver.SaveAsync((WoolworthsOptions)editContext.Model);
     }
 }
