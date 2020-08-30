@@ -1,0 +1,40 @@
+﻿
+
+<MatAppBarContainer Class="outer-container">
+    <MatAppBar>
+        <MatAppBarRow>
+            <MatAppBarSection>
+                <MatAppBarTitle>Catalogue Scanner</MatAppBarTitle>
+            </MatAppBarSection>
+        </MatAppBarRow>
+    </MatAppBar>
+
+    <MatAppBarContent Class="content-container">
+        <MatNavMenu Class="nav-menu">
+            <MatNavItem Title="Home" Href="">
+                <MatIcon Icon="home"></MatIcon>
+                &nbsp;
+                Home
+            </MatNavItem>
+            <MatNavItem Title="Matching Config" Href="config/matching">
+                <MatIcon Icon="filter_list"></MatIcon>
+                &nbsp;
+                Matching Config
+            </MatNavItem>
+            <MatNavItem Title="SaleFinder Config" Href="config/salefinder">
+                <MatIcon Icon="shopping_cart"></MatIcon>
+                &nbsp;
+                SaleFinder Config
+            </MatNavItem>
+        </MatNavMenu>
+
+        <div class="content">
+            @ChildContent
+        </div>
+    </MatAppBarContent>
+</MatAppBarContainer>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

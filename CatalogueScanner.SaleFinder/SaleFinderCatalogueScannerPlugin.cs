@@ -1,4 +1,5 @@
-﻿using CatalogueScanner.Core.Host;
+﻿using CatalogueScanner.Configuration;
+using CatalogueScanner.Core.Host;
 using CatalogueScanner.SaleFinder.Options;
 using CatalogueScanner.SaleFinder.Service;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,8 +29,8 @@ namespace CatalogueScanner.SaleFinder
             var saleFinderSection = builder.Configuration.GetSection("SaleFinder");
 
             builder.Services
-                .Configure<ColesOptions>(saleFinderSection.GetSection(ColesOptions.Coles))
-                .Configure<WoolworthsOptions>(saleFinderSection.GetSection(WoolworthsOptions.Woolworths));
+                .ConfigureOptions<ColesOptions>(saleFinderSection.GetSection(ColesOptions.Coles))
+                .ConfigureOptions<WoolworthsOptions>(saleFinderSection.GetSection(WoolworthsOptions.Woolworths));
         }
     }
 }

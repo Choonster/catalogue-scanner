@@ -109,7 +109,7 @@ namespace CatalogueScanner.SaleFinder.Serialisation
 
             // Disposing the StreamReader disposes the readStream, which prevents the rest of the deserialisation process from reading it
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var streamReader = new StreamReader(readStream, effectiveEncoding, bufferSize: openingParenthesisByteCount);
+            var streamReader = new StreamReader(readStream, effectiveEncoding, detectEncodingFromByteOrderMarks: true, bufferSize: openingParenthesisByteCount);
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Check if the first character is an opening parenthesis

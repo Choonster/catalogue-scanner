@@ -1,54 +1,54 @@
-#: .\Function\CheckColesCatalogue\CheckColesCatalogue.cs:68
+#: .\Functions\CheckColesCatalogue\CheckColesCatalogue.cs:68
 #. log.LogInformation(S["Found sale ID: {0}", saleId]);
-msgctxt "CatalogueScanner.SaleFinder.Function.CheckColesCatalogue"
+msgctxt "CatalogueScanner.SaleFinder.Functions.CheckColesCatalogue"
 msgid "Found sale ID: {0}"
 msgstr ""
 
-#: .\Function\CheckColesCatalogue\CheckColesCatalogue.cs:86
+#: .\Functions\CheckColesCatalogue\CheckColesCatalogue.cs:86
 #. throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" cell in HTML content.", ThisWeeksCatalogue]}\n\n{viewResponse.Content}");
-msgctxt "CatalogueScanner.SaleFinder.Function.CheckColesCatalogue"
+msgctxt "CatalogueScanner.SaleFinder.Functions.CheckColesCatalogue"
 msgid "Didn't find \"{0}\" cell in HTML content."
 msgstr ""
 
-#: .\Function\CheckColesCatalogue\CheckColesCatalogue.cs:96
+#: .\Functions\CheckColesCatalogue\CheckColesCatalogue.cs:96
 #. throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" parent tile in HTML content.", ThisWeeksCatalogue]}\n\n{viewResponse.Content}");
-msgctxt "CatalogueScanner.SaleFinder.Function.CheckColesCatalogue"
+msgctxt "CatalogueScanner.SaleFinder.Functions.CheckColesCatalogue"
 msgid "Didn't find \"{0}\" parent tile in HTML content."
 msgstr ""
 
-#: .\Function\CheckColesCatalogue\CheckColesCatalogue.cs:107
+#: .\Functions\CheckColesCatalogue\CheckColesCatalogue.cs:107
 #. throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" link in HTML content.", "View"]}\n\n{viewResponse.Content}");
-msgctxt "CatalogueScanner.SaleFinder.Function.CheckColesCatalogue"
+msgctxt "CatalogueScanner.SaleFinder.Functions.CheckColesCatalogue"
 msgid "Didn't find \"{0}\" link in HTML content."
 msgstr ""
 
-#: .\Function\CheckColesCatalogue\CheckColesCatalogue.cs:130
+#: .\Functions\CheckColesCatalogue\CheckColesCatalogue.cs:130
 #. throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" parameter in \"{1}\" link in HTML content.", "saleId", "View"]}\n\n{viewResponse.Content}");
-msgctxt "CatalogueScanner.SaleFinder.Function.CheckColesCatalogue"
+msgctxt "CatalogueScanner.SaleFinder.Functions.CheckColesCatalogue"
 msgid "Didn't find \"{0}\" parameter in \"{1}\" link in HTML content."
 msgstr ""
 
-#: .\Function\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:64
+#: .\Functions\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:64
 #. log.LogInformation(S["Found sale ID: {0}", saleId]);
-msgctxt "CatalogueScanner.SaleFinder.Function.CheckWoolworthsCatalogue"
+msgctxt "CatalogueScanner.SaleFinder.Functions.CheckWoolworthsCatalogue"
 msgid "Found sale ID: {0}"
 msgstr ""
 
-#: .\Function\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:83
+#: .\Functions\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:83
 #. throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" container in HTML content.", WeeklySpecialsCatalogue]}\n\n{viewResponse.Content}");
-msgctxt "CatalogueScanner.SaleFinder.Function.CheckWoolworthsCatalogue"
+msgctxt "CatalogueScanner.SaleFinder.Functions.CheckWoolworthsCatalogue"
 msgid "Didn't find \"{0}\" container in HTML content."
 msgstr ""
 
-#: .\Function\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:89
+#: .\Functions\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:89
 #. throw new UnableToFindSaleIdException($"{S["Found invalid \"{0}\" attribute value \"{1}\" in HTML content.", "data-saleid", saleIdValue]}\n\n{viewResponse.Content}");
-msgctxt "CatalogueScanner.SaleFinder.Function.CheckWoolworthsCatalogue"
+msgctxt "CatalogueScanner.SaleFinder.Functions.CheckWoolworthsCatalogue"
 msgid "Found invalid \"{0}\" attribute value \"{1}\" in HTML content."
 msgstr ""
 
-#: .\Function\DownloadSaleFinderCatalogue\DownloadSaleFinderCatalogue.cs:49
+#: .\Functions\DownloadSaleFinderCatalogue\DownloadSaleFinderCatalogue.cs:49
 #. log.LogInformation(S.Plural(catalogue.Pages.Count, "Successfully downloaded and parsed catalogue with 1 page", "Successfully downloaded and parsed catalogue with {0} pages", catalogue.Pages.Count));
-msgctxt "CatalogueScanner.SaleFinder.Function.DownloadSaleFinderCatalogue"
+msgctxt "CatalogueScanner.SaleFinder.Functions.DownloadSaleFinderCatalogue"
 msgid "Successfully downloaded and parsed catalogue with 1 page"
 msgid_plural "Successfully downloaded and parsed catalogue with {0} pages"
 msgstr[0] ""
