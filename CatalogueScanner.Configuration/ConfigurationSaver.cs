@@ -46,11 +46,20 @@ namespace CatalogueScanner.Configuration
                 })
                 .ToList();
 
-            var tasks = changedSettingPairs
+            var removedSettingPairs = existingSettingsDictionary
+                .Where(existingSettingPair => newSettings.ContainsKey(existingSettingPair.Key))
+                .ToList();
+
+            var updateTasks = changedSettingPairs
                 .Select(pair => configurationClient.SetConfigurationSettingAsync(pair.Key, pair.Value, cancellationToken: cancellationToken))
                 .ToList();
 
-            await Task.WhenAll(tasks);
+            var deleteTasks = removedSettingPairs
+                .Select(pair => configurationClient.DeleteConfigurationSettingAsync(pair.Key))
+                .ToList();
+
+            await Task.WhenAll(updateTasks);
+            await Task.WhenAll(deleteTasks);
         }
     }
 }
