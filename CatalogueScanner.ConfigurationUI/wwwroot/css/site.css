@@ -31,11 +31,20 @@ app {
     display: flex;
 }
 
-.matching-save-button {
+.matching-header-buttons {
     margin-left: auto;
 }
 
-.match-rules-table .value {
+.matching-header-buttons :not(:last-child) {
+    margin-right: 10px;
+}
+
+.match-rules-table .actions {
+    min-width: 100px;
+    padding-left: 12px;
+}
+
+.match-rules-table .value .mdc-text-field {
     width: 100%;
 }
 

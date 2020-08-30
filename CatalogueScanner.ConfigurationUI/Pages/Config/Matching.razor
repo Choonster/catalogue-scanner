@@ -12,7 +12,10 @@
 <div class="matching-header-row">
     <MatH3 Class="matching-header">Matching Options</MatH3>
 
-    <MatButton Raised="true" Class="matching-save-button" OnClick="Save">Save</MatButton>
+    <div class="matching-header-buttons">
+        <MatButton OnClick="AddRule" Class="matching-add-button">Add Rule</MatButton>
+        <MatButton Raised="true" Class="matching-save-button" OnClick="Save">Save</MatButton>
+    </div>
 </div>
 
 <MatTable Items="MatchRules" Class="match-rules-table">
@@ -23,56 +26,63 @@
         <th>Value</th>
     </MatTableHeader>
 
-    <MatTableRow>
-        <td>
-            <MatTooltip Tooltip="@(context.InEditMode ? "Close" : "Edit")">
-                <ChildContent Context="tooltip">
-                    <MatIconButton RefBack="tooltip" Icon="edit" ToggleIcon="close" @bind-Toggled="context.InEditMode"></MatIconButton>
-                </ChildContent>
-            </MatTooltip>
-        </td>
+    <MatTableRow Context="matchRule" >
+        <CascadingValue Value="matchRule.EditContext" IsFixed="true">
+            <DataAnnotationsValidator />
 
-        <td>
-            @if (context.InEditMode)
-            {
-                <MatSelectItem Label="Match Type" @bind-Value="context.MatchType" Items="matchTypes" Class="match-type">
-                </MatSelectItem>
-            }
-            else
-            {
-                @context.MatchType
-            }
-        </td>
+            <td class="actions">
+                <MatTooltip Tooltip="@(matchRule.InEditMode ? "Close" : "Edit")" Context="tooltip">
+                    <MatIconButton RefBack="tooltip" Icon="edit" ToggleIcon="close" @bind-Toggled="matchRule.InEditMode"></MatIconButton>
+                </MatTooltip>
 
-        <td>
-            @if (context.InEditMode)
-            {
-                <MatSelectItem Label="Property" @bind-Value="context.Property" Items="properties" Class="property">
-                </MatSelectItem>
-            }
-            else
-            {
-                @context.Property
-            }
-        </td>
+                <MatTooltip Tooltip="Remove" Context="tooltip">
+                    <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => RemoveRule(matchRule))"></MatIconButton>
+                </MatTooltip>
+            </td>
 
-        <td>
-            @if (context.InEditMode)
-            {
-                <MatStringField Label="Value" @bind-Value="context.Value" Class="value"></MatStringField>
-            }
-            else
-            {
-                @context.Value
-            }
-        </td>
+            <td class="match-type">
+                @if (matchRule.InEditMode)
+                {
+                    <MatSelectItem Label="Match Type" @bind-Value="matchRule.MatchType" Items="matchTypes">
+                    </MatSelectItem>
+                }
+                else
+                {
+                    @matchRule.MatchType
+                }
+            </td>
+
+            <td class="property">
+                @if (matchRule.InEditMode)
+                {
+                    <MatSelectItem Label="Property" @bind-Value="matchRule.Property" Items="properties">
+                    </MatSelectItem>
+                }
+                else
+                {
+                    @matchRule.Property
+                }
+            </td>
+
+            <td class="value">
+                @if (matchRule.InEditMode)
+                {
+                    <MatStringField Label="Value" @bind-Value="matchRule.Value"></MatStringField>
+                    <ValidationMessage For="@(() => matchRule.Value)"></ValidationMessage>
+                }
+                else
+                {
+                    @matchRule.Value
+                }
+            </td>
+        </CascadingValue>
     </MatTableRow>
 </MatTable>
 
 @code {
     private MatchingOptions MatchingOptions => MatchingOptionsAccessor.Value;
 
-    private List<MatchRuleViewModel>? MatchRules;
+    private List<MatchRuleViewModel> MatchRules = new List<MatchRuleViewModel>();
 
     private readonly MatchType[] matchTypes = Enum.GetValues(typeof(MatchType)).Cast<MatchType>().ToArray();
     private readonly CatalogueItemProperty[] properties = Enum.GetValues(typeof(CatalogueItemProperty)).Cast<CatalogueItemProperty>().ToArray();
@@ -103,12 +113,25 @@
             {
                 MatchType = rule.MatchType,
                 Property = rule.Property,
-                Value = rule.Value ?? string.Empty,
+                Value = rule.Value,
             })
             .ToList();
     }
 
-    public async Task Save(MouseEventArgs args)
+    private void AddRule()
+    {
+        MatchRules.Add(new MatchRuleViewModel
+        {
+            InEditMode = true,
+        });
+    }
+
+    private void RemoveRule(MatchRuleViewModel matchRule)
+    {
+        MatchRules.Remove(matchRule);
+    }
+
+    private async Task Save(MouseEventArgs args)
     {
 
     }
