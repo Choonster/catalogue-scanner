@@ -10,31 +10,26 @@
 @inject IOptionsSnapshot<WoolworthsOptions> WoolworthsOptionsAccessor;
 
 <section>
-    <h3>Coles</h3>
+    <MatH3>Coles</MatH3>
 
     <EditForm Model="ColesOptions" OnValidSubmit="SaveColesOptions">
-        <label>
-            Sale Finder Location ID:
-            <InputNumber @bind-Value="ColesOptions.SaleFinderLocationId"></InputNumber>
-        </label>
+        <MatNumericUpDownField Label="Sale Finder Location ID" @bind-Value="ColesOptions.SaleFinderLocationId">
+        </MatNumericUpDownField>
 
-        <button type="submit">Save</button>
+        <MatButton Type="submit">Save</MatButton>
     </EditForm>
 </section>
 
 <section>
-    <h3>Woolworths</h3>
+    <MatH3>Woolworths</MatH3>
 
     <EditForm Model="WoolworthsOptions" OnValidSubmit="SaveWoolworthsOptions">
-        <label>
-            Sale Finder Location ID:
-            <InputNumber @bind-Value="WoolworthsOptions.SaleFinderLocationId"></InputNumber>
-        </label>
+        <MatNumericUpDownField Label="Sale Finder Location ID" @bind-Value="WoolworthsOptions.SaleFinderLocationId">
+        </MatNumericUpDownField>
 
-        <button type="submit">Save</button>
+        <MatButton Type="submit">Save</MatButton>
     </EditForm>
 </section>
-
 
 @code {
     private ColesOptions ColesOptions => ColesOptionsAccessor.Value;

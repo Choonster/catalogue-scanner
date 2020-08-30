@@ -1,47 +1,40 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Catalogue Scanner</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="config/core">
-                <span class="oi oi-aperture" aria-hidden="true"></span> Core Config
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="config/salefinder">
-                <span class="oi oi-aperture" aria-hidden="true"></span> SaleFinder Config
-            </NavLink>
-        </li>
-    </ul>
-</div>
+<MatAppBarContainer Class="outer-container">
+    <MatAppBar>
+        <MatAppBarRow>
+            <MatAppBarSection>
+                <MatAppBarTitle>Catalogue Scanner</MatAppBarTitle>
+            </MatAppBarSection>
+        </MatAppBarRow>
+    </MatAppBar>
+
+    <MatAppBarContent Class="content-container">
+        <MatNavMenu Class="nav-menu">
+            <MatNavItem Title="Home" Href="">
+                <MatIcon Icon="home"></MatIcon>
+                &nbsp;
+                Home
+            </MatNavItem>
+            <MatNavItem Title="Matching Config" Href="config/matching">
+                <MatIcon Icon="filter_list"></MatIcon>
+                &nbsp;
+                Matching Config
+            </MatNavItem>
+            <MatNavItem Title="SaleFinder Config" Href="config/salefinder">
+                <MatIcon Icon="shopping_cart"></MatIcon>
+                &nbsp;
+                SaleFinder Config
+            </MatNavItem>
+        </MatNavMenu>
+
+        <div class="content">
+            @ChildContent
+        </div>
+    </MatAppBarContent>
+</MatAppBarContainer>
 
 @code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
 }

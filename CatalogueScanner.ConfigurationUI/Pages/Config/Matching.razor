@@ -1,0 +1,115 @@
+﻿@page "/config/matching"
+
+@using Microsoft.Extensions.Options
+@using CatalogueScanner.Core.Config
+@using CatalogueScanner.Core.Options
+@using CatalogueScanner.Configuration
+@using CatalogueScanner.ConfigurationUI.ViewModel
+
+@inject IOptionsSnapshot<MatchingOptions> MatchingOptionsAccessor
+@inject IConfigurationSaver<MatchingOptions> MatchingOptionsSaver
+
+<div class="matching-header-row">
+    <MatH3 Class="matching-header">Matching Options</MatH3>
+
+    <MatButton Raised="true" Class="matching-save-button" OnClick="Save">Save</MatButton>
+</div>
+
+<MatTable Items="MatchRules" Class="match-rules-table">
+    <MatTableHeader>
+        <th></th>
+        <th>Match Type</th>
+        <th>Property</th>
+        <th>Value</th>
+    </MatTableHeader>
+
+    <MatTableRow>
+        <td>
+            <MatTooltip Tooltip="@(context.InEditMode ? "Close" : "Edit")">
+                <ChildContent Context="tooltip">
+                    <MatIconButton RefBack="tooltip" Icon="edit" ToggleIcon="close" @bind-Toggled="context.InEditMode"></MatIconButton>
+                </ChildContent>
+            </MatTooltip>
+        </td>
+
+        <td>
+            @if (context.InEditMode)
+            {
+                <MatSelectItem Label="Match Type" @bind-Value="context.MatchType" Items="matchTypes" Class="match-type">
+                </MatSelectItem>
+            }
+            else
+            {
+                @context.MatchType
+            }
+        </td>
+
+        <td>
+            @if (context.InEditMode)
+            {
+                <MatSelectItem Label="Property" @bind-Value="context.Property" Items="properties" Class="property">
+                </MatSelectItem>
+            }
+            else
+            {
+                @context.Property
+            }
+        </td>
+
+        <td>
+            @if (context.InEditMode)
+            {
+                <MatStringField Label="Value" @bind-Value="context.Value" Class="value"></MatStringField>
+            }
+            else
+            {
+                @context.Value
+            }
+        </td>
+    </MatTableRow>
+</MatTable>
+
+@code {
+    private MatchingOptions MatchingOptions => MatchingOptionsAccessor.Value;
+
+    private List<MatchRuleViewModel>? MatchRules;
+
+    private readonly MatchType[] matchTypes = Enum.GetValues(typeof(MatchType)).Cast<MatchType>().ToArray();
+    private readonly CatalogueItemProperty[] properties = Enum.GetValues(typeof(CatalogueItemProperty)).Cast<CatalogueItemProperty>().ToArray();
+
+    protected override void OnInitialized()
+    {
+        MatchRules = OptionsToViewModel(MatchingOptions.Rules);
+
+        base.OnInitialized();
+    }
+
+    private List<MatchRuleViewModel> OptionsToViewModel(List<CatalogueItemMatchRule> matchRules)
+    {
+        return matchRules
+            .Select(rule => new MatchRuleViewModel
+            {
+                MatchType = rule.MatchType,
+                Property = rule.Property,
+                Value = rule.Value,
+            })
+            .ToList();
+    }
+
+    private List<CatalogueItemMatchRule> ViewModelToOptions(List<MatchRuleViewModel> matchRules)
+    {
+        return matchRules
+            .Select(rule => new CatalogueItemMatchRule
+            {
+                MatchType = rule.MatchType,
+                Property = rule.Property,
+                Value = rule.Value ?? string.Empty,
+            })
+            .ToList();
+    }
+
+    public async Task Save(MouseEventArgs args)
+    {
+
+    }
+}

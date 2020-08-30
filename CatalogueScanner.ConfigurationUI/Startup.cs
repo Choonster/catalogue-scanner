@@ -34,6 +34,7 @@ namespace CatalogueScanner.ConfigurationUI
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<System.Net.Http.HttpClient>();
 
             IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
 
