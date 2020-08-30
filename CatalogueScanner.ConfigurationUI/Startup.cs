@@ -1,20 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using CatalogueScanner.Core;
+using CatalogueScanner.Core.Host;
+using CatalogueScanner.SaleFinder;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CatalogueScanner.ConfigurationUI.Data;
-using CatalogueScanner.Core.Host;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using CatalogueScanner.Core;
-using CatalogueScanner.SaleFinder;
-using System.Reflection;
 
 namespace CatalogueScanner.ConfigurationUI
 {
@@ -33,7 +25,6 @@ namespace CatalogueScanner.ConfigurationUI
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
             services.AddScoped<System.Net.Http.HttpClient>();
 
             IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
