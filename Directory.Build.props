@@ -4,6 +4,6 @@
     <RestoreLockedMode>true</RestoreLockedMode>
     <NoWarn>NU1603</NoWarn>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
-    <Nullable>true</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 </Project>
