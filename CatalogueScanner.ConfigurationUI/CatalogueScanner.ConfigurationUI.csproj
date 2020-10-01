@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Nullable>enable</Nullable>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <UserSecretsId>ce557102-d517-4c59-b52a-74dbc2b46748</UserSecretsId>
   </PropertyGroup>
 

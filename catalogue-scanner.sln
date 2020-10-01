@@ -19,7 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.Localisati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.ConfigurationUI", "CatalogueScanner.ConfigurationUI\CatalogueScanner.ConfigurationUI.csproj", "{906A31A3-6F57-4D14-A43F-0D8F99E140A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogueScanner.Configuration", "CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj", "{CEA11368-5371-4251-BE65-FB029EAC408C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.Configuration", "CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj", "{CEA11368-5371-4251-BE65-FB029EAC408C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{86651983-5006-4B3D-A3E7-3D7B4A0A9734}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		NuGet.config = NuGet.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
