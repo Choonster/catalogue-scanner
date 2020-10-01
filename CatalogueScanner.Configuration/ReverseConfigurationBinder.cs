@@ -16,16 +16,16 @@ namespace CatalogueScanner.Configuration
     /// </summary>
     class ReverseConfigurationBinder
     {
-        public static Dictionary<string, string> GetConfigurationSettings<TOptions>(TOptions options, IConfigurationSection configuration)
+        public static Dictionary<string, string?> GetConfigurationSettings<TOptions>(TOptions options, IConfigurationSection configuration)
         {
-            var settings = new Dictionary<string, string>();
+            var settings = new Dictionary<string, string?>();
 
             FillInstance(typeof(TOptions), options, configuration, settings);
 
             return settings;
         }
 
-        private static void FillInstance(Type type, object instance, IConfigurationSection config, Dictionary<string, string> settings)
+        private static void FillInstance(Type type, object? instance, IConfigurationSection config, Dictionary<string, string?> settings)
         {
             if (instance is null)
             {
@@ -72,14 +72,14 @@ namespace CatalogueScanner.Configuration
             }
         }
 
-        private static bool TryConvertValue(Type type, object value, string path, out string result, out Exception error)
+        private static bool TryConvertValue(Type type, object? value, string path, out string? result, out Exception? error)
         {
             error = null;
             result = null;
 
             if (type == typeof(string))
             {
-                result = (string)value;
+                result = (string?)value;
                 return true;
             }
 
@@ -110,7 +110,7 @@ namespace CatalogueScanner.Configuration
             return false;
         }
 
-        private static void FillArray(Array source, IConfiguration config, Dictionary<string, string> settings)
+        private static void FillArray(Array source, IConfiguration config, Dictionary<string, string?> settings)
         {
             if (source is null)
             {
@@ -136,7 +136,7 @@ namespace CatalogueScanner.Configuration
             }
         }
 
-        private static void FillCollection(object collection, Type collectionType, IConfiguration config, Dictionary<string, string> settings)
+        private static void FillCollection(object collection, Type collectionType, IConfiguration config, Dictionary<string, string?> settings)
         {
             if (collection is null)
             {
@@ -171,7 +171,7 @@ namespace CatalogueScanner.Configuration
             }
         }
 
-        private static void FillDictionary(object dictionary, Type dictionaryType, IConfiguration config, Dictionary<string, string> settings)
+        private static void FillDictionary(object dictionary, Type dictionaryType, IConfiguration config, Dictionary<string, string?> settings)
         {
             var typeInfo = dictionaryType.GetTypeInfo();
 
@@ -204,7 +204,7 @@ namespace CatalogueScanner.Configuration
             }
         }
 
-        private static void FillNonScalar(IConfiguration configuration, object instance, Dictionary<string, string> settings)
+        private static void FillNonScalar(IConfiguration configuration, object instance, Dictionary<string, string?> settings)
         {
             if (instance != null)
             {
@@ -215,7 +215,7 @@ namespace CatalogueScanner.Configuration
             }
         }
 
-        private static void FillProperty(PropertyInfo property, object instance, IConfiguration config, Dictionary<string, string> settings)
+        private static void FillProperty(PropertyInfo property, object instance, IConfiguration config, Dictionary<string, string?> settings)
         {
             // We don't support set only, non public, or indexer properties
             if (property.GetMethod == null ||
@@ -235,7 +235,7 @@ namespace CatalogueScanner.Configuration
             FillInstance(property.PropertyType, propertyValue, config.GetSection(property.Name), settings);
         }
 
-        private static Type FindOpenGenericInterface(Type expected, Type actual)
+        private static Type? FindOpenGenericInterface(Type expected, Type actual)
         {
             var actualTypeInfo = actual.GetTypeInfo();
             if (actualTypeInfo.IsGenericType &&
