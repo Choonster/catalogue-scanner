@@ -1,6 +1,8 @@
 using CatalogueScanner.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace CatalogueScanner.ConfigurationUI
 {
@@ -14,6 +16,7 @@ namespace CatalogueScanner.ConfigurationUI
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             const string connectionStringPropertyName = "AzureAppConfigurationConnectionString";
+            const string refresherSupplierPropertyName = "ConfigurationRefresher";
 
             var hostBuilder = Host.CreateDefaultBuilder(args);
 
@@ -21,6 +24,7 @@ namespace CatalogueScanner.ConfigurationUI
                   .ConfigureServices(services =>
                   {
                       services.SetAzureAppConfigurationConnectionString((string)hostBuilder.Properties[connectionStringPropertyName]);
+                      services.SetConfigurationRefresher((Func<IConfigurationRefresher>)hostBuilder.Properties[refresherSupplierPropertyName]);
                   })
                   .ConfigureAppConfiguration((hostingContext, config) =>
                   {
@@ -30,7 +34,9 @@ namespace CatalogueScanner.ConfigurationUI
 
                       hostBuilder.Properties[connectionStringPropertyName] = connectionString;
 
-                      config.AddCatalogueScannerAzureAppConfiguration(connectionString);
+                      config.AddCatalogueScannerAzureAppConfiguration(connectionString, out var refresherSupplier);
+
+                      hostBuilder.Properties[refresherSupplierPropertyName] = refresherSupplier;
                   })
                   .ConfigureWebHostDefaults(webBuilder =>
                   {

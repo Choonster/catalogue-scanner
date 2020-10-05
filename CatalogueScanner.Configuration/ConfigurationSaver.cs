@@ -1,7 +1,8 @@
-using Azure.Data.AppConfiguration;
-using CatalogueScanner.Configuration.Options;
+﻿using Azure.Data.AppConfiguration;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,11 +14,13 @@ namespace CatalogueScanner.Configuration
     {
         private readonly ConfigurationClient configurationClient;
         private readonly ITypedConfiguration<TOptions> typedConfiguration;
+        private readonly IConfigurationRefresher configurationRefresher;
 
-        public ConfigurationSaver(IOptionsSnapshot<AzureAppConfigurationOptions> optionsAccessor, ITypedConfiguration<TOptions> typedConfiguration)
+        public ConfigurationSaver(IOptionsSnapshot<Options.AzureAppConfigurationOptions> optionsAccessor, ITypedConfiguration<TOptions> typedConfiguration, IConfigurationRefresher configurationRefresher)
         {
             configurationClient = new ConfigurationClient(optionsAccessor.Value.ConnectionString);
             this.typedConfiguration = typedConfiguration;
+            this.configurationRefresher = configurationRefresher;
         }
 
         public async Task SaveAsync(TOptions options, CancellationToken cancellationToken = default)
@@ -58,8 +61,16 @@ namespace CatalogueScanner.Configuration
                 .Select(pair => configurationClient.DeleteConfigurationSettingAsync(pair.Key))
                 .ToList();
 
-            await Task.WhenAll(updateTasks);
-            await Task.WhenAll(deleteTasks);
+            await Task.WhenAll(updateTasks).ConfigureAwait(false);
+            await Task.WhenAll(deleteTasks).ConfigureAwait(false);
+
+            await RefreshAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        private async Task RefreshAsync(CancellationToken cancellationToken = default)
+        {
+            await configurationClient.SetConfigurationSettingAsync(ConfigurationConstants.SentinelKey, DateTime.UtcNow.ToString("o"), cancellationToken: cancellationToken).ConfigureAwait(false);
+            await configurationRefresher.RefreshAsync().ConfigureAwait(false);
         }
     }
 }

@@ -34,10 +34,12 @@ namespace CatalogueScanner.DefaultHost
             }
 
             var configuration = new ConfigurationBuilder()
-                .AddCatalogueScannerAzureAppConfiguration(connectionString)
+                .AddCatalogueScannerAzureAppConfiguration(connectionString, out var refresherSupplier)
                 .Build();
 
             ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(builder, configuration);
+
+            catalogueScannerHostBuilder.Services.SetConfigurationRefresher(refresherSupplier);
 
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
