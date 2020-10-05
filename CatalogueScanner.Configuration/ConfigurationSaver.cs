@@ -1,4 +1,4 @@
-﻿using Azure.Data.AppConfiguration;
+using Azure.Data.AppConfiguration;
 using CatalogueScanner.Configuration.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -47,7 +47,7 @@ namespace CatalogueScanner.Configuration
                 .ToList();
 
             var removedSettingPairs = existingSettingsDictionary
-                .Where(existingSettingPair => newSettings.ContainsKey(existingSettingPair.Key))
+                .Where(existingSettingPair => !newSettings.ContainsKey(existingSettingPair.Key))
                 .ToList();
 
             var updateTasks = changedSettingPairs
