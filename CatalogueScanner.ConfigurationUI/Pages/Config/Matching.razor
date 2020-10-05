@@ -8,6 +8,7 @@
 
 @inject IOptionsSnapshot<MatchingOptions> MatchingOptionsAccessor
 @inject IConfigurationSaver<MatchingOptions> MatchingOptionsSaver
+@inject NavigationManager NavigationManager;
 
 <div class="matching-header-row">
     <MatH3 Class="matching-header">Matching Options</MatH3>
@@ -89,12 +90,12 @@
 
     protected override void OnInitialized()
     {
-        MatchRules = OptionsToViewModel(MatchingOptions.Rules);
+        MatchRules = OptionsToViewModel(MatchingOptions.Rules).ToList();
 
         base.OnInitialized();
     }
 
-    private List<MatchRuleViewModel> OptionsToViewModel(List<CatalogueItemMatchRule> matchRules)
+    private static IEnumerable<MatchRuleViewModel> OptionsToViewModel(List<CatalogueItemMatchRule> matchRules)
     {
         return matchRules
             .Select(rule => new MatchRuleViewModel
@@ -102,11 +103,10 @@
                 MatchType = rule.MatchType,
                 Property = rule.Property,
                 Value = rule.Value,
-            })
-            .ToList();
+            });
     }
 
-    private List<CatalogueItemMatchRule> ViewModelToOptions(List<MatchRuleViewModel> matchRules)
+    private static IEnumerable<CatalogueItemMatchRule> ViewModelToOptions(List<MatchRuleViewModel> matchRules)
     {
         return matchRules
             .Select(rule => new CatalogueItemMatchRule
@@ -114,8 +114,7 @@
                 MatchType = rule.MatchType,
                 Property = rule.Property,
                 Value = rule.Value,
-            })
-            .ToList();
+            });
     }
 
     private void AddRule()
@@ -133,6 +132,14 @@
 
     private async Task Save(MouseEventArgs args)
     {
+        var options = MatchingOptions;
+        var rules = options.Rules;
 
+        rules.Clear();
+        rules.AddRange(ViewModelToOptions(MatchRules));
+
+        await MatchingOptionsSaver.SaveAsync(options);
+
+        NavigationManager.NavigateTo(NavigationManager.Uri, true);
     }
 }
