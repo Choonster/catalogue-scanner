@@ -67,6 +67,10 @@ app {
     width: 100%;
 }
 
+.match-rules-table .compound-children .compound-match-type, .match-rules-table .compound-children .compound-child-count {
+    font-weight: bold;
+}
+
 .match-rules-dialog .mdc-dialog__content {
     color: unset;
     font-family: unset;
