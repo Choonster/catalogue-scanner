@@ -32,7 +32,13 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
 
         private void AddCompoundRule()
         {
-            matchRuleViewModels.Add(new CompoundMatchRuleViewModel());
+            var compoundRule = new CompoundMatchRuleViewModel();
+            compoundRule.ChildRules.Add(new SinglePropertyMatchRuleViewModel
+            {
+                InEditMode = true,
+            });
+
+            matchRuleViewModels.Add(compoundRule);
         }
 
         private async Task Save(MouseEventArgs args)
