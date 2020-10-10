@@ -1,14 +1,12 @@
-﻿using CatalogueScanner.Core.Options;
-using System;
+﻿using CatalogueScanner.Core.MatchRule;
 using System.Collections.Generic;
-using System.Text;
 
-namespace CatalogueScanner.Core.Config
+namespace CatalogueScanner.Core.Options
 {
     public class MatchingOptions
     {
         public const string Matching = "Matching";
 
-        public List<CatalogueItemMatchRule> Rules { get; } = new List<CatalogueItemMatchRule>();
+        public List<ICatalogueItemMatchRule> Rules { get; } = new List<ICatalogueItemMatchRule>();
     }
 }

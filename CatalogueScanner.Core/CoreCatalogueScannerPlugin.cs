@@ -1,7 +1,7 @@
 ﻿using CatalogueScanner.Configuration;
-using CatalogueScanner.Core.Config;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.Core.Localisation;
+using CatalogueScanner.Core.MatchRule;
 using CatalogueScanner.Core.Options;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +13,8 @@ namespace CatalogueScanner.Core
 {
     public class CoreCatalogueScannerPlugin : ICatalogueScannerPlugin
     {
+        private readonly CatalogueItemMatchRuleSerialiser catalogueItemMatchRuleSerialiser = new CatalogueItemMatchRuleSerialiser();
+
         public void Configure(ICatalogueScannerHostBuilder builder)
         {
             #region null checks
@@ -49,12 +51,19 @@ namespace CatalogueScanner.Core
             });
         }
 
-        private static void AddConfigurationOptions(ICatalogueScannerHostBuilder builder)
+        private void AddConfigurationOptions(ICatalogueScannerHostBuilder builder)
         {
             var coreSection = builder.Configuration.GetSection("Core");
 
+            var matchingConfig = coreSection.GetSection(MatchingOptions.Matching);
+
             builder.Services
-                .ConfigureOptions<MatchingOptions>(coreSection.GetSection(MatchingOptions.Matching))
+                .ConfigureOptions<MatchingOptions>(matchingConfig)
+                .Configure<MatchingOptions>((options) =>
+                {
+                    options.Rules.Clear();
+                    options.Rules.AddRange(catalogueItemMatchRuleSerialiser.DeserialiseMatchRules(matchingConfig.GetSection("Rules")));
+                })
                 .ConfigureOptions<EmailOptions>(coreSection.GetSection(EmailOptions.Email));
         }
     }

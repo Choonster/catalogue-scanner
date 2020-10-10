@@ -1,13 +1,11 @@
 ﻿@page "/config/matching"
 
-@using Microsoft.Extensions.Options
-@using CatalogueScanner.Core.Config
-@using CatalogueScanner.Core.Options
-@using CatalogueScanner.Configuration
-@using CatalogueScanner.ConfigurationUI.ViewModel
+@using CatalogueScanner.Configuration;
+@using CatalogueScanner.Core.Options;
+@using Microsoft.Extensions.Options;
 
-@inject IOptionsSnapshot<MatchingOptions> MatchingOptionsAccessor
-@inject IConfigurationSaver<MatchingOptions> MatchingOptionsSaver
+@inject IOptionsSnapshot<MatchingOptions> MatchingOptionsAccessor;
+@inject IConfigurationSaver<MatchingOptions> MatchingOptionsSaver;
 @inject NavigationManager NavigationManager;
 
 <div class="matching-header-row">
@@ -19,7 +17,7 @@
     </div>
 </div>
 
-<MatTable Items="MatchRules" Class="match-rules-table">
+<MatTable Items="matchRules" Class="match-rules-table">
     <MatTableHeader>
         <th></th>
         <th>Match Type</th>
@@ -27,7 +25,7 @@
         <th>Value</th>
     </MatTableHeader>
 
-    <MatTableRow Context="matchRule" >
+    <MatTableRow Context="matchRule">
         <CascadingValue Value="matchRule.EditContext" IsFixed="true">
             <DataAnnotationsValidator />
 
@@ -79,67 +77,3 @@
         </CascadingValue>
     </MatTableRow>
 </MatTable>
-
-@code {
-    private MatchingOptions MatchingOptions => MatchingOptionsAccessor.Value;
-
-    private List<MatchRuleViewModel> MatchRules = new List<MatchRuleViewModel>();
-
-    private readonly MatchType[] matchTypes = Enum.GetValues(typeof(MatchType)).Cast<MatchType>().ToArray();
-    private readonly CatalogueItemProperty[] properties = Enum.GetValues(typeof(CatalogueItemProperty)).Cast<CatalogueItemProperty>().ToArray();
-
-    protected override void OnInitialized()
-    {
-        MatchRules = OptionsToViewModel(MatchingOptions.Rules).ToList();
-
-        base.OnInitialized();
-    }
-
-    private static IEnumerable<MatchRuleViewModel> OptionsToViewModel(List<CatalogueItemMatchRule> matchRules)
-    {
-        return matchRules
-            .Select(rule => new MatchRuleViewModel
-            {
-                MatchType = rule.MatchType,
-                Property = rule.Property,
-                Value = rule.Value,
-            });
-    }
-
-    private static IEnumerable<CatalogueItemMatchRule> ViewModelToOptions(List<MatchRuleViewModel> matchRules)
-    {
-        return matchRules
-            .Select(rule => new CatalogueItemMatchRule
-            {
-                MatchType = rule.MatchType,
-                Property = rule.Property,
-                Value = rule.Value,
-            });
-    }
-
-    private void AddRule()
-    {
-        MatchRules.Add(new MatchRuleViewModel
-        {
-            InEditMode = true,
-        });
-    }
-
-    private void RemoveRule(MatchRuleViewModel matchRule)
-    {
-        MatchRules.Remove(matchRule);
-    }
-
-    private async Task Save(MouseEventArgs args)
-    {
-        var options = MatchingOptions;
-        var rules = options.Rules;
-
-        rules.Clear();
-        rules.AddRange(ViewModelToOptions(MatchRules));
-
-        await MatchingOptionsSaver.SaveAsync(options);
-
-        NavigationManager.NavigateTo(NavigationManager.Uri, true);
-    }
-}
