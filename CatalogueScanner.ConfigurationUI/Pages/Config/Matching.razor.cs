@@ -1,82 +1,38 @@
-﻿using CatalogueScanner.ConfigurationUI.ViewModel;
-using CatalogueScanner.Core.MatchRule;
+﻿using CatalogueScanner.ConfigurationUI.Extensions;
+using CatalogueScanner.ConfigurationUI.ViewModel;
 using CatalogueScanner.Core.Options;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static CatalogueScanner.Core.MatchRule.SinglePropertyCatalogueItemMatchRule;
 
 namespace CatalogueScanner.ConfigurationUI.Pages.Config
 {
     public partial class Matching
     {
-        private readonly PropertyMatchType[] matchTypes = Enum.GetValues(typeof(PropertyMatchType)).Cast<PropertyMatchType>().ToArray();
-        private readonly CatalogueItemProperty[] properties = Enum.GetValues(typeof(CatalogueItemProperty)).Cast<CatalogueItemProperty>().ToArray();
-
         private MatchingOptions MatchingOptions => MatchingOptionsAccessor.Value;
 
-        private List<MatchRuleViewModel> matchRules = new List<MatchRuleViewModel>();
+        private List<BaseMatchRuleViewModel> matchRuleViewModels = new List<BaseMatchRuleViewModel>();
 
         protected override void OnInitialized()
         {
-            matchRules = OptionsToViewModel(MatchingOptions.Rules).ToList();
+            matchRuleViewModels = MatchingOptions.Rules.ToViewModel().ToList();
 
             base.OnInitialized();
         }
 
-        private static IEnumerable<MatchRuleViewModel> OptionsToViewModel(List<ICatalogueItemMatchRule> matchRules)
+        private void AddSinglePropertyRule()
         {
-            return matchRules
-                .Select(rule =>
-                {
-                    switch (rule.MatchRuleType)
-                    {
-                        case MatchRuleType.SingleProperty:
-                            {
-                                var singlePropertyMatchRule = (SinglePropertyCatalogueItemMatchRule)rule;
-
-                                return new MatchRuleViewModel
-                                {
-                                    MatchType = singlePropertyMatchRule.MatchType,
-                                    Property = singlePropertyMatchRule.Property,
-                                    Value = singlePropertyMatchRule.Value,
-                                };
-                            }
-
-                        case MatchRuleType.Compound:
-                            return null!; // TODO: Handle compound rules
-
-                        default:
-                            throw new Exception($"Unkown MatchRuleType {rule.MatchRuleType}");
-                    }
-                });
-        }
-
-        private static IEnumerable<ICatalogueItemMatchRule> ViewModelToOptions(List<MatchRuleViewModel> matchRules)
-        {
-            return matchRules
-                .Select(rule => new SinglePropertyCatalogueItemMatchRule
-                {
-                    MatchType = rule.MatchType,
-                    Property = rule.Property,
-                    Value = rule.Value,
-                });
-        }
-
-        private void AddRule()
-        {
-            matchRules.Add(new MatchRuleViewModel
+            matchRuleViewModels.Add(new SinglePropertyMatchRuleViewModel
             {
                 InEditMode = true,
             });
         }
 
-        private void RemoveRule(MatchRuleViewModel matchRule)
+        private void AddCompoundRule()
         {
-            matchRules.Remove(matchRule);
+            matchRuleViewModels.Add(new CompoundMatchRuleViewModel());
         }
 
         private async Task Save(MouseEventArgs args)
@@ -85,7 +41,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
             var rules = options.Rules;
 
             rules.Clear();
-            rules.AddRange(ViewModelToOptions(matchRules));
+            rules.AddRange(matchRuleViewModels.ToOptions());
 
             await MatchingOptionsSaver.SaveAsync(options);
 

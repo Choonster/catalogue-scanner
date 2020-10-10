@@ -1,0 +1,103 @@
+﻿@using CatalogueScanner.ConfigurationUI.ViewModel;
+@using CatalogueScanner.Core.MatchRule;
+
+@inject IJSRuntime JSRuntime;
+
+@* TODO: Remove *@
+
+<MatTable Items="MatchRules" Class="match-rules-table">
+    <MatTableHeader>
+        <th></th>
+        <th>Match Type</th>
+        <th>Property</th>
+        <th>Value</th>
+    </MatTableHeader>
+
+    <MatTableRow Context="matchRule">
+        <CascadingValue Value="matchRule.EditContext" IsFixed="true">
+            <DataAnnotationsValidator />
+
+            @switch (matchRule.MatchRuleType)
+            {
+                case MatchRuleType.SingleProperty:
+                    {
+                        var singlePropertyMatchRule = (SinglePropertyMatchRuleViewModel)matchRule;
+
+                        <td class="actions">
+                            <MatTooltip Tooltip="@(singlePropertyMatchRule.InEditMode ? "Close" : "Edit")" Context="tooltip">
+                                <MatIconButton RefBack="tooltip" Icon="edit" ToggleIcon="close" @bind-Toggled="singlePropertyMatchRule.InEditMode"></MatIconButton>
+                            </MatTooltip>
+
+                            <MatTooltip Tooltip="Remove" Context="tooltip">
+                                <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => RemoveRule(singlePropertyMatchRule))"></MatIconButton>
+                            </MatTooltip>
+                        </td>
+
+                        <td class="match-type">
+                            @if (singlePropertyMatchRule.InEditMode)
+                            {
+                                <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="matchTypes">
+                                </MatSelectItem>
+                            }
+                            else
+                            {
+                                @singlePropertyMatchRule.MatchType
+                            }
+                        </td>
+
+                        <td class="property">
+                            @if (singlePropertyMatchRule.InEditMode)
+                            {
+                                <MatSelectItem Label="Property" @bind-Value="singlePropertyMatchRule.Property" Items="properties">
+                                </MatSelectItem>
+                            }
+                            else
+                            {
+                                @singlePropertyMatchRule.Property
+                            }
+                        </td>
+
+                        <td class="value">
+                            @if (singlePropertyMatchRule.InEditMode)
+                            {
+                                <MatStringField Label="Value" @bind-Value="singlePropertyMatchRule.Value"></MatStringField>
+                                <ValidationMessage For="@(() => singlePropertyMatchRule.Value)"></ValidationMessage>
+                            }
+                            else
+                            {
+                                @singlePropertyMatchRule.Value
+                            }
+                        </td>
+                    }
+
+                    break;
+
+                case MatchRuleType.Compound:
+                    {
+                        var compoundMatchRule = (CompoundMatchRuleViewModel)matchRule;
+
+                        <td class="actions">
+                            <MatTooltip Tooltip="Edit" Context="tooltip">
+                                <MatIconButton RefBack="tooltip" Icon="edit" @onclick="@(args => OpenCompoundEditDialog(compoundMatchRule))"></MatIconButton>
+                            </MatTooltip>
+
+                            <MatTooltip Tooltip="Remove" Context="tooltip">
+                                <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => RemoveRule(compoundMatchRule))"></MatIconButton>
+                            </MatTooltip>
+                        </td>
+
+                        <td class="compound-children" colspan="3">
+                            Compound rule with @compoundMatchRule.ChildRules.Count child rules.
+                        </td>
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+
+
+        </CascadingValue>
+    </MatTableRow>
+</MatTable>
