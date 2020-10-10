@@ -19,6 +19,7 @@ namespace CatalogueScanner.Core.MatchRule
             {
                 CompoundMatchType.And => ChildRules.All(rule => rule.ItemMatches(item)),
                 CompoundMatchType.Or => ChildRules.Any(rule => rule.ItemMatches(item)),
+                CompoundMatchType.Not => !ChildRules.Any(rule => rule.ItemMatches(item)),
                 _ => throw new InvalidOperationException($"Unkown MatchType {MatchType}")
             };
         }
@@ -27,6 +28,7 @@ namespace CatalogueScanner.Core.MatchRule
         {
             And,
             Or,
+            Not,
         }
     }
 }
