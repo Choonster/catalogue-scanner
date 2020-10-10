@@ -1,10 +1,6 @@
 ﻿@using CatalogueScanner.ConfigurationUI.ViewModel;
 @using CatalogueScanner.Core.MatchRule;
 
-@inject IJSRuntime JSRuntime;
-
-@* TODO: Remove *@
-
 <MatTable Items="MatchRules" Class="match-rules-table">
     <MatTableHeader>
         <th></th>
@@ -36,7 +32,7 @@
                         <td class="match-type">
                             @if (singlePropertyMatchRule.InEditMode)
                             {
-                                <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="matchTypes">
+                                <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="propertyMatchTypes">
                                 </MatSelectItem>
                             }
                             else
@@ -101,3 +97,26 @@
         </CascadingValue>
     </MatTableRow>
 </MatTable>
+
+<MatDialog IsOpen="dialogCompoundRule != null" Class="match-rules-dialog full-page-dialog">
+    @if (dialogCompoundRule != null)
+    {
+        <MatDialogTitle>Edit Compound Rule</MatDialogTitle>
+        <MatDialogContent>
+            <div class="matching-header-row">
+                <MatSelectItem Label="Match Type" @bind-Value="dialogCompoundRule.MatchType" Items="compoundMatchTypes"></MatSelectItem>
+
+                <div class="matching-header-buttons">
+                    <MatButton OnClick="AddSinglePropertyRule" Class="matching-add-single-button">Add Single Property Rule</MatButton>
+                    <MatButton OnClick="AddCompoundRule" Class="matching-add-compound-button">Add Compound Rule</MatButton>
+                </div>
+            </div>
+
+            <MatchRuleTable MatchRules="dialogCompoundRule.ChildRules">
+            </MatchRuleTable>
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton @onclick="CloseCompoundEditDialog">Close</MatButton>
+        </MatDialogActions>
+    }
+</MatDialog>
