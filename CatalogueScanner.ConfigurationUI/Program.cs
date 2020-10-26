@@ -1,5 +1,7 @@
+using Azure.Identity;
 using CatalogueScanner.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -37,6 +39,16 @@ namespace CatalogueScanner.ConfigurationUI
                       config.AddCatalogueScannerAzureAppConfiguration(connectionString, out var refresherSupplier);
 
                       hostBuilder.Properties[refresherSupplierPropertyName] = refresherSupplier;
+
+                      
+                      var vaultUri = Environment.GetEnvironmentVariable("VaultUri");
+
+                      if (vaultUri is null)
+                      {
+                          throw new InvalidOperationException(S["VaultUri environment variable not set"]);
+                      }
+
+                      config.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
                   })
                   .ConfigureWebHostDefaults(webBuilder =>
                   {
