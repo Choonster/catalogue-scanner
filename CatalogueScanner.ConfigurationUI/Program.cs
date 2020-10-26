@@ -45,7 +45,7 @@ namespace CatalogueScanner.ConfigurationUI
 
                       if (vaultUri is null)
                       {
-                          throw new InvalidOperationException(S["VaultUri environment variable not set"]);
+                          throw new InvalidOperationException("VaultUri environment variable not set");
                       }
 
                       config.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
