@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace CatalogueScanner.Localisation.OrchardCore
 {
@@ -35,6 +36,12 @@ namespace CatalogueScanner.Localisation.OrchardCore
         public LocalizedString Plural(int count, string[] pluralForms, params object[] arguments)
         {
             return stringLocalizer.Plural(count, pluralForms, arguments);
+        }
+
+        [Obsolete("This method is obsolete. Use `CurrentCulture` and `CurrentUICulture` instead.")]
+        public IStringLocalizer WithCulture(CultureInfo culture)
+        {
+            return stringLocalizer.WithCulture(culture);
         }
     }
 }
