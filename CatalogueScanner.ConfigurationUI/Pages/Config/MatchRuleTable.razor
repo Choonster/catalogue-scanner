@@ -1,122 +1,124 @@
 ﻿@using CatalogueScanner.ConfigurationUI.ViewModel;
 @using CatalogueScanner.Core.MatchRule;
 
-<MatTable Items="MatchRules" Class="match-rules-table">
-    <MatTableHeader>
-        <th></th>
-        <th>Match Type</th>
-        <th>Property</th>
-        <th>Value</th>
-    </MatTableHeader>
+<div>
+    <MatTable Items="MatchRules" Class="match-rules-table">
+        <MatTableHeader>
+            <th></th>
+            <th>Match Type</th>
+            <th>Property</th>
+            <th>Value</th>
+        </MatTableHeader>
 
-    <MatTableRow Context="matchRule">
-        <CascadingValue Value="matchRule.EditContext" IsFixed="true">
-            <DataAnnotationsValidator />
+        <MatTableRow Context="matchRule">
+            <CascadingValue Value="matchRule.EditContext" IsFixed="true">
+                <DataAnnotationsValidator />
 
-            @switch (matchRule.MatchRuleType)
-            {
-                case MatchRuleType.SingleProperty:
-                    {
-                        var singlePropertyMatchRule = (SinglePropertyMatchRuleViewModel)matchRule;
+                @switch (matchRule.MatchRuleType)
+                {
+                    case MatchRuleType.SingleProperty:
+                        {
+                            var singlePropertyMatchRule = (SinglePropertyMatchRuleViewModel)matchRule;
 
-                        <td class="actions">
-                            <MatTooltip Tooltip="@(singlePropertyMatchRule.InEditMode ? "Close" : "Edit")" Context="tooltip">
-                                <MatIconButton RefBack="tooltip" Icon="edit" ToggleIcon="close" @bind-Toggled="singlePropertyMatchRule.InEditMode"></MatIconButton>
-                            </MatTooltip>
+                            <td class="actions">
+                                <MatTooltip Tooltip="@(singlePropertyMatchRule.InEditMode ? "Close" : "Edit")" Context="tooltip">
+                                    <MatIconButton RefBack="tooltip" Icon="edit" ToggleIcon="close" @bind-Toggled="singlePropertyMatchRule.InEditMode"></MatIconButton>
+                                </MatTooltip>
 
-                            <MatTooltip Tooltip="Remove" Context="tooltip">
-                                <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => RemoveRule(singlePropertyMatchRule))"></MatIconButton>
-                            </MatTooltip>
-                        </td>
+                                <MatTooltip Tooltip="Remove" Context="tooltip">
+                                    <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => RemoveRule(singlePropertyMatchRule))"></MatIconButton>
+                                </MatTooltip>
+                            </td>
 
-                        <td class="match-type">
-                            @if (singlePropertyMatchRule.InEditMode)
-                            {
-                                <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="propertyMatchTypes">
-                                </MatSelectItem>
-                            }
-                            else
-                            {
-                                @singlePropertyMatchRule.MatchType
-                            }
-                        </td>
+                            <td class="match-type">
+                                @if (singlePropertyMatchRule.InEditMode)
+                                {
+                                    <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="propertyMatchTypes">
+                                    </MatSelectItem>
+                                }
+                                else
+                                {
+                                    @singlePropertyMatchRule.MatchType
+                                }
+                            </td>
 
-                        <td class="property">
-                            @if (singlePropertyMatchRule.InEditMode)
-                            {
-                                <MatSelectItem Label="Property" @bind-Value="singlePropertyMatchRule.Property" Items="properties">
-                                </MatSelectItem>
-                            }
-                            else
-                            {
-                                @singlePropertyMatchRule.Property
-                            }
-                        </td>
+                            <td class="property">
+                                @if (singlePropertyMatchRule.InEditMode)
+                                {
+                                    <MatSelectItem Label="Property" @bind-Value="singlePropertyMatchRule.Property" Items="properties">
+                                    </MatSelectItem>
+                                }
+                                else
+                                {
+                                    @singlePropertyMatchRule.Property
+                                }
+                            </td>
 
-                        <td class="value">
-                            @if (singlePropertyMatchRule.InEditMode)
-                            {
-                                <MatStringField Label="Value" @bind-Value="singlePropertyMatchRule.Value"></MatStringField>
-                                <ValidationMessage For="@(() => singlePropertyMatchRule.Value)"></ValidationMessage>
-                            }
-                            else
-                            {
-                                @singlePropertyMatchRule.Value
-                            }
-                        </td>
-                    }
+                            <td class="value">
+                                @if (singlePropertyMatchRule.InEditMode)
+                                {
+                                    <MatStringField Label="Value" @bind-Value="singlePropertyMatchRule.Value"></MatStringField>
+                                    <ValidationMessage For="@(() => singlePropertyMatchRule.Value)"></ValidationMessage>
+                                }
+                                else
+                                {
+                                    @singlePropertyMatchRule.Value
+                                }
+                            </td>
+                        }
 
-                    break;
+                        break;
 
-                case MatchRuleType.Compound:
-                    {
-                        var compoundMatchRule = (CompoundMatchRuleViewModel)matchRule;
+                    case MatchRuleType.Compound:
+                        {
+                            var compoundMatchRule = (CompoundMatchRuleViewModel)matchRule;
 
-                        <td class="actions">
-                            <MatTooltip Tooltip="Edit" Context="tooltip">
-                                <MatIconButton RefBack="tooltip" Icon="edit" @onclick="@(args => OpenCompoundEditDialog(compoundMatchRule))"></MatIconButton>
-                            </MatTooltip>
+                            <td class="actions">
+                                <MatTooltip Tooltip="Edit" Context="tooltip">
+                                    <MatIconButton RefBack="tooltip" Icon="edit" @onclick="@(args => OpenCompoundEditDialog(compoundMatchRule))"></MatIconButton>
+                                </MatTooltip>
 
-                            <MatTooltip Tooltip="Remove" Context="tooltip">
-                                <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => RemoveRule(compoundMatchRule))"></MatIconButton>
-                            </MatTooltip>
-                        </td>
+                                <MatTooltip Tooltip="Remove" Context="tooltip">
+                                    <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => RemoveRule(compoundMatchRule))"></MatIconButton>
+                                </MatTooltip>
+                            </td>
 
-                        <td class="compound-children" colspan="3">
-                            <span class="compound-match-type">@compoundMatchRule.MatchType</span> compound rule with <span class="compound-child-count">@compoundMatchRule.ChildRules.Count</span> child rules.
-                        </td>
-                    }
+                            <td class="compound-children" colspan="3">
+                                <span class="compound-match-type">@compoundMatchRule.MatchType</span> compound rule with <span class="compound-child-count">@compoundMatchRule.ChildRules.Count</span> child rules.
+                            </td>
+                        }
 
-                    break;
+                        break;
 
-                default:
-                    break;
-            }
+                    default:
+                        break;
+                }
 
 
-        </CascadingValue>
-    </MatTableRow>
-</MatTable>
+            </CascadingValue>
+        </MatTableRow>
+    </MatTable>
 
-<MatDialog IsOpen="dialogCompoundRule != null" Class="match-rules-dialog full-page-dialog">
-    @if (dialogCompoundRule != null)
-    {
-        <MatDialogTitle>Edit Compound Rule</MatDialogTitle>
-        <MatDialogContent>
-            <div class="matching-header-row">
-                <MatSelectItem Label="Match Type" @bind-Value="dialogCompoundRule.MatchType" Items="compoundMatchTypes"></MatSelectItem>
+    <MatDialog IsOpen="dialogCompoundRule != null" Class="match-rules-dialog full-page-dialog">
+        @if (dialogCompoundRule != null)
+        {
+            <MatDialogTitle>Edit Compound Rule</MatDialogTitle>
+            <MatDialogContent>
+                <div class="matching-header-row">
+                    <MatSelectItem Label="Match Type" @bind-Value="dialogCompoundRule.MatchType" Items="compoundMatchTypes"></MatSelectItem>
 
-                <div class="matching-header-buttons">
-                    <MatButton OnClick="AddSinglePropertyRule" Class="matching-add-single-button">Add Single Property Rule</MatButton>
-                    <MatButton OnClick="AddCompoundRule" Class="matching-add-compound-button">Add Compound Rule</MatButton>
+                    <div class="matching-header-buttons">
+                        <MatButton OnClick="AddSinglePropertyRule" Class="matching-add-single-button">Add Single Property Rule</MatButton>
+                        <MatButton OnClick="AddCompoundRule" Class="matching-add-compound-button">Add Compound Rule</MatButton>
+                    </div>
                 </div>
-            </div>
 
-            <MatchRuleTable MatchRules="dialogCompoundRule.ChildRules">
-            </MatchRuleTable>
-        </MatDialogContent>
-        <MatDialogActions>
-            <MatButton @onclick="CloseCompoundEditDialog">Close</MatButton>
-        </MatDialogActions>
-    }
-</MatDialog>
+                <MatchRuleTable MatchRules="dialogCompoundRule.ChildRules">
+                </MatchRuleTable>
+            </MatDialogContent>
+            <MatDialogActions>
+                <MatButton @onclick="CloseCompoundEditDialog">Close</MatButton>
+            </MatDialogActions>
+        }
+    </MatDialog>
+</div>

@@ -8,23 +8,15 @@ app {
     flex-direction: column;
 }
 
-.outer-container {
+.page {
     width: 100%;
+    height: 100%;
 }
 
-.content-container {
-    display: flex;
-    flex-direction: row;
-}
-
-.content {
-    padding: 1.1rem;
-    flex: 1;
-}
 
 .full-page-dialog .mdc-dialog__container {
-    height: 100%;
     width: 100%;
+    height: 100%;
 }
 
 .full-page-dialog .mdc-dialog__surface {
@@ -33,6 +25,7 @@ app {
     max-height: 100% !important;
     max-width: 100% !important;
 }
+
 
 .matching-header-row {
     display: flex;
@@ -58,29 +51,6 @@ app {
         margin-right: 10px;
     }
 
-.match-rules-table .actions {
-    min-width: 100px;
-    padding-left: 12px;
-}
-
-.match-rules-table .value .mdc-text-field {
-    width: 100%;
-}
-
-.match-rules-table .compound-children .compound-match-type, .match-rules-table .compound-children .compound-child-count {
-    font-weight: bold;
-}
-
-.match-rules-dialog .mdc-dialog__content {
-    color: unset;
-    font-family: unset;
-    font-size: unset;
-    line-height: unset;
-    font-weight: unset;
-    letter-spacing: unset;
-    text-decoration: unset;
-    text-transform: unset;
-}
 
 #blazor-error-ui {
     background: lightyellow;
@@ -101,48 +71,9 @@ app {
         top: 0.5rem;
     }
 
-@media (max-width: 767.98px) {
-    .main .top-row:not(.auth) {
-        display: none;
-    }
-
-    .main .top-row.auth {
-        justify-content: space-between;
-    }
-
-    .main .top-row a, .main .top-row .btn-link {
-        margin-left: 0;
-    }
-}
 
 @media (min-width: 768px) {
     app {
         flex-direction: row;
-    }
-
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-    }
-
-    .main .top-row {
-        position: sticky;
-        top: 0;
-    }
-
-    .main > div {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }
-
-    .navbar-toggler {
-        display: none;
-    }
-
-    .sidebar .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
     }
 }

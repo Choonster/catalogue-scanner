@@ -1,0 +1,13 @@
+﻿::deep .outer-container {
+    width: 100%;
+}
+
+::deep .content-container {
+    display: flex;
+    flex-direction: row;
+}
+
+::deep .content {
+    padding: 1.1rem;
+    flex: 1;
+}
