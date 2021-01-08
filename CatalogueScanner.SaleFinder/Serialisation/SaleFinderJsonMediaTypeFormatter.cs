@@ -58,10 +58,8 @@ namespace CatalogueScanner.SaleFinder.Serialisation
             var contentHeaders = content?.Headers;
             var effectiveEncoding = SelectCharacterEncoding(contentHeaders);
 
-            // Base method asks implementers not to close stream
-#pragma warning disable CA2000 // Dispose objects before losing scope
+            // Base method asks implementers not to close stream, so we don't wrap it in a using statement
             var newReadStream = WrapStreamIfRequired(readStream, effectiveEncoding);
-#pragma warning restore CA2000 // Dispose objects before losing scope
 
             return base.ReadFromStreamAsync(type, newReadStream, content, formatterLogger, cancellationToken);
         }
@@ -83,10 +81,8 @@ namespace CatalogueScanner.SaleFinder.Serialisation
             var contentHeaders = content?.Headers;
             var effectiveEncoding = SelectCharacterEncoding(contentHeaders);
 
-            // Base method asks implementers not to close stream
-#pragma warning disable CA2000 // Dispose objects before losing scope
+            // Base method asks implementers not to close stream, so we don't wrap it in a using statement
             var newReadStream = WrapStreamIfRequired(readStream, effectiveEncoding);
-#pragma warning restore CA2000 // Dispose objects before losing scope
 
             return base.ReadFromStreamAsync(type, newReadStream, content, formatterLogger);
         }
@@ -107,10 +103,8 @@ namespace CatalogueScanner.SaleFinder.Serialisation
             // so record the original position before creating and reading from the StreamReader
             var originalPosition = readStream.Position;
 
-            // Disposing the StreamReader disposes the readStream, which prevents the rest of the deserialisation process from reading it
-#pragma warning disable CA2000 // Dispose objects before losing scope
+            // Disposing the StreamReader would dispose the readStream and prevent the rest of the deserialisation process from reading it, so we don't wrap it in a using statement
             var streamReader = new StreamReader(readStream, effectiveEncoding, detectEncodingFromByteOrderMarks: true, bufferSize: openingParenthesisByteCount);
-#pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Check if the first character is an opening parenthesis
             var hasLeadingParenthesis = OPENING_PARENTHESIS == streamReader.Peek();
