@@ -15,7 +15,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
         private static readonly CatalogueItemProperty[] properties = Enum.GetValues(typeof(CatalogueItemProperty)).Cast<CatalogueItemProperty>().ToArray();
 
         [Parameter]
-        public List<BaseMatchRuleViewModel> MatchRules { get; set; } = new List<BaseMatchRuleViewModel>();
+        public ICollection<BaseMatchRuleViewModel> MatchRules { get; set; } = new List<BaseMatchRuleViewModel>();
 
         private void RemoveRule(BaseMatchRuleViewModel matchRule)
         {
@@ -30,7 +30,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
                 {
                     [nameof(CompoundMatchRuleEditDialog.CompoundRule)] = matchRule,
                 },
-            });
+            }).ConfigureAwait(true);
         }
     }
 }

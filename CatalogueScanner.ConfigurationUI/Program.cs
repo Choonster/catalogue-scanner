@@ -8,7 +8,7 @@ using System;
 
 namespace CatalogueScanner.ConfigurationUI
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {

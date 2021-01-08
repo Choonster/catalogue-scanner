@@ -22,7 +22,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
             #region null checks
             if (DialogReference is null)
             {
-                throw new NullReferenceException($"{nameof(DialogReference)} is null");
+                throw new InvalidOperationException($"{nameof(DialogReference)} is null");
             }
             #endregion
         }

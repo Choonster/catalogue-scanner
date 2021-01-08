@@ -73,8 +73,8 @@ namespace CatalogueScanner.Core.Functions
 
             message.AddTo(options.ToEmail, options.ToName);
 
-            message.AddContent(MimeType.Html, GetHtmlContent(summary, filteredCatalogue));
-            message.AddContent(MimeType.Text, GetPlainTextContent(summary, filteredCatalogue));
+            message.AddContent(MimeType.Html, GetHtmlContent(summary!, filteredCatalogue));
+            message.AddContent(MimeType.Text, GetPlainTextContent(summary!, filteredCatalogue));
 
             return message;
         }
@@ -112,7 +112,7 @@ namespace CatalogueScanner.Core.Functions
             var thead = table.AppendChild(htmlDocument.CreateElement("thead"));
 
             var headerRow = thead.AppendChild(htmlDocument.CreateElement("tr"));
-            headerRow.AppendChild(ElementWithText("th", S["Product Name"]));
+            headerRow.AppendChild(ElementWithText("th", S["Product Name"]!));
             #endregion
 
             #region Table body
@@ -187,6 +187,6 @@ namespace CatalogueScanner.Core.Functions
             return content.ToString();
         }
 
-        private string ItemName(CatalogueItem catalogueItem) => catalogueItem.Name ?? S["Unknown Item"];
+        private string ItemName(CatalogueItem catalogueItem) => catalogueItem.Name ?? S["Unknown Item"]!;
     }
 }

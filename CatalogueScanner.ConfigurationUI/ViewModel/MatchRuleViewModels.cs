@@ -13,7 +13,7 @@ namespace CatalogueScanner.ConfigurationUI.ViewModel
 
         public EditContext EditContext { get; }
 
-        public BaseMatchRuleViewModel()
+        protected BaseMatchRuleViewModel()
         {
             EditContext = new EditContext(this);
         }
@@ -39,6 +39,6 @@ namespace CatalogueScanner.ConfigurationUI.ViewModel
 
         public CompoundMatchType MatchType { get; set; }
 
-        public List<BaseMatchRuleViewModel> ChildRules { get; } = new List<BaseMatchRuleViewModel>();
+        public ICollection<BaseMatchRuleViewModel> ChildRules { get; } = new List<BaseMatchRuleViewModel>();
     }
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace CatalogueScanner.ConfigurationUI.Pages.Config
 {
+#pragma warning disable CA1724
     public partial class Matching
     {
         private MatchingOptions MatchingOptions => MatchingOptionsAccessor.Value;
@@ -41,7 +42,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
             matchRuleViewModels.Add(compoundRule);
         }
 
-        private async Task Save(MouseEventArgs args)
+        private async Task Save(MouseEventArgs _)
         {
             var options = MatchingOptions;
             var rules = options.Rules;
@@ -49,7 +50,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
             rules.Clear();
             rules.AddRange(matchRuleViewModels.ToOptions());
 
-            await MatchingOptionsSaver.SaveAsync(options);
+            await MatchingOptionsSaver.SaveAsync(options).ConfigureAwait(true);
 
             NavigationManager.NavigateTo(NavigationManager.Uri, true);
         }

@@ -12,13 +12,13 @@ msgid_plural "Catalogue Scanner found {0} matching items at {1}"
 msgstr[0] ""
 
 #: .\Functions\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:115
-#. headerRow.AppendChild(ElementWithText("th", S["Product Name"]));
+#. headerRow.AppendChild(ElementWithText("th", S["Product Name"]!));
 msgctxt "CatalogueScanner.Core.Functions.SendCatalogueDigestEmail"
 msgid "Product Name"
 msgstr ""
 
 #: .\Functions\SendCatalogueDigestEmail\SendCatalogueDigestEmail.cs:190
-#. private string ItemName(CatalogueItem catalogueItem) => catalogueItem.Name ?? S["Unknown Item"];
+#. private string ItemName(CatalogueItem catalogueItem) => catalogueItem.Name ?? S["Unknown Item"]!;
 msgctxt "CatalogueScanner.Core.Functions.SendCatalogueDigestEmail"
 msgid "Unknown Item"
 msgstr ""

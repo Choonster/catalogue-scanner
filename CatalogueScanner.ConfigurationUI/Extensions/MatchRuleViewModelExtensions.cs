@@ -8,7 +8,7 @@ namespace CatalogueScanner.ConfigurationUI.Extensions
 {
     public static class MatchRuleViewModelExtensions
     {
-        public static IEnumerable<BaseMatchRuleViewModel> ToViewModel(this List<ICatalogueItemMatchRule> matchRules) =>
+        public static IEnumerable<BaseMatchRuleViewModel> ToViewModel(this IEnumerable<ICatalogueItemMatchRule> matchRules) =>
             matchRules
                 .Select<ICatalogueItemMatchRule, BaseMatchRuleViewModel>(rule =>
                 {
@@ -41,11 +41,11 @@ namespace CatalogueScanner.ConfigurationUI.Extensions
                             }
 
                         default:
-                            throw new Exception($"Unkown MatchRuleType {rule.MatchRuleType}");
+                            throw new InvalidOperationException($"Unkown MatchRuleType {rule.MatchRuleType}");
                     }
                 });
 
-        public static IEnumerable<ICatalogueItemMatchRule> ToOptions(this List<BaseMatchRuleViewModel> matchRules) =>
+        public static IEnumerable<ICatalogueItemMatchRule> ToOptions(this IEnumerable<BaseMatchRuleViewModel> matchRules) =>
             matchRules
                 .Select<BaseMatchRuleViewModel, ICatalogueItemMatchRule>(rule =>
                 {
@@ -78,7 +78,7 @@ namespace CatalogueScanner.ConfigurationUI.Extensions
                             }
 
                         default:
-                            throw new Exception($"Unkown MatchRuleType {rule.MatchRuleType}");
+                            throw new InvalidOperationException($"Unkown MatchRuleType {rule.MatchRuleType}");
                     }
                 });
     }
