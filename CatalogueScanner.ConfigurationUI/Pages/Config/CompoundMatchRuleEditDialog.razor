@@ -1,0 +1,19 @@
+﻿<div class="dialog-root-passthrough">
+    <MatDialogTitle>Edit Compound Rule</MatDialogTitle>
+    <MatDialogContent>
+        <div class="matching-header-row">
+            <MatSelectItem Label="Match Type" @bind-Value="CompoundRule.MatchType" Items="compoundMatchTypes"></MatSelectItem>
+
+            <div class="matching-header-buttons">
+                <MatButton OnClick="AddSinglePropertyRule" Class="matching-add-single-button">Add Single Property Rule</MatButton>
+                <MatButton OnClick="AddCompoundRule" Class="matching-add-compound-button">Add Compound Rule</MatButton>
+            </div>
+        </div>
+
+        <MatchRuleTable MatchRules="CompoundRule.ChildRules">
+        </MatchRuleTable>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton @onclick="Close">Close</MatButton>
+    </MatDialogActions>
+</div>

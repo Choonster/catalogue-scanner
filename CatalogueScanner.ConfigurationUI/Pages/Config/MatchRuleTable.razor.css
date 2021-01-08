@@ -10,14 +10,3 @@
 ::deep .match-rules-table .compound-children .compound-match-type, .match-rules-table .compound-children .compound-child-count {
     font-weight: bold;
 }
-
-::deep .match-rules-dialog .mdc-dialog__content {
-    color: unset;
-    font-family: unset;
-    font-size: unset;
-    line-height: unset;
-    font-weight: unset;
-    letter-spacing: unset;
-    text-decoration: unset;
-    text-transform: unset;
-}

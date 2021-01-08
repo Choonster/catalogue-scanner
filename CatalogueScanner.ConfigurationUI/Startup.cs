@@ -1,6 +1,7 @@
 using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.SaleFinder;
+using MatBlazor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -26,6 +27,7 @@ namespace CatalogueScanner.ConfigurationUI
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<System.Net.Http.HttpClient>();
+            services.AddMatBlazor();
 
             IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
 

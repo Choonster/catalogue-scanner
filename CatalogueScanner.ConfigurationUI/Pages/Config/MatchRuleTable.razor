@@ -1,6 +1,8 @@
 ﻿@using CatalogueScanner.ConfigurationUI.ViewModel;
 @using CatalogueScanner.Core.MatchRule;
 
+@inject IMatDialogService DialogService;
+
 <div>
     <MatTable Items="MatchRules" Class="match-rules-table">
         <MatTableHeader>
@@ -98,27 +100,4 @@
             </CascadingValue>
         </MatTableRow>
     </MatTable>
-
-    <MatDialog IsOpen="dialogCompoundRule != null" Class="match-rules-dialog full-page-dialog">
-        @if (dialogCompoundRule != null)
-        {
-            <MatDialogTitle>Edit Compound Rule</MatDialogTitle>
-            <MatDialogContent>
-                <div class="matching-header-row">
-                    <MatSelectItem Label="Match Type" @bind-Value="dialogCompoundRule.MatchType" Items="compoundMatchTypes"></MatSelectItem>
-
-                    <div class="matching-header-buttons">
-                        <MatButton OnClick="AddSinglePropertyRule" Class="matching-add-single-button">Add Single Property Rule</MatButton>
-                        <MatButton OnClick="AddCompoundRule" Class="matching-add-compound-button">Add Compound Rule</MatButton>
-                    </div>
-                </div>
-
-                <MatchRuleTable MatchRules="dialogCompoundRule.ChildRules">
-                </MatchRuleTable>
-            </MatDialogContent>
-            <MatDialogActions>
-                <MatButton @onclick="CloseCompoundEditDialog">Close</MatButton>
-            </MatDialogActions>
-        }
-    </MatDialog>
 </div>
