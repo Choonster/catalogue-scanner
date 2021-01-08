@@ -16,6 +16,8 @@ namespace CatalogueScanner.Configuration
     /// </summary>
     class ReverseConfigurationBinder
     {
+        private const BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+
         public static Dictionary<string, string?> GetConfigurationSettings<TOptions>(TOptions options, IConfigurationSection configuration)
         {
             var settings = new Dictionary<string, string?>();
@@ -143,10 +145,8 @@ namespace CatalogueScanner.Configuration
                 return;
             }
 
-            var typeInfo = collectionType.GetTypeInfo();
-
             // ICollection<T> is guaranteed to have exactly one parameter
-            var itemType = typeInfo.GenericTypeArguments[0];
+            var itemType = collectionType.GenericTypeArguments[0];
 
             var index = 0;
 
@@ -173,12 +173,10 @@ namespace CatalogueScanner.Configuration
 
         private static void FillDictionary(object dictionary, Type dictionaryType, IConfiguration config, Dictionary<string, string?> settings)
         {
-            var typeInfo = dictionaryType.GetTypeInfo();
-
             // IDictionary<K,V> is guaranteed to have exactly two parameters
-            var keyType = typeInfo.GenericTypeArguments[0];
-            var valueType = typeInfo.GenericTypeArguments[1];
-            var keyTypeIsEnum = keyType.GetTypeInfo().IsEnum;
+            var keyType = dictionaryType.GenericTypeArguments[0];
+            var valueType = dictionaryType.GenericTypeArguments[1];
+            var keyTypeIsEnum = keyType.IsEnum;
 
             if (keyType != typeof(string) && !keyTypeIsEnum)
             {
@@ -186,9 +184,9 @@ namespace CatalogueScanner.Configuration
                 return;
             }
 
-            var keyValuePairType = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType).GetTypeInfo();
-            var keyGetter = keyValuePairType.GetDeclaredProperty(nameof(KeyValuePair<object, object>.Key));
-            var valueGetter = keyValuePairType.GetDeclaredProperty(nameof(KeyValuePair<object, object>.Value));
+            var keyValuePairType = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
+            var keyGetter = keyValuePairType.GetProperty(nameof(KeyValuePair<object, object>.Key), DeclaredOnlyLookup);
+            var valueGetter = keyValuePairType.GetProperty(nameof(KeyValuePair<object, object>.Value), DeclaredOnlyLookup);
 
             foreach (var pair in (IEnumerable)dictionary)
             {
@@ -208,7 +206,7 @@ namespace CatalogueScanner.Configuration
         {
             if (instance != null)
             {
-                foreach (var property in GetAllProperties(instance.GetType().GetTypeInfo()))
+                foreach (var property in GetAllProperties(instance.GetType()))
                 {
                     FillProperty(property, instance, configuration, settings);
                 }
@@ -237,17 +235,16 @@ namespace CatalogueScanner.Configuration
 
         private static Type? FindOpenGenericInterface(Type expected, Type actual)
         {
-            var actualTypeInfo = actual.GetTypeInfo();
-            if (actualTypeInfo.IsGenericType &&
+            if (actual.IsGenericType &&
                 actual.GetGenericTypeDefinition() == expected)
             {
                 return actual;
             }
 
-            var interfaces = actualTypeInfo.ImplementedInterfaces;
+            var interfaces = actual.GetInterfaces();
             foreach (var interfaceType in interfaces)
             {
-                if (interfaceType.GetTypeInfo().IsGenericType &&
+                if (interfaceType.IsGenericType &&
                     interfaceType.GetGenericTypeDefinition() == expected)
                 {
                     return interfaceType;
@@ -256,16 +253,16 @@ namespace CatalogueScanner.Configuration
             return null;
         }
 
-        private static IEnumerable<PropertyInfo> GetAllProperties(TypeInfo type)
+        private static IEnumerable<PropertyInfo> GetAllProperties(Type type)
         {
             var allProperties = new List<PropertyInfo>();
 
             do
             {
-                allProperties.AddRange(type.DeclaredProperties);
-                type = type.BaseType.GetTypeInfo();
+                allProperties.AddRange(type.GetProperties(DeclaredOnlyLookup));
+                type = type.BaseType;
             }
-            while (type != typeof(object).GetTypeInfo());
+            while (type != typeof(object));
 
             return allProperties;
         }
@@ -275,7 +272,7 @@ namespace CatalogueScanner.Configuration
             return IsNonPointerPrimitive(type) ||
                 (IsNullable(type) && IsNonPointerPrimitive(Nullable.GetUnderlyingType(type))) ||
                 type == typeof(string) ||
-                type.GetTypeInfo().IsEnum;
+                type.IsEnum;
         }
 
         private static bool IsNonPointerPrimitive(Type type)
@@ -285,7 +282,7 @@ namespace CatalogueScanner.Configuration
 
         private static bool IsNullable(Type type)
         {
-            return type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
     }
 }
