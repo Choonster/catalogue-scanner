@@ -28,7 +28,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
             {
                 Attributes = new Dictionary<string, object>
                 {
-                    ["CompoundRule"] = matchRule,
+                    [nameof(CompoundMatchRuleEditDialog.CompoundRule)] = matchRule,
                 },
             });
         }
