@@ -40,15 +40,17 @@ namespace CatalogueScanner.ConfigurationUI
 
                       hostBuilder.Properties[refresherSupplierPropertyName] = refresherSupplier;
 
-                      
-                      var vaultUri = Environment.GetEnvironmentVariable("VaultUri");
-
-                      if (vaultUri is null)
+                      if (hostingContext.HostingEnvironment.IsProduction())
                       {
-                          throw new InvalidOperationException("VaultUri environment variable not set");
-                      }
+                          var vaultUri = Environment.GetEnvironmentVariable("VaultUri");
 
-                      config.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
+                          if (vaultUri is null)
+                          {
+                              throw new InvalidOperationException("VaultUri environment variable not set");
+                          }
+
+                          config.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
+                      }
                   })
                   .ConfigureWebHostDefaults(webBuilder =>
                   {
