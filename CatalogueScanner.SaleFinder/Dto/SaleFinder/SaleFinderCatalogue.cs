@@ -64,15 +64,12 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
         public object? Extra2Id { get; set; }
 
         [JsonProperty("extraURL", NullValueHandling = NullValueHandling.Ignore)]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder may not output valid URIs for this property")]
         public string? ExtraUrl { get; set; }
 
         [JsonProperty("extraURLText", NullValueHandling = NullValueHandling.Ignore)]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "This property probably isn't a URI")]
         public string? ExtraUrlText { get; set; }
 
         [JsonProperty("itemURL", NullValueHandling = NullValueHandling.Ignore)]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder does not output full URIs for this property")]
         public string? ItemUrl { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

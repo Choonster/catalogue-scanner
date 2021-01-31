@@ -33,12 +33,10 @@ namespace CatalogueScanner.SaleFinder.Service
                 {
                     stringContent = await content.ReadAsStringAsync().ConfigureAwait(false);
                 }
-#pragma warning disable CA1031 // Do not catch general exception types
                 catch
                 {
                     // Ignored
                 }
-#pragma warning restore CA1031 // Do not catch general exception types
 
                 if (!string.IsNullOrEmpty(stringContent))
                 {
