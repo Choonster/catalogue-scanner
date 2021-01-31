@@ -45,6 +45,7 @@ namespace CatalogueScanner.SaleFinder.Functions
             {
                 #region Check and update the catalogue's scan state
                 context.SetCustomStatus("CheckingState");
+                log.LogDebug($"Checking state - {scanStateId.EntityKey}");
 
                 var state = await scanState.GetState().ConfigureAwait(true);
                 if (state != ScanState.NotStarted)
@@ -59,12 +60,14 @@ namespace CatalogueScanner.SaleFinder.Functions
 
                 #region Download catalogue
                 context.SetCustomStatus("Downloading");
+                log.LogDebug($"Downloading - {scanStateId.EntityKey}");
 
                 var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderFunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
                 #endregion
 
                 #region Filter catalouge items
                 context.SetCustomStatus("Filtering");
+                log.LogDebug($"Filtering - {scanStateId.EntityKey}");
 
                 var itemTasks = downloadedCatalogue.Items
                     .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
@@ -75,6 +78,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
                 #region Send digest email
                 context.SetCustomStatus("SendingDigestEmail");
+                log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
 
                 var filteredItems = itemTasks
                     .Where(task => task.Result != null)
@@ -95,10 +99,12 @@ namespace CatalogueScanner.SaleFinder.Functions
 
                 #region Update catalogue's scan state
                 context.SetCustomStatus("UpdatingState");
+                log.LogDebug($"Updating state - {scanStateId.EntityKey}");
 
                 await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
                 #endregion
 
+                log.LogDebug($"Completed - {scanStateId.EntityKey}");
                 context.SetCustomStatus("Completed");
             }
         }

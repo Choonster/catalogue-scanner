@@ -34,13 +34,13 @@ msgctxt "CatalogueScanner.SaleFinder.Functions.CheckWoolworthsCatalogue"
 msgid "Found sale ID: {0}"
 msgstr ""
 
-#: .\Functions\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:83
+#: .\Functions\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:85
 #. throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" container in HTML content.", WeeklySpecialsCatalogue]}\n\n{viewResponse.Content}");
 msgctxt "CatalogueScanner.SaleFinder.Functions.CheckWoolworthsCatalogue"
 msgid "Didn't find \"{0}\" container in HTML content."
 msgstr ""
 
-#: .\Functions\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:89
+#: .\Functions\CheckWoolworthsCatalogue\CheckWoolworthsCatalogue.cs:91
 #. throw new UnableToFindSaleIdException($"{S["Found invalid \"{0}\" attribute value \"{1}\" in HTML content.", "data-saleid", saleIdValue]}\n\n{viewResponse.Content}");
 msgctxt "CatalogueScanner.SaleFinder.Functions.CheckWoolworthsCatalogue"
 msgid "Found invalid \"{0}\" attribute value \"{1}\" in HTML content."
