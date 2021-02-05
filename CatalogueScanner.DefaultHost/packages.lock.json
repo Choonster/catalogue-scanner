@@ -503,10 +503,10 @@
       },
       "Microsoft.Azure.WebJobs": {
         "type": "Transitive",
-        "resolved": "3.0.23",
-        "contentHash": "/nb3DYXOoWSMA+VtDKnH2T65V3/Z9CqeIxXAECEKq5JH/4oF7XNjLuDLcU/kXRCQLTpYokUpSEpW6XkZ0NYyDQ==",
+        "resolved": "3.0.25",
+        "contentHash": "sIL3t9ObUFY2IBtjgeqgaw6wrjlXa3jVsjBevLX/cw9zDr5PSzD+y3/szPHcyHYbWVgn+LsFxo4xExNDwjg95g==",
         "dependencies": {
-          "Microsoft.Azure.WebJobs.Core": "3.0.23",
+          "Microsoft.Azure.WebJobs.Core": "3.0.25",
           "Microsoft.Extensions.Configuration": "2.1.0",
           "Microsoft.Extensions.Configuration.Abstractions": "2.1.0",
           "Microsoft.Extensions.Configuration.EnvironmentVariables": "2.1.0",
@@ -521,8 +521,8 @@
       },
       "Microsoft.Azure.WebJobs.Core": {
         "type": "Transitive",
-        "resolved": "3.0.23",
-        "contentHash": "BKYXOdR97/aMcLlCrxV+fyJc7I8ciRJAhm03xVMtG30jfl3uNJqvpWg46u/pfDbjPBs0zdkogu5mSmrVtulCTQ==",
+        "resolved": "3.0.25",
+        "contentHash": "dwW5+Y7UNBql88d1eQT5/XUk6FXOAgofgHBguzBnTo0M87QZKwwrzEqy92af1xKxgzvU4TInyZXMbLMf0C9WCw==",
         "dependencies": {
           "System.ComponentModel.Annotations": "4.4.0",
           "System.Diagnostics.TraceSource": "4.3.0"
@@ -563,15 +563,15 @@
       },
       "Microsoft.Azure.WebJobs.Extensions.Http": {
         "type": "Transitive",
-        "resolved": "3.0.2",
-        "contentHash": "JvC3fESMMbNkYbpaJ4vkK4Xaw1yZy4HSxxqwoaI3Ls2Y5/qBrHftPy0WJQgmXcGjgE/o/aAmuixdTfrj5OQDJQ==",
+        "resolved": "3.0.12",
+        "contentHash": "MjkRW5Twk3Qgqaa/gjNrrdzN/AFw/6+eh7hMszO3nDoczgSQWWypqYOLedqmfPy8v0/QqK5f4vrcs8SQEj+TZg==",
         "dependencies": {
           "Microsoft.AspNet.WebApi.Client": "5.2.4",
           "Microsoft.AspNetCore.Http": "2.1.0",
           "Microsoft.AspNetCore.Mvc.Formatters.Json": "2.1.0",
           "Microsoft.AspNetCore.Mvc.WebApiCompatShim": "2.1.0",
           "Microsoft.AspNetCore.Routing": "2.1.0",
-          "Microsoft.Azure.WebJobs": "3.0.2"
+          "Microsoft.Azure.WebJobs": "3.0.25"
         }
       },
       "Microsoft.Azure.WebJobs.Extensions.SendGrid": {
@@ -2424,6 +2424,7 @@
           "Microsoft.Azure.Functions.Extensions": "1.1.0",
           "Microsoft.Azure.WebJobs.Extensions": "4.0.1",
           "Microsoft.Azure.WebJobs.Extensions.DurableTask": "2.4.0",
+          "Microsoft.Azure.WebJobs.Extensions.Http": "3.0.12",
           "Microsoft.Azure.WebJobs.Extensions.SendGrid": "3.0.0",
           "Microsoft.Azure.WebJobs.Extensions.Storage": "4.0.3",
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.1.0",

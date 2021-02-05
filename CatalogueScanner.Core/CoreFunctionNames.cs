@@ -1,4 +1,4 @@
-namespace CatalogueScanner.Core
+﻿namespace CatalogueScanner.Core
 {
     public static class CoreFunctionNames
     {
@@ -11,5 +11,15 @@ namespace CatalogueScanner.Core
         /// The name of the <see cref="Functions.SendCatalogueDigestEmail"/> activity function.
         /// </summary>
         public const string SendCatalogueDigestEmail = "SendCatalogueDigestEmail";
+
+        /// <summary>
+        /// The name of the <see cref="Functions.Api.ListCatalogueScanStates"/> function
+        /// </summary>
+        public const string ListCatalogueScanStates = "ListCatalogueScanStates";
+
+        /// <summary>
+        /// The name of the <see cref="Functions.Api.UpdateCatalogueScanState"/> function.
+        /// </summary>
+        public const string UpdateCatalogueScanState = "UpdateCatalogueScanState";
     }
 }
