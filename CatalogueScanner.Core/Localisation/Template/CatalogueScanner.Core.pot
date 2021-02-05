@@ -23,9 +23,3 @@ msgctxt "CatalogueScanner.Core.Functions.SendCatalogueDigestEmail"
 msgid "Unknown Item"
 msgstr ""
 
-#: .\Functions\Entity\Implementation\CatalogueScanState.cs:73
-#. throw new ArgumentException(S["Invalid Entity Key, must be in the form <CatalogueType>|<Store>|<CatalogueId>"]);
-msgctxt "CatalogueScanner.Core.Functions.Entity.Implementation.CatalogueScanState"
-msgid "Invalid Entity Key, must be in the form <CatalogueType>|<Store>|<CatalogueId>"
-msgstr ""
-

@@ -1,7 +1,7 @@
 using CatalogueScanner.Core;
+using CatalogueScanner.Core.Dto.EntityKey;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
-using CatalogueScanner.Core.Functions.Entity.Implementation;
 using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -38,7 +38,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             var catalogueDownloadInfo = context.GetInput<SaleFinderCatalogueDownloadInformation>();
 
-            var scanStateId = new EntityId(nameof(CatalogueScanState), $"{CatalogueType}|{catalogueDownloadInfo.Store}|{catalogueDownloadInfo.SaleId}");
+            var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, catalogueDownloadInfo.Store, catalogueDownloadInfo.SaleId.ToString()));
             var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
 
             using (await context.LockAsync(scanStateId).ConfigureAwait(true))

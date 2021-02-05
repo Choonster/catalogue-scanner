@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using CatalogueScanner.Core.Dto.EntityKey;
+using CatalogueScanner.Core.Functions.Entity.Implementation;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using System.Threading.Tasks;
 
 namespace CatalogueScanner.Core.Functions.Entity
 {
@@ -7,6 +10,19 @@ namespace CatalogueScanner.Core.Functions.Entity
     /// </summary>
     public interface ICatalogueScanState
     {
+        /// <summary>
+        /// The name of the entity type.
+        /// </summary>
+        const string EntityName = nameof(CatalogueScanState);
+
+        /// <summary>
+        /// Creates an <see cref="EntityId"/> for a catalogue scan state entity.
+        /// </summary>
+        /// <param name="key">The catalogue scan state key</param>
+        /// <returns>The entity ID</returns>
+        static EntityId CreateId(CatalogueScanStateKey key) => new EntityId(EntityName, key.ToString());
+
+
         /// <summary>
         /// Entity operation that returns the current scan state of the catalogue.
         /// </summary>

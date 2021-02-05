@@ -1,6 +1,6 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using CatalogueScanner.Core.Dto.EntityKey;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -65,19 +65,9 @@ namespace CatalogueScanner.Core.Functions.Entity.Implementation
             }
             #endregion
 
-            var parts = ctx.EntityKey.Split('|', 3);
-            if (parts.Length != 3)
-            {
-                IStringLocalizer<CatalogueScanState> S = ctx.FunctionBindingContext.CreateObjectInstance<StringLocalizer<CatalogueScanState>>();
+            var key = CatalogueScanStateKey.FromString(ctx.EntityKey);
 
-                throw new ArgumentException(S["Invalid Entity Key, must be in the form <CatalogueType>|<Store>|<CatalogueId>"]);
-            }
-
-            var catalogueType = parts[0];
-            var store = parts[1];
-            var catalogueId = parts[2];
-
-            return ctx.DispatchAsync<CatalogueScanState>(catalogueType, store, catalogueId);
+            return ctx.DispatchAsync<CatalogueScanState>(key.CatalogueType, key.Store, key.CatalogueId);
         }
     }
 }
