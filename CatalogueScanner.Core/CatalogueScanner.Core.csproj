@@ -46,10 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj" />
   </ItemGroup>
 
