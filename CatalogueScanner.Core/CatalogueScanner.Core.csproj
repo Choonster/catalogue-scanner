@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectCapability Include="AzureFunctions" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Functions\SendCatalogueDigestEmail\EmailTemplates.Designer.cs">
       <DependentUpon>EmailTemplates.resx</DependentUpon>
       <DesignTime>True</DesignTime>

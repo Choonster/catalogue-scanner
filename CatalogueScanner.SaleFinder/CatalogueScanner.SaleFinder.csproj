@@ -9,6 +9,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectCapability Include="AzureFunctions"/>
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Localisation\**\*.po">
       <Link>Localisation\CatalogueScanner.SaleFinder\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
