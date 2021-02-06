@@ -1,0 +1,25 @@
+﻿@page "/management/cataloguescanstates"
+
+@using Microsoft.Extensions.Logging
+@using CatalogueScanner.ConfigurationUI.Service
+
+@inject CatalogueScanStateService CatalogueScanStateService;
+@inject ILogger<CatalogueScanStates> Logger;
+@inject IMatDialogService DialogService
+
+<h3>CatalogueScanStates</h3>
+
+<MatButton OnClick="LoadScanStates">Load Scan States</MatButton>
+
+<h5>Scan states:</h5>
+
+<code>
+<pre>
+@Newtonsoft.Json.JsonConvert.SerializeObject(scanStates)
+</pre>
+</code>
+
+@if (loading)
+{
+    <MatProgressCircle Indeterminate="true"></MatProgressCircle>
+}

@@ -1,3 +1,6 @@
+using CatalogueScanner.ConfigurationUI.Extensions;
+using CatalogueScanner.ConfigurationUI.Options;
+using CatalogueScanner.ConfigurationUI.Service;
 using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.SaleFinder;
@@ -8,6 +11,8 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using System;
 
 namespace CatalogueScanner.ConfigurationUI
 {
@@ -26,8 +31,30 @@ namespace CatalogueScanner.ConfigurationUI
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<System.Net.Http.HttpClient>();
             services.AddMatBlazor();
+
+
+            services.Configure<CatalogueScannerApiOptions>(Configuration.GetSection(CatalogueScannerApiOptions.CatalogueScannerApi));
+
+            services.AddHttpClient(CatalogueScannerApiOptions.CatalogueScannerApi, (serviceProvider, httpClient) =>
+            {
+                var options = serviceProvider
+                    .GetRequiredService<IOptions<CatalogueScannerApiOptions>>()
+                    .Value;
+
+                if (options.BaseAddress == null)
+                {
+                    throw new InvalidOperationException($"{CatalogueScannerApiOptions.CatalogueScannerApi}:{nameof(options.BaseAddress)} app setting must be configured");
+                }
+
+                httpClient.BaseAddress = options.BaseAddress;
+            });
+
+            services.AddHttpClient<CatalogueScanStateService>(CatalogueScannerApiOptions.CatalogueScannerApi, (httpClient) =>
+            {
+                var baseAddress = httpClient.BaseAddress ?? throw new InvalidOperationException($"{nameof(httpClient)}.{nameof(httpClient.BaseAddress)} is null");
+                httpClient.BaseAddress = httpClient.BaseAddress.AppendPath("CatalogueScanState/");
+            });
 
             IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
 
