@@ -11,3 +11,7 @@
     padding: 1.1rem;
     flex: 1;
 }
+
+::deep .nav-menu {
+    flex-shrink: 0;
+}
