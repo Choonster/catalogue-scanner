@@ -63,6 +63,13 @@ namespace CatalogueScanner.ConfigurationUI
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
                 .AddPlugin<SaleFinderCatalogueScannerPlugin>();
+
+
+            string applicationInsightsConnectionString = Configuration["APPINSIGHTS_CONNECTIONSTRING"];
+            if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
+            {
+                services.AddApplicationInsightsTelemetry(applicationInsightsConnectionString);
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
