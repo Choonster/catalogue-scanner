@@ -12,8 +12,6 @@ namespace CatalogueScanner.SaleFinder.Service
         public SaleFinderService(HttpClient httpClient)
         {
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-
-            this.httpClient.BaseAddress = new Uri("https://embed.salefinder.com.au/");
         }
 
         public Task<CatalogueViewResponse> GetCatalogueViewDataAsync(int storeId, int locationId)

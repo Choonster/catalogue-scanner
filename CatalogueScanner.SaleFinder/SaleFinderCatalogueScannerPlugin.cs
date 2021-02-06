@@ -19,7 +19,10 @@ namespace CatalogueScanner.SaleFinder
             #endregion
 
             builder.Services.AddHttpClient();
-            builder.Services.AddHttpClient<SaleFinderService>();
+            builder.Services.AddHttpClient<SaleFinderService>((client) =>
+            {
+                client.BaseAddress = new Uri("https://embed.salefinder.com.au/");
+            });
 
             AddConfiguration(builder);
         }
