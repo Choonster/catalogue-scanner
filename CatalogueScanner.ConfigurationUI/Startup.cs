@@ -5,13 +5,16 @@ using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.SaleFinder;
 using MatBlazor;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web;
 using System;
 
 namespace CatalogueScanner.ConfigurationUI
@@ -33,6 +36,10 @@ namespace CatalogueScanner.ConfigurationUI
             services.AddServerSideBlazor();
             services.AddMatBlazor();
 
+            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"))
+                .EnableTokenAcquisitionToCallDownstreamApi()
+                .AddInMemoryTokenCaches();
 
             services.Configure<CatalogueScannerApiOptions>(Configuration.GetSection(CatalogueScannerApiOptions.CatalogueScannerApi));
 
@@ -56,6 +63,7 @@ namespace CatalogueScanner.ConfigurationUI
                 httpClient.BaseAddress = httpClient.BaseAddress.AppendPath("CatalogueScanState/");
             });
 
+
             IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
 
             ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(functionsHostBuilder, Configuration);
@@ -73,7 +81,7 @@ namespace CatalogueScanner.ConfigurationUI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -96,6 +104,8 @@ namespace CatalogueScanner.ConfigurationUI
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
+            logger.LogWarning("AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled: {value}", AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled);
         }
 
         private class DummyFunctionsHostBuilder : IFunctionsHostBuilder

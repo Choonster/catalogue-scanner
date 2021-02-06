@@ -11,10 +11,13 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
     {
         private bool loading;
         private ListEntityResult<CatalogueScanStateDto>? scanStates;
+        private string? token;
 
         public async Task LoadScanStates()
         {
             loading = true;
+
+            token = await TokenAcquisition.GetAccessTokenForUserAsync(new[] { ".default" }).ConfigureAwait(false);
 
             try
             {
