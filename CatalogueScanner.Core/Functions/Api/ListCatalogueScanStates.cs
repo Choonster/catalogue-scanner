@@ -18,7 +18,7 @@ namespace CatalogueScanner.Core.Functions.Api
     {
         [FunctionName(CoreFunctionNames.ListCatalogueScanStates)]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "CatalogueScanState/List")] ListEntityRequest listEntityRequest,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CatalogueScanState/List")] ListEntityRequest listEntityRequest,
             [DurableClient] IDurableEntityClient durableEntityClient
         )
         {

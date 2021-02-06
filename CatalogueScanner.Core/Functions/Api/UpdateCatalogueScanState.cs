@@ -16,7 +16,7 @@ namespace CatalogueScanner.Core.Functions.Api
     {
         [FunctionName(CoreFunctionNames.UpdateCatalogueScanState)]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "CatalogueScanState/Update")] CatalogueScanStateDto dto,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CatalogueScanState/Update")] CatalogueScanStateDto dto,
             [DurableClient] IDurableEntityClient durableEntityClient
         )
         {
