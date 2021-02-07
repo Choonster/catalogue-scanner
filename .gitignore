@@ -339,5 +339,5 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
-/CatalogueScanner.DefaultHost/Properties/ServiceDependencies/catalogue-scanner - Web Deploy/*
-/CatalogueScanner.ConfigurationUI/Properties/ServiceDependencies/catalogue-scanner-configuration-ui - Web Deploy
+/CatalogueScanner.DefaultHost/Properties/ServiceDependencies
+/CatalogueScanner.ConfigurationUI/Properties/ServiceDependencies
