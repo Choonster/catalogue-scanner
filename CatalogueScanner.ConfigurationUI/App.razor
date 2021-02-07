@@ -1,4 +1,8 @@
-﻿<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
+﻿@using Service
+
+@inject TokenProvider TokenProvider
+
+<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>
@@ -10,3 +14,15 @@
 </Router>
 
 <MatPortalHost></MatPortalHost>
+
+@code {
+    [Parameter]
+    public InitialApplicationState InitialState { get; set; } = null!;
+
+    protected override Task OnInitializedAsync()
+    {
+        TokenProvider.AccessToken = InitialState.AccessToken;
+
+        return base.OnInitializedAsync();
+    }
+}

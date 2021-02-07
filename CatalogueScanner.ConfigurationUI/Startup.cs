@@ -36,6 +36,8 @@ namespace CatalogueScanner.ConfigurationUI
             services.AddServerSideBlazor();
             services.AddMatBlazor();
 
+            services.AddScoped<TokenProvider>();
+
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"))
                 .EnableTokenAcquisitionToCallDownstreamApi()

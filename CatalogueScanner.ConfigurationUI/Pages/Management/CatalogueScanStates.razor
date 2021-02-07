@@ -2,12 +2,10 @@
 
 @using Microsoft.Extensions.Logging
 @using CatalogueScanner.ConfigurationUI.Service
-@using Microsoft.Identity.Web;
 
 @inject CatalogueScanStateService CatalogueScanStateService;
 @inject ILogger<CatalogueScanStates> Logger;
 @inject IMatDialogService DialogService
-@inject ITokenAcquisition TokenAcquisition;
 
 <h3>CatalogueScanStates</h3>
 
@@ -18,12 +16,6 @@
 <div>
     <code>
         @Newtonsoft.Json.JsonConvert.SerializeObject(scanStates)
-    </code>
-</div>
-
-<div>
-    <code>
-        @Newtonsoft.Json.JsonConvert.SerializeObject(token)
     </code>
 </div>
 

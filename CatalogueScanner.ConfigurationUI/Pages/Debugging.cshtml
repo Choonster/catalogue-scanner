@@ -1,0 +1,34 @@
+﻿@page
+@model CatalogueScanner.ConfigurationUI.Pages.DebuggingModel
+@{
+    string[] importantEnvironmentVariables = new string[] {
+    "WEBSITE_AUTH_ENABLED", "WEBSITE_AUTH_OPENID_ISSUER", "WEBSITE_AUTH_CLIENT_ID",
+    "WEBSITE_AUTH_CLIENT_SECRET", "WEBSITE_AUTH_LOGOUT_PATH", "WEBSITE_AUTH_DEFAULT_PROVIDER"};
+
+    string[] importantHeaders = new string[] { "X-MS-TOKEN-AAD-ID-TOKEN", "X-MS-CLIENT-PRINCIPAL-IDP", "X-MS-TOKEN-AAD-ACCESS-TOKEN" };
+}
+
+
+<h1>Debug</h1>
+
+<div>
+    "environmentVariables": {
+</div>
+<div style="margin-left:2cm">
+    "ASPNETCORE_ENVIRONMENT": "Development"
+</div>
+@{
+    foreach (string environmentVariable in importantEnvironmentVariables)
+    {
+        <div style="margin-left:2cm">"@environmentVariable": "@Environment.GetEnvironmentVariable(environmentVariable)"</div>
+    }
+
+    List<string> headers = new List<string>();
+    foreach (string header in importantHeaders)
+    {
+        headers.Add($"{header}={Model.HttpContext.Request.Headers[header]}");
+    }
+
+    <div style="margin-left:2cm">"APP_SERVICES_AUTH_LOCAL_DEBUG": "@string.Join(";", headers)"</div>
+}
+}

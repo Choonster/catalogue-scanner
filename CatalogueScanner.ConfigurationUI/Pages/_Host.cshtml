@@ -5,6 +5,9 @@
     Layout = null;
 }
 
+@using Microsoft.Extensions.DependencyInjection
+@using Microsoft.Identity.Web
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,8 +21,19 @@
     <link href="css/site.css" rel="stylesheet" />
 </head>
 <body class="mat">
+    @{
+        var accessToken = await HttpContext.RequestServices
+            .GetRequiredService<ITokenAcquisition>()
+            .GetAccessTokenForUserAsync(new string[] { ".default" });
+
+        var initialState = new InitialApplicationState
+        {
+            AccessToken = accessToken,
+        };
+    }
+
     <app>
-        <component type="typeof(App)" render-mode="ServerPrerendered" />
+        <component type="typeof(App)" param-InitialState="initialState" render-mode="ServerPrerendered" />
     </app>
 
     <div id="blazor-error-ui">

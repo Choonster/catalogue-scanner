@@ -11,13 +11,10 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
     {
         private bool loading;
         private ListEntityResult<CatalogueScanStateDto>? scanStates;
-        private string? token;
 
         public async Task LoadScanStates()
         {
             loading = true;
-
-            token = await TokenAcquisition.GetAccessTokenForUserAsync(new[] { ".default" }).ConfigureAwait(false);
 
             try
             {
@@ -31,10 +28,8 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
                 await DialogService.AlertAsync($"List Catalogue Scan States request failed: {e.Message}").ConfigureAwait(true);
             }
-            finally
-            {
-                loading = false;
-            }
+
+            loading = false;
         }
     }
 }
