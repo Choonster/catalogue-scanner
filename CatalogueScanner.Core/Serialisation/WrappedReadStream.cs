@@ -43,6 +43,11 @@ namespace CatalogueScanner.Core.Serialisation
         /// <returns>The number of bytes to read</returns>
         private int LimitReadCount(int count)
         {
+            if (Position >= Length)
+            {
+                return 0;
+            }
+
             if (Position + count >= Length)
             {
                 return (int)Math.Max(Position + count - Length, 0);
