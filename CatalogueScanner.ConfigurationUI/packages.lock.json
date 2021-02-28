@@ -1263,6 +1263,19 @@
           "Newtonsoft.Json": "10.0.1"
         }
       },
+      "OrchardCore.Localization.Abstractions": {
+        "type": "Transitive",
+        "resolved": "1.0.0-rc2-13450",
+        "contentHash": "VZMonxa7EZP4sSC0wrf3tLBd+Jj0DLfBG9QeYCqD4NLtnYIxChg74ciwilGs0zO/mpGCHdu6ekUPyPjthwypxQ=="
+      },
+      "OrchardCore.Localization.Core": {
+        "type": "Transitive",
+        "resolved": "1.0.0-rc2-13450",
+        "contentHash": "YKnACNIjiz2OHAP2g61IHkn3zkJ34u5w1L0QcBI1nsheixSLBlBrJA3RojkcmyD7ClaqVcp+IqoZG6oexFQ3TA==",
+        "dependencies": {
+          "OrchardCore.Localization.Abstractions": "1.0.0-rc2-13450"
+        }
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
         "resolved": "4.3.2",
@@ -2656,6 +2669,13 @@
           "Microsoft.Azure.WebJobs.Extensions.Storage": "4.0.3",
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.1.0",
           "Microsoft.Extensions.Localization.Abstractions": "3.1.10"
+        }
+      },
+      "cataloguescanner.localisation.orchardcore": {
+        "type": "Project",
+        "dependencies": {
+          "CatalogueScanner.Core": "1.0.0",
+          "OrchardCore.Localization.Core": "1.0.0-rc2-13450"
         }
       },
       "cataloguescanner.salefinder": {

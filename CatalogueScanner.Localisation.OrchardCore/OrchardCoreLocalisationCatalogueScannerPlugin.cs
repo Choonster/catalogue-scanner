@@ -16,9 +16,10 @@ namespace CatalogueScanner.Localisation.OrchardCore
         {
             builder.Services
                 .AddMemoryCache()
-                .AddPortableObjectLocalization(o => o.ResourcesPath = "Localisation")
-                .AddSingleton<ILocalizationFileLocationProvider, FunctionsRootPoFileLocationProvider>()
-                .TryAddTransient(typeof(Core.Localisation.IPluralStringLocalizer<>), typeof(PluralStringLocalizer<>));
+                .AddPortableObjectLocalization(o => o.ResourcesPath = "Localisation");
+
+            builder.Services.TryAddSingleton<ILocalizationFileLocationProvider, FunctionsRootPoFileLocationProvider>();
+            builder.Services.TryAddTransient(typeof(Core.Localisation.IPluralStringLocalizer<>), typeof(PluralStringLocalizer<>));
         }
     }
 }

@@ -36,7 +36,11 @@ namespace CatalogueScanner.Core.Functions.Api
 
             var entities = result.Entities.Select(status =>
             {
-                return status.State.ToObject<CatalogueScanStateDto>();
+                var dto = status.State.ToObject<CatalogueScanStateDto>();
+
+                dto.LastOperationTime = status.LastOperationTime;
+
+                return dto;
             });
 
             return new ObjectResult(new ListEntityResult<CatalogueScanStateDto>

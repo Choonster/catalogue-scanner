@@ -1,6 +1,7 @@
 ﻿using CatalogueScanner.Core.Functions.Entity;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 
 namespace CatalogueScanner.Core.Dto.Api
 {
@@ -26,5 +27,10 @@ namespace CatalogueScanner.Core.Dto.Api
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public ScanState ScanState { get; set; }
+
+        /// <summary>
+        /// The UTC time of the last change to this scan state record.
+        /// </summary>
+        public DateTime LastOperationTime { get; set; }
     }
 }

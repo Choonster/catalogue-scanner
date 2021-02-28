@@ -1,25 +1,62 @@
 ﻿@page "/management/cataloguescanstates"
 
+@using Microsoft.Extensions.Localization
 @using Microsoft.Extensions.Logging
 @using CatalogueScanner.ConfigurationUI.Service
 
-@inject CatalogueScanStateService CatalogueScanStateService;
-@inject ILogger<CatalogueScanStates> Logger;
+@inject IStringLocalizer<CatalogueScanStates> S
+@inject CatalogueScanStateService CatalogueScanStateService
+@inject ILogger<CatalogueScanStates> Logger
 @inject IMatDialogService DialogService
 
-<h3>CatalogueScanStates</h3>
-
-<MatButton OnClick="LoadScanStates">Load Scan States</MatButton>
-
-<h5>Scan states:</h5>
-
 <div>
-    <code>
-        @Newtonsoft.Json.JsonConvert.SerializeObject(scanStates)
-    </code>
-</div>
+    <h3>CatalogueScanStates</h3>
 
-@if (loading)
-{
-    <MatProgressCircle Indeterminate="true"></MatProgressCircle>
-}
+    <MatButton OnClick="LoadScanStates">Load Scan States</MatButton>
+
+    <h5>Scan states:</h5>
+
+    <MatTable Items="scanStates" @bind-PageSize="pageInfo.PageSize">
+        <MatTableHeader>
+            <th></th>
+            <th>Catalogue Type</th>
+            <th>Store</th>
+            <th>Catalogue ID</th>
+            <th>Scan State</th>
+            <th>Last operation time</th>
+        </MatTableHeader>
+
+        <MatTableRow Context="scanState">
+            <td class="actions">
+                <MatTooltip Tooltip="Reset" Context="tooltip">
+                    <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => ResetScanState(scanState))"></MatIconButton>
+                </MatTooltip>
+            </td>
+
+            <td class="catalogue-type">
+                @scanState.CatalogueType
+            </td>
+
+            <td class="store">
+                @scanState.Store
+            </td>
+
+            <td class="catalogue-id">
+                @scanState.CatalogueId
+            </td>
+
+            <td class="scan-state">
+                @scanStateLabels[scanState.ScanState]
+            </td>
+
+            <td class="last-operation-time">
+                @scanState.LastOperationTime.ToString("G")
+            </td>
+        </MatTableRow>
+    </MatTable>
+
+    @if (loading)
+    {
+        <MatProgressCircle Indeterminate="true"></MatProgressCircle>
+    }
+</div>

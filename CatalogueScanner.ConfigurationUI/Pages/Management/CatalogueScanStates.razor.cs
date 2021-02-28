@@ -1,7 +1,9 @@
-﻿using CatalogueScanner.Core.Dto.Api;
+﻿using CatalogueScanner.ConfigurationUI.ViewModel;
+using CatalogueScanner.Core.Dto.Api;
 using CatalogueScanner.Core.Dto.Api.Request;
-using CatalogueScanner.Core.Dto.Api.Result;
+using CatalogueScanner.Core.Functions.Entity;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -9,18 +11,39 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 {
     public partial class CatalogueScanStates
     {
-        private bool loading;
-        private ListEntityResult<CatalogueScanStateDto>? scanStates;
+        private Dictionary<ScanState, string?> scanStateLabels = new Dictionary<ScanState, string?>();
 
-        public async Task LoadScanStates()
+        private bool loading;
+        private readonly List<CatalogueScanStateDto> scanStates = new List<CatalogueScanStateDto>();
+        private PageInfo pageInfo = new PageInfo { PageSize = 20 };
+        private bool isFinalPage;        
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            scanStateLabels = new Dictionary<ScanState, string?>
+            {
+                [ScanState.NotStarted] = S["Not Started"],
+                [ScanState.InProgress] = S["In Progress"],
+                [ScanState.Completed] = S["Completed"],
+            };
+        }
+
+        private async Task LoadScanStates()
         {
             loading = true;
 
             try
             {
-                var scanStates = await CatalogueScanStateService.ListCatalogueScanStatesAsync(new ListEntityRequest()).ConfigureAwait(true);
+                var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(new ListEntityRequest { Page = pageInfo }).ConfigureAwait(true);
 
-                this.scanStates = scanStates;
+                scanStates.AddRange(result.Entities);
+
+                pageInfo = result.Page;
+
+                // TODO: This may not be the right way to check for the final page
+                isFinalPage = result.Page.ContinuationToken is null;
             }
             catch (HttpRequestException e)
             {
@@ -30,6 +53,11 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
             }
 
             loading = false;
+        }
+
+        private async Task ResetScanState(CatalogueScanStateDto scanState)
+        {
+            await CatalogueScanStateService.UpdateCatalogueScanStateAsync(scanState).ConfigureAwait(true);
         }
     }
 }

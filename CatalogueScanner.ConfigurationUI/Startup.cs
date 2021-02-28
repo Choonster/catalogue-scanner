@@ -3,6 +3,7 @@ using CatalogueScanner.ConfigurationUI.Options;
 using CatalogueScanner.ConfigurationUI.Service;
 using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
+using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
 using MatBlazor;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -15,6 +16,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
+using OrchardCore.Localization;
+using OrchardCore.Localization.PortableObject;
 using System;
 
 namespace CatalogueScanner.ConfigurationUI
@@ -65,6 +68,7 @@ namespace CatalogueScanner.ConfigurationUI
                 httpClient.BaseAddress = httpClient.BaseAddress.AppendPath("CatalogueScanState/");
             });
 
+            services.AddSingleton<ILocalizationFileLocationProvider, ContentRootPoFileLocationProvider>();
 
             IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
 
@@ -72,6 +76,7 @@ namespace CatalogueScanner.ConfigurationUI
 
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
+                .AddPlugin<OrchardCoreLocalisationCatalogueScannerPlugin>()
                 .AddPlugin<SaleFinderCatalogueScannerPlugin>();
 
 
