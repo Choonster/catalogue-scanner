@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
 
 namespace CatalogueScanner.Configuration
@@ -102,7 +103,9 @@ namespace CatalogueScanner.Configuration
                 {
                     result = converter.ConvertToInvariantString(value);
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
                     error = new InvalidOperationException($"Failed to convert configuration value at '{path}' from type '{type}'.", ex);
                 }
@@ -128,11 +131,13 @@ namespace CatalogueScanner.Configuration
                     FillInstance(
                         type: elementType,
                         instance: source.GetValue(i),
-                        config: config.GetSection(i.ToString()),
+                        config: config.GetSection(i.ToString(CultureInfo.InvariantCulture)),
                         settings: settings
                     );
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
                 }
             }
@@ -154,7 +159,7 @@ namespace CatalogueScanner.Configuration
             {
                 try
                 {
-                    var section = config.GetSection(index.ToString());
+                    var section = config.GetSection(index.ToString(CultureInfo.InvariantCulture));
 
                     FillInstance(
                         type: itemType,
@@ -163,7 +168,9 @@ namespace CatalogueScanner.Configuration
                         settings: settings
                     );
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
                 }
 

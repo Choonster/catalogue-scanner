@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CatalogueScanner.ConfigurationUI.Extensions
+namespace CatalogueScanner.Core.Extensions
 {
     public static class CollectionExtensions
     {
@@ -27,7 +27,7 @@ namespace CatalogueScanner.ConfigurationUI.Extensions
             if (collection is null)
             {
                 throw new ArgumentNullException(nameof(collection));
-            } 
+            }
             #endregion
 
             if (thisCollection is List<T> list)

@@ -46,6 +46,18 @@ namespace CatalogueScanner.Configuration
 
         public static IServiceCollection SetConfigurationRefresher(this IServiceCollection services, Func<IConfigurationRefresher> refresherSupplier)
         {
+            #region null checks
+            if (services is null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (refresherSupplier is null)
+            {
+                throw new ArgumentNullException(nameof(refresherSupplier));
+            }
+            #endregion
+
             services.AddSingleton(refresherSupplier.Invoke());
 
             return services;

@@ -33,10 +33,17 @@ namespace CatalogueScanner.Core.Dto.EntityKey
         /// <returns>The key object</returns>
         public static CatalogueScanStateKey FromString(string key)
         {
+            #region null checks
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentException($"'{nameof(key)}' cannot be null or whitespace.", nameof(key));
+            }
+            #endregion
+
             var parts = key.Split('|', 3);
             if (parts.Length != 3)
             {
-                throw new ArgumentException("Invalid Entity Key, must be in the form <CatalogueType>|<Store>|<CatalogueId>");
+                throw new ArgumentException("Invalid Entity Key, must be in the form <CatalogueType>|<Store>|<CatalogueId>", nameof(key));
             }
 
             var catalogueType = parts[0];

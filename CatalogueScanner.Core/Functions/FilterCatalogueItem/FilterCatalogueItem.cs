@@ -16,7 +16,7 @@ namespace CatalogueScanner.Core.Functions
     /// </summary>
     public class FilterCatalogueItem
     {
-        private readonly List<ICatalogueItemMatchRule> rules;
+        private readonly ICollection<ICatalogueItemMatchRule> rules;
 
         public FilterCatalogueItem(IOptionsSnapshot<MatchingOptions> optionsAccessor)
         {

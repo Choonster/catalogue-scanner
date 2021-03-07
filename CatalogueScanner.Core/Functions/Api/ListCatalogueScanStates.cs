@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,6 +23,18 @@ namespace CatalogueScanner.Core.Functions.Api
             [DurableClient] IDurableEntityClient durableEntityClient
         )
         {
+            #region null checks
+            if (listEntityRequest is null)
+            {
+                throw new ArgumentNullException(nameof(listEntityRequest));
+            }
+
+            if (durableEntityClient is null)
+            {
+                throw new ArgumentNullException(nameof(durableEntityClient));
+            }
+            #endregion
+
             var query = new EntityQuery
             {
                 EntityName = ICatalogueScanState.EntityName,

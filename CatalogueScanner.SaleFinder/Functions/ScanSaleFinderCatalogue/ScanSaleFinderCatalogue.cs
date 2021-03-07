@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,7 +39,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             var catalogueDownloadInfo = context.GetInput<SaleFinderCatalogueDownloadInformation>();
 
-            var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, catalogueDownloadInfo.Store, catalogueDownloadInfo.SaleId.ToString()));
+            var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, catalogueDownloadInfo.Store, catalogueDownloadInfo.SaleId.ToString(CultureInfo.InvariantCulture)));
             var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
 
             using (await context.LockAsync(scanStateId).ConfigureAwait(true))

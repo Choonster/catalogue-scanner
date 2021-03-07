@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using System;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.Core.Functions.Api
@@ -20,6 +21,18 @@ namespace CatalogueScanner.Core.Functions.Api
             [DurableClient] IDurableEntityClient durableEntityClient
         )
         {
+            #region null checks
+            if (dto is null)
+            {
+                throw new ArgumentNullException(nameof(dto));
+            }
+
+            if (durableEntityClient is null)
+            {
+                throw new ArgumentNullException(nameof(durableEntityClient));
+            }
+            #endregion
+
             var entityId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(dto.CatalogueType, dto.Store, dto.CatalogueId));
 
             await durableEntityClient.SignalEntityAsync<ICatalogueScanState>(

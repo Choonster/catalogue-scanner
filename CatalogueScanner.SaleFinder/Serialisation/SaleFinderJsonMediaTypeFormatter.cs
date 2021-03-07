@@ -59,7 +59,9 @@ namespace CatalogueScanner.SaleFinder.Serialisation
             var effectiveEncoding = SelectCharacterEncoding(contentHeaders);
 
             // Base method asks implementers not to close stream, so we don't wrap it in a using statement
+#pragma warning disable CA2000 // Dispose objects before losing scope
             var newReadStream = WrapStreamIfRequired(readStream, effectiveEncoding);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             return base.ReadFromStreamAsync(type, newReadStream, content, formatterLogger, cancellationToken);
         }
@@ -82,7 +84,9 @@ namespace CatalogueScanner.SaleFinder.Serialisation
             var effectiveEncoding = SelectCharacterEncoding(contentHeaders);
 
             // Base method asks implementers not to close stream, so we don't wrap it in a using statement
+#pragma warning disable CA2000 // Dispose objects before losing scope
             var newReadStream = WrapStreamIfRequired(readStream, effectiveEncoding);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             return base.ReadFromStreamAsync(type, newReadStream, content, formatterLogger);
         }
@@ -104,7 +108,9 @@ namespace CatalogueScanner.SaleFinder.Serialisation
             var originalPosition = readStream.Position;
 
             // Disposing the StreamReader would dispose the readStream and prevent the rest of the deserialisation process from reading it, so we don't wrap it in a using statement
+#pragma warning disable CA2000 // Dispose objects before losing scope
             var streamReader = new StreamReader(readStream, effectiveEncoding, detectEncodingFromByteOrderMarks: true, bufferSize: openingParenthesisByteCount);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             // Check if the first character is an opening parenthesis
             var hasLeadingParenthesis = OPENING_PARENTHESIS == streamReader.Peek();

@@ -1,4 +1,5 @@
 ﻿using CatalogueScanner.ConfigurationUI.ViewModel;
+using CatalogueScanner.Core.Extensions;
 using CatalogueScanner.Core.MatchRule;
 using System;
 using System.Collections.Generic;

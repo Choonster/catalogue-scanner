@@ -33,14 +33,16 @@ namespace CatalogueScanner.SaleFinder.Service
                 {
                     stringContent = await content.ReadAsStringAsync().ConfigureAwait(false);
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
                     // Ignored
                 }
 
                 if (!string.IsNullOrEmpty(stringContent))
                 {
-                    throw new Exception("Failed to parse JSON. Original content: " + stringContent, ex);
+                    throw new JsonSerializationException("Failed to parse JSON. Original content: " + stringContent, ex);
                 }
 
                 throw;

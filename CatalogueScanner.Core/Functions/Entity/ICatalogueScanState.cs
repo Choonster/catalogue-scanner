@@ -1,6 +1,7 @@
 ﻿using CatalogueScanner.Core.Dto.EntityKey;
 using CatalogueScanner.Core.Functions.Entity.Implementation;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using System;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.Core.Functions.Entity
@@ -20,7 +21,17 @@ namespace CatalogueScanner.Core.Functions.Entity
         /// </summary>
         /// <param name="key">The catalogue scan state key</param>
         /// <returns>The entity ID</returns>
-        static EntityId CreateId(CatalogueScanStateKey key) => new EntityId(EntityName, key.ToString());
+        static EntityId CreateId(CatalogueScanStateKey key)
+        {
+            #region null checks
+            if (key is null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+            #endregion
+
+            return new EntityId(EntityName, key.ToString());
+        }
 
 
         /// <summary>

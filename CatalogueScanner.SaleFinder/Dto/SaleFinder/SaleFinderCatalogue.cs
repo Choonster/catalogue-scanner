@@ -27,14 +27,14 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
         public DateTimeOffset EndDate { get; set; }
 
         [JsonProperty("catalogue", ItemConverterType = typeof(PageConverter))]
-        public List<Page> Pages { get; } = new List<Page>();
+        public ICollection<Page> Pages { get; } = new List<Page>();
     }
 
     [JsonObject(NamingStrategyType = typeof(SnakeCaseNamingStrategy))]
     public partial class Page
     {
         [JsonIgnore]
-        public List<Item> Items { get; } = new List<Item>();
+        public IList<Item> Items { get; } = new List<Item>();
 
         [JsonProperty("imagefile")]
         public string? ImageFile { get; set; }
@@ -50,7 +50,7 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
         public Shape Shape { get; set; }
 
         [JsonProperty(ItemConverterType = typeof(ExponentInt64Converter))]
-        public List<long> Coords { get; } = new List<long>();
+        public ICollection<long> Coords { get; } = new List<long>();
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public long? ItemId { get; set; }
@@ -68,12 +68,15 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
         public object? Extra2Id { get; set; }
 
         [JsonProperty("extraURL", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder may not output valid URIs for this property")]
         public string? ExtraUrl { get; set; }
 
         [JsonProperty("extraURLText", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "This property probably isn't a URI")]
         public string? ExtraUrlText { get; set; }
 
         [JsonProperty("itemURL", NullValueHandling = NullValueHandling.Ignore)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder does not output full URIs for this property")]
         public string? ItemUrl { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -143,7 +146,9 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
     /// 
     /// Note that the scientific notation/floating-point formats are only supported in the range of <see cref="double"/>.
     /// </summary>
+#pragma warning disable CA1812 // Avoid uninstantiated internal classes
     internal class ExponentInt64Converter : JsonConverter<long?>
+#pragma warning restore CA1812 // Avoid uninstantiated internal classes
     {
         public override long? ReadJson(JsonReader reader, Type objectType, long? existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
@@ -180,7 +185,7 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
             }
 
 
-            throw new Exception($"Error reading Int64 from JsonReader. Current JsonReader item is not a number or numeric string: {reader.TokenType}");
+            throw new JsonReaderException($"Error reading Int64 from JsonReader. Current JsonReader item is not a number or numeric string: {reader.TokenType}");
         }
 
         public override void WriteJson(JsonWriter writer, long? value, JsonSerializer serializer)

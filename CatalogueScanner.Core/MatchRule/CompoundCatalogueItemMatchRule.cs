@@ -11,7 +11,7 @@ namespace CatalogueScanner.Core.MatchRule
 
         public CompoundMatchType MatchType { get; set; }
 
-        public List<ICatalogueItemMatchRule> ChildRules { get; } = new List<ICatalogueItemMatchRule>();
+        public ICollection<ICatalogueItemMatchRule> ChildRules { get; } = new List<ICatalogueItemMatchRule>();
 
         public bool ItemMatches(CatalogueItem item)
         {

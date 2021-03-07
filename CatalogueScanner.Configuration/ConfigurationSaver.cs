@@ -18,9 +18,16 @@ namespace CatalogueScanner.Configuration
 
         public ConfigurationSaver(IOptionsSnapshot<Options.AzureAppConfigurationOptions> optionsAccessor, ITypedConfiguration<TOptions> typedConfiguration, IConfigurationRefresher configurationRefresher)
         {
+            #region null checks
+            if (optionsAccessor is null)
+            {
+                throw new ArgumentNullException(nameof(optionsAccessor));
+            }
+            #endregion
+
             configurationClient = new ConfigurationClient(optionsAccessor.Value.ConnectionString);
-            this.typedConfiguration = typedConfiguration;
-            this.configurationRefresher = configurationRefresher;
+            this.typedConfiguration = typedConfiguration ?? throw new ArgumentNullException(nameof(typedConfiguration));
+            this.configurationRefresher = configurationRefresher ?? throw new ArgumentNullException(nameof(configurationRefresher));
         }
 
         public async Task SaveAsync(TOptions options, CancellationToken cancellationToken = default)

@@ -1,4 +1,5 @@
 ﻿using CatalogueScanner.Configuration;
+using CatalogueScanner.Core.Extensions;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.Core.MatchRule;
