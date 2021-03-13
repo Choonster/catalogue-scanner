@@ -49,8 +49,6 @@ app {
 
 .matching-header {
     display: flex;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
 }
 
 .matching-header-buttons {
@@ -60,6 +58,12 @@ app {
     .matching-header-buttons :not(:last-child) {
         margin-right: 10px;
     }
+
+
+.table-page-header {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
 
 
 #blazor-error-ui {
