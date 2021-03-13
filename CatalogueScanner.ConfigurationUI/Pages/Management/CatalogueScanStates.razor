@@ -10,13 +10,9 @@
 @inject IMatDialogService DialogService
 
 <div>
-    <h3>CatalogueScanStates</h3>
+    <MatH3>Catalogue Scan States</MatH3>
 
-    <MatButton OnClick="LoadScanStates">Load Scan States</MatButton>
-
-    <h5>Scan states:</h5>
-
-    <MatTable Items="scanStates" @bind-PageSize="pageInfo.PageSize">
+    <MatTable Items="tableData" @bind-PageSize="pageInfo.PageSize" ShowPaging="false" >
         <MatTableHeader>
             <th></th>
             <th>Catalogue Type</th>
@@ -27,33 +23,42 @@
         </MatTableHeader>
 
         <MatTableRow Context="scanState">
-            <td class="actions">
-                <MatTooltip Tooltip="Reset" Context="tooltip">
-                    <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => ResetScanState(scanState))"></MatIconButton>
-                </MatTooltip>
-            </td>
+            @if (hasNoData)
+            {
+                <td colspan="6">No data available.</td>
+            }
+            else
+            {
+                <td class="actions">
+                    <MatTooltip Tooltip="Reset" Context="tooltip">
+                        <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => ResetScanState(scanState))"></MatIconButton>
+                    </MatTooltip>
+                </td>
 
-            <td class="catalogue-type">
-                @scanState.CatalogueType
-            </td>
+                <td class="catalogue-type">
+                    @scanState.CatalogueType
+                </td>
 
-            <td class="store">
-                @scanState.Store
-            </td>
+                <td class="store">
+                    @scanState.Store
+                </td>
 
-            <td class="catalogue-id">
-                @scanState.CatalogueId
-            </td>
+                <td class="catalogue-id">
+                    @scanState.CatalogueId
+                </td>
 
-            <td class="scan-state">
-                @scanStateLabels[scanState.ScanState]
-            </td>
+                <td class="scan-state">
+                    @scanStateLabels[scanState.ScanState]
+                </td>
 
-            <td class="last-operation-time">
-                @scanState.LastOperationTime.ToString("G")
-            </td>
+                <td class="last-operation-time">
+                    @scanState.LastOperationTime.ToString("G")
+                </td>
+            }
         </MatTableRow>
     </MatTable>
+
+    <MatPaginator Length="PaginatorLength" PageSize="PageSize" Page="OnPage"></MatPaginator>
 
     @if (loading)
     {
