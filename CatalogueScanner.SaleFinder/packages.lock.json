@@ -62,8 +62,8 @@
       },
       "HtmlAgilityPack": {
         "type": "Transitive",
-        "resolved": "1.11.31",
-        "contentHash": "yQO6Ero0AAeTrud/Lf9aubFNi9FBJnvC0P9tqH+hxw2vNz3hzENNMU9Ep4pm5m34m1MU8BMHj8wOJaB8OfWK8g=="
+        "resolved": "1.11.32",
+        "contentHash": "c5eNfxPDvQSh7YClPuo+xkD1d5F4Qms4g+MG1UktytdHk/mvCFsbopLIsk+AKqByPmPvSl/xVmyogRBejf0DyQ=="
       },
       "ImpromptuInterface": {
         "type": "Transitive",
@@ -408,10 +408,10 @@
       },
       "Microsoft.Azure.DurableTask.AzureStorage": {
         "type": "Transitive",
-        "resolved": "1.8.4",
-        "contentHash": "auSKomWFDQdZcBFyLDPIqx8qmWPwBL69u6It+DDHiKKbq/+BtwJAvZ6vzr1pchCXMjthlTXatsI4GorIGpu2+A==",
+        "resolved": "1.8.5",
+        "contentHash": "T9hllLlFjA420S0b8lA4/RHw5jsexJwEFMzLmmFpz9YGK4Z294UnvELTxADJRHcNOIB2jrivvXcWWG4RdKEp7Q==",
         "dependencies": {
-          "Microsoft.Azure.DurableTask.Core": "2.5.1",
+          "Microsoft.Azure.DurableTask.Core": "2.5.2",
           "Microsoft.Extensions.Logging.Abstractions": "2.2.0",
           "Newtonsoft.Json": "11.0.2",
           "WindowsAzure.Storage": "9.3.1"
@@ -419,8 +419,8 @@
       },
       "Microsoft.Azure.DurableTask.Core": {
         "type": "Transitive",
-        "resolved": "2.5.1",
-        "contentHash": "u6mQYvpxvm3K7YEOwrFdyPMbLs3h2+NytmhzqfYxIugBpkyicyV0C6vLZmQY70uqU5+5nignTjclE5rPL1hQ/A==",
+        "resolved": "2.5.2",
+        "contentHash": "HUSDGLP+o/EMN4B+M/hu0z8iMP3kzhZI2xGoFtIGYRynzHwVE6Z5meAMJWkFAf2NS4CIqXQRkmXnFFeh1gyKSA==",
         "dependencies": {
           "ImpromptuInterface": "7.0.1",
           "Microsoft.Extensions.Logging.Abstractions": "2.2.0",
@@ -515,15 +515,15 @@
       },
       "Microsoft.Azure.WebJobs.Extensions.DurableTask": {
         "type": "Transitive",
-        "resolved": "2.4.1",
-        "contentHash": "szP+9GD/4PG3LaoFU0UG2V2tILDGtTXeK+90GGEZului4qTRKt7GjITwQ1Cbn31Q82zCSfcWmpJavG2fhXTYXg==",
+        "resolved": "2.4.2",
+        "contentHash": "WC9SmrkSIEFOZdgU20f6ImajXH/Sv6KmH/wNCBkRSPt+kn8W1J7RxlvBw/66CF+ntRkY+A4D1C1l0U3wmQeQ1g==",
         "dependencies": {
           "Azure.Identity": "1.1.1",
           "Microsoft.ApplicationInsights": "2.12.2",
           "Microsoft.AspNetCore.Mvc.WebApiCompatShim": "2.1.0",
           "Microsoft.AspNetCore.Routing": "2.2.0",
           "Microsoft.AspNetCore.Server.Kestrel": "2.2.0",
-          "Microsoft.Azure.DurableTask.AzureStorage": "1.8.4",
+          "Microsoft.Azure.DurableTask.AzureStorage": "1.8.5",
           "Microsoft.Azure.WebJobs": "3.0.14",
           "Microsoft.Azure.WebJobs.Extensions.DurableTask.Analyzers": "0.4.0",
           "Microsoft.Extensions.Http": "2.2.0"
@@ -622,8 +622,8 @@
       },
       "Microsoft.Extensions.Configuration.AzureAppConfiguration": {
         "type": "Transitive",
-        "resolved": "4.1.0",
-        "contentHash": "GscYJUh/1t6wLj3K3aL4zhZaoSfZrndCdNOCGbSuqG1bKcTbaGHO7UyGsdulGyImY46K9+4SkhR8JGhtAMsyMQ==",
+        "resolved": "4.2.1",
+        "contentHash": "8rHO2dgLxD6Ro2aFkicktft3ynlu1j+bIxFSVybXp4etpfDDTFkn6f9nmRoaN/1jS1IwILJJJfHMPThaYqpZEw==",
         "dependencies": {
           "Azure.Data.AppConfiguration": "1.0.0",
           "Azure.Security.KeyVault.Secrets": "4.0.1",
@@ -2308,7 +2308,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Data.AppConfiguration": "1.0.2",
-          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.1.0",
+          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.2.1",
           "Microsoft.Extensions.Options": "3.1.13",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "3.1.13"
         }
@@ -2317,15 +2317,15 @@
         "type": "Project",
         "dependencies": {
           "CatalogueScanner.Configuration": "1.0.0",
-          "HtmlAgilityPack": "1.11.31",
+          "HtmlAgilityPack": "1.11.32",
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
           "Microsoft.Azure.Functions.Extensions": "1.1.0",
           "Microsoft.Azure.WebJobs.Extensions": "4.0.1",
-          "Microsoft.Azure.WebJobs.Extensions.DurableTask": "2.4.1",
+          "Microsoft.Azure.WebJobs.Extensions.DurableTask": "2.4.2",
           "Microsoft.Azure.WebJobs.Extensions.Http": "3.0.12",
           "Microsoft.Azure.WebJobs.Extensions.SendGrid": "3.0.2",
           "Microsoft.Azure.WebJobs.Extensions.Storage": "4.0.4",
-          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.1.0",
+          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.2.1",
           "Microsoft.Extensions.Localization.Abstractions": "3.1.13"
         }
       }

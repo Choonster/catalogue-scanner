@@ -15,9 +15,9 @@
       },
       "Microsoft.Extensions.Configuration.AzureAppConfiguration": {
         "type": "Direct",
-        "requested": "[4.1.0, )",
-        "resolved": "4.1.0",
-        "contentHash": "GscYJUh/1t6wLj3K3aL4zhZaoSfZrndCdNOCGbSuqG1bKcTbaGHO7UyGsdulGyImY46K9+4SkhR8JGhtAMsyMQ==",
+        "requested": "[4.2.1, )",
+        "resolved": "4.2.1",
+        "contentHash": "8rHO2dgLxD6Ro2aFkicktft3ynlu1j+bIxFSVybXp4etpfDDTFkn6f9nmRoaN/1jS1IwILJJJfHMPThaYqpZEw==",
         "dependencies": {
           "Azure.Data.AppConfiguration": "1.0.0",
           "Azure.Security.KeyVault.Secrets": "4.0.1",
