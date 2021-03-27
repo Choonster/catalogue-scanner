@@ -12,14 +12,19 @@
 <div>
     <MatH3 Class="table-page-header">Catalogue Scan States</MatH3>
 
-    <MatTable Items="tableData" @bind-PageSize="pageInfo.PageSize" ShowPaging="false" >
+    <div class="date-range-row">
+        <MatDatePicker Value="lastOperationFrom" ValueChanged="@((DateTime? minDate) => OnFromDateChanged(minDate))" Maximum="lastOperationTo" PlaceHolder="Last Operation From (Local)"></MatDatePicker>
+        <MatDatePicker Value="lastOperationTo" ValueChanged="@((DateTime? maxDate) => OnToDateChanged(maxDate))" Minimum="lastOperationFrom" PlaceHolder="Last Operation To (Local)"></MatDatePicker>
+    </div>
+
+    <MatTable Items="tableData" @bind-PageSize="pageInfo.PageSize" ShowPaging="false">
         <MatTableHeader>
             <th></th>
             <th>Catalogue Type</th>
             <th>Store</th>
             <th>Catalogue ID</th>
             <th>Scan State</th>
-            <th>Last operation time</th>
+            <th>Last operation time (local)</th>
         </MatTableHeader>
 
         <MatTableRow Context="scanState">
@@ -52,7 +57,7 @@
                 </td>
 
                 <td class="last-operation-time">
-                    @scanState.LastOperationTime.ToString("G")
+                    @scanState.LastOperationTime.ToLocalTime().ToString("G")
                 </td>
             }
         </MatTableRow>

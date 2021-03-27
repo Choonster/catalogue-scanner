@@ -1,8 +1,10 @@
-﻿using CatalogueScanner.Core.Dto.Api;
+﻿using CatalogueScanner.ConfigurationUI.Extensions;
+using CatalogueScanner.Core.Dto.Api;
 using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Functions.Entity;
 using MatBlazor;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -21,9 +23,12 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
         private readonly List<CatalogueScanStateDto> loadedScanStates = new();
 
-        private readonly PageInfo pageInfo = new() { PageSize = 25 };
+        private readonly PageInfo pageInfo = new() { PageSize = 10 };
         private bool isFinalPage;
         private bool hasNoData;
+
+        private DateTime? lastOperationFrom;
+        private DateTime? lastOperationTo;
 
         private int PageSize
         {
@@ -61,6 +66,31 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
             await OnPage(new MatPaginatorPageEvent { PageIndex = 0, PageSize = PageSize, Length = 0 }).ConfigureAwait(true);
         }
 
+        private async Task OnFromDateChanged(DateTime? lastOperationFrom)
+        {
+            this.lastOperationFrom  = lastOperationFrom;
+
+            await OnDateRangeChanged().ConfigureAwait(true);
+        }
+
+        private async Task OnToDateChanged(DateTime? lastOperationTo)
+        {
+            this.lastOperationTo = lastOperationTo;
+
+            await OnDateRangeChanged().ConfigureAwait(true);
+        }
+
+        private async Task OnDateRangeChanged()
+        {
+            isFinalPage = false;
+            tablePageIndex = 0;
+            pageInfo.ContinuationToken = null;
+
+            await LoadScanStates(resetData: true).ConfigureAwait(true);
+
+            UpdateTableData();
+        }
+
         private async Task OnPage(MatPaginatorPageEvent e)
         {
             tablePageIndex = e.PageIndex;
@@ -69,7 +99,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
             // If we haven't loaded the final page of data and the new page would include data that hasn't been loaded yet, load the new page.
             if (!isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count)
             {
-                await LoadScanStates().ConfigureAwait(true);
+                await LoadScanStates(resetData: false).ConfigureAwait(true);
             }
 
             UpdateTableData();
@@ -84,13 +114,31 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
                                         .ToList();
         }
 
-        private async Task LoadScanStates()
+        private async Task LoadScanStates(bool resetData)
         {
             loading = true;
 
             try
             {
-                var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(new ListEntityRequest { Page = pageInfo }).ConfigureAwait(true);
+                var request = new ListEntityRequest
+                {
+                    Page = pageInfo,
+                    LastOperationFrom = lastOperationFrom,
+                };
+
+                if (lastOperationTo != null)
+                {
+                    request.LastOperationTo = lastOperationTo.Value.ToLocalTime()
+                                                                   .WithTime(23, 59, 59)
+                                                                   .ToUniversalTime();
+                }
+
+                var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true);
+
+                if (resetData)
+                {
+                    loadedScanStates.Clear();
+                }
 
                 loadedScanStates.AddRange(result.Entities);
 
