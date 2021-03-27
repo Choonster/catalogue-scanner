@@ -8,13 +8,14 @@
 @inject CatalogueScanStateService CatalogueScanStateService
 @inject ILogger<CatalogueScanStates> Logger
 @inject IMatDialogService DialogService
+@inject TimeZoneService TimeZoneService
 
 <div>
     <MatH3 Class="table-page-header">Catalogue Scan States</MatH3>
 
     <div class="date-range-row">
-        <MatDatePicker Value="lastOperationFrom" ValueChanged="@((DateTime? minDate) => OnFromDateChanged(minDate))" Maximum="lastOperationTo" PlaceHolder="Last Operation From (Local)"></MatDatePicker>
-        <MatDatePicker Value="lastOperationTo" ValueChanged="@((DateTime? maxDate) => OnToDateChanged(maxDate))" Minimum="lastOperationFrom" PlaceHolder="Last Operation To (Local)"></MatDatePicker>
+        <DatePicker Value="lastOperationFrom" ValueChanged="@((DateTime? minDate) => OnFromDateChanged(minDate))" Maximum="lastOperationTo" PlaceHolder="Last Operation From (Local)"></DatePicker>
+        <DatePicker Value="lastOperationTo" ValueChanged="@((DateTime? maxDate) => OnToDateChanged(maxDate))" Minimum="lastOperationFrom" PlaceHolder="Last Operation To (Local)"></DatePicker>
     </div>
 
     <MatTable Items="tableData" @bind-PageSize="pageInfo.PageSize" ShowPaging="false">
@@ -57,7 +58,7 @@
                 </td>
 
                 <td class="last-operation-time">
-                    @scanState.LastOperationTime.ToLocalTime().ToString("G")
+                    @scanState.LastOperationLocalTime.ToString("G")
                 </td>
             }
         </MatTableRow>

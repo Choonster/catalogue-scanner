@@ -1,4 +1,5 @@
 ﻿using CatalogueScanner.ConfigurationUI.Extensions;
+using CatalogueScanner.ConfigurationUI.ViewModel;
 using CatalogueScanner.Core.Dto.Api;
 using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Functions.Entity;
@@ -18,10 +19,10 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
         private bool loading;
 
-        private List<CatalogueScanStateDto> tableData = new();
+        private List<CatalogueScanStateViewModel> tableData = new();
         private int tablePageIndex;
 
-        private readonly List<CatalogueScanStateDto> loadedScanStates = new();
+        private readonly List<CatalogueScanStateViewModel> loadedScanStates = new();
 
         private readonly PageInfo pageInfo = new() { PageSize = 10 };
         private bool isFinalPage;
@@ -68,7 +69,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
         private async Task OnFromDateChanged(DateTime? lastOperationFrom)
         {
-            this.lastOperationFrom  = lastOperationFrom;
+            this.lastOperationFrom = lastOperationFrom;
 
             await OnDateRangeChanged().ConfigureAwait(true);
         }
@@ -124,14 +125,8 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
                 {
                     Page = pageInfo,
                     LastOperationFrom = lastOperationFrom,
-                };
-
-                if (lastOperationTo != null)
-                {
-                    request.LastOperationTo = lastOperationTo.Value.ToLocalTime()
-                                                                   .WithTime(23, 59, 59)
-                                                                   .ToUniversalTime();
-                }
+                    LastOperationTo = lastOperationTo?.WithTime(23, 59, 59),
+                };                
 
                 var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true);
 
@@ -140,7 +135,23 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
                     loadedScanStates.Clear();
                 }
 
-                loadedScanStates.AddRange(result.Entities);
+                foreach (var entity in result.Entities)
+                {
+                    var model = new CatalogueScanStateViewModel
+                    {
+                        CatalogueType = entity.CatalogueType,
+                        Store = entity.Store,
+                        CatalogueId = entity.CatalogueId,
+                        ScanState = entity.ScanState,
+                        LastOperationTime = entity.LastOperationTime,
+                    };
+
+                    var localTime = await TimeZoneService.GetTimezoneOffset(model.LastOperationTime).ConfigureAwait(true);
+
+                    model.LastOperationLocalTime = localTime.DateTime;
+
+                    loadedScanStates.Add(model);
+                }
 
                 hasNoData = !loadedScanStates.Any();
 

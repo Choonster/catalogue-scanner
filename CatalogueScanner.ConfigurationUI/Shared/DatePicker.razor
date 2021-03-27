@@ -1,0 +1,80 @@
+﻿@*
+    Wrapper around MatDatePicker that properly handles time zones.
+
+    Credit:
+    Craig Brown: https://github.com/SamProf/MatBlazor/issues/663#issuecomment-744399206
+    Jim Thurston: https://github.com/SamProf/MatBlazor/issues/663#issuecomment-763528584
+*@
+
+@using CatalogueScanner.ConfigurationUI.Service
+
+@inject TimeZoneService TimeZoneService
+
+<MatDatePicker Value="@MatDatePickerValue"
+               ValueExpression=@(() => MatDatePickerValue)
+               ValueChanged=@(async (DateTime? value) => await MatDatePickerValueChanged(value))
+               Minimum="Minimum"
+               Maximum="Maximum"
+               PlaceHolder="@PlaceHolder"
+               Enable24hours="true">
+</MatDatePicker>
+
+@code {
+    private DateTime? value;
+
+    /// <summary>
+    /// The selected DateTime.
+    /// </summary>
+    [Parameter]
+    public DateTime? Value
+    {
+        get => value;
+        set
+        {
+            this.value = value;
+            MatDatePickerValue = value;
+        }
+    }
+
+    [Parameter]
+    public EventCallback<DateTime?> ValueChanged { get; set; }
+
+
+    [Parameter]
+    public DateTime? Minimum { get; set; }
+
+    [Parameter]
+    public DateTime? Maximum { get; set; }
+
+    [Parameter]
+    public string? PlaceHolder { get; set; }
+
+    /// <summary>
+    /// The DateTime bound to the MatDatePicker.
+    /// </summary>
+    private DateTime? MatDatePickerValue { get; set; }
+
+    private async Task MatDatePickerValueChanged(DateTime? value)
+    {
+        // If the Kind is UTC, the Date was selected via the calendar picker. So adjust the time to be the same as it was before, rather than 00:00.
+        if (value?.Kind == DateTimeKind.Utc)
+        {
+            var dateTime = value.Value;
+
+            var offset = await TimeZoneService.GetTimezoneOffset(dateTime);  // include the selected DateTime value
+            var newDateTime = dateTime.Add(offset.Offset);
+            var oldDateTime = MatDatePickerValue;
+            MatDatePickerValue = new DateTime(newDateTime.Year, newDateTime.Month, newDateTime.Day, oldDateTime?.Hour ?? 0, oldDateTime?.Minute ?? 0, 0, DateTimeKind.Local);
+        }
+        // If the Kind is Local, the Date was changed via the user manually typing into the input box, so don't change anything.
+        else
+        {
+            MatDatePickerValue = value;
+        }
+
+        // Update the user bound value
+        this.value = MatDatePickerValue;
+
+        await ValueChanged.InvokeAsync(this.value);
+    }
+}
