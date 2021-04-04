@@ -14,8 +14,8 @@
     <MatH3 Class="table-page-header">Catalogue Scan States</MatH3>
 
     <div class="date-range-row">
-        <DatePicker Value="lastOperationFrom" ValueChanged="@((DateTime? minDate) => OnFromDateChanged(minDate))" Maximum="lastOperationTo" PlaceHolder="Last Operation From (Local)"></DatePicker>
-        <DatePicker Value="lastOperationTo" ValueChanged="@((DateTime? maxDate) => OnToDateChanged(maxDate))" Minimum="lastOperationFrom" PlaceHolder="Last Operation To (Local)"></DatePicker>
+        <DatePicker Value="lastOperationFrom" ValueChanged="@((DateTime? minDate) => OnFromDateChanged(minDate))" Maximum="lastOperationTo" Label="Last Operation From (Local)"></DatePicker>
+        <DatePicker Value="lastOperationTo" ValueChanged="@((DateTime? maxDate) => OnToDateChanged(maxDate))" Minimum="lastOperationFrom" Label="Last Operation To (Local)"></DatePicker>
     </div>
 
     <MatTable Items="tableData" @bind-PageSize="pageInfo.PageSize" ShowPaging="false">

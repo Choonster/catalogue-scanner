@@ -16,6 +16,7 @@
                Minimum="Minimum"
                Maximum="Maximum"
                PlaceHolder="@PlaceHolder"
+               Label="@Label"
                Enable24hours="true">
 </MatDatePicker>
 
@@ -48,6 +49,9 @@
 
     [Parameter]
     public string? PlaceHolder { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
 
     /// <summary>
     /// The DateTime bound to the MatDatePicker.
