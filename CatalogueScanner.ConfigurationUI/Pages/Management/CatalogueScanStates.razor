@@ -10,7 +10,7 @@
 @inject IMatDialogService DialogService
 @inject TimeZoneService TimeZoneService
 
-<div>
+<div class="loading-spinner-container">
     <MatH3 Class="table-page-header">Catalogue Scan States</MatH3>
 
     <div class="date-range-row">
@@ -68,6 +68,6 @@
 
     @if (loading)
     {
-        <MatProgressCircle Indeterminate="true"></MatProgressCircle>
+        <LoadingSpinner></LoadingSpinner>
     }
 </div>

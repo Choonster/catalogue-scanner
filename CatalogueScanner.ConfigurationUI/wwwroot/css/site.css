@@ -66,6 +66,11 @@ app {
 }
 
 
+.loading-spinner-container {
+    transform: translate(0, 0);
+}
+
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

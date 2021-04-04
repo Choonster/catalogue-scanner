@@ -1,0 +1,14 @@
+﻿.loading-spinner-overlay {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    place-content: center;
+    place-items: center;
+}
+
+::deep .mat-progress-circle {
+    background-color: white;
+}
