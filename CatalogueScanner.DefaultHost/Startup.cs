@@ -1,4 +1,5 @@
-﻿using CatalogueScanner.Configuration;
+﻿using CatalogueScanner.ColesOnline;
+using CatalogueScanner.Configuration;
 using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.DefaultHost;
@@ -41,7 +42,8 @@ namespace CatalogueScanner.DefaultHost
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
                 .AddPlugin<OrchardCoreLocalisationCatalogueScannerPlugin>()
-                .AddPlugin<SaleFinderCatalogueScannerPlugin>();
+                .AddPlugin<SaleFinderCatalogueScannerPlugin>()
+                .AddPlugin<ColesOnlineCatalogueScannerPlugin>();
         }
     }
 }

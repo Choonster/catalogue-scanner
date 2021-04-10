@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectCapability Include="AzureFunctions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Localisation\**\*.po">
+      <Link>Localisation\CatalogueScanner.SaleFinder\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PlaywrightSharp" Version="0.192.0" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet tool restore&#xD;&#xA;dotnet tool run extractpo -- . .\Localisation\Template" />
+  </Target>
+</Project>
