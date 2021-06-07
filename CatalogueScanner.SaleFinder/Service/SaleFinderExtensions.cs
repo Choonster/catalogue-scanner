@@ -1,6 +1,7 @@
 ﻿using CatalogueScanner.SaleFinder.Serialisation;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading.Tasks;
@@ -9,11 +10,12 @@ namespace CatalogueScanner.SaleFinder.Service
 {
     public static class SaleFinderExtensions
     {
-        private static readonly MediaTypeFormatterCollection saleFinderMediaTypeFormatters = new MediaTypeFormatterCollection(
-            new MediaTypeFormatter[] { new SaleFinderJsonMediaTypeFormatter() }
-        );
+        private static readonly ConcurrentDictionary<string, MediaTypeFormatterCollection> mediaTypeFormattersByCallbackName = new ConcurrentDictionary<string, MediaTypeFormatterCollection>()
+        {
+            [string.Empty] = CreateMediaTypeFormatterCollection(string.Empty),
+        };
 
-        public static async Task<T> ReadSaleFinderResponseAsAync<T>(this HttpContent content)
+        public static async Task<T> ReadSaleFinderResponseAsAync<T>(this HttpContent content, string? callbackName)
         {
             #region null checks
             if (content is null)
@@ -22,9 +24,11 @@ namespace CatalogueScanner.SaleFinder.Service
             }
             #endregion
 
+            var mediaTypeFormatters = mediaTypeFormattersByCallbackName.GetOrAdd(callbackName ?? string.Empty, CreateMediaTypeFormatterCollection);
+
             try
             {
-                return await content.ReadAsAsync<T>(saleFinderMediaTypeFormatters).ConfigureAwait(false);
+                return await content.ReadAsAsync<T>(mediaTypeFormatters).ConfigureAwait(false);
             }
             catch (JsonReaderException ex)
             {
@@ -48,5 +52,10 @@ namespace CatalogueScanner.SaleFinder.Service
                 throw;
             }
         }
+
+        private static MediaTypeFormatterCollection CreateMediaTypeFormatterCollection(string callbackName) =>
+            new MediaTypeFormatterCollection(
+                new MediaTypeFormatter[] { new SaleFinderJsonMediaTypeFormatter(callbackName) }
+            );
     }
 }

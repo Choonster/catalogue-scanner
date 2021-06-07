@@ -17,6 +17,22 @@ namespace CatalogueScanner.SaleFinder.Serialisation
         private const char OPENING_PARENTHESIS = '(';
         private const char CLOSING_PARENTHESIS = ')';
 
+        private static readonly char[] CLOSING_PARENTHESIS_ARRAY = new[] { CLOSING_PARENTHESIS };
+
+        private readonly char[] callbackWithOpeningParenthesis;
+
+        public SaleFinderJsonMediaTypeFormatter(string callbackName)
+        {
+            #region null checks
+            if (callbackName is null)
+            {
+                throw new ArgumentNullException(nameof(callbackName));
+            }
+            #endregion
+
+            callbackWithOpeningParenthesis = (callbackName + OPENING_PARENTHESIS).ToCharArray();
+        }
+
         public override object ReadFromStream(Type type, Stream readStream, Encoding effectiveEncoding, IFormatterLogger formatterLogger)
         {
             #region null checks
@@ -91,7 +107,7 @@ namespace CatalogueScanner.SaleFinder.Serialisation
             return base.ReadFromStreamAsync(type, newReadStream, content, formatterLogger);
         }
 
-        private static Stream WrapStreamIfRequired(Stream readStream, Encoding effectiveEncoding)
+        private Stream WrapStreamIfRequired(Stream readStream, Encoding effectiveEncoding)
         {
             // If the stream is already wrapped, return it as-is
             if (readStream is WrappedReadStream)
@@ -99,9 +115,9 @@ namespace CatalogueScanner.SaleFinder.Serialisation
                 return readStream;
             }
 
-            // Get the byte counts of the opening and closing parenthesis characters in the current encoding
-            var openingParenthesisByteCount = effectiveEncoding.GetByteCount(new char[] { OPENING_PARENTHESIS });
-            var closingParenthesisByteCount = effectiveEncoding.GetByteCount(new char[] { CLOSING_PARENTHESIS });
+            // Get the byte counts of the callback name with opening parenthesis and of the closing parenthesis character in the current encoding
+            var callbackByteCount = effectiveEncoding.GetByteCount(callbackWithOpeningParenthesis);
+            var closingParenthesisByteCount = effectiveEncoding.GetByteCount(CLOSING_PARENTHESIS_ARRAY);
 
             // StreamReader reads into an internal buffer, changing the stream position;
             // so record the original position before creating and reading from the StreamReader
@@ -109,20 +125,30 @@ namespace CatalogueScanner.SaleFinder.Serialisation
 
             // Disposing the StreamReader would dispose the readStream and prevent the rest of the deserialisation process from reading it, so we don't wrap it in a using statement
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var streamReader = new StreamReader(readStream, effectiveEncoding, detectEncodingFromByteOrderMarks: true, bufferSize: openingParenthesisByteCount);
+            var streamReader = new StreamReader(readStream, effectiveEncoding, detectEncodingFromByteOrderMarks: true, bufferSize: callbackByteCount);
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
-            // Check if the first character is an opening parenthesis
-            var hasLeadingParenthesis = OPENING_PARENTHESIS == streamReader.Peek();
+            // Check if the first character in the stream is the first character of the callback name
+            if (callbackWithOpeningParenthesis[0] == streamReader.Peek())
+            {
+                // Check if the rest of the callback name matches
+                var buffer = (Span<char>)new char[callbackWithOpeningParenthesis.Length];
+                streamReader.Read(buffer);
+
+                var openingCharactersMatchCallback = buffer.SequenceEqual(callbackWithOpeningParenthesis);
+
+                // If the stream starts with the callback name and an opening parenthesis, assume it ends with a closing parenthesis and ignore them when deserialising
+                if (openingCharactersMatchCallback)
+                {
+                    // Reset the stream to the original position 
+                    readStream.Seek(originalPosition, SeekOrigin.Begin);
+
+                    return new WrappedReadStream(readStream, callbackByteCount, closingParenthesisByteCount);
+                }
+            }
 
             // Reset the stream to the original position 
             readStream.Seek(originalPosition, SeekOrigin.Begin);
-
-            // If the stream starts with an opening parenthesis, assume it ends with a closing parenthesis and ignore them when deserialising
-            if (hasLeadingParenthesis)
-            {
-                return new WrappedReadStream(readStream, openingParenthesisByteCount, closingParenthesisByteCount);
-            }
 
             return readStream;
         }

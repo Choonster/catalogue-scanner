@@ -7,6 +7,11 @@ namespace CatalogueScanner.SaleFinder.Service
 {
     public class SaleFinderService
     {
+        /// <summary>
+        /// A dummy value to pass as the <c>callback</c> parameter of SaleFinder requests.
+        /// </summary>
+        private const string CALLBACK_NAME = "____________________";
+
         private readonly HttpClient httpClient;
 
         public SaleFinderService(HttpClient httpClient)
@@ -21,16 +26,16 @@ namespace CatalogueScanner.SaleFinder.Service
 
         public Task<SaleFinderCatalogue> GetCatalogueAsync(int saleId)
         {
-            return GetAsync<SaleFinderCatalogue>($"/catalogue/svgData/{saleId}/?format=json");
+            return GetAsync<SaleFinderCatalogue>($"/catalogue/svgData/{saleId}/?format=json", CALLBACK_NAME);
         }
 
-        private async Task<T> GetAsync<T>(string path)
+        private async Task<T> GetAsync<T>(string path, string? callbackName = null)
         {
-            var response = await httpClient.GetAsync(new Uri(path, UriKind.Relative)).ConfigureAwait(false);
+            var response = await httpClient.GetAsync(new Uri(path + $"&callback={callbackName}", UriKind.Relative)).ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadSaleFinderResponseAsAync<T>().ConfigureAwait(false);
+            return await response.Content.ReadSaleFinderResponseAsAync<T>(callbackName).ConfigureAwait(false);
         }
     }
 }
