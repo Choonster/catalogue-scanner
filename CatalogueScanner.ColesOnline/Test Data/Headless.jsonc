@@ -1,0 +1,24 @@
+// headless
+{
+    "t": "6eec5426-77f3-146e-613c-1bfc7fdd61a6",
+    "d": {
+        "a0951fa71c40fb8124b1e39021248b2c8ff9f78a6b883334db9a95b35635607ec": "372f342ec53ead98eeb308fb485bd928",
+        "a3f60b630e22339a4a5a9c75420649e59dcc5d3fb261601bba05fdd22439986f3": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4421.0 Safari/537.36",
+        "a40535a97a8b207b54bb4794df47d695dbed3d9d401382bb1a17b9554d9da1642": false,
+        "a191856e634c97b61b4e9cf9ef6ee39b9c3d9262f1881d7fd4e4cbd73216ae1e4": false,
+        "a8cbd4e39c5ced9db97dbfe73fc18765dd74c1eabb3145fe04c31c732e06e7ef9": false,
+        "a9211185f73cf1cd56317a99604bb93df4b5f8684ce44a926b855f517d39139a4": true,
+        "a9dbaaac3968e569e00f95b8e7ca918752f8b69dda3374b83427af023a6e3bdd7": [
+            1280,
+            720
+        ],
+        "a0ecf9496c0d6001ef29b92a6af063f88328c10c21473b1fb8344dd8fb4636140": [],
+        "af9f02850ecbeb8f86f8a122a4345b5645379ae002aae5df302353635a69e24da": [],
+        "a58d23a5d099291b3a266b7efd08f0357e992ebb194a7c2b85d41969c6bf45bb4": "TypeError: [] is not a function\n    at _0x56ee9e (https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint/script/kpf.js?url=/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint&token=6eec5426-77f3-146e-613c-1bfc7fdd61a6:5:16807)\n    at _0x494691 (https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint/script/kpf.js?url=/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint&token=6eec5426-77f3-146e-613c-1bfc7fdd61a6:5:21264)\n    at https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint/script/kpf.js?url=/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint&token=6eec5426-77f3-146e-613c-1bfc7fdd61a6:5:23465\n    at https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/f.js:1:1802\n    at https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/f.js:1:14149",
+        "aa5d3585f43a4277e39e1141d8ac0bb2b64a3d6ffe557232ab2f0a42bf5397e2f": false,
+        "ad451e4e0f89b04c4093adac203a8b08ff316e46fb81b19ab5db8f449958c965b": true,
+        "ae7f454204c761dc7a014204563424e3a78dfd4ff1b94557a85fe0e4a0d945d76": false,
+        "ab669c741d72648b9a3d1b1faedacbedd49657d9128852e4d36254623573e5532": false,
+        "a2610f2a067253ba3f0edda7296ce348ff36f4426af430fdf6e96c063fc830d7d": false
+    }
+}
