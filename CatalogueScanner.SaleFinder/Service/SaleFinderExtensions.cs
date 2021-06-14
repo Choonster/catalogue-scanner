@@ -32,6 +32,29 @@ namespace CatalogueScanner.SaleFinder.Service
             }
             catch (JsonReaderException ex)
             {
+                var stringContent = await GetStringContent(content).ConfigureAwait(false);
+
+                if (!string.IsNullOrEmpty(stringContent))
+                {
+                    throw new JsonSerializationException($"Failed to parse JSON. Original content: {stringContent}", ex);
+                }
+
+                throw;
+            }
+            catch (UnsupportedMediaTypeException ex)
+            {
+                var stringContent = await GetStringContent(content).ConfigureAwait(false);
+
+                if (!string.IsNullOrEmpty(stringContent))
+                {
+                    throw new JsonSerializationException($"Unsupported media type {content.Headers.ContentType.MediaType}. Original content: {stringContent}", ex);
+                }
+
+                throw;
+            }
+
+            static async Task<string?> GetStringContent(HttpContent content)
+            {
                 string? stringContent = null;
                 try
                 {
@@ -44,12 +67,7 @@ namespace CatalogueScanner.SaleFinder.Service
                     // Ignored
                 }
 
-                if (!string.IsNullOrEmpty(stringContent))
-                {
-                    throw new JsonSerializationException("Failed to parse JSON. Original content: " + stringContent, ex);
-                }
-
-                throw;
+                return stringContent;
             }
         }
 
