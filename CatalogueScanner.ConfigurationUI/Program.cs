@@ -12,12 +12,6 @@ namespace CatalogueScanner.ConfigurationUI
     {
         public static void Main(string[] args)
         {
-            // This is required for Microsoft.Identity.Web's Azure App Service authentication to be registered
-            if (Environment.GetEnvironmentVariable("WEBSITE_AUTH_DEFAULT_PROVIDER") == "aad")
-            {
-                Environment.SetEnvironmentVariable("WEBSITE_AUTH_DEFAULT_PROVIDER", "AzureActiveDirectory");
-            }
-
             CreateHostBuilder(args).Build().Run();
         }
 

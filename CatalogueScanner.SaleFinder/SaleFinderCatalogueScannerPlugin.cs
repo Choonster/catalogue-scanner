@@ -4,6 +4,8 @@ using CatalogueScanner.SaleFinder.Options;
 using CatalogueScanner.SaleFinder.Service;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Net;
+using System.Net.Http;
 
 namespace CatalogueScanner.SaleFinder
 {
@@ -19,10 +21,16 @@ namespace CatalogueScanner.SaleFinder
             #endregion
 
             builder.Services.AddHttpClient();
-            builder.Services.AddHttpClient<SaleFinderService>((client) =>
-            {
-                client.BaseAddress = new Uri("https://embed.salefinder.com.au/");
-            });
+
+            builder.Services
+                .AddHttpClient<SaleFinderService>(client =>
+                {
+                    client.BaseAddress = new Uri("https://embed.salefinder.com.au/");
+                })
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                {
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+                });
 
             AddConfiguration(builder);
         }

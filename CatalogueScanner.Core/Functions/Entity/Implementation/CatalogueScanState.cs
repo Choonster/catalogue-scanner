@@ -39,6 +39,23 @@ namespace CatalogueScanner.Core.Functions.Entity.Implementation
 
         public CatalogueScanState(string catalogueType, string store, string catalogueId)
         {
+            #region null checks
+            if (string.IsNullOrWhiteSpace(catalogueType))
+            {
+                throw new ArgumentException($"'{nameof(catalogueType)}' cannot be null or whitespace.", nameof(catalogueType));
+            }
+
+            if (string.IsNullOrWhiteSpace(store))
+            {
+                throw new ArgumentException($"'{nameof(store)}' cannot be null or whitespace.", nameof(store));
+            }
+
+            if (string.IsNullOrWhiteSpace(catalogueId))
+            {
+                throw new ArgumentException($"'{nameof(catalogueId)}' cannot be null or whitespace.", nameof(catalogueId));
+            }
+            #endregion
+
             CatalogueType = catalogueType;
             Store = store;
             CatalogueId = catalogueId;

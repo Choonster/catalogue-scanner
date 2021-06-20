@@ -171,6 +171,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
         private async Task ResetScanState(CatalogueScanStateDto scanState)
         {
+            scanState.ScanState = ScanState.NotStarted;
             await CatalogueScanStateService.UpdateCatalogueScanStateAsync(scanState).ConfigureAwait(true);
         }
     }
