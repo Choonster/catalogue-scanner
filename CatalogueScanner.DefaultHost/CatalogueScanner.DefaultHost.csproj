@@ -7,15 +7,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.13" />
-    <PackageReference Include="PlaywrightSharp" Version="0.192.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CatalogueScanner.ColesOnline\CatalogueScanner.ColesOnline.csproj" />
     <ProjectReference Include="..\CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj" />
     <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
     <ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
     <ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
+    <ProjectReference Include="..\CatalogueScanner.WebScraping\CatalogueScanner.WebScraping.csproj" />
   </ItemGroup>
 
   <ItemGroup>

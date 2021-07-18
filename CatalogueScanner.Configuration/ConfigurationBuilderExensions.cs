@@ -9,6 +9,18 @@ namespace CatalogueScanner.Configuration
     {
         public static IConfigurationBuilder AddCatalogueScannerAzureAppConfiguration(this IConfigurationBuilder configurationBuilder, string connectionString, out Func<IConfigurationRefresher> refresherSupplier)
         {
+            #region null checks
+            if (configurationBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(configurationBuilder));
+            }
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentException($"'{nameof(connectionString)}' cannot be null or empty.", nameof(connectionString));
+            }
+            #endregion
+
             IConfigurationRefresher? refresher = null;
 
             configurationBuilder.AddAzureAppConfiguration(options =>
