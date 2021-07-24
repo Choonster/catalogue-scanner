@@ -4,17 +4,17 @@
     ".NETCoreApp,Version=v3.1": {
       "OrchardCore.Localization.Core": {
         "type": "Direct",
-        "requested": "[1.0.0-rc2-13450, )",
-        "resolved": "1.0.0-rc2-13450",
-        "contentHash": "YKnACNIjiz2OHAP2g61IHkn3zkJ34u5w1L0QcBI1nsheixSLBlBrJA3RojkcmyD7ClaqVcp+IqoZG6oexFQ3TA==",
+        "requested": "[1.0.0, )",
+        "resolved": "1.0.0",
+        "contentHash": "bJabaUcB8nI2h8j0151dcmvZMIaErDbldrxCOuD1JZnwbor6oz0FqLWv2YFn9ithKrGB4cd1niIyT/7t3HxcDA==",
         "dependencies": {
-          "OrchardCore.Localization.Abstractions": "1.0.0-rc2-13450"
+          "OrchardCore.Localization.Abstractions": "1.0.0"
         }
       },
       "Azure.Core": {
         "type": "Transitive",
-        "resolved": "1.14.0",
-        "contentHash": "kUMUOZX4FcmfHmy7OjyP5LovO5FMXco9uUYB76l77mtqMVbZ0cLobv+XCy/j6LpStc8cZo2sI1+dMXhk0YROEQ==",
+        "resolved": "1.16.0",
+        "contentHash": "DT/d7TTwBiyU/Me0MISk7qFDGeFUBlZoLXJKWrXN86oSRieaeeYZ+LKN4dINkWQ0VMEqv6FlhY4AbAdPiGan6w==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.0.0",
           "System.Buffers": "4.5.1",
@@ -29,10 +29,10 @@
       },
       "Azure.Data.AppConfiguration": {
         "type": "Transitive",
-        "resolved": "1.0.3",
-        "contentHash": "DcvjarFNsh2sZqNPM0OnaBNfWOUAsPoVQrAkReJXSnlPNWZtPeul4503jyehzS4maA9gEBH86Knoii5effKg4A==",
+        "resolved": "1.1.0",
+        "contentHash": "nK3CtxS35QpYfqOoNDcsNmpgxoFKFTsZJ9yfPev5d6HUGYCjF+xwOmlKoHiZ/UnQN80tIsBT20gDNcF8k3SbVQ==",
         "dependencies": {
-          "Azure.Core": "1.14.0",
+          "Azure.Core": "1.16.0",
           "Microsoft.Bcl.AsyncInterfaces": "1.0.0",
           "System.Text.Json": "4.6.0"
         }
@@ -917,8 +917,8 @@
       },
       "OrchardCore.Localization.Abstractions": {
         "type": "Transitive",
-        "resolved": "1.0.0-rc2-13450",
-        "contentHash": "VZMonxa7EZP4sSC0wrf3tLBd+Jj0DLfBG9QeYCqD4NLtnYIxChg74ciwilGs0zO/mpGCHdu6ekUPyPjthwypxQ=="
+        "resolved": "1.0.0",
+        "contentHash": "xE7dUUj5UKFyx9Yf0ITuf6nNy3lIOsrhchsy3cR70nrNZUl83TAH2TfKovguSP3CdKdt+b9JSTGmbk5DfrImQA=="
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
@@ -2239,7 +2239,7 @@
       "cataloguescanner.configuration": {
         "type": "Project",
         "dependencies": {
-          "Azure.Data.AppConfiguration": "1.0.3",
+          "Azure.Data.AppConfiguration": "1.1.0",
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.4.0",
           "Microsoft.Extensions.Options": "3.1.16",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "3.1.16"
