@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
+    <ProjectReference Include="..\CatalogueScanner.WebScraping.Common\CatalogueScanner.WebScraping.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

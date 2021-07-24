@@ -1,15 +1,17 @@
 ﻿using CatalogueScanner.WebScraping.API.Options;
+using CatalogueScanner.WebScraping.Common.Dto.ColesOnline;
 using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
 using System;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.WebScraping.API.Service
 {
     public class ColesOnlineService
     {
-        private const string ColesBaseUrl = "https://shop.coles.com.au/a";
+        private const string ColesBaseUrl = "https://shop.coles.com.au/";
 
         private readonly ColesOnlineOptions options;
 
@@ -32,16 +34,21 @@ namespace CatalogueScanner.WebScraping.API.Service
             #endregion
         }
 
-        public async Task<dynamic> GetSpecialsAsync()
+        public async Task<ColrsCatalogEntryList> GetSpecialsAsync()
         {
             using var playwright = await Playwright.CreateAsync().ConfigureAwait(false);
-
             await using var browser = await playwright.Chromium.LaunchAsync().ConfigureAwait(false);
-
             var page = await browser.NewPageAsync().ConfigureAwait(false);
 
+            // Prevent all external requests for advertising, tracking, etc.
+            await page.RouteAsync(
+                (url) => !url.StartsWith(ColesBaseUrl, StringComparison.OrdinalIgnoreCase),
+                (route) => route.AbortAsync()
+            ).ConfigureAwait(false);
+
+            // Navigate to the Specials page
             var response = await page.GotoAsync(
-                $"{ColesBaseUrl}/{options.StoreId}/specials/browse",
+                $"{ColesBaseUrl}/a/{options.StoreId}/specials/browse",
                 new PageGotoOptions
                 {
                     WaitUntil = WaitUntilState.DOMContentLoaded,
@@ -56,15 +63,26 @@ namespace CatalogueScanner.WebScraping.API.Service
 
             if (!response.Ok)
             {
-                throw new HttpRequestException($"Coles Online request failed with status {response.Status} ({response.StatusText})");
+                throw new HttpRequestException($"Coles Online request failed with status {response.Status} ({response.StatusText}) - {await response.TextAsync().ConfigureAwait(false)}");
             }
 
-            await page.WaitForLoadStateAsync(LoadState.Load).ConfigureAwait(false);
+            const string colrsProductListDataExpression = "angular.element(document.querySelector('[data-colrs-product-list]')).data()?.$colrsProductListController?.widget?.data";
 
-            await page.WaitForLoadStateAsync(LoadState.NetworkIdle).ConfigureAwait(false);
+            // The server returns the JSON data in compressed form with keys like "p1" and "a" that then get converted to full keys like "name" and "attributesMap".
+            // Wait until the data has been decompressed before we read it.
+            await page.WaitForFunctionAsync($"typeof {colrsProductListDataExpression}.products[{colrsProductListDataExpression}.products.length - 1].name === 'string'", options: new PageWaitForFunctionOptions { Timeout = 0 }).ConfigureAwait(false);
 
-            dynamic productData = await page.EvaluateAsync<dynamic>(@"angular.element(document.querySelector(""[data-colrs-product-list]"")).data().$colrsProductListController.widget.data")
+            // Playwright's EvaluateArgumentValueConverter doesn't seem to be able to deserialise to ColrsCatalogEntryList (and doesn't handle custom names),
+            // so evaluate the expression as a JsonElement and then re-serialise and deserialise to ColrsCatalogEntryList.
+            var productDataJson = await page.EvaluateAsync<JsonElement>(colrsProductListDataExpression)
                                             .ConfigureAwait(false);
+
+            var productData = JsonSerializer.Deserialize<ColrsCatalogEntryList>(productDataJson.GetRawText());
+
+            if (productData is null)
+            {
+                throw new InvalidOperationException("productData is null after deserialising from JsonElement.GetRawText()");
+            }
 
             return productData;
         }

@@ -19,7 +19,7 @@ namespace CatalogueScanner.ColesOnline.API.Controllers
         [Route("specials")]
         public async Task<IActionResult> GetSpecialsAsync()
         {
-            dynamic productData = await colesPlaywrightTest.GetSpecialsAsync().ConfigureAwait(true);
+            var productData = await colesPlaywrightTest.GetSpecialsAsync().ConfigureAwait(true);
 
             return Ok(productData);
         }
