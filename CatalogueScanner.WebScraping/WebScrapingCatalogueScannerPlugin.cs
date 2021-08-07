@@ -1,8 +1,8 @@
-using CatalogueScanner.Configuration;
+﻿using CatalogueScanner.Configuration;
 using CatalogueScanner.ConfigurationUI.Extensions;
 using CatalogueScanner.Core.Host;
-using CatalogueScanner.WebScraping.Functions;
 using CatalogueScanner.WebScraping.Options;
+using CatalogueScanner.WebScraping.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
@@ -36,10 +36,10 @@ namespace CatalogueScanner.WebScraping
                 httpClient.BaseAddress = options.BaseAddress;
             });
 
-            builder.Services.AddHttpClient<CheckColesOnlineSpecials>(WebScrapingApiOptions.WebScrapingApi, (httpClient) =>
+            builder.Services.AddHttpClient<ColesOnlineService>(WebScrapingApiOptions.WebScrapingApi, (httpClient) =>
             {
                 var baseAddress = httpClient.BaseAddress ?? throw new InvalidOperationException($"{nameof(httpClient)}.{nameof(httpClient.BaseAddress)} is null");
-                httpClient.BaseAddress = httpClient.BaseAddress.AppendPath("ColesOnline/");
+                httpClient.BaseAddress = httpClient.BaseAddress.AppendPath("coles-online/");
             });
 
             AddConfiguration(builder);
