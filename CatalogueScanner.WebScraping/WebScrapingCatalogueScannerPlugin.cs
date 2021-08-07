@@ -1,4 +1,4 @@
-﻿using CatalogueScanner.Configuration;
+using CatalogueScanner.Configuration;
 using CatalogueScanner.ConfigurationUI.Extensions;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.WebScraping.Functions;
@@ -47,10 +47,10 @@ namespace CatalogueScanner.WebScraping
 
         private static void AddConfiguration(ICatalogueScannerHostBuilder builder)
         {
-            var webScraping = builder.Configuration.GetSection("WebScraping");
+            var webScrapingLocal = builder.LocalConfiguration.GetSection("WebScraping");
 
             builder.Services
-                .ConfigureOptions<WebScrapingApiOptions>(webScraping.GetSection(WebScrapingApiOptions.WebScrapingApi));
+                .ConfigureOptions<WebScrapingApiOptions>(webScrapingLocal.GetSection(WebScrapingApiOptions.WebScrapingApi));
         }
     }
 }

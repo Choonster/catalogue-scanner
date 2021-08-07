@@ -9,5 +9,6 @@ namespace CatalogueScanner.Core.Host
         IFunctionsHostBuilder FunctionsHostBuilder { get; }
         IServiceCollection Services { get; }
         IConfiguration Configuration { get; }
+        IConfiguration LocalConfiguration { get; }
     }
 }

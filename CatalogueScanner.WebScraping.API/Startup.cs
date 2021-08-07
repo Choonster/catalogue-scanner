@@ -30,7 +30,7 @@ namespace CatalogueScanner.WebScraping.API
 
             IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
 
-            ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(functionsHostBuilder, Configuration);
+            ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(functionsHostBuilder, Configuration, Configuration);
 
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
