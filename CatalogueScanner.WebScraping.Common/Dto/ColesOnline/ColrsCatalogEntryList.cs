@@ -2,273 +2,264 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Collections.Immutable;
+using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
 {
     public partial class ColrsCatalogEntryList
     {
-        [JsonPropertyName("type")]
-        public string Type { get; set; }
+        [JsonProperty("type")]
+        public string? Type { get; set; }
 
-        [JsonPropertyName("categories")]
-        public Categories Categories { get; set; }
+        [JsonProperty("categories")]
+        public Categories? Categories { get; set; }
 
-        [JsonPropertyName("facets")]
-        public List<Facet> Facets { get; set; }
+        [JsonProperty("facets")]
+        public IEnumerable<Facet> Facets { get; } = new List<Facet>();
 
-        [JsonPropertyName("products")]
-        public List<Product> Products { get; set; }
+        [JsonProperty("products")]
+        public IEnumerable<Product> Products { get; } = new List<Product>();
 
-        [JsonPropertyName("searchInfo")]
-        public SearchInfo SearchInfo { get; set; }
+        [JsonProperty("searchInfo")]
+        public SearchInfo? SearchInfo { get; set; }
     }
 
     public partial class Categories
     {
-        [JsonPropertyName("parentCatgroup_id_search")]
-        public Dictionary<string, string> ParentCatgroupIdSearch { get; set; }
+        [JsonProperty("parentCatgroup_id_search")]
+        public IDictionary<string, string> ParentCatgroupIdSearch { get; } = new Dictionary<string, string>();
     }
 
     public partial class Facet
     {
-        [JsonPropertyName("values")]
-        public List<Value> Values { get; set; }
+        [JsonProperty("values")]
+        public IEnumerable<Value> Values { get; } = new List<Value>();
 
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
+        [JsonProperty("name")]
+        public string? Name { get; set; }
 
-        [JsonPropertyName("showEspot")]
+        [JsonProperty("showEspot")]
         public bool ShowEspot { get; set; }
     }
 
     public partial class Value
     {
-        [JsonPropertyName("count")]
+        [JsonProperty("count")]
         public long Count { get; set; }
 
-        [JsonPropertyName("label")]
-        public string Label { get; set; }
+        [JsonProperty("label")]
+        public string? Label { get; set; }
 
-        [JsonPropertyName("value")]
-        public string ValueValue { get; set; }
+        [JsonProperty("value")]
+        public string? ValueValue { get; set; }
     }
 
-    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public partial class Product
     {
-        [JsonPropertyName("price")]
-        public Price Price { get; set; }
+        [JsonProperty("price")]
+        public Price? Price { get; set; }
 
-        [JsonPropertyName("attributesMap")]
-        public AttributesMap AttributesMap { get; set; }
+        [JsonProperty("attributesMap")]
+        public AttributesMap? AttributesMap { get; set; }
 
-        [JsonPropertyName("shortDescription")]
-        public string ShortDescription { get; set; }
+        [JsonProperty("shortDescription")]
+        public string? ShortDescription { get; set; }
 
-        [JsonPropertyName("singleSKUCatalogEntryID")]
-        public string SingleSkuCatalogEntryId { get; set; }
+        [JsonProperty("singleSKUCatalogEntryID")]
+        public string? SingleSkuCatalogEntryId { get; set; }
 
-        [JsonPropertyName("manufacturer")]
-        public string Manufacturer { get; set; }
+        [JsonProperty("manufacturer")]
+        public string? Manufacturer { get; set; }
 
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
+        [JsonProperty("name")]
+        public string? Name { get; set; }
 
-        [JsonPropertyName("partNumber")]
-        public string PartNumber { get; set; }
+        [JsonProperty("partNumber")]
+        public string? PartNumber { get; set; }
 
-        [JsonPropertyName("seoToken")]
-        public string SeoToken { get; set; }
+        [JsonProperty("seoToken")]
+        public string? SeoToken { get; set; }
 
-        [JsonPropertyName("thumbnail")]
-        public string Thumbnail { get; set; }
+        [JsonProperty("thumbnail")]
+        public string? Thumbnail { get; set; }
 
-        [JsonPropertyName("uniqueID")]
+        [JsonProperty("uniqueID")]
 
-        public string UniqueId { get; set; }
+        public string? UniqueId { get; set; }
 
-        [JsonPropertyName("purchaseLimit")]
-        public string PurchaseLimit { get; set; }
+        [JsonProperty("purchaseLimit")]
+        public string? PurchaseLimit { get; set; }
 
-        [JsonPropertyName("unitPrice")]
-        public string UnitPrice { get; set; }
+        [JsonProperty("unitPrice")]
+        public string? UnitPrice { get; set; }
 
-        [JsonPropertyName("tickettype")]
+        [JsonProperty("tickettype")]
         [JsonConverter(typeof(TicketTypeConverter))]
         public TicketType TicketType { get; set; }
 
-        [JsonPropertyName("promo_min_qty")]
+        [JsonProperty("promo_min_qty")]
+        public string? PromoMinQty { get; set; }
 
-        public string PromoMinQty { get; set; }
+        [JsonProperty("promo_reward")]
+        public string? PromoReward { get; set; }
 
-        [JsonPropertyName("promo_reward")]
-        public string PromoReward { get; set; }
-
-        [JsonPropertyName("promo_type")]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonProperty("promo_type")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public PromoType? PromoType { get; set; }
 
-        [JsonPropertyName("promo_desc")]
-        public string PromoDesc { get; set; }
+        [JsonProperty("promo_desc")]
+        public string? PromoDesc { get; set; }
 
-        [JsonPropertyName("promo_id")]
+        [JsonProperty("promo_id")]
 
-        public string PromoId { get; set; }
+        public string? PromoId { get; set; }
 
-        [JsonPropertyName("available")]
+        [JsonProperty("available")]
         public bool? Available { get; set; }
 
-        [JsonPropertyName("rating")]
-        public string Rating { get; set; }
+        [JsonProperty("rating")]
+        public string? Rating { get; set; }
 
-        [JsonPropertyName("reviews")]
+        [JsonProperty("reviews")]
         public long Reviews { get; set; }
     }
 
     public partial class AttributesMap
     {
-        [JsonPropertyName("AVERAGESIZE")]
-        public List<string> AverageSize { get; set; }
+        [JsonProperty("AVERAGESIZE")]
+        public IEnumerable<string> AverageSize { get; } = new List<string>();
 
-        [JsonPropertyName("DELIVERYRESTRICTIONS")]
-        public List<string> DeliveryRestrictions { get; set; }
+        [JsonProperty("DELIVERYRESTRICTIONS")]
+        public IEnumerable<string> DeliveryRestrictions { get; } = new List<string>();
 
-        [JsonPropertyName("ONLINESIZEDESCRIPTION")]
-        public List<string> OnlinesizeDescription { get; set; }
+        [JsonProperty("ONLINESIZEDESCRIPTION")]
+        public IEnumerable<string> OnlinesizeDescription { get; } = new List<string>();
 
-        [JsonPropertyName("LIQUORAGERESTRICTIONFLAG")]
-        public List<string> LiquorAgeRestrictionFlag { get; set; }
+        [JsonProperty("LIQUORAGERESTRICTIONFLAG")]
+        public IEnumerable<string> LiquorAgeRestrictionFlag { get; } = new List<string>();
 
-        [JsonPropertyName("PRIMARYAISLE")]
-        public List<string> PrimaryAisle { get; set; }
+        [JsonProperty("PRIMARYAISLE")]
+        public IEnumerable<string> PrimaryAisle { get; } = new List<string>();
 
-        [JsonPropertyName("WEIGHTEDITEMINDICATOR")]
-        public List<string> WeightedItemIndicator { get; set; }
+        [JsonProperty("WEIGHTEDITEMINDICATOR")]
+        public IEnumerable<string> WeightedItemIndicator { get; } = new List<string>();
 
-        [JsonPropertyName("EXCLUDEFROMSUBSTITUTIONFLAG")]
-        public List<string> ExcludeFromSubstitutionFlag { get; set; }
+        [JsonProperty("EXCLUDEFROMSUBSTITUTIONFLAG")]
+        public IEnumerable<string> ExcludeFromSubstitutionFlag { get; } = new List<string>();
 
-        [JsonPropertyName("TOBACCOAGERESTRICTIONFLAG")]
-        public List<string> TobaccoAgeRestrictionFlag { get; set; }
+        [JsonProperty("TOBACCOAGERESTRICTIONFLAG")]
+        public IEnumerable<string> TobaccoAgeRestrictionFlag { get; } = new List<string>();
 
-        [JsonPropertyName("TYPE")]
-        public List<string> Type { get; set; }
+        [JsonProperty("TYPE")]
+        public IEnumerable<string> Type { get; } = new List<string>();
 
-        [JsonPropertyName("DISPLAYREVIEWS")]
-        public List<string> Displayreviews { get; set; }
+        [JsonProperty("DISPLAYREVIEWS")]
+        public IEnumerable<string> Displayreviews { get; } = new List<string>();
     }
 
-    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public partial class Price
     {
-        [JsonPropertyName("listPrice")]
+        [JsonProperty("listPrice")]
         public double ListPrice { get; set; }
 
-        [JsonPropertyName("offerPrice")]
+        [JsonProperty("offerPrice")]
         public double OfferPrice { get; set; }
 
-        [JsonPropertyName("isNaN")]
+        [JsonProperty("isNaN")]
         public bool IsNaN { get; set; }
 
-        [JsonPropertyName("dollarValue")]
-
+        [JsonProperty("dollarValue")]
         public long DollarValue { get; set; }
 
-        [JsonPropertyName("centValue")]
+        [JsonProperty("centValue")]
         public long CentValue { get; set; }
     }
 
-    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public partial class SearchInfo
     {
-        [JsonPropertyName("pageSize")]
+        [JsonProperty("pageSize")]
         public long PageSize { get; set; }
 
-        [JsonPropertyName("searchTerm")]
-        public string SearchTerm { get; set; }
+        [JsonProperty("searchTerm")]
+        public string? SearchTerm { get; set; }
 
-        [JsonPropertyName("categoryId")]
-        public string CategoryId { get; set; }
+        [JsonProperty("categoryId")]
+        public string? CategoryId { get; set; }
 
-        [JsonPropertyName("searchType")]
+        [JsonProperty("searchType")]
         public long SearchType { get; set; }
 
-        [JsonPropertyName("manufacturer")]
-        public string Manufacturer { get; set; }
+        [JsonProperty("manufacturer")]
+        public string? Manufacturer { get; set; }
 
-        [JsonPropertyName("profileName")]
-        public string ProfileName { get; set; }
+        [JsonProperty("profileName")]
+        public string? ProfileName { get; set; }
 
-        [JsonPropertyName("searchSource")]
-        public string SearchSource { get; set; }
+        [JsonProperty("searchSource")]
+        public string? SearchSource { get; set; }
 
-        [JsonPropertyName("intentSearchTerm")]
-        public string IntentSearchTerm { get; set; }
+        [JsonProperty("intentSearchTerm")]
+        public string? IntentSearchTerm { get; set; }
 
-        [JsonPropertyName("originalSearchTerm")]
-        public string OriginalSearchTerm { get; set; }
+        [JsonProperty("originalSearchTerm")]
+        public string? OriginalSearchTerm { get; set; }
 
-        [JsonPropertyName("metaData")]
-        public string MetaData { get; set; }
+        [JsonProperty("metaData")]
+        public string? MetaData { get; set; }
 
-        [JsonPropertyName("currency")]
-        public string Currency { get; set; }
+        [JsonProperty("currency")]
+        public string? Currency { get; set; }
 
-        [JsonPropertyName("filterTerm")]
-        public string FilterTerm { get; set; }
+        [JsonProperty("filterTerm")]
+        public string? FilterTerm { get; set; }
 
-        [JsonPropertyName("filterType")]
-        public string FilterType { get; set; }
+        [JsonProperty("filterType")]
+        public string? FilterType { get; set; }
 
-        [JsonPropertyName("filterFacet")]
-        public string FilterFacet { get; set; }
+        [JsonProperty("filterFacet")]
+        public string? FilterFacet { get; set; }
 
-        [JsonPropertyName("maxPrice")]
-        public string MaxPrice { get; set; }
+        [JsonProperty("maxPrice")]
+        public string? MaxPrice { get; set; }
 
-        [JsonPropertyName("minPrice")]
-        public string MinPrice { get; set; }
+        [JsonProperty("minPrice")]
+        public string? MinPrice { get; set; }
 
-        [JsonPropertyName("orderBy")]
-        public string OrderBy { get; set; }
+        [JsonProperty("orderBy")]
+        public string? OrderBy { get; set; }
 
-        [JsonPropertyName("physicalStoreIds")]
-        public string PhysicalStoreIds { get; set; }
+        [JsonProperty("physicalStoreIds")]
+        public string? PhysicalStoreIds { get; set; }
 
-        [JsonPropertyName("advancedFacetList")]
-        public string AdvancedFacetList { get; set; }
+        [JsonProperty("advancedFacetList")]
+        public string? AdvancedFacetList { get; set; }
 
-        [JsonPropertyName("pageView")]
-        public string PageView { get; set; }
+        [JsonProperty("pageView")]
+        public string? PageView { get; set; }
 
-        [JsonPropertyName("personaliseSearch")]
-        [JsonConverter(typeof(StringBooleanConverter))]
+        [JsonProperty("personaliseSearch")]
         public bool PersonaliseSearch { get; set; }
 
-        [JsonPropertyName("personaliseSort")]
-        [JsonConverter(typeof(StringBooleanConverter))]
+        [JsonProperty("personaliseSort")]
         public bool PersonaliseSort { get; set; }
 
-        [JsonPropertyName("responseTemplate")]
-        public string ResponseTemplate { get; set; }
+        [JsonProperty("responseTemplate")]
+        public string? ResponseTemplate { get; set; }
 
-        [JsonPropertyName("currentPage")]
+        [JsonProperty("currentPage")]
         public long CurrentPage { get; set; }
 
-        [JsonPropertyName("totalCount")]
+        [JsonProperty("totalCount")]
         public long TotalCount { get; set; }
 
-        [JsonPropertyName("showAddAllResults")]
+        [JsonProperty("showAddAllResults")]
         public bool ShowAddAllResults { get; set; }
 
-        [JsonPropertyName("params")]
-        public Params Params { get; set; }
-
-        //[JsonPropertyName("suggestedterms")]
-        //public object Suggestedterms { get; set; }
+        [JsonProperty("params")]
+        public Params? Params { get; set; }
     }
 
     public partial class Params
@@ -277,42 +268,64 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
 
     public enum PromoType { MultibuyMultiSku, MultibuySingleSku };
 
-    public enum TicketType { M, M1, S0, S1 };
+    public enum TicketType { M, MZero, MOne, SZero, SOne, SFiftyZero }
 
     public class TicketTypeConverter : JsonConverter<TicketType>
     {
-        public override TicketType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        private static readonly IDictionary<TicketType, string> ticketTypeToString = new Dictionary<TicketType, string>
+        {
+            [TicketType.M] = "M",
+            [TicketType.MZero] = "M_0",
+            [TicketType.MOne] = "M_1",
+            [TicketType.SZero] = "S_0",
+            [TicketType.SOne] = "S_1",
+            [TicketType.SFiftyZero] = "S50_0",
+        }.ToImmutableDictionary();
+
+        private static readonly IDictionary<string, TicketType> stringToTicketType = ticketTypeToString
+               .Select(kvp => KeyValuePair.Create(kvp.Value, kvp.Key))
+               .ToImmutableDictionary();
+
+        public override TicketType ReadJson(JsonReader reader, Type objectType, TicketType existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             #region null checks
-            if (typeToConvert is null)
+            if (reader is null)
             {
-                throw new ArgumentNullException(nameof(typeToConvert));
+                throw new ArgumentNullException(nameof(reader));
             }
 
-            if (options is null)
+            if (objectType is null)
             {
-                throw new ArgumentNullException(nameof(options));
+                throw new ArgumentNullException(nameof(objectType));
+            }
+
+            if (serializer is null)
+            {
+                throw new ArgumentNullException(nameof(serializer));
             }
             #endregion
 
-            var stringValue = reader.GetString();
+            var stringValue = reader.Value;
 
             if (stringValue is null)
             {
-                throw new JsonException($"Unable to read null value as {nameof(TicketType)}");
+                throw new JsonReaderException($"Unable to read null value as {nameof(TicketType)}");
             }
 
-            return stringValue switch
+            if (reader.TokenType != JsonToken.String)
             {
-                "M" => TicketType.M,
-                "M_1" => TicketType.M1,
-                "S_0" => TicketType.S0,
-                "S_1" => TicketType.S1,
-                _ => throw new JsonException($"Unable to read unknown value \"{stringValue}\" as {nameof(TicketType)}"),
-            };
+                throw new JsonReaderException($"Unable to read ${reader.TokenType} value as {nameof(TicketType)}");
+            }
+
+            if (!stringToTicketType.TryGetValue((string)stringValue, out var ticketType))
+            {
+                throw new JsonReaderException($"Unable to read unknown value \"{stringValue}\" as {nameof(TicketType)}");
+            }
+
+            return ticketType;
         }
 
-        public override void Write(Utf8JsonWriter writer, TicketType value, JsonSerializerOptions options)
+        public override void WriteJson(JsonWriter writer, TicketType value, JsonSerializer serializer)
         {
             #region null checks
             if (writer is null)
@@ -320,71 +333,18 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
                 throw new ArgumentNullException(nameof(writer));
             }
 
-            if (options is null)
+            if (serializer is null)
             {
-                throw new ArgumentNullException(nameof(options));
+                throw new ArgumentNullException(nameof(serializer));
             }
             #endregion
 
-            var stringValue = value switch
+            if (!ticketTypeToString.TryGetValue(value, out var stringValue))
             {
-                TicketType.M => "M",
-                TicketType.M1 => "M_1",
-                TicketType.S0 => "S_0",
-                TicketType.S1 => "S_1",
-                _ => throw new JsonException($"Unable to write unknown {nameof(TicketType)} value \"{value}\""),
-            };
-
-            writer.WriteStringValue(stringValue);
-        }
-    }
-
-    public class StringBooleanConverter : JsonConverter<bool>
-    {
-        public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            #region null checks
-            if (typeToConvert is null)
-            {
-                throw new ArgumentNullException(nameof(typeToConvert));
+                throw new JsonReaderException($"Unable to write unknown {nameof(TicketType)} value \"{value}\"");
             }
 
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            #endregion
-
-            var stringValue = reader.GetString();
-
-            if (stringValue is null)
-            {
-                throw new JsonException($"Unable to read null value as {nameof(Boolean)}");
-            }
-
-            return stringValue switch
-            {
-                "true" => true,
-                "false" => false,
-                _ => throw new JsonException($"Unable to read unknown value \"{stringValue}\" as {nameof(Boolean)}"),
-            };
-        }
-
-        public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
-        {
-            #region null checks
-            if (writer is null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
-
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            #endregion
-
-            writer.WriteStringValue(value ? "true" : "false");
+            writer.WriteValue(stringValue);
         }
     }
 }

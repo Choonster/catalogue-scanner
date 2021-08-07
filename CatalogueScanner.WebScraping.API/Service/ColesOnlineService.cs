@@ -2,6 +2,7 @@
 using CatalogueScanner.WebScraping.Common.Dto.ColesOnline;
 using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
+using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Text.Json;
@@ -11,7 +12,7 @@ namespace CatalogueScanner.WebScraping.API.Service
 {
     public class ColesOnlineService
     {
-        private const string ColesBaseUrl = "https://shop.coles.com.au/";
+        private const string ColesBaseUrl = "https://shop.coles.com.au";
 
         private readonly ColesOnlineOptions options;
 
@@ -33,6 +34,8 @@ namespace CatalogueScanner.WebScraping.API.Service
             }
             #endregion
         }
+
+        public Uri ProductUrlTemplate => new($"{ColesBaseUrl}/a/{options.StoreId}/product/[productToken]");
 
         public async Task<ColrsCatalogEntryList> GetSpecialsAsync()
         {
@@ -73,11 +76,11 @@ namespace CatalogueScanner.WebScraping.API.Service
             await page.WaitForFunctionAsync($"typeof {colrsProductListDataExpression}.products[{colrsProductListDataExpression}.products.length - 1].name === 'string'", options: new PageWaitForFunctionOptions { Timeout = 0 }).ConfigureAwait(false);
 
             // Playwright's EvaluateArgumentValueConverter doesn't seem to be able to deserialise to ColrsCatalogEntryList (and doesn't handle custom names),
-            // so evaluate the expression as a JsonElement and then re-serialise and deserialise to ColrsCatalogEntryList.
+            // so evaluate the expression as a JsonElement and then re-serialise and deserialise to ColrsCatalogEntryList (using Newtonsoft.Json rather than System.Text.Json).
             var productDataJson = await page.EvaluateAsync<JsonElement>(colrsProductListDataExpression)
                                             .ConfigureAwait(false);
 
-            var productData = JsonSerializer.Deserialize<ColrsCatalogEntryList>(productDataJson.GetRawText());
+            var productData = JsonConvert.DeserializeObject<ColrsCatalogEntryList>(productDataJson.GetRawText());
 
             if (productData is null)
             {
