@@ -25,6 +25,12 @@ namespace CatalogueScanner.WebScraping.Functions
 
             var productUrlTemplate = specialsResult.ProductUrlTemplate;
 
+            var specialsResetTime = colesOnlineService.SpecialsResetTime;
+
+            var now = DateTimeOffset.UtcNow;
+            var specialsStartDate = specialsResetTime.GetPreviousDate(now);
+            var specialsEndDate = specialsResetTime.GetNextDate(now);
+
             var items = specialsResult.Data.Products
                 .Select(product => new CatalogueItem
                 {
@@ -35,7 +41,7 @@ namespace CatalogueScanner.WebScraping.Functions
                 })
                 .ToList();
 
-            Catalogue catalogue = new Catalogue("Coles Online", DateTimeOffset.Now, DateTimeOffset.Now.AddDays(1), items);
+            Catalogue catalogue = new Catalogue("Coles Online", specialsStartDate, specialsEndDate, items);
             return catalogue;
         }
     }
