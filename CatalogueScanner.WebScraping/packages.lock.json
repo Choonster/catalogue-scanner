@@ -2,126 +2,6 @@
   "version": 1,
   "dependencies": {
     ".NETStandard,Version=v2.1": {
-      "HtmlAgilityPack": {
-        "type": "Direct",
-        "requested": "[1.11.34, )",
-        "resolved": "1.11.34",
-        "contentHash": "LJyKMPuQVRi68RnPRmptSSJa1r3adpIfII/tfyMkismDhgmdS0i2ruOGF3Y7Ocxt4IfnhG76BNIa4dzMfR+KYw=="
-      },
-      "Microsoft.AspNet.WebApi.Client": {
-        "type": "Direct",
-        "requested": "[5.2.7, )",
-        "resolved": "5.2.7",
-        "contentHash": "/76fAHknzvFqbznS6Uj2sOyE9rJB3PltY+f53TH8dX9RiGhk02EhuFCWljSj5nnqKaTsmma8DFR50OGyQ4yJ1g==",
-        "dependencies": {
-          "Newtonsoft.Json": "10.0.1",
-          "Newtonsoft.Json.Bson": "1.0.1"
-        }
-      },
-      "Microsoft.Azure.Functions.Extensions": {
-        "type": "Direct",
-        "requested": "[1.1.0, )",
-        "resolved": "1.1.0",
-        "contentHash": "zYKtQQoS1fdzufxFApuMFiFtoi9QAGH6McXxntpylwLKgKjmCMWdgUd1dcekzTKNR9DPSDPRLiulvukqXnpWrQ==",
-        "dependencies": {
-          "Microsoft.Azure.WebJobs": "3.0.18",
-          "Microsoft.Extensions.DependencyInjection": "2.1.0"
-        }
-      },
-      "Microsoft.Azure.WebJobs.Extensions": {
-        "type": "Direct",
-        "requested": "[4.0.1, )",
-        "resolved": "4.0.1",
-        "contentHash": "e6cgsrI7Wrf80UJkyj+aOniG30EzRhOfCfPl+DuJuL+lrkuqCWw0XWVMLi0nenUDr20alrQrErDhJftuYbAuQg==",
-        "dependencies": {
-          "Microsoft.Azure.WebJobs": "3.0.18",
-          "Microsoft.Azure.WebJobs.Host.Storage": "4.0.1",
-          "ncrontab.signed": "3.3.0"
-        }
-      },
-      "Microsoft.Azure.WebJobs.Extensions.DurableTask": {
-        "type": "Direct",
-        "requested": "[2.5.1, )",
-        "resolved": "2.5.1",
-        "contentHash": "JK98tBEbxukcfoiBEq9zuy4gtCPuT00dQlLbd/cGg3EDQVPAMW8HedKH8gRSi9zOxOAYiH3hLo0lzUCXQgbnng==",
-        "dependencies": {
-          "Azure.Identity": "1.1.1",
-          "Microsoft.ApplicationInsights": "2.12.2",
-          "Microsoft.AspNetCore.Mvc.WebApiCompatShim": "2.1.0",
-          "Microsoft.AspNetCore.Routing": "2.2.0",
-          "Microsoft.AspNetCore.Server.Kestrel": "2.2.0",
-          "Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets": "2.2.1",
-          "Microsoft.Azure.DurableTask.AzureStorage": "1.9.0",
-          "Microsoft.Azure.WebJobs": "3.0.14",
-          "Microsoft.Azure.WebJobs.Extensions.DurableTask.Analyzers": "0.4.0",
-          "Microsoft.Extensions.Http": "2.2.0",
-          "System.Text.Encodings.Web": "4.7.2"
-        }
-      },
-      "Microsoft.Azure.WebJobs.Extensions.Http": {
-        "type": "Direct",
-        "requested": "[3.0.12, )",
-        "resolved": "3.0.12",
-        "contentHash": "MjkRW5Twk3Qgqaa/gjNrrdzN/AFw/6+eh7hMszO3nDoczgSQWWypqYOLedqmfPy8v0/QqK5f4vrcs8SQEj+TZg==",
-        "dependencies": {
-          "Microsoft.AspNet.WebApi.Client": "5.2.4",
-          "Microsoft.AspNetCore.Http": "2.1.0",
-          "Microsoft.AspNetCore.Mvc.Formatters.Json": "2.1.0",
-          "Microsoft.AspNetCore.Mvc.WebApiCompatShim": "2.1.0",
-          "Microsoft.AspNetCore.Routing": "2.1.0",
-          "Microsoft.Azure.WebJobs": "3.0.25"
-        }
-      },
-      "Microsoft.Azure.WebJobs.Extensions.SendGrid": {
-        "type": "Direct",
-        "requested": "[3.0.2, )",
-        "resolved": "3.0.2",
-        "contentHash": "wf4MSfpncEDydigFvuobdALVeiRG7EiwNzdp4auP9pAIJj1AlT/01vp68hHUABtXpaxfHVtb1iuy9tZNTepkgw==",
-        "dependencies": {
-          "Microsoft.Azure.WebJobs": "3.0.17",
-          "SendGrid": "9.10.0"
-        }
-      },
-      "Microsoft.Azure.WebJobs.Extensions.Storage": {
-        "type": "Direct",
-        "requested": "[4.0.4, )",
-        "resolved": "4.0.4",
-        "contentHash": "sNS63xR2Fx7P2ydvfDnrqEnGH1yWjvwQFDqx8iIk91/E2YXi7wCZjcD8SEu6bQS9n2p9yUxZTQg8CMtIqpfnSw==",
-        "dependencies": {
-          "Microsoft.Azure.Cosmos.Table": "1.0.7",
-          "Microsoft.Azure.Storage.Blob": "11.1.7",
-          "Microsoft.Azure.Storage.Queue": "11.1.7",
-          "Microsoft.Azure.WebJobs": "3.0.22"
-        }
-      },
-      "Microsoft.Extensions.Configuration.AzureAppConfiguration": {
-        "type": "Direct",
-        "requested": "[4.4.0, )",
-        "resolved": "4.4.0",
-        "contentHash": "XHuSKhWvkOPZwhrBLyOr6fLUC5tHaEjB1ELTszNYCeLuvHkYySt2ixE7JhJE7yaKsBnzf2Jm1oZs7iCTZV1Rsw==",
-        "dependencies": {
-          "Azure.Data.AppConfiguration": "1.0.0",
-          "Azure.Security.KeyVault.Secrets": "4.0.1",
-          "Microsoft.Extensions.Configuration": "2.1.1",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.1.1",
-          "System.Text.Json": "4.6.0"
-        }
-      },
-      "Microsoft.Extensions.Localization.Abstractions": {
-        "type": "Direct",
-        "requested": "[3.1.16, )",
-        "resolved": "3.1.16",
-        "contentHash": "iKQ/9JIDB1rZY6VHzicHhcrzJlF5vcewDGC1ZhbOXWT3msVHdb+LVXdf8yhNgLd67MlImrQR1rekD59e0FWAGA=="
-      },
-      "System.Collections.Immutable": {
-        "type": "Direct",
-        "requested": "[5.0.0, )",
-        "resolved": "5.0.0",
-        "contentHash": "FXkLXiK0sVVewcso0imKQoOxjoPAj42R8HtjjbSjVPAzwDfzoyoznWxgA3c38LDbN9SJux1xXoXYAhz98j7r2g==",
-        "dependencies": {
-          "System.Memory": "4.5.4"
-        }
-      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.16.0",
@@ -182,6 +62,11 @@
           "System.ComponentModel": "4.3.0"
         }
       },
+      "HtmlAgilityPack": {
+        "type": "Transitive",
+        "resolved": "1.11.34",
+        "contentHash": "LJyKMPuQVRi68RnPRmptSSJa1r3adpIfII/tfyMkismDhgmdS0i2ruOGF3Y7Ocxt4IfnhG76BNIa4dzMfR+KYw=="
+      },
       "ImpromptuInterface": {
         "type": "Transitive",
         "resolved": "7.0.1",
@@ -199,6 +84,15 @@
         "dependencies": {
           "System.Diagnostics.DiagnosticSource": "4.6.0",
           "System.RunTime.InteropServices": "4.3.0"
+        }
+      },
+      "Microsoft.AspNet.WebApi.Client": {
+        "type": "Transitive",
+        "resolved": "5.2.7",
+        "contentHash": "/76fAHknzvFqbznS6Uj2sOyE9rJB3PltY+f53TH8dX9RiGhk02EhuFCWljSj5nnqKaTsmma8DFR50OGyQ4yJ1g==",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.1",
+          "Newtonsoft.Json.Bson": "1.0.1"
         }
       },
       "Microsoft.AspNetCore.Authentication.Abstractions": {
@@ -538,6 +432,15 @@
           "System.Reactive.Core": "4.4.1"
         }
       },
+      "Microsoft.Azure.Functions.Extensions": {
+        "type": "Transitive",
+        "resolved": "1.1.0",
+        "contentHash": "zYKtQQoS1fdzufxFApuMFiFtoi9QAGH6McXxntpylwLKgKjmCMWdgUd1dcekzTKNR9DPSDPRLiulvukqXnpWrQ==",
+        "dependencies": {
+          "Microsoft.Azure.WebJobs": "3.0.18",
+          "Microsoft.Extensions.DependencyInjection": "2.1.0"
+        }
+      },
       "Microsoft.Azure.KeyVault.Core": {
         "type": "Transitive",
         "resolved": "2.0.4",
@@ -602,10 +505,71 @@
           "System.Diagnostics.TraceSource": "4.3.0"
         }
       },
+      "Microsoft.Azure.WebJobs.Extensions": {
+        "type": "Transitive",
+        "resolved": "4.0.1",
+        "contentHash": "e6cgsrI7Wrf80UJkyj+aOniG30EzRhOfCfPl+DuJuL+lrkuqCWw0XWVMLi0nenUDr20alrQrErDhJftuYbAuQg==",
+        "dependencies": {
+          "Microsoft.Azure.WebJobs": "3.0.18",
+          "Microsoft.Azure.WebJobs.Host.Storage": "4.0.1",
+          "ncrontab.signed": "3.3.0"
+        }
+      },
+      "Microsoft.Azure.WebJobs.Extensions.DurableTask": {
+        "type": "Transitive",
+        "resolved": "2.5.1",
+        "contentHash": "JK98tBEbxukcfoiBEq9zuy4gtCPuT00dQlLbd/cGg3EDQVPAMW8HedKH8gRSi9zOxOAYiH3hLo0lzUCXQgbnng==",
+        "dependencies": {
+          "Azure.Identity": "1.1.1",
+          "Microsoft.ApplicationInsights": "2.12.2",
+          "Microsoft.AspNetCore.Mvc.WebApiCompatShim": "2.1.0",
+          "Microsoft.AspNetCore.Routing": "2.2.0",
+          "Microsoft.AspNetCore.Server.Kestrel": "2.2.0",
+          "Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets": "2.2.1",
+          "Microsoft.Azure.DurableTask.AzureStorage": "1.9.0",
+          "Microsoft.Azure.WebJobs": "3.0.14",
+          "Microsoft.Azure.WebJobs.Extensions.DurableTask.Analyzers": "0.4.0",
+          "Microsoft.Extensions.Http": "2.2.0",
+          "System.Text.Encodings.Web": "4.7.2"
+        }
+      },
       "Microsoft.Azure.WebJobs.Extensions.DurableTask.Analyzers": {
         "type": "Transitive",
         "resolved": "0.4.0",
         "contentHash": "ZKcvDIfgg+EFLwg1MPxXT3iJzcbJVG6pUshHtKiGAm1Nn29mKXU/CUMkfoiFqk5reNifKPHF4qsUwVZVIg52Zw=="
+      },
+      "Microsoft.Azure.WebJobs.Extensions.Http": {
+        "type": "Transitive",
+        "resolved": "3.0.12",
+        "contentHash": "MjkRW5Twk3Qgqaa/gjNrrdzN/AFw/6+eh7hMszO3nDoczgSQWWypqYOLedqmfPy8v0/QqK5f4vrcs8SQEj+TZg==",
+        "dependencies": {
+          "Microsoft.AspNet.WebApi.Client": "5.2.4",
+          "Microsoft.AspNetCore.Http": "2.1.0",
+          "Microsoft.AspNetCore.Mvc.Formatters.Json": "2.1.0",
+          "Microsoft.AspNetCore.Mvc.WebApiCompatShim": "2.1.0",
+          "Microsoft.AspNetCore.Routing": "2.1.0",
+          "Microsoft.Azure.WebJobs": "3.0.25"
+        }
+      },
+      "Microsoft.Azure.WebJobs.Extensions.SendGrid": {
+        "type": "Transitive",
+        "resolved": "3.0.2",
+        "contentHash": "wf4MSfpncEDydigFvuobdALVeiRG7EiwNzdp4auP9pAIJj1AlT/01vp68hHUABtXpaxfHVtb1iuy9tZNTepkgw==",
+        "dependencies": {
+          "Microsoft.Azure.WebJobs": "3.0.17",
+          "SendGrid": "9.10.0"
+        }
+      },
+      "Microsoft.Azure.WebJobs.Extensions.Storage": {
+        "type": "Transitive",
+        "resolved": "4.0.4",
+        "contentHash": "sNS63xR2Fx7P2ydvfDnrqEnGH1yWjvwQFDqx8iIk91/E2YXi7wCZjcD8SEu6bQS9n2p9yUxZTQg8CMtIqpfnSw==",
+        "dependencies": {
+          "Microsoft.Azure.Cosmos.Table": "1.0.7",
+          "Microsoft.Azure.Storage.Blob": "11.1.7",
+          "Microsoft.Azure.Storage.Queue": "11.1.7",
+          "Microsoft.Azure.WebJobs": "3.0.22"
+        }
       },
       "Microsoft.Azure.WebJobs.Host.Storage": {
         "type": "Transitive",
@@ -658,6 +622,18 @@
         "contentHash": "TcYhNw4N11FeT2wNmN5gAUjthj6MtObBaFOZ3zH+DkMPc2L/Dn/6fbCGzdmOj7R1QoP9TAJrjfkW3wZb/WlGEw==",
         "dependencies": {
           "Microsoft.Extensions.Primitives": "3.1.16"
+        }
+      },
+      "Microsoft.Extensions.Configuration.AzureAppConfiguration": {
+        "type": "Transitive",
+        "resolved": "4.4.0",
+        "contentHash": "XHuSKhWvkOPZwhrBLyOr6fLUC5tHaEjB1ELTszNYCeLuvHkYySt2ixE7JhJE7yaKsBnzf2Jm1oZs7iCTZV1Rsw==",
+        "dependencies": {
+          "Azure.Data.AppConfiguration": "1.0.0",
+          "Azure.Security.KeyVault.Secrets": "4.0.1",
+          "Microsoft.Extensions.Configuration": "2.1.1",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.1.1",
+          "System.Text.Json": "4.6.0"
         }
       },
       "Microsoft.Extensions.Configuration.Binder": {
@@ -774,6 +750,11 @@
           "Microsoft.Extensions.Logging": "2.2.0",
           "Microsoft.Extensions.Options": "2.2.0"
         }
+      },
+      "Microsoft.Extensions.Localization.Abstractions": {
+        "type": "Transitive",
+        "resolved": "3.1.16",
+        "contentHash": "iKQ/9JIDB1rZY6VHzicHhcrzJlF5vcewDGC1ZhbOXWT3msVHdb+LVXdf8yhNgLd67MlImrQR1rekD59e0FWAGA=="
       },
       "Microsoft.Extensions.Logging": {
         "type": "Transitive",
@@ -940,8 +921,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "11.0.2",
-        "contentHash": "IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ=="
+        "resolved": "13.0.1",
+        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
       },
       "Newtonsoft.Json.Bson": {
         "type": "Transitive",
@@ -1106,6 +1087,14 @@
           "System.Runtime.Extensions": "4.3.0",
           "System.Threading": "4.3.0",
           "System.Threading.Tasks": "4.3.0"
+        }
+      },
+      "System.Collections.Immutable": {
+        "type": "Transitive",
+        "resolved": "5.0.0",
+        "contentHash": "FXkLXiK0sVVewcso0imKQoOxjoPAj42R8HtjjbSjVPAzwDfzoyoznWxgA3c38LDbN9SJux1xXoXYAhz98j7r2g==",
+        "dependencies": {
+          "System.Memory": "4.5.4"
         }
       },
       "System.Collections.NonGeneric": {
@@ -2335,6 +2324,30 @@
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.4.0",
           "Microsoft.Extensions.Options": "3.1.16",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "3.1.16"
+        }
+      },
+      "cataloguescanner.core": {
+        "type": "Project",
+        "dependencies": {
+          "CatalogueScanner.Configuration": "1.0.0",
+          "HtmlAgilityPack": "1.11.34",
+          "Microsoft.AspNet.WebApi.Client": "5.2.7",
+          "Microsoft.Azure.Functions.Extensions": "1.1.0",
+          "Microsoft.Azure.WebJobs.Extensions": "4.0.1",
+          "Microsoft.Azure.WebJobs.Extensions.DurableTask": "2.5.1",
+          "Microsoft.Azure.WebJobs.Extensions.Http": "3.0.12",
+          "Microsoft.Azure.WebJobs.Extensions.SendGrid": "3.0.2",
+          "Microsoft.Azure.WebJobs.Extensions.Storage": "4.0.4",
+          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.4.0",
+          "Microsoft.Extensions.Localization.Abstractions": "3.1.16",
+          "System.Collections.Immutable": "5.0.0"
+        }
+      },
+      "cataloguescanner.webscraping.common": {
+        "type": "Project",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1",
+          "System.Collections.Immutable": "5.0.0"
         }
       }
     }

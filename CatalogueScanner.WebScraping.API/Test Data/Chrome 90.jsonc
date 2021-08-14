@@ -1,0 +1,28 @@
+// chrome 90
+{
+    "t": "5de19818-0836-61da-28a1-6820118af3dc",
+    "d": {
+        "a7ac2a2f39aefd275d2b9254d00f91fb2deb863fc9d57ce36e81a0d59729c1457": "7022e452decc508059c6700b02543f31",
+        "ad4585202d00b10ef586bbd3cb63c573f8e5385e29db9a650f110b0360db60fda": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36",
+        "a02f294f4dce21ac54e1ae220f78597a39a42a6566c39019a2f4805861f7804e1": false,
+        "ad715082931ae86d793d9ed5ebc740da4c1885164369c0c6bee99a73e0421173a": false,
+        "ac1667bef58f84bf90ec5b1e0d341c0d88ddbb21f4019d58b3b80c2c8ffd92848": false,
+        "aeb9914eb2788e3f4f98ad7efc38c72f4ffbcca2d28776dd04d36d7a638d8fc20": true,
+        "a3a49d78dc7671f4ff1e147922eb9df08cb0baba935db61fec5ea0429b9e951d8": [
+            1920,
+            1040
+        ],
+        "a5e35c05b7ca2158a3f2e944c629962c9198adfa3094ae90d10c6b0e6bc33083b": [
+            "Chrome PDF Plugin::Portable Document Format::application/x-google-chrome-pdf~pdf",
+            "Chrome PDF Viewer::::application/pdf~pdf",
+            "Native Client::::application/x-nacl~,application/x-pnacl~"
+        ],
+        "ae623a134198b19e8fb265f701e097854896178d06bbd6abb6a5cd4d7d2fa7be6": [],
+        "a2dfd8646b75305d1fed1b3f48c7cfd84e123debd9d3f8e4ceeb36fb052419bba": "TypeError: [] is not a function\n    at _0x4c2c60 (https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint/script/kpf.js?url=/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint&token=5de19818-0836-61da-28a1-6820118af3dc:5:13855)\n    at _0x50cbc7 (https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint/script/kpf.js?url=/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint&token=5de19818-0836-61da-28a1-6820118af3dc:5:18203)\n    at https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint/script/kpf.js?url=/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/fingerprint&token=5de19818-0836-61da-28a1-6820118af3dc:5:19955\n    at https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/f.js:1:1802\n    at https://shop.coles.com.au/149e9513-01fa-4fb0-aad4-566afd725d1b/2d206a39-8ed7-437e-a3be-862e0f06eea3/f.js:1:14149",
+        "a15acbd3db2da78214fc291af670f36142657a028ddfefb3ae352df33e19e86b3": false,
+        "a26a6de934224f92174cdb9893e4f7e44bb422998988ac02736d427d2fd084f99": false,
+        "a515f17ccd07865ea5a40847bead61f264d74709547df0a9c210f4e7e38b8976d": false,
+        "a4878b408bde77b59f9c3a90e1bf90ec1e52ab3b2d1a5645e56fb3a5282f4ba19": false,
+        "a7dc5c8215db893507218538065ca6dca20e719d56fc11dc567208b21001e08cf": false
+    }
+}
