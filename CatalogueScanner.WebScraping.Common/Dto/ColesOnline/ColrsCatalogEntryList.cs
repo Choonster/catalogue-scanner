@@ -268,7 +268,7 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
 
     public enum PromoType { MultibuyMultiSku, MultibuySingleSku };
 
-    public enum TicketType { M, MZero, MOne, SZero, SOne, SFiftyZero }
+    public enum TicketType { M, MZero, MOne, SZero, SOne, STwentyZero, SFiftyZero }
 
     public class TicketTypeConverter : JsonConverter<TicketType>
     {
@@ -280,6 +280,7 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
             [TicketType.SZero] = "S_0",
             [TicketType.SOne] = "S_1",
             [TicketType.SFiftyZero] = "S50_0",
+            [TicketType.STwentyZero] = "S20_0",
         }.ToImmutableDictionary();
 
         private static readonly IDictionary<string, TicketType> stringToTicketType = ticketTypeToString

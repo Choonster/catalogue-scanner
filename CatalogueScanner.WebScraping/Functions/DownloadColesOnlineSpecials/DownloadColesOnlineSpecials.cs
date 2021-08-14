@@ -1,35 +1,29 @@
 using CatalogueScanner.Core.Dto.FunctionResult;
+using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WebScraping.Service;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.WebScraping.Functions
 {
-    public class CheckColesOnlineSpecials
+    public class DownloadColesOnlineSpecials
     {
         private readonly ColesOnlineService colesOnlineService;
 
-        public CheckColesOnlineSpecials(ColesOnlineService colesOnlineService)
+        public DownloadColesOnlineSpecials(ColesOnlineService colesOnlineService)
         {
             this.colesOnlineService = colesOnlineService;
         }
 
-        [FunctionName("CheckColesOnlineSpecials")]
-        [return: Queue("coles-online-specials")]
-        public async Task<Catalogue> Run([TimerTrigger("0 */10 * * * *")] TimerInfo timer, ILogger log)
+        [FunctionName(WebScrapingFunctionNames.DownloadColesOnlineSpecials)]
+        public async Task<Catalogue> Run([ActivityTrigger] DateRange specialsDateRange)
         {
             var specialsResult = await colesOnlineService.GetColesOnlineSpecials().ConfigureAwait(false);
 
             var productUrlTemplate = specialsResult.ProductUrlTemplate;
-
-            var specialsResetTime = colesOnlineService.SpecialsResetTime;
-
-            var now = DateTimeOffset.UtcNow;
-            var specialsStartDate = specialsResetTime.GetPreviousDate(now);
-            var specialsEndDate = specialsResetTime.GetNextDate(now);
 
             var items = specialsResult.Data.Products
                 .Select(product => new CatalogueItem
@@ -41,8 +35,7 @@ namespace CatalogueScanner.WebScraping.Functions
                 })
                 .ToList();
 
-            Catalogue catalogue = new Catalogue("Coles Online", specialsStartDate, specialsEndDate, items);
-            return catalogue;
+            return new Catalogue("Coles Online", specialsDateRange.StartDate, specialsDateRange.EndDate, items);
         }
     }
 }
