@@ -149,8 +149,8 @@
       },
       "HtmlAgilityPack": {
         "type": "Transitive",
-        "resolved": "1.11.34",
-        "contentHash": "LJyKMPuQVRi68RnPRmptSSJa1r3adpIfII/tfyMkismDhgmdS0i2ruOGF3Y7Ocxt4IfnhG76BNIa4dzMfR+KYw=="
+        "resolved": "1.11.36",
+        "contentHash": "dCuPhd6Mcdz0oyaSidPqZZiaKcVaBnIqCQlvgJx7Qr5PJAjSatSIVPmuOwpMjbtR8mqoXyUbWVKxuairGGauJg=="
       },
       "ImpromptuInterface": {
         "type": "Transitive",
@@ -874,8 +874,8 @@
       },
       "Microsoft.Extensions.Configuration.AzureAppConfiguration": {
         "type": "Transitive",
-        "resolved": "4.4.0",
-        "contentHash": "XHuSKhWvkOPZwhrBLyOr6fLUC5tHaEjB1ELTszNYCeLuvHkYySt2ixE7JhJE7yaKsBnzf2Jm1oZs7iCTZV1Rsw==",
+        "resolved": "4.5.0",
+        "contentHash": "2wmIqxf24jHYqUaBZLgiG5bswTmCfmcQhbTGNMi8CcG5oJXk18RZxiZn/zTZg2oZstdXf7PrMAa31zUA7Cj/Zg==",
         "dependencies": {
           "Azure.Data.AppConfiguration": "1.0.0",
           "Azure.Security.KeyVault.Secrets": "4.0.1",
@@ -2593,7 +2593,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Data.AppConfiguration": "1.1.0",
-          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.4.0",
+          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.5.0",
           "Microsoft.Extensions.Options": "3.1.16",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "3.1.16"
         }
@@ -2602,7 +2602,7 @@
         "type": "Project",
         "dependencies": {
           "CatalogueScanner.Configuration": "1.0.0",
-          "HtmlAgilityPack": "1.11.34",
+          "HtmlAgilityPack": "1.11.36",
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
           "Microsoft.Azure.Functions.Extensions": "1.1.0",
           "Microsoft.Azure.WebJobs.Extensions": "4.0.1",
@@ -2610,8 +2610,9 @@
           "Microsoft.Azure.WebJobs.Extensions.Http": "3.0.12",
           "Microsoft.Azure.WebJobs.Extensions.SendGrid": "3.0.2",
           "Microsoft.Azure.WebJobs.Extensions.Storage": "4.0.4",
-          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.4.0",
-          "Microsoft.Extensions.Localization.Abstractions": "3.1.16"
+          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.5.0",
+          "Microsoft.Extensions.Localization.Abstractions": "3.1.16",
+          "System.Collections.Immutable": "5.0.0"
         }
       },
       "cataloguescanner.localisation.orchardcore": {
