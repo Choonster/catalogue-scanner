@@ -18,8 +18,14 @@ namespace CatalogueScanner.WebScraping.Service
         private readonly WebScrapingApiOptions webScrapingApiOptions;
         private readonly ITokenAcquisition tokenAcquisition;
         private readonly string tokenScope;
+        private readonly IOptionsMonitor<JwtBearerOptions> jwtBearerOptions;
 
-        public ColesOnlineService(HttpClient httpClient, IOptionsSnapshot<WebScrapingApiOptions> webScrapingApiOptions, ITokenAcquisition tokenAcquisition)
+        public ColesOnlineService(
+            HttpClient httpClient,
+            IOptionsSnapshot<WebScrapingApiOptions> webScrapingApiOptions,
+            ITokenAcquisition tokenAcquisition,
+            IOptionsMonitor<JwtBearerOptions> jwtBearerOptions
+        )
         {
             #region null checks
             if (webScrapingApiOptions is null)
@@ -31,6 +37,7 @@ namespace CatalogueScanner.WebScraping.Service
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.tokenAcquisition = tokenAcquisition ?? throw new ArgumentNullException(nameof(tokenAcquisition));
             this.webScrapingApiOptions = webScrapingApiOptions.Value;
+            this.jwtBearerOptions = jwtBearerOptions ?? throw new ArgumentNullException(nameof(jwtBearerOptions));
 
             tokenScope = new Uri(this.webScrapingApiOptions.BaseAddress!, ".default").AbsoluteUri;
         }
@@ -51,6 +58,8 @@ namespace CatalogueScanner.WebScraping.Service
 
         private async Task<T> GetAsync<T>(string path)
         {
+            jwtBearerOptions.Get(Constants.Bearer); // Trigger the merge?
+
             var token = await tokenAcquisition.GetAccessTokenForAppAsync(tokenScope, authenticationScheme: Constants.Bearer).ConfigureAwait(false);
 
             using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(path, UriKind.Relative));
