@@ -15,7 +15,6 @@ namespace CatalogueScanner.WebScraping.Service
     public class ColesOnlineService
     {
         private readonly HttpClient httpClient;
-        private readonly WebScrapingApiOptions webScrapingApiOptions;
         private readonly ITokenAcquisition tokenAcquisition;
         private readonly string tokenScope;
         private readonly IOptionsMonitor<JwtBearerOptions> jwtBearerOptions;
@@ -36,10 +35,14 @@ namespace CatalogueScanner.WebScraping.Service
 
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.tokenAcquisition = tokenAcquisition ?? throw new ArgumentNullException(nameof(tokenAcquisition));
-            this.webScrapingApiOptions = webScrapingApiOptions.Value;
             this.jwtBearerOptions = jwtBearerOptions ?? throw new ArgumentNullException(nameof(jwtBearerOptions));
 
-            tokenScope = new Uri(this.webScrapingApiOptions.BaseAddress!, ".default").AbsoluteUri;
+            if (string.IsNullOrEmpty(webScrapingApiOptions.Value.Scope))
+            {
+                throw new InvalidOperationException($"{WebScrapingApiOptions.WebScrapingApi}:{nameof(webScrapingApiOptions.Value.Scope)} app setting must be configured");
+            }
+
+            tokenScope = webScrapingApiOptions.Value.Scope;
         }
 
         /// <summary>
