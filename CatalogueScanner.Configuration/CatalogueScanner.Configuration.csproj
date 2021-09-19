@@ -9,6 +9,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.13" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.13" />
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="3.1.13" />
   </ItemGroup>
 
 </Project>

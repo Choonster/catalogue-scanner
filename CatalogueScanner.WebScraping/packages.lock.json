@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v3.1": {
       "Microsoft.Identity.Web": {
         "type": "Direct",
-        "requested": "[1.14.1-debug3, )",
-        "resolved": "1.14.1-debug3",
-        "contentHash": "XOFG2Cl9/todUj66j2qf3JXJMqzxRAHnyV4qr7XWo2xZxR4vuDinDW0Fs3Yw8ygNMK83N3YA/71wB2ogyznuzg==",
+        "requested": "[1.14.1, )",
+        "resolved": "1.14.1",
+        "contentHash": "EgIuHVec9dyLAkZtHl5gV2qLsoIrZbwa1TIOjzi3TY8qLRhPCtm0LdcdFFK74iJlnWOVFRre/fXVCnpHSWPhCQ==",
         "dependencies": {
           "Azure.Identity": "1.3.0",
           "Azure.Security.KeyVault.Certificates": "4.1.0",
@@ -842,6 +842,15 @@
         "dependencies": {
           "Microsoft.Extensions.Configuration.Abstractions": "3.1.13",
           "Microsoft.Extensions.Configuration.Binder": "3.1.13",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.13",
+          "Microsoft.Extensions.Options": "3.1.13"
+        }
+      },
+      "Microsoft.Extensions.Options.DataAnnotations": {
+        "type": "Transitive",
+        "resolved": "3.1.13",
+        "contentHash": "lEHnipgeZ1ujnBwP7IVD5mfc4QcS5K0nUeOTGT5FkOoEcoD15v2btHfcGo85ZobEUX8qBGSQ14BDU2ZyMUAk4A==",
+        "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.13",
           "Microsoft.Extensions.Options": "3.1.13"
         }
@@ -2116,7 +2125,8 @@
           "Azure.Data.AppConfiguration": "1.1.0",
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.5.0",
           "Microsoft.Extensions.Options": "3.1.13",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "3.1.13"
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "3.1.13",
+          "Microsoft.Extensions.Options.DataAnnotations": "3.1.13"
         }
       },
       "cataloguescanner.core": {
