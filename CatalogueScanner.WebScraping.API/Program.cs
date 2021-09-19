@@ -12,6 +12,8 @@ namespace CatalogueScanner.WebScraping.API
     {
         public static void Main(string[] args)
         {
+            Microsoft.Playwright.Program.Main(new[] { "install chromium" });
+
             CreateHostBuilder(args).Build().Run();
         }
 
