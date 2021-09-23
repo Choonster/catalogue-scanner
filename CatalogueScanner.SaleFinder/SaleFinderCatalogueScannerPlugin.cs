@@ -26,6 +26,7 @@ namespace CatalogueScanner.SaleFinder
                 .AddHttpClient<SaleFinderService>(client =>
                 {
                     client.BaseAddress = new Uri("https://embed.salefinder.com.au/");
+                    client.DefaultRequestHeaders.Add("sec-fetch-site", "cross-site");
                 })
                 .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
                 {
