@@ -2,6 +2,18 @@
   "version": 1,
   "dependencies": {
     "net6.0": {
+      "Microsoft.Playwright": {
+        "type": "Direct",
+        "requested": "[1.16.1, )",
+        "resolved": "1.16.1",
+        "contentHash": "eRT3NtDlBHSYv3PL8fs0mGEJdZAsApfKhL+x+jmtkjZc766M/CTeNFH6v/yj3jHRB7NmZzvt2O5KU7PuRL+SlQ==",
+        "dependencies": {
+          "Macross.Json.Extensions": "2.0.0",
+          "Microsoft.Bcl.AsyncInterfaces": "5.0.0",
+          "System.ComponentModel.Annotations": "5.0.0",
+          "System.Text.Json": "5.0.2"
+        }
+      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.20.0",
@@ -101,6 +113,14 @@
           "Dynamitey": "2.0.9.136",
           "Microsoft.CSharp": "4.4.1",
           "System.Reflection.Emit": "4.3.0"
+        }
+      },
+      "Macross.Json.Extensions": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "LgC+ZlbequOJsQtP+h1/ldhF9EJVx1zRTTEDjTuziMnymOOTWgzxFlqYQ748lvlCdQYOhNkAjOqHVOsfCWgOhA==",
+        "dependencies": {
+          "System.Text.Json": "4.7.0"
         }
       },
       "Microsoft.ApplicationInsights": {
@@ -586,8 +606,8 @@
       },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "K63Y4hORbBcKLWH5wnKgzyn7TOfYzevIEwIedQHBIkmkEBA9SCqgvom+XTuE+fAFGvINGkhFItaZ2dvMGdT5iw=="
+        "resolved": "5.0.0",
+        "contentHash": "W8DPQjkMScOMTtJbPwmPyj9c3zYSFGawDW3jwlBOOsnY+EzZFLgNQ/UMkK35JmkNOVPdCyPr2Tw7Vv9N+KA3ZQ=="
       },
       "Microsoft.CSharp": {
         "type": "Transitive",
@@ -957,8 +977,8 @@
       },
       "System.ComponentModel.Annotations": {
         "type": "Transitive",
-        "resolved": "4.4.0",
-        "contentHash": "29K3DQ+IGU7LBaMjTo7SI7T7X/tsMtLvz1p56LJ556Iu0Dw3pKZw5g8yCYCWMRxrOF0Hr0FU0FwW0o42y2sb3A=="
+        "resolved": "5.0.0",
+        "contentHash": "dMkqfy2el8A8/I76n2Hi1oBFEbG1SfxD2l5nhwXV3XjlnOmwxJlQbYpJH4W51odnU9sARCSAgv7S3CyAFMkpYg=="
       },
       "System.Diagnostics.Debug": {
         "type": "Transitive",
@@ -1383,8 +1403,8 @@
       },
       "System.Text.Json": {
         "type": "Transitive",
-        "resolved": "4.6.0",
-        "contentHash": "4F8Xe+JIkVoDJ8hDAZ7HqLkjctN/6WItJIzQaifBwClC7wmoLSda/Sv2i6i1kycqDb3hWF4JCVbpAweyOKHEUA=="
+        "resolved": "5.0.2",
+        "contentHash": "I47dVIGiV6SfAyppphxqupertT/5oZkYLDCX6vC3HpOI4ZLjyoKAreUoem2ie6G0RbRuFrlqz/PcTQjfb2DOfQ=="
       },
       "System.Threading": {
         "type": "Transitive",
@@ -1447,12 +1467,6 @@
           "Microsoft.Azure.WebJobs.Extensions.Storage": "5.0.0",
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.5.1",
           "Microsoft.Extensions.Localization.Abstractions": "6.0.0",
-          "System.Collections.Immutable": "6.0.0"
-        }
-      },
-      "cataloguescanner.webscraping.common": {
-        "type": "Project",
-        "dependencies": {
           "Newtonsoft.Json": "13.0.1",
           "System.Collections.Immutable": "6.0.0"
         }

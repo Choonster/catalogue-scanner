@@ -21,11 +21,10 @@ namespace CatalogueScanner.WebScraping.Functions
         [FunctionName(WebScrapingFunctionNames.DownloadColesOnlineSpecials)]
         public async Task<Catalogue> Run([ActivityTrigger] DateRange specialsDateRange)
         {
-            var specialsResult = await colesOnlineService.GetColesOnlineSpecials().ConfigureAwait(false);
+            var productUrlTemplate = colesOnlineService.ProductUrlTemplate;
+            var specials = await colesOnlineService.GetSpecialsAsync().ConfigureAwait(false);
 
-            var productUrlTemplate = specialsResult.ProductUrlTemplate;
-
-            var items = specialsResult.Data.Products
+            var items = specials.Products
                 .Select(product => new CatalogueItem
                 {
                     Id = product.UniqueId,
