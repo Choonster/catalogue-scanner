@@ -40,7 +40,10 @@ namespace CatalogueScanner.WebScraping.API.Service
         public async Task<ColrsCatalogEntryList> GetSpecialsAsync()
         {
             using var playwright = await Playwright.CreateAsync().ConfigureAwait(false);
-            await using var browser = await playwright.Chromium.LaunchAsync().ConfigureAwait(false);
+
+            var browser = await playwright.Chromium.LaunchAsync().ConfigureAwait(false);
+            await using var _ = browser.ConfigureAwait(false);
+
             var page = await browser.NewPageAsync().ConfigureAwait(false);
 
             // Prevent all external requests for advertising, tracking, etc.
