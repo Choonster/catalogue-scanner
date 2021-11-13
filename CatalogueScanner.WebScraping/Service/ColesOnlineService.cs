@@ -32,7 +32,7 @@ namespace CatalogueScanner.WebScraping.Service
 
         private async Task<T> GetAsync<T>(string path)
         {
-            var response = await httpClient.GetAsync(path).ConfigureAwait(false);
+            var response = await httpClient.GetAsync(new Uri(path, UriKind.Relative)).ConfigureAwait(false);
 
             response.EnsureSuccessStatusCode();
 
