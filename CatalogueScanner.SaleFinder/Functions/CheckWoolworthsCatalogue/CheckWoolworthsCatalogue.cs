@@ -18,7 +18,7 @@ namespace CatalogueScanner.SaleFinder.Functions
         private const int WoolworthsStoreId = 126;
         private const string WoolworthsStoreName = "Woolworths";
         private const string WeeklySpecialsCatalogue = "Weekly Specials Catalogue";
-        private static readonly Uri CatalaogueBaseUri = new Uri("https://www.woolworths.com.au/shop/catalogue");
+        private static readonly Uri CatalaogueBaseUri = new("https://www.woolworths.com.au/shop/catalogue");
 
         private readonly SaleFinderService saleFinderService;
         private readonly WoolworthsOptions options;

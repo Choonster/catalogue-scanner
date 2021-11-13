@@ -10,7 +10,7 @@ namespace CatalogueScanner.SaleFinder.Service
 {
     public static class SaleFinderExtensions
     {
-        private static readonly ConcurrentDictionary<string, MediaTypeFormatterCollection> mediaTypeFormattersByCallbackName = new ConcurrentDictionary<string, MediaTypeFormatterCollection>()
+        private static readonly ConcurrentDictionary<string, MediaTypeFormatterCollection> mediaTypeFormattersByCallbackName = new()
         {
             [string.Empty] = CreateMediaTypeFormatterCollection(string.Empty),
         };
@@ -47,7 +47,7 @@ namespace CatalogueScanner.SaleFinder.Service
 
                 if (!string.IsNullOrEmpty(stringContent))
                 {
-                    throw new JsonSerializationException($"Unsupported media type {content.Headers.ContentType.MediaType}. Original content: {stringContent}", ex);
+                    throw new JsonSerializationException($"Unsupported media type {content.Headers.ContentType?.MediaType}. Original content: {stringContent}", ex);
                 }
 
                 throw;
@@ -72,8 +72,8 @@ namespace CatalogueScanner.SaleFinder.Service
         }
 
         private static MediaTypeFormatterCollection CreateMediaTypeFormatterCollection(string callbackName) =>
-            new MediaTypeFormatterCollection(
-                new MediaTypeFormatter[] { new SaleFinderJsonMediaTypeFormatter(callbackName) }
+            new(
+                new[] { new SaleFinderJsonMediaTypeFormatter(callbackName) }
             );
     }
 }

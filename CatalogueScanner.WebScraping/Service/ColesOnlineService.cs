@@ -19,7 +19,7 @@ namespace CatalogueScanner.WebScraping.Service
         /// <summary>
         /// The time of week when Coles Online changes its specials.
         /// </summary>
-        public static TimeOfWeek SpecialsResetTime => new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Wednesday, "AUS Eastern Standard Time");
+        public static TimeOfWeek SpecialsResetTime => new(TimeSpan.Zero, DayOfWeek.Wednesday, "AUS Eastern Standard Time");
 
         /// <summary>
         /// Gets the current specials from Coles Online.

@@ -14,7 +14,7 @@ namespace CatalogueScanner.Core
 {
     public class CoreCatalogueScannerPlugin : ICatalogueScannerPlugin
     {
-        private readonly CatalogueItemMatchRuleSerialiser catalogueItemMatchRuleSerialiser = new CatalogueItemMatchRuleSerialiser();
+        private readonly CatalogueItemMatchRuleSerialiser catalogueItemMatchRuleSerialiser = new();
 
         public void Configure(ICatalogueScannerHostBuilder builder)
         {
