@@ -37,11 +37,5 @@ namespace CatalogueScanner.Localisation.OrchardCore
         {
             return stringLocalizer.Plural(count, pluralForms, arguments);
         }
-
-        [Obsolete("This method is obsolete. Use `CurrentCulture` and `CurrentUICulture` instead.")]
-        public IStringLocalizer WithCulture(CultureInfo culture)
-        {
-            return stringLocalizer.WithCulture(culture);
-        }
     }
 }
