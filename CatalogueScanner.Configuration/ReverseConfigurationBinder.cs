@@ -93,7 +93,7 @@ namespace CatalogueScanner.Configuration
                     return true;
                 }
 
-                return TryConvertValue(Nullable.GetUnderlyingType(type), value, path, out result, out error);
+                return TryConvertValue(Nullable.GetUnderlyingType(type)!, value, path, out result, out error);
             }
 
             var converter = TypeDescriptor.GetConverter(type);
@@ -122,7 +122,7 @@ namespace CatalogueScanner.Configuration
                 return;
             }
 
-            var elementType = source.GetType().GetElementType();
+            var elementType = source.GetType().GetElementType()!;
 
             for (int i = 0; i < source.Length; i++)
             {
@@ -197,12 +197,12 @@ namespace CatalogueScanner.Configuration
 
             foreach (var pair in (IEnumerable)dictionary)
             {
-                var key = keyGetter.GetValue(pair).ToString();
+                var key = keyGetter!.GetValue(pair)!.ToString();
                 var child = config.GetSection(key);
 
                 FillInstance(
                    type: valueType,
-                   instance: valueGetter.GetValue(pair),
+                   instance: valueGetter!.GetValue(pair),
                    config: child,
                    settings: settings
                 );
@@ -237,7 +237,7 @@ namespace CatalogueScanner.Configuration
                 return;
             }
 
-            FillInstance(property.PropertyType, propertyValue, config.GetSection(property.Name), settings);
+            FillPropertyValue(property, propertyValue, config.GetSection(property.Name), settings);
         }
 
         private static Type? FindOpenGenericInterface(Type expected, Type actual)
@@ -267,7 +267,7 @@ namespace CatalogueScanner.Configuration
             do
             {
                 allProperties.AddRange(type.GetProperties(DeclaredOnlyLookup));
-                type = type.BaseType;
+                type = type.BaseType!;
             }
             while (type != typeof(object));
 
@@ -277,7 +277,7 @@ namespace CatalogueScanner.Configuration
         private static bool IsSupportedSimpleType(Type type)
         {
             return IsNonPointerPrimitive(type) ||
-                (IsNullable(type) && IsNonPointerPrimitive(Nullable.GetUnderlyingType(type))) ||
+                (IsNullable(type) && IsNonPointerPrimitive(Nullable.GetUnderlyingType(type)!)) ||
                 type == typeof(string) ||
                 type.IsEnum;
         }
@@ -290,6 +290,51 @@ namespace CatalogueScanner.Configuration
         private static bool IsNullable(Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
+        private static void FillPropertyValue(PropertyInfo property, object instance, IConfiguration config, Dictionary<string, string?> settings)
+        {
+            var propertyName = GetPropertyName(property);
+
+            FillInstance(
+                property.PropertyType,
+                property.GetValue(instance),
+                config.GetSection(propertyName),
+                settings
+            );
+        }
+
+        private static string GetPropertyName(MemberInfo property)
+        {
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
+
+            // Check for a custom property name used for configuration key binding
+            foreach (var attributeData in property.GetCustomAttributesData())
+            {
+                if (attributeData.AttributeType != typeof(ConfigurationKeyNameAttribute))
+                {
+                    continue;
+                }
+
+                // Ensure ConfigurationKeyName constructor signature matches expectations
+                if (attributeData.ConstructorArguments.Count != 1)
+                {
+                    break;
+                }
+
+                // Assumes ConfigurationKeyName constructor first arg is the string key name
+                var name = attributeData
+                    .ConstructorArguments[0]
+                    .Value?
+                    .ToString();
+
+                return !string.IsNullOrWhiteSpace(name) ? name : property.Name;
+            }
+
+            return property.Name;
         }
     }
 }
