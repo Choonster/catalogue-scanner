@@ -1,40 +1,56 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-	  <TargetFramework>net6.0</TargetFramework>
-	  <AzureFunctionsVersion>v4</AzureFunctionsVersion>
-    <FunctionsInDependencies>true</FunctionsInDependencies>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
+		<FunctionsInDependencies>true</FunctionsInDependencies>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />
-    <PackageReference Include="Microsoft.Playwright" Version="1.16.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />
+		<PackageReference Include="Microsoft.Playwright" Version="1.16.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj" />
-    <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
-    <ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
-    <ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
-    <ProjectReference Include="..\CatalogueScanner.WebScraping\CatalogueScanner.WebScraping.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj" />
+		<ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
+		<ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
+		<ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
+		<ProjectReference Include="..\CatalogueScanner.WebScraping\CatalogueScanner.WebScraping.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="host.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </None>
-  </ItemGroup>
-	
-  <!-- https://github.com/microsoft/playwright-dotnet/issues/1076#issuecomment-938463418 -->
-  <Target Name="PlaywrightCopyAfterBuild" AfterTargets="Build">
-  	<ItemGroup>
-  		<_BuildCopyItems Include="$(OutDir).playwright\**" />
-  	</ItemGroup>
-  	<Message Text="[Fix] Copying files to the nested bin folder of the Azure Function... $(OutDir)bin" Importance="high"/>
-  	<Copy SourceFiles="@(_BuildCopyItems)" DestinationFiles="@(_BuildCopyItems->'$(OutDir)bin\.playwright\%(RecursiveDir)%(Filename)%(Extension)')"/>
-  </Target>
+	<ItemGroup>
+		<None Update="host.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="local.settings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
 
+	<ItemGroup>
+		<_PlaywrightDummyProjectItems Include="Publish\PlaywrightDummyProject.proj" />
+		
+		<None Include="@(_PlaywrightDummyProjectItems)">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<Target Name="MovePlaywrightFilesToOutputBin" AfterTargets="CopyPlaywrightFilesToOutput">
+		<Move SourceFiles="@(_CopyItems->'$(OutDir)\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" DestinationFiles="@(_CopyItems->'$(OutDir)\bin\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<RemoveDir Directories="$(OutDir).playwright" />
+	</Target>
+
+	<Target Name="MovePlaywrightShellToOutputBin" AfterTargets="CopyPlaywrightShellToOutput">
+		<Move SourceFiles="@(_CopyItemsShell->'$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)')" DestinationFiles="@(_CopyItemsShell->'$(OutDir)\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
+	</Target>
+
+	<Target Name="PlaywrightMoveToBinAfterPublish" AfterTargets="PlaywrightCopyAfterPublish">
+		<Move SourceFiles="@(_PublishCopyItems->'$(PublishDir)\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" DestinationFiles="@(_PublishCopyItems->'$(PublishDir)\bin\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<RemoveDir Directories="$(PublishDir).playwright" />
+	</Target>
+
+	<Target Name="PlaywrightCopyDummyProjectAfterPublish" AfterTargets="Publish">
+		<Copy SourceFiles="@(_PlaywrightDummyProjectItems)" DestinationFiles="@(_PlaywrightDummyProjectItems->'$(PublishDir)\%(Filename)%(Extension)')" />
+	</Target>
 </Project>
