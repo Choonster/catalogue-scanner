@@ -24,6 +24,8 @@ namespace CatalogueScanner.DefaultHost
             }
             #endregion
 
+            Microsoft.Playwright.Program.Main(new[] { "install chromium" });
+
             var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
 
             if (string.IsNullOrEmpty(connectionString))
