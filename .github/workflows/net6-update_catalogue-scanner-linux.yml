@@ -50,7 +50,7 @@ jobs:
       - name: 'Deploy to Azure'
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          func azure functionapp publish ${{ env.FUNCTIONS_APP_NAME }}
+          func azure functionapp publish --csharp ${{ env.FUNCTIONS_APP_NAME }}
           popd
         
     # - name: 'Run Azure Functions Action'
