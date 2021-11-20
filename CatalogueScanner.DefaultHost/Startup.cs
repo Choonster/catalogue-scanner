@@ -33,7 +33,7 @@ namespace CatalogueScanner.DefaultHost
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    Arguments = $"-c \"ls \\\"{Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH")}\\\"",
+                    Arguments = $"-c \"ls \\\"./bin/.playwright/node\\\"",
                 },
             };
 
