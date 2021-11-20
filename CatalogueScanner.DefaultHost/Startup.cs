@@ -33,7 +33,7 @@ namespace CatalogueScanner.DefaultHost
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    Arguments = $"-c \"ls .",
+                    Arguments = $"-c \"ls -l .",
                 },
             };
 
