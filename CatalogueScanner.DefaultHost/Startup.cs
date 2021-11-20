@@ -33,7 +33,7 @@ namespace CatalogueScanner.DefaultHost
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    Arguments = $"-c \"ls -l \\\"{typeof(Startup).Assembly.Location}\\\"",
+                    Arguments = $"-c \"ls -l \\\"{System.IO.Path.GetDirectoryName(typeof(Startup).Assembly.Location)}\\\"",
                 },
             };
 
@@ -44,7 +44,7 @@ namespace CatalogueScanner.DefaultHost
             var stderr = process.StandardError.ReadToEnd();
 
             throw new Exception($"\n\nstdout: {stdout}\n\nstderr: {stderr}");
-            
+
 
             Microsoft.Playwright.Program.Main(new[] { "install chromium" });
 
