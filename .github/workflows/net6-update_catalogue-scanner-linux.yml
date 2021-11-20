@@ -42,7 +42,6 @@ jobs:
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
           zip -r ../output.zip .
-          unzip -l ../output.zip
           popd
 
       - name: 'Run Azure Functions Action'
