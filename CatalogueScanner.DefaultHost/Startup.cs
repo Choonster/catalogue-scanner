@@ -24,6 +24,29 @@ namespace CatalogueScanner.DefaultHost
             }
             #endregion
 
+            using var process = new System.Diagnostics.Process
+            {
+                StartInfo = new()
+                {
+                    FileName = "ls",
+                    UseShellExecute = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                },
+            };
+
+            process.StartInfo.ArgumentList.Add("-l");
+            process.StartInfo.ArgumentList.Add(Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH") ?? string.Empty);
+
+            process.Start();
+            process.WaitForExit();
+
+            var stdout = process.StandardOutput.ReadToEnd();
+            var stderr = process.StandardError.ReadToEnd();
+
+            throw new Exception($"stdout: {stdout}\n\nstderr: {stderr}");
+            
+
             Microsoft.Playwright.Program.Main(new[] { "install chromium" });
 
             var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
