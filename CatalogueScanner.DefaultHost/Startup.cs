@@ -33,7 +33,7 @@ namespace CatalogueScanner.DefaultHost
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    Arguments = $"-c \"ls \\\"./bin/.playwright/node\\\"",
+                    Arguments = $"-c \"ls .",
                 },
             };
 
@@ -43,7 +43,7 @@ namespace CatalogueScanner.DefaultHost
             var stdout = process.StandardOutput.ReadToEnd();
             var stderr = process.StandardError.ReadToEnd();
 
-            throw new Exception($"stdout: {stdout}\n\nstderr: {stderr}");
+            throw new Exception($"\n\nstdout: {stdout}\n\nstderr: {stderr}");
             
 
             Microsoft.Playwright.Program.Main(new[] { "install chromium" });
