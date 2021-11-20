@@ -38,9 +38,12 @@ jobs:
           popd
 
       - name: 'Zip Build Output'
+        shell: bash
         run: |
-          zip -r output.zip ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output
-          unzip -l output.zip
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+          zip -r ../output.zip .
+          unzip -l ../output.zip
+          popd
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
@@ -48,5 +51,5 @@ jobs:
         with:
           app-name: 'catalogue-scanner-linux'
           slot-name: 'Production'
-          package: './output.zip'
+          package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output.zip'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C7ED7F0EF82F41DE9BFF97EB8F6B6F29 }}
