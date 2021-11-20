@@ -38,7 +38,9 @@ jobs:
           popd
 
       - name: 'Zip Build Output'
-        run: 'zip -r output.zip ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+        run: |
+          zip -r output.zip ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output
+          unzip -l output.zip
 
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
