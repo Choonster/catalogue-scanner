@@ -33,7 +33,7 @@ namespace CatalogueScanner.DefaultHost
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    Arguments = $"-c \"ls -lR \\\"{System.IO.Path.GetDirectoryName(typeof(Startup).Assembly.Location)}/..\\\"",
+                    Arguments = $"-c \"ls -lRaA \\\"{System.IO.Path.GetDirectoryName(typeof(Startup).Assembly.Location)}/..\\\"",
                 },
             };
 
