@@ -46,6 +46,7 @@
 	</Target>
 
 	<Target Name="PlaywrightMoveToBinAfterPublish" AfterTargets="PlaywrightCopyAfterPublish">
+		<Message Text="@(_PublishCopyItems)" Importance="high" />
 		<Move SourceFiles="@(_PublishCopyItems->'$(PublishDir)\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" DestinationFiles="@(_PublishCopyItems->'$(PublishDir)\bin\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" />
 		<RemoveDir Directories="$(PublishDir).playwright" />
 	</Target>
