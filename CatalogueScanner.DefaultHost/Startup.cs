@@ -28,15 +28,14 @@ namespace CatalogueScanner.DefaultHost
             {
                 StartInfo = new()
                 {
-                    FileName = "ls",
-                    UseShellExecute = true,
+                    FileName = "/bin/bash",
+                    UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    Arguments = $"-c \"ls \\\"{Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH")}\\\"",
                 },
             };
-
-            process.StartInfo.ArgumentList.Add("-l");
-            process.StartInfo.ArgumentList.Add(Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH") ?? string.Empty);
 
             process.Start();
             process.WaitForExit();
