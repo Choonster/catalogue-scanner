@@ -37,20 +37,6 @@ jobs:
           dotnet publish --configuration Release --output ./output
           popd
 
-      #- name: 'Zip Build Output'
-      #  shell: bash
-      #  run: |
-      #    pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-      #    zip -r ../output.zip .
-      #    popd
-
-      - name: 'Add execute permission to playwright.sh'
-        shell: bash
-        run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          chmod +x ./bin/.playwright/node/linux/playwright.sh
-          popd
-
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
