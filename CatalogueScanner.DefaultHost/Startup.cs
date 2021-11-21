@@ -26,27 +26,6 @@ namespace CatalogueScanner.DefaultHost
 
             var appBinFolder = System.IO.Path.GetDirectoryName(typeof(Startup).Assembly.Location);
 
-            using var chmodProcess = new System.Diagnostics.Process
-            {
-                StartInfo = new()
-                {
-                    FileName = "chmod",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    Arguments = $"+x \"{appBinFolder}/.playwright/node/linux/playwright.sh\" "
-                },
-            };
-
-            chmodProcess.Start();
-            chmodProcess.WaitForExit();
-
-            if (chmodProcess.ExitCode != 0)
-            {
-                throw new Exception($"chmod failed: {chmodProcess.StandardError.ReadToEnd()}");
-            }
-
             using var process = new System.Diagnostics.Process
             {
                 StartInfo = new()
