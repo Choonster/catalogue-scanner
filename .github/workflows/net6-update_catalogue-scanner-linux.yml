@@ -35,31 +35,37 @@ jobs:
         run: |
           npm i -g azure-functions-core-tools@4 --unsafe-perm true
 
-      #- name: 'Build Application'
-      #  shell: bash
-      #  run: |
-      #    pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-      #    dotnet publish --configuration Release --output ./output
-      #    popd
-
-      - name: 'Azure Login'
-        uses: Azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      - name: 'Deploy to Azure'
+      - name: 'Build Application'
+        shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          func azure functionapp publish ${{ env.FUNCTIONS_APP_NAME }} --csharp
+          dotnet publish --configuration Release --output ./output
           popd
+
+      - name: 'Zip Build Output'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+          zip -r ../output.zip .
+          zipinfo ../output.zip
+          popd
+
+      #- name: 'Azure Login'
+      #  uses: Azure/login@v1
+      #  with:
+      #    creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
+      #- name: 'Deploy to Azure'
+      #  run: |
+      #    pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+      #    func azure functionapp publish ${{ env.FUNCTIONS_APP_NAME }} --csharp
+      #    popd
         
-    # - name: 'Run Azure Functions Action'
-    #   uses: Azure/functions-action@v1
-    #   id: fa
-    #   with:
-    #     app-name: 'catalogue-scanner-linux'
-    #     slot-name: 'Production'
-    #     package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-    #     publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C7ED7F0EF82F41DE9BFF97EB8F6B6F29 }}
-    #     scm-do-build-during-deployment: true
-    #     enable-oryx-build: true
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: 'catalogue-scanner-linux'
+          slot-name: 'Production'
+          package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output.zip'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C7ED7F0EF82F41DE9BFF97EB8F6B6F29 }}
