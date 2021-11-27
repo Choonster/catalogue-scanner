@@ -1,66 +1,75 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 namespace CatalogueScanner.Core.Host
 {
     public class TracingStream : MemoryStream
     {
         private const byte NewLine = (byte)'\n';
 
-        private readonly LogLevel logLevel;
+        private readonly TelemetryClient telemetryClient;
+        private readonly SeverityLevel severityLevel;
         private readonly StreamReader reader;
 
-        public TracingStream(LogLevel logLevel)
+        public TracingStream(TelemetryClient telemetryClient, SeverityLevel severityLevel)
         {
-            this.logLevel = logLevel;
+            this.telemetryClient = telemetryClient;
+            this.severityLevel = severityLevel;
 
             reader = new StreamReader(this);
         }
 
-        public TracingStream(byte[] buffer, LogLevel logLevel) : base(buffer)
+        public TracingStream(byte[] buffer, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer)
         {
-            this.logLevel = logLevel;
-
+            this.telemetryClient = telemetryClient;
+            this.severityLevel = severityLevel;
+        
             reader = new StreamReader(this);
         }
 
-        public TracingStream(int capacity, LogLevel logLevel) : base(capacity)
+        public TracingStream(int capacity, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(capacity)
         {
-            this.logLevel = logLevel;
-
+            this.telemetryClient = telemetryClient;
+            this.severityLevel = severityLevel;
+        
             reader = new StreamReader(this);
         }
 
-        public TracingStream(byte[] buffer, bool writable, LogLevel logLevel) : base(buffer, writable)
+        public TracingStream(byte[] buffer, bool writable, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer, writable)
         {
-            this.logLevel = logLevel;
-
+            this.telemetryClient = telemetryClient;
+            this.severityLevel = severityLevel;
+        
             reader = new StreamReader(this);
         }
 
-        public TracingStream(byte[] buffer, int index, int count, LogLevel logLevel) : base(buffer, index, count)
+        public TracingStream(byte[] buffer, int index, int count, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer, index, count)
         {
-            this.logLevel = logLevel;
+            this.telemetryClient = telemetryClient;
+            this.severityLevel = severityLevel;
+        
+            reader = new StreamReader(this);
+        }
+
+        public TracingStream(byte[] buffer, int index, int count, bool writable, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer, index, count, writable)
+        {
+            this.telemetryClient = telemetryClient;
+            this.severityLevel = severityLevel;
+        
+            reader = new StreamReader(this);
+        }
+
+        public TracingStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer, index, count, writable, publiclyVisible)
+        {
+            this.telemetryClient = telemetryClient;
+            this.severityLevel = severityLevel;
        
-            reader = new StreamReader(this);
-        }
-
-        public TracingStream(byte[] buffer, int index, int count, bool writable, LogLevel logLevel) : base(buffer, index, count, writable)
-        {
-            this.logLevel = logLevel;
-        
-            reader = new StreamReader(this);
-        }
-
-        public TracingStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, LogLevel logLevel) : base(buffer, index, count, writable, publiclyVisible)
-        {
-            this.logLevel = logLevel;
-        
             reader = new StreamReader(this);
         }
 
@@ -123,26 +132,7 @@ namespace CatalogueScanner.Core.Host
             var line = reader.ReadLine();
             while (line != null)
             {
-                switch (logLevel)
-                {
-                    case LogLevel.Trace:
-                    case LogLevel.Debug:
-                        Trace.WriteLine(line);
-                        break;
-
-                        case LogLevel.Information:
-                        Trace.TraceInformation(line);
-                        break;
-
-                    case LogLevel.Warning:
-                        Trace.TraceWarning(line);
-                        break;
-
-                    case LogLevel.Error:
-                    case LogLevel.Critical:
-                        Trace.TraceError(line);
-                        break;
-                }
+                telemetryClient.TrackTrace(line, severityLevel);
 
                 line = reader.ReadLine();
             }

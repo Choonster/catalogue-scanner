@@ -5,9 +5,11 @@ using CatalogueScanner.DefaultHost;
 using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
 using CatalogueScanner.WebScraping;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 
@@ -26,9 +28,10 @@ namespace CatalogueScanner.DefaultHost
             }
             #endregion
 
-            var errorStream = new TracingStream(10240, LogLevel.Error);
-
 #pragma warning disable CA2000 // Dispose objects before losing scope
+            var telemetryClient = new TelemetryClient(new TelemetryConfiguration(Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY")));
+            var errorStream = new TracingStream(10240, telemetryClient, SeverityLevel.Error);
+            
             Console.SetError(new StreamWriter(errorStream)
             {
                AutoFlush = true,
