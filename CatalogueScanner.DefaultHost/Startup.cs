@@ -7,7 +7,9 @@ using CatalogueScanner.SaleFinder;
 using CatalogueScanner.WebScraping;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -24,29 +26,14 @@ namespace CatalogueScanner.DefaultHost
             }
             #endregion
 
-            var appBinFolder = System.IO.Path.GetDirectoryName(typeof(Startup).Assembly.Location);
+            var errorStream = new TracingStream(10240, LogLevel.Error);
 
-            using var process = new System.Diagnostics.Process
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            Console.SetError(new StreamWriter(errorStream)
             {
-                StartInfo = new()
-                {
-                    FileName = "/bin/bash",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    Arguments = $"-c \"ls -lRaA \\\"{appBinFolder}/..\\\"",
-                },
-            };
-
-            process.Start();
-            process.WaitForExit();
-
-            var stdout = process.StandardOutput.ReadToEnd();
-            var stderr = process.StandardError.ReadToEnd();
-
-            Console.WriteLine($"\n\nstdout: {stdout}\n\nstderr: {stderr}");
-
+               AutoFlush = true,
+            });
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
             Microsoft.Playwright.Program.Main(new[] { "install chromium" });
 
