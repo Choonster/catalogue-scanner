@@ -45,7 +45,7 @@ namespace CatalogueScanner.DefaultHost
             var stdout = process.StandardOutput.ReadToEnd();
             var stderr = process.StandardError.ReadToEnd();
 
-            throw new Exception($"\n\nstdout: {stdout}\n\nstderr: {stderr}");
+            Console.WriteLine($"\n\nstdout: {stdout}\n\nstderr: {stderr}");
 
 
             Microsoft.Playwright.Program.Main(new[] { "install chromium" });
