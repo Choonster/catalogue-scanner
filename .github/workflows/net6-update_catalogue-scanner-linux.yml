@@ -42,18 +42,18 @@ jobs:
           dotnet publish --configuration Release --output ./output
           popd
 
-      - name: 'Zip Build Output'
-        shell: bash
-        run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          zip -r ../output.zip .
-          zipinfo ../output.zip
-          popd
+      #- name: 'Zip Build Output'
+      #  shell: bash
+      #  run: |
+      #    pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+      #    zip -r ../output.zip .
+      #    zipinfo ../output.zip
+      #    popd
 
-      #- name: 'Azure Login'
-      #  uses: Azure/login@v1
-      #  with:
-      #    creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: 'Azure Login'
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
           
       #- name: 'Deploy to Azure'
       #  run: |
@@ -67,5 +67,5 @@ jobs:
         with:
           app-name: 'catalogue-scanner-linux'
           slot-name: 'Production'
-          package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output.zip'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C7ED7F0EF82F41DE9BFF97EB8F6B6F29 }}
+          package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+          #publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C7ED7F0EF82F41DE9BFF97EB8F6B6F29 }}
