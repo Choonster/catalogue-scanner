@@ -30,20 +30,20 @@
       },
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
         "type": "Direct",
-        "requested": "[5.0.9, )",
-        "resolved": "5.0.9",
-        "contentHash": "tJ7i6BDf/y+iKc1fuS6SRwelcSvhHkfQ86RhHVpUol4LfcW3WnSSL+njPuT2KmJidfJ349/7+eb/pCERHYG0/A==",
+        "requested": "[5.0.8, )",
+        "resolved": "5.0.8",
+        "contentHash": "RI+0FCopaRzKzbtkUGdugzr64BHiHLkZviqB3WJl2l0aEqLwDYeluG7Q/dW/kgTwpy8y8XdFDWjC5A0iORBTqQ==",
         "dependencies": {
-          "Microsoft.AspNetCore.JsonPatch": "5.0.9",
+          "Microsoft.AspNetCore.JsonPatch": "5.0.8",
           "Newtonsoft.Json": "12.0.2",
           "Newtonsoft.Json.Bson": "1.0.2"
         }
       },
       "Microsoft.Playwright": {
         "type": "Direct",
-        "requested": "[1.14.0, )",
-        "resolved": "1.14.0",
-        "contentHash": "Z2CKYZUxOoxk4p+CxdgjTYkkzoseqf7WxiBiWLCBsu8CeT+Dl+vd3uu6GVTzlfnPWYyZJ+J+iOdwxclbOUCxXw==",
+        "requested": "[1.13.0, )",
+        "resolved": "1.13.0",
+        "contentHash": "2kj83fJp6GpqSFpeQHCh7/f80A33tEkgynF8gBnfecaHjPpMggfvsee1r3IeYhkHODu2FjyX8GO5rnG1ggH6Rg==",
         "dependencies": {
           "Macross.Json.Extensions": "2.0.0",
           "Microsoft.Bcl.AsyncInterfaces": "5.0.0",
@@ -53,14 +53,14 @@
       },
       "Swashbuckle.AspNetCore": {
         "type": "Direct",
-        "requested": "[6.1.5, )",
-        "resolved": "6.1.5",
-        "contentHash": "AFiomCan3c3twBr3q/0P0YECN+AtJEKASjtRybbKlFyqSyENrwj8Q3JmPQ7knyp7Z2TzbhZ+ZccA3eXpGcD97g==",
+        "requested": "[6.1.4, )",
+        "resolved": "6.1.4",
+        "contentHash": "aglxV+kJA5wP0RoAS8Rrh4Jp7bmVEcDAAofdSyGfea4TSEtNRLam9Fq0A4+0asUWDRk1N0/6VnuLC6+ev50wSQ==",
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "3.0.0",
-          "Swashbuckle.AspNetCore.Swagger": "6.1.5",
-          "Swashbuckle.AspNetCore.SwaggerGen": "6.1.5",
-          "Swashbuckle.AspNetCore.SwaggerUI": "6.1.5"
+          "Swashbuckle.AspNetCore.Swagger": "6.1.4",
+          "Swashbuckle.AspNetCore.SwaggerGen": "6.1.4",
+          "Swashbuckle.AspNetCore.SwaggerUI": "6.1.4"
         }
       },
       "Azure.Core": {
@@ -112,8 +112,8 @@
       },
       "HtmlAgilityPack": {
         "type": "Transitive",
-        "resolved": "1.11.36",
-        "contentHash": "dCuPhd6Mcdz0oyaSidPqZZiaKcVaBnIqCQlvgJx7Qr5PJAjSatSIVPmuOwpMjbtR8mqoXyUbWVKxuairGGauJg=="
+        "resolved": "1.11.34",
+        "contentHash": "LJyKMPuQVRi68RnPRmptSSJa1r3adpIfII/tfyMkismDhgmdS0i2ruOGF3Y7Ocxt4IfnhG76BNIa4dzMfR+KYw=="
       },
       "ImpromptuInterface": {
         "type": "Transitive",
@@ -279,8 +279,8 @@
       },
       "Microsoft.AspNetCore.JsonPatch": {
         "type": "Transitive",
-        "resolved": "5.0.9",
-        "contentHash": "Y898BNDwTNaLK9AV4sZfYUeVC0LtWP0VdcOd04txbpFpFv5BgYbiLumQkmecwX40+KnxsqxGSCcOB8buBeadtw==",
+        "resolved": "5.0.8",
+        "contentHash": "Crb4/sjNS/yc1ao/kHKIBnB8FWt0n88GmN7ubAwQiVUFYmFC3vOHgBX947gNHl2su0iCz3mDMFr3wMCiePEmMw==",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Newtonsoft.Json": "12.0.2"
@@ -684,8 +684,8 @@
       },
       "Microsoft.Extensions.Configuration.AzureAppConfiguration": {
         "type": "Transitive",
-        "resolved": "4.5.0",
-        "contentHash": "2wmIqxf24jHYqUaBZLgiG5bswTmCfmcQhbTGNMi8CcG5oJXk18RZxiZn/zTZg2oZstdXf7PrMAa31zUA7Cj/Zg==",
+        "resolved": "4.4.0",
+        "contentHash": "XHuSKhWvkOPZwhrBLyOr6fLUC5tHaEjB1ELTszNYCeLuvHkYySt2ixE7JhJE7yaKsBnzf2Jm1oZs7iCTZV1Rsw==",
         "dependencies": {
           "Azure.Data.AppConfiguration": "1.0.0",
           "Azure.Security.KeyVault.Secrets": "4.0.1",
@@ -1088,24 +1088,24 @@
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
-        "resolved": "6.1.5",
-        "contentHash": "Wp8FlwNCKR/DfxvEkjQdru0l7aUp4/5VLEvejCA8t/SMMcUTP+xw4zvyEjGCBoJ/ETqzQM3y+72iYaEOhBlYOw==",
+        "resolved": "6.1.4",
+        "contentHash": "5XRKPKXpQRJMdOwHgotSZjWYGKnvresUIKiUOecmDrsiTkRpUd15QJMS/+HKYjjOvWnJthYwhLJG3pABJOHwOg==",
         "dependencies": {
           "Microsoft.OpenApi": "1.2.3"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerGen": {
         "type": "Transitive",
-        "resolved": "6.1.5",
-        "contentHash": "16M5iJN+hzykkH/vEm4V+47rh8r8KNCOSkIWvP9/+krH3hqVjMlhuop8Xzq6IXckmpXLwxoylLBpiSG9Yy2UUQ==",
+        "resolved": "6.1.4",
+        "contentHash": "i0Y3a3XMKz7r9vMNtB7TUIsWXpz9uJwnJ42NV3lAnmem7XpTykxm/cFJqHc9CqVBdbPf7XPvhUvEiUybRlocIg==",
         "dependencies": {
-          "Swashbuckle.AspNetCore.Swagger": "6.1.5"
+          "Swashbuckle.AspNetCore.Swagger": "6.1.4"
         }
       },
       "Swashbuckle.AspNetCore.SwaggerUI": {
         "type": "Transitive",
-        "resolved": "6.1.5",
-        "contentHash": "/YwEGAdkDK8rEPSuPURNNgJ3mWmtsCI/xnVlWBaM2UDNVTr8wBUO0qhLvHFgrf6NjjjNq6cyO3M7lZMLXcGusw=="
+        "resolved": "6.1.4",
+        "contentHash": "Ue8Ag73DOXPPB/NCqT7oN1PYSj35IETWROsIZG9EbwAtFDcgonWOrHbefjMFUGyPalNm6CSmVm1JInpURnxMgw=="
       },
       "System.AppContext": {
         "type": "Transitive",
@@ -2104,7 +2104,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Data.AppConfiguration": "1.1.0",
-          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.5.0",
+          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.4.0",
           "Microsoft.Extensions.Options": "3.1.16",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "3.1.16"
         }
@@ -2113,7 +2113,7 @@
         "type": "Project",
         "dependencies": {
           "CatalogueScanner.Configuration": "1.0.0",
-          "HtmlAgilityPack": "1.11.36",
+          "HtmlAgilityPack": "1.11.34",
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
           "Microsoft.Azure.Functions.Extensions": "1.1.0",
           "Microsoft.Azure.WebJobs.Extensions": "4.0.1",
@@ -2121,7 +2121,7 @@
           "Microsoft.Azure.WebJobs.Extensions.Http": "3.0.12",
           "Microsoft.Azure.WebJobs.Extensions.SendGrid": "3.0.2",
           "Microsoft.Azure.WebJobs.Extensions.Storage": "4.0.4",
-          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.5.0",
+          "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.4.0",
           "Microsoft.Extensions.Localization.Abstractions": "3.1.16",
           "System.Collections.Immutable": "5.0.0"
         }
