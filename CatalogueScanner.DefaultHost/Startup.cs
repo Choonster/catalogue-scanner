@@ -29,6 +29,7 @@ namespace CatalogueScanner.DefaultHost
             #endregion
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
+            // Replace the Console.Error stream to record error output from Playwright in Application Insights
             var telemetryClient = new TelemetryClient(new TelemetryConfiguration(Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY")));
             var errorStream = new TracingStream(10240, telemetryClient, SeverityLevel.Error);
             
@@ -38,6 +39,7 @@ namespace CatalogueScanner.DefaultHost
             });
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
+            // Install the browser required by Playwright 
             Microsoft.Playwright.Program.Main(new[] { "install chromium" });
 
             var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");

@@ -1,14 +1,17 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 namespace CatalogueScanner.Core.Host
 {
+    /// <summary>
+    /// <para>Stream that traces its contents in Application Insights after a line is written to it.</para>
+    /// <para>Designed to be used as the <see cref="Console.Error"/> stream so that stderr messages are recorded in Application Insights.</para>
+    /// </summary>
     public class TracingStream : MemoryStream
     {
         private const byte NewLine = (byte)'\n';
@@ -29,7 +32,7 @@ namespace CatalogueScanner.Core.Host
         {
             this.telemetryClient = telemetryClient;
             this.severityLevel = severityLevel;
-        
+
             reader = new StreamReader(this);
         }
 
@@ -37,7 +40,7 @@ namespace CatalogueScanner.Core.Host
         {
             this.telemetryClient = telemetryClient;
             this.severityLevel = severityLevel;
-        
+
             reader = new StreamReader(this);
         }
 
@@ -45,7 +48,7 @@ namespace CatalogueScanner.Core.Host
         {
             this.telemetryClient = telemetryClient;
             this.severityLevel = severityLevel;
-        
+
             reader = new StreamReader(this);
         }
 
@@ -53,7 +56,7 @@ namespace CatalogueScanner.Core.Host
         {
             this.telemetryClient = telemetryClient;
             this.severityLevel = severityLevel;
-        
+
             reader = new StreamReader(this);
         }
 
@@ -61,7 +64,7 @@ namespace CatalogueScanner.Core.Host
         {
             this.telemetryClient = telemetryClient;
             this.severityLevel = severityLevel;
-        
+
             reader = new StreamReader(this);
         }
 
@@ -69,7 +72,7 @@ namespace CatalogueScanner.Core.Host
         {
             this.telemetryClient = telemetryClient;
             this.severityLevel = severityLevel;
-       
+
             reader = new StreamReader(this);
         }
 
