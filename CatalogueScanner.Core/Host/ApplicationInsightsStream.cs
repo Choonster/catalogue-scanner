@@ -1,5 +1,6 @@
 ﻿using Microsoft.ApplicationInsights;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -126,14 +127,8 @@ namespace CatalogueScanner.Core.Host
             var line = reader.ReadLine();
             while (line != null)
             {
-                try
-                {
-                    throw new ApplicationInsightsStreamException(line);
-                }
-                catch (ApplicationInsightsStreamException ex)
-                {
-                    telemetryClient.TrackException(ex);
-                }
+                var exception = new ApplicationInsightsStreamException(line, new StackTrace(true));
+                telemetryClient.TrackException(exception);
 
                 line = reader.ReadLine();
             }
