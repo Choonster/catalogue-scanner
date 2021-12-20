@@ -126,7 +126,14 @@ namespace CatalogueScanner.Core.Host
             var line = reader.ReadLine();
             while (line != null)
             {
-                telemetryClient.TrackException(new ApplicationInsightsStreamException(line));
+                try
+                {
+                    throw new ApplicationInsightsStreamException(line);
+                }
+                catch (ApplicationInsightsStreamException ex)
+                {
+                    telemetryClient.TrackException(ex);
+                }
 
                 line = reader.ReadLine();
             }
