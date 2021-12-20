@@ -41,7 +41,7 @@ namespace CatalogueScanner.DefaultHost
             Console.Error.WriteLine("catalogue-scanner starting up");
 
             // Install the browser required by Playwright 
-            Microsoft.Playwright.Program.Main(new[] { "install chromium" });
+            Microsoft.Playwright.Program.Main(new[] { "install", "chromium" });
 
             var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
 
