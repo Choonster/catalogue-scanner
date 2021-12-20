@@ -1,5 +1,4 @@
 ﻿using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DataContracts;
 using System;
 using System.IO;
 using System.Linq;
@@ -9,69 +8,61 @@ using System.Threading.Tasks;
 namespace CatalogueScanner.Core.Host
 {
     /// <summary>
-    /// <para>Stream that traces its contents in Application Insights after a line is written to it.</para>
+    /// <para>Stream that tracks its contents as an exception in Application Insights after a line is written to it.</para>
     /// <para>Designed to be used as the <see cref="Console.Error"/> stream so that stderr messages are recorded in Application Insights.</para>
     /// </summary>
-    public class TracingStream : MemoryStream
+    public class ApplicationInsightsStream : MemoryStream
     {
         private const byte NewLine = (byte)'\n';
 
         private readonly TelemetryClient telemetryClient;
-        private readonly SeverityLevel severityLevel;
         private readonly StreamReader reader;
 
-        public TracingStream(TelemetryClient telemetryClient, SeverityLevel severityLevel)
+        public ApplicationInsightsStream(TelemetryClient telemetryClient)
         {
             this.telemetryClient = telemetryClient;
-            this.severityLevel = severityLevel;
 
             reader = new StreamReader(this);
         }
 
-        public TracingStream(byte[] buffer, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer)
+        public ApplicationInsightsStream(byte[] buffer, TelemetryClient telemetryClient) : base(buffer)
         {
             this.telemetryClient = telemetryClient;
-            this.severityLevel = severityLevel;
 
             reader = new StreamReader(this);
         }
 
-        public TracingStream(int capacity, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(capacity)
+        public ApplicationInsightsStream(int capacity, TelemetryClient telemetryClient) : base(capacity)
         {
             this.telemetryClient = telemetryClient;
-            this.severityLevel = severityLevel;
 
             reader = new StreamReader(this);
         }
 
-        public TracingStream(byte[] buffer, bool writable, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer, writable)
+        public ApplicationInsightsStream(byte[] buffer, bool writable, TelemetryClient telemetryClient) : base(buffer, writable)
         {
             this.telemetryClient = telemetryClient;
-            this.severityLevel = severityLevel;
 
             reader = new StreamReader(this);
         }
 
-        public TracingStream(byte[] buffer, int index, int count, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer, index, count)
+        public ApplicationInsightsStream(byte[] buffer, int index, int count, TelemetryClient telemetryClient) : base(buffer, index, count)
         {
             this.telemetryClient = telemetryClient;
-            this.severityLevel = severityLevel;
 
             reader = new StreamReader(this);
         }
 
-        public TracingStream(byte[] buffer, int index, int count, bool writable, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer, index, count, writable)
+        public ApplicationInsightsStream(byte[] buffer, int index, int count, bool writable, TelemetryClient telemetryClient) : base(buffer, index, count, writable)
         {
             this.telemetryClient = telemetryClient;
-            this.severityLevel = severityLevel;
 
             reader = new StreamReader(this);
         }
 
-        public TracingStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, TelemetryClient telemetryClient, SeverityLevel severityLevel) : base(buffer, index, count, writable, publiclyVisible)
+        public ApplicationInsightsStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, TelemetryClient telemetryClient) : base(buffer, index, count, writable, publiclyVisible)
         {
             this.telemetryClient = telemetryClient;
-            this.severityLevel = severityLevel;
 
             reader = new StreamReader(this);
         }
@@ -82,7 +73,7 @@ namespace CatalogueScanner.Core.Host
 
             if (Array.IndexOf(buffer, NewLine) != -1)
             {
-                LogContents();
+                TrackContents();
             }
         }
 
@@ -92,7 +83,7 @@ namespace CatalogueScanner.Core.Host
 
             if (buffer.Contains(NewLine))
             {
-                LogContents();
+                TrackContents();
             }
         }
 
@@ -104,7 +95,7 @@ namespace CatalogueScanner.Core.Host
 
             if (Array.IndexOf(buffer, NewLine) != -1)
             {
-                LogContents();
+                TrackContents();
             }
         }
 
@@ -114,7 +105,7 @@ namespace CatalogueScanner.Core.Host
 
             if (buffer.Span.Contains(NewLine))
             {
-                LogContents();
+                TrackContents();
             }
         }
 
@@ -124,18 +115,18 @@ namespace CatalogueScanner.Core.Host
 
             if (value == NewLine)
             {
-                LogContents();
+                TrackContents();
             }
         }
 
-        private void LogContents()
+        private void TrackContents()
         {
             Position = 0;
 
             var line = reader.ReadLine();
             while (line != null)
             {
-                telemetryClient.TrackTrace(line, severityLevel);
+                telemetryClient.TrackException(new ApplicationInsightsStreamException(line));
 
                 line = reader.ReadLine();
             }

@@ -6,7 +6,6 @@ using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
 using CatalogueScanner.WebScraping;
 using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +30,7 @@ namespace CatalogueScanner.DefaultHost
 #pragma warning disable CA2000 // Dispose objects before losing scope
             // Replace the Console.Error stream to record error output from Playwright in Application Insights
             var telemetryClient = new TelemetryClient(new TelemetryConfiguration(Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY")));
-            var errorStream = new TracingStream(10240, telemetryClient, SeverityLevel.Error);
+            var errorStream = new ApplicationInsightsStream(10240, telemetryClient);
             
             Console.SetError(new StreamWriter(errorStream)
             {
@@ -39,7 +38,7 @@ namespace CatalogueScanner.DefaultHost
             });
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
-            Console.Error.WriteLine("catalogue-scanner starting up!");
+            Console.Error.WriteLine("catalogue-scanner starting up");
 
             // Install the browser required by Playwright 
             Microsoft.Playwright.Program.Main(new[] { "install chromium" });
