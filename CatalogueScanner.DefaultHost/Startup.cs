@@ -32,15 +32,17 @@ namespace CatalogueScanner.DefaultHost
             // Replace the Console.Error stream to record error output from Playwright in Application Insights
             var telemetryClient = new TelemetryClient(new TelemetryConfiguration(Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY")));
             var errorStream = new ApplicationInsightsStream(10240, telemetryClient);
-            
+
             Console.SetError(TextWriter.Synchronized(new StreamWriter(errorStream)
             {
-               AutoFlush = true,
+                AutoFlush = true,
             }));
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
-            Console.Error.WriteLine($"Site directory: {typeof(Startup).Assembly.GetName().CodeBase}");
-            Console.Error.WriteLine($"Current directory: {Environment.CurrentDirectory}");
+            throw new Exception(
+                $"Site directory: {typeof(Startup).Assembly.GetName().CodeBase}" +
+                $"Current directory: {Environment.CurrentDirectory}"
+            );
 
             var playwrightBrowsersPath = Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH")!;
 
@@ -50,7 +52,7 @@ namespace CatalogueScanner.DefaultHost
             Microsoft.Playwright.Program.Main(new[] { "install", "chromium" });
 
             var browserFiles = string.Join(Environment.NewLine, Directory.EnumerateFiles(playwrightBrowsersPath, string.Empty, SearchOption.AllDirectories));
-            Console.Error.WriteLine($"Playwright browser files:\n{browserFiles}");                
+            Console.Error.WriteLine($"Playwright browser files:\n{browserFiles}");
 
             var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
 
