@@ -39,6 +39,11 @@ namespace CatalogueScanner.DefaultHost
             }));
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
+            throw new Exception(
+                $"Site directory: {typeof(Startup).Assembly.GetName().CodeBase}" +
+                $"Current directory: {Environment.CurrentDirectory}"
+            );
+
             var playwrightBrowsersPath = Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH")!;
 
             Directory.CreateDirectory(playwrightBrowsersPath);
