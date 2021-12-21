@@ -39,8 +39,6 @@ namespace CatalogueScanner.DefaultHost
             }));
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
-            Console.Error.WriteLine("catalogue-scanner starting up");
-
             // Install the browser required by Playwright 
             Microsoft.Playwright.Program.Main(new[] { "install", "chromium" });
 
