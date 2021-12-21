@@ -12,7 +12,6 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
-using System.Linq;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -39,6 +38,9 @@ namespace CatalogueScanner.DefaultHost
                AutoFlush = true,
             }));
 #pragma warning restore CA2000 // Dispose objects before losing scope
+
+            Console.Error.WriteLine($"Site directory: {typeof(Startup).Assembly.GetName().CodeBase}");
+            Console.Error.WriteLine($"Current directory: {Environment.CurrentDirectory}");
 
             var playwrightBrowsersPath = Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH")!;
 
