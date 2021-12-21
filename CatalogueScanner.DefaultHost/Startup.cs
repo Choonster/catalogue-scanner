@@ -41,13 +41,11 @@ namespace CatalogueScanner.DefaultHost
 
             var playwrightBrowsersPath = Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH")!;
 
+            // Create the Playwright browsers directory manually so we get a clear exception message if we don't have permission
             Directory.CreateDirectory(playwrightBrowsersPath);
 
             // Install the browser required by Playwright 
             Microsoft.Playwright.Program.Main(new[] { "install", "chromium" });
-
-            var browserFiles = string.Join(Environment.NewLine, Directory.EnumerateFiles(playwrightBrowsersPath, string.Empty, SearchOption.AllDirectories));
-            Console.Error.WriteLine($"Playwright browser files:\n{browserFiles}");
 
             var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
 
