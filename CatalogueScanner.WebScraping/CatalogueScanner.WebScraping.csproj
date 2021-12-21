@@ -20,11 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Playwright" Version="1.16.1" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.17.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Test Data\COLRS Catalog Entry List - Decompressed.json"/>
+    <None Update="Test Data\COLRS Catalog Entry List - Decompressed.json" />
   </ItemGroup>
 
 </Project>

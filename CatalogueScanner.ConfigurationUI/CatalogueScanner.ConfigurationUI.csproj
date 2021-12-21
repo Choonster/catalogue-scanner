@@ -9,9 +9,9 @@
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.1" />
     <PackageReference Include="Azure.Identity" Version="1.5.0" />
     <PackageReference Include="MatBlazor" Version="2.8.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.19.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.13.0" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="1.20.0" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="1.21.1" />
   </ItemGroup>
 
   <ItemGroup>

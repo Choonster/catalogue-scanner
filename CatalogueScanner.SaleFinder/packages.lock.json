@@ -90,8 +90,8 @@
       },
       "HtmlAgilityPack": {
         "type": "Transitive",
-        "resolved": "1.11.38",
-        "contentHash": "DC1j3GzU9lBp8hSXb9eYRHiJOUS5sxjBjme/4RTYjTXlgiFCOMXkIY+rmL+BtUss1pCwCN4LaVlZ/ci/fWY+lA=="
+        "resolved": "1.11.39",
+        "contentHash": "9xk8l+68NaHe3RmfzAOO0A5DcotDO4lAilUnmZpu6h/EpBCfDVrxr7aNClIGK/p3vPiypVzpUCENm72UKfIVjg=="
       },
       "ImpromptuInterface": {
         "type": "Transitive",
@@ -768,8 +768,8 @@
       },
       "Microsoft.Extensions.Localization.Abstractions": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "UQJmE78r414kbguPmvbT6MIz0r8LPsBhjLNOlpXOP1VVjaSIuUMATfAve8Q+oivwNG3Mnv+5OLZHfaBkB4SuUg=="
+        "resolved": "6.0.1",
+        "contentHash": "LDGf0vOKjXYHL8ji6V0wjO9A8w3ps+HJ455dgZe6/CpSG2bcYnXhph+WNNDvFn3gtl0Tr4avsWp23j7lN1Wrkw=="
       },
       "Microsoft.Extensions.Logging": {
         "type": "Transitive",
@@ -1437,7 +1437,7 @@
         "type": "Project",
         "dependencies": {
           "CatalogueScanner.Configuration": "1.0.0",
-          "HtmlAgilityPack": "1.11.38",
+          "HtmlAgilityPack": "1.11.39",
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
           "Microsoft.Azure.Functions.Extensions": "1.1.0",
           "Microsoft.Azure.WebJobs.Extensions": "4.0.1",
@@ -1446,7 +1446,7 @@
           "Microsoft.Azure.WebJobs.Extensions.SendGrid": "3.0.2",
           "Microsoft.Azure.WebJobs.Extensions.Storage": "5.0.0",
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.5.1",
-          "Microsoft.Extensions.Localization.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Localization.Abstractions": "6.0.1",
           "Newtonsoft.Json": "13.0.1",
           "System.Collections.Immutable": "6.0.0"
         }

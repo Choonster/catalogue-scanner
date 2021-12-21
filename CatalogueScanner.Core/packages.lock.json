@@ -4,9 +4,9 @@
     "net6.0": {
       "HtmlAgilityPack": {
         "type": "Direct",
-        "requested": "[1.11.38, )",
-        "resolved": "1.11.38",
-        "contentHash": "DC1j3GzU9lBp8hSXb9eYRHiJOUS5sxjBjme/4RTYjTXlgiFCOMXkIY+rmL+BtUss1pCwCN4LaVlZ/ci/fWY+lA=="
+        "requested": "[1.11.39, )",
+        "resolved": "1.11.39",
+        "contentHash": "9xk8l+68NaHe3RmfzAOO0A5DcotDO4lAilUnmZpu6h/EpBCfDVrxr7aNClIGK/p3vPiypVzpUCENm72UKfIVjg=="
       },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Direct",
@@ -107,9 +107,9 @@
       },
       "Microsoft.Extensions.Localization.Abstractions": {
         "type": "Direct",
-        "requested": "[6.0.0, )",
-        "resolved": "6.0.0",
-        "contentHash": "UQJmE78r414kbguPmvbT6MIz0r8LPsBhjLNOlpXOP1VVjaSIuUMATfAve8Q+oivwNG3Mnv+5OLZHfaBkB4SuUg=="
+        "requested": "[6.0.1, )",
+        "resolved": "6.0.1",
+        "contentHash": "LDGf0vOKjXYHL8ji6V0wjO9A8w3ps+HJ455dgZe6/CpSG2bcYnXhph+WNNDvFn3gtl0Tr4avsWp23j7lN1Wrkw=="
       },
       "Newtonsoft.Json": {
         "type": "Direct",
