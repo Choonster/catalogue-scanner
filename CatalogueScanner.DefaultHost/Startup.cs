@@ -40,10 +40,14 @@ namespace CatalogueScanner.DefaultHost
             }));
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
+            var playwrightBrowsersPath = Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH")!;
+
+            Directory.CreateDirectory(playwrightBrowsersPath);
+
             // Install the browser required by Playwright 
             Microsoft.Playwright.Program.Main(new[] { "install", "chromium" });
 
-            var browserFiles = string.Join(Environment.NewLine, Directory.EnumerateFiles(Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH")!, string.Empty, SearchOption.AllDirectories));
+            var browserFiles = string.Join(Environment.NewLine, Directory.EnumerateFiles(playwrightBrowsersPath, string.Empty, SearchOption.AllDirectories));
             Console.Error.WriteLine($"Playwright browser files:\n{browserFiles}");                
 
             var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
