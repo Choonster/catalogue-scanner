@@ -1,15 +1,18 @@
 ﻿using Microsoft.ApplicationInsights;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ExceptionTelemetry = Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry;
+using SeverityLevel = Microsoft.ApplicationInsights.DataContracts.SeverityLevel;
 
-namespace CatalogueScanner.Core.Host
+namespace CatalogueScanner.Core.Host.ApplicationInsights
 {
     /// <summary>
-    /// <para>Stream that tracks its contents as an exception in Application Insights after a line is written to it.</para>
+    /// <para>Stream that tracks each line written to it as an exception in Application Insights.</para>
     /// <para>Designed to be used as the <see cref="Console.Error"/> stream so that stderr messages are recorded in Application Insights.</para>
     /// </summary>
     public class ApplicationInsightsStream : MemoryStream
@@ -127,8 +130,17 @@ namespace CatalogueScanner.Core.Host
             var line = reader.ReadLine();
             while (line != null)
             {
-                var exception = new ApplicationInsightsStreamException(line, new StackTrace(true));
-                telemetryClient.TrackException(exception);
+                var exception = new ApplicationInsightsStreamException(line);
+                var stackTrace = new StackTrace(true);
+                var exceptionDetailsInfo = ExceptionConverter.ConvertToExceptionDetailsInfo(exception, stackTrace);
+
+                telemetryClient.TrackException(new ExceptionTelemetry(
+                    new[] { exceptionDetailsInfo },
+                    SeverityLevel.Error,
+                    null,
+                    new Dictionary<string, string>(),
+                    new Dictionary<string, double>()
+                ));
 
                 line = reader.ReadLine();
             }

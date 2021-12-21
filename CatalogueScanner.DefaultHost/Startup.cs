@@ -1,6 +1,7 @@
 ﻿using CatalogueScanner.Configuration;
 using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
+using CatalogueScanner.Core.Host.ApplicationInsights;
 using CatalogueScanner.DefaultHost;
 using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
@@ -32,10 +33,10 @@ namespace CatalogueScanner.DefaultHost
             var telemetryClient = new TelemetryClient(new TelemetryConfiguration(Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY")));
             var errorStream = new ApplicationInsightsStream(10240, telemetryClient);
             
-            Console.SetError(new StreamWriter(errorStream)
+            Console.SetError(TextWriter.Synchronized(new StreamWriter(errorStream)
             {
                AutoFlush = true,
-            });
+            }));
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             Console.Error.WriteLine("catalogue-scanner starting up");
