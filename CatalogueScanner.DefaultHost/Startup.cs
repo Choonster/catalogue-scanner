@@ -12,6 +12,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using System.Linq;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -41,6 +42,9 @@ namespace CatalogueScanner.DefaultHost
 
             // Install the browser required by Playwright 
             Microsoft.Playwright.Program.Main(new[] { "install", "chromium" });
+
+            var browserFiles = string.Join(Environment.NewLine, Directory.EnumerateFiles(Environment.GetEnvironmentVariable("PLAYWRIGHT_BROWSERS_PATH")!, string.Empty, SearchOption.AllDirectories));
+            Console.Error.WriteLine($"Playwright browser files:\n{browserFiles}");                
 
             var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
 
