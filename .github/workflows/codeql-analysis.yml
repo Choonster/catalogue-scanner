@@ -11,6 +11,9 @@ on:
   schedule:
     - cron: '0 11 * * 0'
 
+env:   
+  CONFIGURATION: 'Release'
+
 jobs:
   analyze:
     name: Analyze
@@ -45,6 +48,8 @@ jobs:
 
     - name: Build application
       uses: ./.github/actions/build-catalogue-scanner
+      with:
+        configuration: ${{ env.CONFIGURATION }}
     
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1

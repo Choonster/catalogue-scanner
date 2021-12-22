@@ -23,6 +23,8 @@ jobs:
 
       - name: Build application
         uses: ./.github/actions/build-catalogue-scanner
+        with:
+          configuration: ${{ env.CONFIGURATION }}
 
       - name: 'Publish to folder'
         shell: bash

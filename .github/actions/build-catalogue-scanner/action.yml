@@ -10,7 +10,7 @@ inputs:
   configuration:
     description: 'The build configuration to use'
     required: false
-    default: 'Production'
+    default: 'Release'
     
 runs:
   using: "composite"
