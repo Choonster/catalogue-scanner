@@ -28,14 +28,6 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
-		<_PlaywrightDummyProjectItems Include="Publish\PlaywrightDummyProject.proj" />
-		
-		<None Include="@(_PlaywrightDummyProjectItems)">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
 	<Target Name="MovePlaywrightFilesToOutputBin" AfterTargets="CopyPlaywrightFilesToOutput">
 		<Move SourceFiles="@(_CopyItems->'$(OutDir)\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" DestinationFiles="@(_CopyItems->'$(OutDir)\bin\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" />
 		<RemoveDir Directories="$(OutDir).playwright" />
@@ -46,12 +38,7 @@
 	</Target>
 
 	<Target Name="PlaywrightMoveToBinAfterPublish" AfterTargets="PlaywrightCopyAfterPublish">
-		<Message Text="@(_PublishCopyItems)" Importance="high" />
 		<Move SourceFiles="@(_PublishCopyItems->'$(PublishDir)\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" DestinationFiles="@(_PublishCopyItems->'$(PublishDir)\bin\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" />
 		<RemoveDir Directories="$(PublishDir).playwright" />
-	</Target>
-
-	<Target Name="PlaywrightCopyDummyProjectAfterPublish" AfterTargets="Publish">
-		<Copy SourceFiles="@(_PlaywrightDummyProjectItems)" DestinationFiles="@(_PlaywrightDummyProjectItems->'$(PublishDir)\%(Filename)%(Extension)')" />
 	</Target>
 </Project>
