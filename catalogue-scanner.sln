@@ -7,12 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.Core", "Ca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.SaleFinder", "CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj", "{9619D919-2EBA-4953-ACBA-5466793E0A6A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{9C075E7F-828E-4377-A21A-21C7CF068E9C}"
-	ProjectSection(SolutionItems) = preProject
-		Design.txt = Design.txt
-		TODO.txt = TODO.txt
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.DefaultHost", "CatalogueScanner.DefaultHost\CatalogueScanner.DefaultHost.csproj", "{211F78B4-530C-480A-879E-30F022ACAFA5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.Localisation.OrchardCore", "CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj", "{2404FA90-97BA-4245-B85C-AC2E62901303}"
@@ -21,18 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.Configurat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.Configuration", "CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj", "{CEA11368-5371-4251-BE65-FB029EAC408C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{86651983-5006-4B3D-A3E7-3D7B4A0A9734}"
-	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
-		Directory.Build.props = Directory.Build.props
-		.config\dotnet-tools.json = .config\dotnet-tools.json
-		.github\workflows\net6-update_catalogue-scanner-linux.yml = .github\workflows\net6-update_catalogue-scanner-linux.yml
-		NuGet.config = NuGet.config
-		README.md = README.md
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.WebScraping", "CatalogueScanner.WebScraping\CatalogueScanner.WebScraping.csproj", "{9383737D-E990-4E2C-93D9-0CA8C7BB68C3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_Shared", "_Shared\_Shared.csproj", "{B46EECA8-3FFE-4585-9600-28EDC694BBBE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +53,10 @@ Global
 		{9383737D-E990-4E2C-93D9-0CA8C7BB68C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9383737D-E990-4E2C-93D9-0CA8C7BB68C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9383737D-E990-4E2C-93D9-0CA8C7BB68C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B46EECA8-3FFE-4585-9600-28EDC694BBBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B46EECA8-3FFE-4585-9600-28EDC694BBBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B46EECA8-3FFE-4585-9600-28EDC694BBBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B46EECA8-3FFE-4585-9600-28EDC694BBBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
