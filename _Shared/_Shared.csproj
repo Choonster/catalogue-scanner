@@ -5,6 +5,7 @@
 	
 	<ItemGroup>
 		<None Include="..\.github\**" Link=".github\%(RecursiveDir)%(Filename)%(Extension)" />
+		<None Include="..\.config\**" Link=".config\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 	
 	<ItemGroup>
