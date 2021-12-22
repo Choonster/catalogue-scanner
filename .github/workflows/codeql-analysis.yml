@@ -43,21 +43,8 @@ jobs:
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
-    - name: Setup .NET 5
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
-        
-    - name: Setup .NET 6
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
-
-    - name: Restore dependencies
-      run: dotnet restore --locked-mode
-
-    - name: Build
-      run: dotnet build --no-restore
-
+    - name: Build application
+      uses: ./.github/actions/build-catalogue-scanner
+    
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1

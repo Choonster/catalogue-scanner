@@ -11,61 +11,35 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './CatalogueScanner.DefaultHost' # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: '6.0.x' # set this to the dotnet version to use
   FUNCTIONS_APP_NAME: 'catalogue-scanner-linux'
+  CONFIGURATION: 'Release'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout GitHub Action'
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup .NET 5
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 5.0.x
+      - name: Build application
+        uses: ./.github/actions/build-catalogue-scanner
 
-      - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: 'Setup Functions Core Tools'
-        run: |
-          npm i -g azure-functions-core-tools@4 --unsafe-perm true
-
-      - name: 'Build Application'
+      - name: 'Publish to folder'
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet publish --configuration Release --output ./output
+          dotnet publish --configuration ${{ env.CONFIGURATION }} --output ./output
           popd
-
-      #- name: 'Zip Build Output'
-      #  shell: bash
-      #  run: |
-      #    pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-      #    zip -r ../output.zip .
-      #    zipinfo ../output.zip
-      #    popd
 
       - name: 'Azure Login'
         uses: Azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      #- name: 'Deploy to Azure'
-      #  run: |
-      #    pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-      #    func azure functionapp publish ${{ env.FUNCTIONS_APP_NAME }} --csharp
-      #    popd
         
-      - name: 'Run Azure Functions Action'
+      - name: 'Publish to Azure'
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: 'catalogue-scanner-linux'
+          app-name: '${{ env.FUNCTIONS_APP_NAME }}'
           slot-name: 'Production'
           package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          #publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C7ED7F0EF82F41DE9BFF97EB8F6B6F29 }}
