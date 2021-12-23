@@ -34,14 +34,14 @@ jobs:
         shell: bash
         run: |
           pushd './${{ env.FUNCTIONS_APP_PATH }}'
-          dotnet publish --configuration ${{ env.CONFIGURATION }} --output ./output
+          dotnet publish --no-build --configuration ${{ env.CONFIGURATION }} --output ./output
           popd
       
       - name: Publish Configuration UI to folder
         shell: bash
         run: |
           pushd './${{ env.CONFIGURATION_UI_PATH }}'
-          dotnet publish --configuration ${{ env.CONFIGURATION }} --output ./output
+          dotnet publish --no-build --configuration ${{ env.CONFIGURATION }} --output ./output
           popd
 
       - name: Azure Login
