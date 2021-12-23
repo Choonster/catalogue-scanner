@@ -10,8 +10,12 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './CatalogueScanner.DefaultHost' # set this to the path to your web app project, defaults to the repository root
+  FUNCTIONS_APP_PATH: 'CatalogueScanner.DefaultHost'
   FUNCTIONS_APP_NAME: 'catalogue-scanner-linux'
+  FUNCTIONS_APP_SLOT: 'Production'
+  CONFIGURATION_UI_PATH: 'CatalogueScanner.ConfigurationUI'
+  CONFIGURATION_UI_APP_NAME: 'catalogue-scanner-configuration-ui-test'
+  CONFIGURATION_UI_APP_SLOT: 'Production'
   CONFIGURATION: 'Release'
 
 jobs:
@@ -26,22 +30,35 @@ jobs:
         with:
           configuration: ${{ env.CONFIGURATION }}
 
-      - name: 'Publish to folder'
+      - name: Publish Functions App to folder
         shell: bash
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          pushd './${{ env.FUNCTIONS_APP_PATH }}'
+          dotnet publish --configuration ${{ env.CONFIGURATION }} --output ./output
+          popd
+      
+      - name: Publish Configuration UI to folder
+        shell: bash
+        run: |
+          pushd './${{ env.CONFIGURATION_UI_PATH }}'
           dotnet publish --configuration ${{ env.CONFIGURATION }} --output ./output
           popd
 
-      - name: 'Azure Login'
+      - name: Azure Login
         uses: Azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
         
-      - name: 'Publish to Azure'
-        uses: Azure/functions-action@v1
-        id: fa
+      - name: Publish Functions App to Azure
+        uses: Azure/webapps-deploy@v2
         with:
           app-name: '${{ env.FUNCTIONS_APP_NAME }}'
-          slot-name: 'Production'
+          slot-name: '${{ env.FUNCTIONS_APP_SLOT }}'
           package: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+        
+      - name: Publish Configuration_UI to Azure
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: '${{ env.CONFIGURATION_UI_APP_NAME }}'
+          slot-name: '${{ env.CONFIGURATION_UI_APP_SLOT }}'
+          package: './${{ env.CONFIGURATION_UI_PATH }}/output'
