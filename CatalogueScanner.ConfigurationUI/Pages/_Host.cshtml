@@ -22,10 +22,9 @@
 </head>
 <body class="mat">
     @{
-        var accessToken = string.Empty;
-        //await HttpContext.RequestServices
-        //    .GetRequiredService<ITokenAcquisition>()
-        //    .GetAccessTokenForUserAsync(new string[] { ".default" });
+        var accessToken = await HttpContext.RequestServices
+            .GetRequiredService<ITokenAcquisition>()
+            .GetAccessTokenForUserAsync(new string[] { ".default" });
 
         var initialState = new InitialApplicationState
         {
