@@ -35,7 +35,6 @@ jobs:
         run: |
           pushd './${{ env.FUNCTIONS_APP_PATH }}'
           dotnet publish --no-build --configuration ${{ env.CONFIGURATION }} --output ./output
-          ls -R ./output
           popd
       
       - name: Publish Configuration UI to folder
@@ -50,14 +49,14 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
         
-      - name: Publish Functions App to Azure
-        uses: Azure/webapps-deploy@v2
-        with:
-          app-name: '${{ env.FUNCTIONS_APP_NAME }}'
-          slot-name: '${{ env.FUNCTIONS_APP_SLOT }}'
-          package: './${{ env.FUNCTIONS_APP_PATH }}/output'
+      #- name: Publish Functions App to Azure
+      #  uses: Azure/webapps-deploy@v2
+      #  with:
+      #    app-name: '${{ env.FUNCTIONS_APP_NAME }}'
+      #    slot-name: '${{ env.FUNCTIONS_APP_SLOT }}'
+      #    package: './${{ env.FUNCTIONS_APP_PATH }}/output'
         
-      - name: Publish Configuration_UI to Azure
+      - name: Publish Configuration UI to Azure
         uses: Azure/webapps-deploy@v2
         with:
           app-name: '${{ env.CONFIGURATION_UI_APP_NAME }}'
