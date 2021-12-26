@@ -28,8 +28,10 @@ on:
 
 env:
   SHA_SUFFIX: ${{ github.ref_type == 'branch' && format('-{0}', github.sha) || '' }}
-  FUNCTIONS_APP_OUTPUT_PATH: 'CatalogueScanner.DefaultHost/output'
-  CONFIGURATION_UI_OUTPUT_PATH: 'CatalogueScanner.ConfigurationUI/output'
+  FUNCTIONS_APP_PATH: 'CatalougeScanner.DefaultHost'
+  FUNCTIONS_APP_OUTPUT_PATH: '${{ FUNCTIONS_APP_PATH }}/output'
+  CONFIGURATION_UI_PATH: 'CatalogueScanner.ConfigurationUI'
+  CONFIGURATION_UI_OUTPUT_PATH: '${{ CONFIGURATION_UI_PATH }}/output'
 
 jobs:
   build:
@@ -51,10 +53,10 @@ jobs:
           configuration: ${{ inputs.build-configuration }}
 
       - name: Publish Functions App to folder
-        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
+        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.FUNCTIONS_APP_OUTPUT_PATH }} ${{ env.FUNCTIONS_APP_PATH }}
       
       - name: Publish Configuration UI to folder
-        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
+        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.CONFIGURATION_UI_OUTPUT_PATH }} ${{ env.CONFIGURATION_UI_PATH }}
 
       - name: List GH ref name
         run: echo '${{ github.ref_name }}'
