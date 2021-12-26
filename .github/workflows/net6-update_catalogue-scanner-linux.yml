@@ -4,9 +4,9 @@
 name: Build and deploy dotnet core project to Azure Function App - catalogue-scanner-linux
 
 on:
-  push:
-    branches:
-      - net6-update
+  #push:
+  #  branches:
+  #    - net6-update
   workflow_dispatch:
 
 env:

@@ -1,15 +1,24 @@
 name: 'Build Application'
 
 on:
-  push:
-  pull_request:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      build-configuration:
+        description: 'The build configuration to use'
+        required: false
+        type: string
+        default: 'Release'
+    
+    outputs:
+      functions-app-artifact-name: ${{ jobs.build.outputs.functions-app-artifact-name }}
+      functions-app-output-path: ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
+      configuration-ui-artifact-name: ${{ jobs.build.outputs.configuration-ui-artifact-name }}
+      configuration-ui-output-path: ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
 
-env:   
-  CONFIGURATION: 'Release'
+env:
   SHA_SUFFIX: ${{ github.ref_type == 'branch' && format('-{0}', github.sha) || '' }}
-  FUNCTIONS_APP_OUTPUT_PATH: './CatalogueScanner.DefaultHost/output'
-  CONFIGURATION_UI_OUTPUT_PATH: './CatalogueScanner.ConfigurationUI/output'
+  FUNCTIONS_APP_OUTPUT_PATH: 'CatalogueScanner.DefaultHost/output'
+  CONFIGURATION_UI_OUTPUT_PATH: 'CatalogueScanner.ConfigurationUI/output'
 
 jobs:
   build:
@@ -29,22 +38,22 @@ jobs:
           configuration: ${{ env.CONFIGURATION }}
 
       - name: Publish Functions App to folder
-        run: dotnet publish --no-build --configuration ${{ env.CONFIGURATION }} --output ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
+        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
       
       - name: Publish Configuration UI to folder
-        run: dotnet publish --no-build --configuration ${{ env.CONFIGURATION }} --output ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
+        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
 
       - name: List GH ref name
         run: echo '${{ github.ref_name }}'
 
       - name: Sanitise Functions App artifact name
-        id: 'sanitise-functions-app-artifact-name'
+        id: sanitise-functions-app-artifact-name
         uses: ./.github/actions/sanitise-artifact-name          
         with:
           name: ${{ format('CatalogueScanner-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
 
       - name: Sanitise Configuration UI artifact name
-        id: 'sanitise-configuration-ui-artifact-name'
+        id: sanitise-configuration-ui-artifact-name
         uses: ./.github/actions/sanitise-artifact-name          
         with:
           name: ${{ format('CatalogueScanner.ConfigurationUI-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
@@ -55,7 +64,7 @@ jobs:
           name: ${{ steps.sanitise-functions-app-artifact-name.outputs.sanitised-name }}
           path: ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
 
-      - name: Archive Configuration UI App
+      - name: Archive Configuration UI
         uses: alehechka/upload-tartifact@v1
         with:
           name: ${{ steps.sanitise-configuration-ui-artifact-name.outputs.sanitised-name }}
