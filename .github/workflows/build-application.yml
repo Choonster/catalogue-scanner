@@ -48,7 +48,7 @@ jobs:
       - name: Build application
         uses: ./.github/actions/build-catalogue-scanner
         with:
-          configuration: ${{ env.CONFIGURATION }}
+          configuration: ${{ inputs.build-configuration }}
 
       - name: Publish Functions App to folder
         run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
