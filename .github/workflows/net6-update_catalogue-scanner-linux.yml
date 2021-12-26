@@ -12,7 +12,7 @@ on:
 env:
   FUNCTIONS_APP_PATH: 'CatalogueScanner.DefaultHost'
   FUNCTIONS_APP_NAME: 'catalogue-scanner-linux'
-  FUNCTIONS_APP_SLOT: 'catalogue-scanner-linux'
+  FUNCTIONS_APP_SLOT: 'Production'
   CONFIGURATION_UI_PATH: 'CatalogueScanner.ConfigurationUI'
   CONFIGURATION_UI_APP_NAME: 'catalogue-scanner-configuration-ui-test'
   CONFIGURATION_UI_APP_SLOT: 'Production'
