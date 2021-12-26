@@ -18,7 +18,7 @@ runs:
       id: sanitise-name
       shell: pwsh
       env:
-        ARTIFACT_NAME: ${{ github.inputs.name }}
+        ARTIFACT_NAME: ${{ inputs.name }}
       run: |
         # Replace the following characters with a - (minus sign/dash) character:
         # - Double quote "
