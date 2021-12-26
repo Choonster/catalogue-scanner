@@ -50,7 +50,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
         
       - name: Publish Functions App to Azure
-        uses: Azure/webapps-deploy@v2
+        uses: Azure/functions-action@v1
         with:
           app-name: '${{ env.FUNCTIONS_APP_NAME }}'
           slot-name: '${{ env.FUNCTIONS_APP_SLOT }}'
