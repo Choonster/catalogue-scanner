@@ -14,6 +14,11 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    outputs:
+      functions-app-artifact-name: ${{ steps.sanitise-functions-app-artifact-name.outputs.sanitised-name }}
+      configuration-ui-artifact-name: ${{ steps.sanitise-configuration-ui-artifact-name.outputs.sanitised-name }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -31,15 +36,27 @@ jobs:
 
       - name: List GH ref name
         run: echo '${{ github.ref_name }}'
-     
-      - name: Archive Functions App
-        uses: actions/upload-artifact@v2
+
+      - name: Sanitise Functions App artifact name
+        id: 'sanitise-functions-app-artifact-name'
+        uses: ./.github/actions/sanitise-artifact-name          
         with:
           name: ${{ format('CatalogueScanner-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
+
+      - name: Sanitise Configuration UI artifact name
+        id: 'sanitise-configuration-ui-artifact-name'
+        uses: ./.github/actions/sanitise-artifact-name          
+        with:
+          name: ${{ format('CatalogueScanner.ConfigurationUI-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
+     
+      - name: Archive Functions App
+        uses: alehechka/upload-tartifact@v1
+        with:
+          name: ${{ steps.sanitise-functions-app-artifact-name.outputs.sanitised-name }}
           path: ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
 
       - name: Archive Configuration UI App
-        uses: actions/upload-artifact@v2
+        uses: alehechka/upload-tartifact@v1
         with:
-          name: ${{ format('CatalogueScanner.ConfigurationUI-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
+          name: ${{ steps.sanitise-configuration-ui-artifact-name.outputs.sanitised-name }}
           path: ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
