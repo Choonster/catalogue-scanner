@@ -11,18 +11,20 @@ jobs:
 
   deploy-functions-app:
     uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-functions-app.yml@net6-update'
+    needs: build
     with:
-      artifact-name: ${{ jobs.build.outputs.functions-app-artifact-name }}
-      output-path: ${{ jobs.build.outputs.functions-app-output-path }}
+      artifact-name: ${{ needs.build.outputs.functions-app-artifact-name }}
+      output-path: ${{ needs.build.outputs.functions-app-output-path }}
       app-name: catalogue-scanner-linux
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
   deploy-configuration-ui:
     uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-configuration-ui.yml@net6-update'
+    needs: build
     with:
-      artifact-name: ${{ jobs.build.outputs.configuration-ui-artifact-name }}
-      output-path: ${{ jobs.build.outputs.configuration-ui-output-path }}
+      artifact-name: ${{ needs.build.outputs.configuration-ui-artifact-name }}
+      output-path: ${{ needs.build.outputs.configuration-ui-output-path }}
       app-name: catalogue-scanner-configuration-ui
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
