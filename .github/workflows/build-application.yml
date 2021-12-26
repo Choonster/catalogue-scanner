@@ -28,9 +28,9 @@ on:
 
 env:
   SHA_SUFFIX: ${{ github.ref_type == 'branch' && format('-{0}', github.sha) || '' }}
-  FUNCTIONS_APP_PATH: 'CatalougeScanner.DefaultHost'
+  FUNCTIONS_APP_PROJECT_PATH: 'CatalougeScanner.DefaultHost/CatalougeScanner.DefaultHost.csproj'
   FUNCTIONS_APP_OUTPUT_PATH: 'CatalougeScanner.DefaultHost/output'
-  CONFIGURATION_UI_PATH: 'CatalogueScanner.ConfigurationUI'
+  CONFIGURATION_UI_PROJECT_PATH: 'CatalogueScanner.ConfigurationUI/CatalogueScanner.ConfigurationUI.csproj'
   CONFIGURATION_UI_OUTPUT_PATH: 'CatalogueScanner.ConfigurationUI/output'
 
 jobs:
@@ -53,10 +53,10 @@ jobs:
           configuration: ${{ inputs.build-configuration }}
 
       - name: Publish Functions App to folder
-        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.FUNCTIONS_APP_OUTPUT_PATH }} ${{ env.FUNCTIONS_APP_PATH }}
+        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.FUNCTIONS_APP_OUTPUT_PATH }} ${{ env.FUNCTIONS_APP_PROJECT_PATH }}
       
       - name: Publish Configuration UI to folder
-        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.CONFIGURATION_UI_OUTPUT_PATH }} ${{ env.CONFIGURATION_UI_PATH }}
+        run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.CONFIGURATION_UI_OUTPUT_PATH }} ${{ env.CONFIGURATION_UI_PROJECT_PATH }}
 
       - name: List GH ref name
         run: echo '${{ github.ref_name }}'
