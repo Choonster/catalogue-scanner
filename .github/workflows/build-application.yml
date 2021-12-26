@@ -1,0 +1,48 @@
+name: 'Build Application'
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:   
+  CONFIGURATION: 'Release'
+  SHA_SUFFIX: ${{ github.ref_type == 'branch' && format('-{0}', github.sha) || '' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build application
+        uses: ./.github/actions/build-catalogue-scanner
+        with:
+          configuration: ${{ env.CONFIGURATION }}
+
+      - name: Publish Functions App to folder
+        shell: bash
+        run: |
+          pushd './${{ env.FUNCTIONS_APP_PATH }}'
+          dotnet publish --no-build --configuration ${{ env.CONFIGURATION }} --output ./output
+          popd
+      
+      - name: Publish Configuration UI to folder
+        shell: bash
+        run: |
+          pushd './${{ env.CONFIGURATION_UI_PATH }}'
+          dotnet publish --no-build --configuration ${{ env.CONFIGURATION }} --output ./output
+          popd
+     
+      - name: Archive Functions App
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ format('CatalogueScanner-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
+          path: './CatalogueScanner.DefaultHost/output'
+
+      - name: Archive Functions App
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ format('CatalogueScanner.ConfigurationUI-{0}{1}{2}', github.ref_name, env.SHA_SUFFIX) }}
+          path: './CatalogueScanner.ConfigurationUI/output'
