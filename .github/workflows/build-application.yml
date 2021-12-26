@@ -41,7 +41,7 @@ jobs:
           name: ${{ format('CatalogueScanner-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
           path: './CatalogueScanner.DefaultHost/output'
 
-      - name: Archive Functions App
+      - name: Archive Configuration UI App
         uses: actions/upload-artifact@v2
         with:
           name: ${{ format('CatalogueScanner.ConfigurationUI-{0}{1}{2}', github.ref_name, env.SHA_SUFFIX) }}
