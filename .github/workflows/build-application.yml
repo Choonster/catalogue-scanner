@@ -16,7 +16,7 @@ on:
       
       functions-app-output-path:
         description: Path of the Functions App build output within the Build Artifact
-        value: ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
+        value: ${{ jobs.build.outputs.functions-app-output-path }}
       
       configuration-ui-artifact-name:
         description: Name of the Build Artifact for the Configuration UI
@@ -24,7 +24,7 @@ on:
       
       configuration-ui-output-path:
         description: Path of the Configuration UI build output within the Build Artifact
-        value: ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
+        value: ${{ jobs.build.outputs.configuration-ui-output-path }}
 
 env:
   SHA_SUFFIX: ${{ github.ref_type == 'branch' && format('-{0}', github.sha) || '' }}
@@ -37,7 +37,9 @@ jobs:
     
     outputs:
       functions-app-artifact-name: ${{ steps.sanitise-functions-app-artifact-name.outputs.sanitised-name }}
+      functions-app-output-path: ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
       configuration-ui-artifact-name: ${{ steps.sanitise-configuration-ui-artifact-name.outputs.sanitised-name }}
+      configuration-ui-output-path: ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
 
     steps:
       - name: Checkout repository
