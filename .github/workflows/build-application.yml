@@ -28,6 +28,9 @@ jobs:
       
       - name: Publish Configuration UI to folder
         run: dotnet publish --no-build --configuration ${{ env.CONFIGURATION }} --output ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
+
+      - name: List GH ref name
+        run: echo '${{ github.ref_name }}'
      
       - name: Archive Functions App
         uses: actions/upload-artifact@v2
