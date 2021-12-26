@@ -10,10 +10,21 @@ on:
         default: 'Release'
     
     outputs:
-      functions-app-artifact-name: ${{ jobs.build.outputs.functions-app-artifact-name }}
-      functions-app-output-path: ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
-      configuration-ui-artifact-name: ${{ jobs.build.outputs.configuration-ui-artifact-name }}
-      configuration-ui-output-path: ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
+      functions-app-artifact-name:
+        description: Name of the Build Artifact for the Functions App
+        value: ${{ jobs.build.outputs.functions-app-artifact-name }}
+      
+      functions-app-output-path:
+        description: Path of the Functions App build output within the Build Artifact
+        value: ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
+      
+      configuration-ui-artifact-name:
+        description: Name of the Build Artifact for the Configuration UI
+        value: ${{ jobs.build.outputs.configuration-ui-artifact-name }}
+      
+      configuration-ui-output-path:
+        description: Path of the Configuration UI build output within the Build Artifact
+        value: ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}
 
 env:
   SHA_SUFFIX: ${{ github.ref_type == 'branch' && format('-{0}', github.sha) || '' }}
