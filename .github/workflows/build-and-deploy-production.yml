@@ -7,20 +7,20 @@ on:
 
 jobs:
   build:
-    uses: 'Choonster/catalogue-scanner/.github/workflows/build-application.yml@net6-update'
+    uses: 'Choonster/catalogue-scanner/.github/workflows/build-application.yml@master'
 
   deploy-functions-app:
-    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-functions-app.yml@net6-update'
+    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-functions-app.yml@master'
     needs: build
     with:
       artifact-name: ${{ needs.build.outputs.functions-app-artifact-name }}
       output-path: ${{ needs.build.outputs.functions-app-output-path }}
-      app-name: catalogue-scanner-linux
+      app-name: catalogue-scanner
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
   deploy-configuration-ui:
-    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-configuration-ui.yml@net6-update'
+    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-configuration-ui.yml@master'
     needs: build
     with:
       artifact-name: ${{ needs.build.outputs.configuration-ui-artifact-name }}
