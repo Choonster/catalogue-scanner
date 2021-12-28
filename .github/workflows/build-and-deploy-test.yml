@@ -15,8 +15,7 @@ jobs:
     with:
       artifact-name: ${{ needs.build.outputs.functions-app-artifact-name }}
       output-path: ${{ needs.build.outputs.functions-app-output-path }}
-      app-name: catalogue-scanner-linux
-      slot-name: Test
+      app-name: catalogue-scanner-test
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
