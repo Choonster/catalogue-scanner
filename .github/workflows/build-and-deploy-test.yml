@@ -1,0 +1,30 @@
+name: Build and deploy to Test environment
+
+on:
+  push:
+    branches:
+      - net6-update
+
+jobs:
+  build:
+    uses: 'Choonster/catalogue-scanner/.github/workflows/build-application.yml@net6-update'
+
+  deploy-functions-app:
+    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-functions-app.yml@net6-update'
+    needs: build
+    with:
+      artifact-name: ${{ needs.build.outputs.functions-app-artifact-name }}
+      output-path: ${{ needs.build.outputs.functions-app-output-path }}
+      app-name: catalogue-scanner-test
+    secrets:
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
+  deploy-configuration-ui:
+    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-configuration-ui.yml@net6-update'
+    needs: build
+    with:
+      artifact-name: ${{ needs.build.outputs.configuration-ui-artifact-name }}
+      output-path: ${{ needs.build.outputs.configuration-ui-output-path }}
+      app-name: catalogue-scanner-configuration-ui-test
+    secrets:
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}

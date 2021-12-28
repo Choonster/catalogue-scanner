@@ -1,0 +1,30 @@
+name: Build and deploy to Production environment
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    uses: 'Choonster/catalogue-scanner/.github/workflows/build-application.yml@master'
+
+  deploy-functions-app:
+    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-functions-app.yml@master'
+    needs: build
+    with:
+      artifact-name: ${{ needs.build.outputs.functions-app-artifact-name }}
+      output-path: ${{ needs.build.outputs.functions-app-output-path }}
+      app-name: catalogue-scanner
+    secrets:
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
+  deploy-configuration-ui:
+    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-configuration-ui.yml@master'
+    needs: build
+    with:
+      artifact-name: ${{ needs.build.outputs.configuration-ui-artifact-name }}
+      output-path: ${{ needs.build.outputs.configuration-ui-output-path }}
+      app-name: catalogue-scanner-configuration-ui
+    secrets:
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}

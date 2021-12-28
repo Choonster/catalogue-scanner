@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
-    <ProjectReference Include="..\CatalogueScanner.WebScraping.Common\CatalogueScanner.WebScraping.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,8 +19,12 @@
     </Content>
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="dotnet tool restore&#xD;&#xA;dotnet tool run extractpo -- . .\Localisation\Template" />
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Playwright" Version="1.17.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Test Data\COLRS Catalog Entry List - Decompressed.json" />
+  </ItemGroup>
 
 </Project>

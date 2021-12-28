@@ -1,49 +1,102 @@
 ﻿using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WebScraping.Common.Dto.ColesOnline;
+using CatalogueScanner.WebScraping.Options;
+using Microsoft.Extensions.Options;
+using Microsoft.Playwright;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.WebScraping.Service
 {
     public class ColesOnlineService
     {
-        private readonly HttpClient httpClient;
+        private const string ColesBaseUrl = "https://shop.coles.com.au";
 
-        public ColesOnlineService(HttpClient httpClient)
+        private readonly ColesOnlineOptions options;
+
+        public ColesOnlineService(IOptionsSnapshot<ColesOnlineOptions> optionsAccessor)
         {
-            this.httpClient = httpClient;
+            #region null checks
+            if (optionsAccessor is null)
+            {
+                throw new ArgumentNullException(nameof(optionsAccessor));
+            }
+            #endregion
+
+            options = optionsAccessor.Value;
+
+            #region options null checks
+            if (options.StoreId is null)
+            {
+                throw new ArgumentException($"{ColesOnlineOptions.ColesOnline}.{nameof(options.StoreId)} is null", nameof(optionsAccessor));
+            }
+            #endregion
         }
 
         /// <summary>
         /// The time of week when Coles Online changes its specials.
         /// </summary>
-        public static TimeOfWeek SpecialsResetTime => new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Wednesday, "AUS Eastern Standard Time");
+        public static TimeOfWeek SpecialsResetTime => new(TimeSpan.Zero, DayOfWeek.Wednesday, "AUS Eastern Standard Time");
 
-        /// <summary>
-        /// Gets the current specials from Coles Online.
-        /// </summary>
-        /// <returns>The specials</returns>
-        public async Task<ColesOnlineSpecialsResult> GetColesOnlineSpecials()
+        public Uri ProductUrlTemplate => new($"{ColesBaseUrl}/a/{options.StoreId}/product/[productToken]");
+
+        public async Task<ColrsCatalogEntryList> GetSpecialsAsync()
         {
-            return await GetAsync<ColesOnlineSpecialsResult>("specials").ConfigureAwait(false);
-        }
+            using var playwright = await Playwright.CreateAsync().ConfigureAwait(false);
 
-        private async Task<T> GetAsync<T>(string path)
-        {
-            var response = await httpClient.GetAsync(path).ConfigureAwait(false);
+            var browser = await playwright.Chromium.LaunchAsync().ConfigureAwait(false);
+            await using var _ = browser.ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
+            var page = await browser.NewPageAsync().ConfigureAwait(false);
 
-            var result = await response.Content.ReadAsAsync<T>().ConfigureAwait(false);
+            // Prevent all external requests for advertising, tracking, etc.
+            await page.RouteAsync(
+                (url) => !url.StartsWith(ColesBaseUrl, StringComparison.OrdinalIgnoreCase),
+                (route) => route.AbortAsync()
+            ).ConfigureAwait(false);
 
-            if (result is null)
+            // Navigate to the Specials page
+            var response = await page.GotoAsync(
+                $"{ColesBaseUrl}/a/{options.StoreId}/specials/browse",
+                new PageGotoOptions
+                {
+                    WaitUntil = WaitUntilState.DOMContentLoaded,
+                    Timeout = 0
+                }
+            ).ConfigureAwait(false);
+
+            if (response is null)
             {
-                throw new JsonSerializationException("result is null");
+                throw new InvalidOperationException("Page goto response is null");
             }
 
-            return result;
+            if (!response.Ok)
+            {
+                throw new HttpRequestException($"Coles Online request failed with status {response.Status} ({response.StatusText}) - {await response.TextAsync().ConfigureAwait(false)}");
+            }
+
+            const string colrsProductListDataExpression = "angular.element(document.querySelector('[data-colrs-product-list]')).data()?.$colrsProductListController?.widget?.data";
+
+            // The server returns the JSON data in compressed form with keys like "p1" and "a" that then get converted to full keys like "name" and "attributesMap".
+            // Wait until the data has been decompressed before we read it.
+            await page.WaitForFunctionAsync($"typeof {colrsProductListDataExpression}.products[{colrsProductListDataExpression}.products.length - 1].name === 'string'", options: new PageWaitForFunctionOptions { Timeout = 0 }).ConfigureAwait(false);
+
+            // Playwright's EvaluateArgumentValueConverter doesn't seem to be able to deserialise to ColrsCatalogEntryList (and doesn't handle custom names),
+            // so evaluate the expression as a JsonElement and then re-serialise and deserialise to ColrsCatalogEntryList (using Newtonsoft.Json rather than System.Text.Json).
+            var productDataJson = await page.EvaluateAsync<JsonElement>(colrsProductListDataExpression)
+                                            .ConfigureAwait(false);
+
+            var productData = JsonConvert.DeserializeObject<ColrsCatalogEntryList>(productDataJson.GetRawText());
+
+            if (productData is null)
+            {
+                throw new InvalidOperationException("productData is null after deserialising from JsonElement.GetRawText()");
+            }
+
+            return productData;
         }
     }
 }

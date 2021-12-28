@@ -22,7 +22,7 @@ namespace CatalogueScanner.SaleFinder.Functions
         private const int ColesStoreId = 148;
         private const string ColesStoreName = "Coles";
         private const string ThisWeeksCatalogue = "This week's catalogue";
-        private static readonly Uri CatalaogueBaseUri = new Uri("https://www.coles.com.au/catalogues-and-specials/view-all-available-catalogues");
+        private static readonly Uri CatalaogueBaseUri = new("https://www.coles.com.au/catalogues-and-specials/view-all-available-catalogues");
 
         private readonly SaleFinderService saleFinderService;
         private readonly ColesOptions options;

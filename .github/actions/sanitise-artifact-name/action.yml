@@ -1,0 +1,37 @@
+name: 'Sanitise Artifact Name'
+description: 'Sanitises a name for use with Build Artifacts'
+
+inputs:
+  name:
+    description: 'The name to be sanitised'
+    required: true
+
+outputs:
+  sanitised-name:
+    description: 'The sanitised name'
+    value: ${{ steps.sanitise-name.outputs.sanitised-name }}
+    
+runs:
+  using: "composite"
+  steps:
+    - name: Sanitise name
+      id: sanitise-name
+      shell: pwsh
+      env:
+        ARTIFACT_NAME: ${{ inputs.name }}
+      run: |
+        # Replace the following characters with a - (minus sign/dash) character:
+        # - Double quote "
+        # - Colon :, 
+        # - Less than <
+        # - Greater than >
+        # - Vertical bar |
+        # - Asterisk *
+        # - Question mark ?
+        # - Carriage return \r
+        # - Line feed \n
+        # - Backslash \
+        # - Forward slash /
+
+        $sanitisedName = [regex]::Replace($env:ARTIFACT_NAME, "["":<>|*?`r`n\\/]", '-')
+        echo "::set-output name=sanitised-name::$sanitisedName"

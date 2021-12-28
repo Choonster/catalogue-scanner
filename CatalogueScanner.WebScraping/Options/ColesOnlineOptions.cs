@@ -1,4 +1,4 @@
-﻿namespace CatalogueScanner.WebScraping.API.Options
+﻿namespace CatalogueScanner.WebScraping.Options
 {
     public class ColesOnlineOptions
     {

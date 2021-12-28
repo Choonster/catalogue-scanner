@@ -61,9 +61,23 @@ namespace CatalogueScanner.Core.Serialisation
             return stream.Read(buffer, offset, LimitReadCount(count));
         }
 
+        public override int Read(Span<byte> buffer)
+        {
+            var count = LimitReadCount(buffer.Length);
+
+            return stream.Read(buffer[..count]);
+        }
+
         public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             return stream.ReadAsync(buffer, offset, LimitReadCount(count), cancellationToken);
+        }
+
+        public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            var count = LimitReadCount(buffer.Length);
+
+            return stream.ReadAsync(buffer[..count], cancellationToken);
         }
 
         public override int ReadByte()
@@ -106,6 +120,8 @@ namespace CatalogueScanner.Core.Serialisation
         {
             await base.DisposeAsync().ConfigureAwait(false);
             await stream.DisposeAsync().ConfigureAwait(false);
+
+            GC.SuppressFinalize(this);
         }
     }
 }
