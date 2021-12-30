@@ -92,7 +92,7 @@ namespace CatalogueScanner.WebScraping.Service
             var currentPageNum = await GetCurrentPageNum().ConfigureAwait(false);
             var totalPageCount = await page.EvaluateAsync<int>("CatalogueScanner_ColesOnline.instance.totalPageCount").ConfigureAwait(false);
 
-            logger.LogWarning("Scanning {TotalPageCount} pages of Coles Online specials");
+            logger.LogWarning("Scanning {TotalPageCount} pages of Coles Online specials", totalPageCount);
 
             while (currentPageNum <= totalPageCount)
             {
