@@ -18,6 +18,7 @@ namespace CatalogueScanner.WebScraping.Functions
             this.colesOnlineService = colesOnlineService;
         }
 
+        [Timeout("-1")]
         [FunctionName(WebScrapingFunctionNames.DownloadColesOnlineSpecials)]
         public async Task<Catalogue> Run([ActivityTrigger] DateRange specialsDateRange)
         {
