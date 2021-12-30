@@ -24,7 +24,8 @@ namespace CatalogueScanner.WebScraping.Functions
             var productUrlTemplate = colesOnlineService.ProductUrlTemplate;
             var specials = await colesOnlineService.GetSpecialsAsync().ConfigureAwait(false);
 
-            var items = specials.Products
+            var items = specials
+                .SelectMany(s => s.Products)
                 .Select(product => new CatalogueItem
                 {
                     Id = product.UniqueId,

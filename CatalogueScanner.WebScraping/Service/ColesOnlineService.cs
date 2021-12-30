@@ -1,10 +1,12 @@
 ﻿using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WebScraping.Common.Dto.ColesOnline;
+using CatalogueScanner.WebScraping.JavaScript;
 using CatalogueScanner.WebScraping.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -43,7 +45,7 @@ namespace CatalogueScanner.WebScraping.Service
 
         public Uri ProductUrlTemplate => new($"{ColesBaseUrl}/a/{options.StoreId}/product/[productToken]");
 
-        public async Task<ColrsCatalogEntryList> GetSpecialsAsync()
+        public async Task<IEnumerable<ColrsCatalogEntryList>> GetSpecialsAsync()
         {
             using var playwright = await Playwright.CreateAsync().ConfigureAwait(false);
 
@@ -51,6 +53,8 @@ namespace CatalogueScanner.WebScraping.Service
             await using var _ = browser.ConfigureAwait(false);
 
             var page = await browser.NewPageAsync().ConfigureAwait(false);
+
+            await page.AddInitScriptAsync(script: JavaScriptFiles.ColesOnline).ConfigureAwait(false);
 
             // Prevent all external requests for advertising, tracking, etc.
             await page.RouteAsync(
@@ -78,25 +82,43 @@ namespace CatalogueScanner.WebScraping.Service
                 throw new HttpRequestException($"Coles Online request failed with status {response.Status} ({response.StatusText}) - {await response.TextAsync().ConfigureAwait(false)}");
             }
 
-            const string colrsProductListDataExpression = "angular.element(document.querySelector('[data-colrs-product-list]')).data()?.$colrsProductListController?.widget?.data";
+            var result = new List<ColrsCatalogEntryList>();
 
-            // The server returns the JSON data in compressed form with keys like "p1" and "a" that then get converted to full keys like "name" and "attributesMap".
-            // Wait until the data has been decompressed before we read it.
-            await page.WaitForFunctionAsync($"typeof {colrsProductListDataExpression}.products[{colrsProductListDataExpression}.products.length - 1].name === 'string'", options: new PageWaitForFunctionOptions { Timeout = 0 }).ConfigureAwait(false);
+            await page.WaitForFunctionAsync("CatalogueScanner_ColesOnline.instance.isPaginationLoaded").ConfigureAwait(false);
 
-            // Playwright's EvaluateArgumentValueConverter doesn't seem to be able to deserialise to ColrsCatalogEntryList (and doesn't handle custom names),
-            // so evaluate the expression as a JsonElement and then re-serialise and deserialise to ColrsCatalogEntryList (using Newtonsoft.Json rather than System.Text.Json).
-            var productDataJson = await page.EvaluateAsync<JsonElement>(colrsProductListDataExpression)
-                                            .ConfigureAwait(false);
+            var currentPageNum = await GetCurrentPageNum().ConfigureAwait(false);
+            var totalPageCount = await page.EvaluateAsync<int>("CatalogueScanner_ColesOnline.instance.totalPageCount").ConfigureAwait(false);
 
-            var productData = JsonConvert.DeserializeObject<ColrsCatalogEntryList>(productDataJson.GetRawText());
-
-            if (productData is null)
+            while (currentPageNum <= totalPageCount)
             {
-                throw new InvalidOperationException("productData is null after deserialising from JsonElement.GetRawText()");
+                // The server returns the JSON data in compressed form with keys like "p1" and "a" that then get converted to full keys like "name" and "attributesMap".
+                // Wait until the data has been decompressed before we read it.
+                await page.WaitForFunctionAsync(
+                    "CatalogueScanner_ColesOnline.instance.isDataLoaded",
+                    options: new PageWaitForFunctionOptions { Timeout = 0 }
+                ).ConfigureAwait(false);
+
+                // Playwright's EvaluateArgumentValueConverter doesn't seem to be able to deserialise to ColrsCatalogEntryList (and doesn't handle custom names),
+                // so evaluate the expression as a JsonElement and then re-serialise and deserialise to ColrsCatalogEntryList (using Newtonsoft.Json rather than System.Text.Json).
+                var productDataJson = await page.EvaluateAsync<JsonElement>("CatalogueScanner_ColesOnline.instance.productListData")
+                                                .ConfigureAwait(false);
+
+                var productData = JsonConvert.DeserializeObject<ColrsCatalogEntryList>(productDataJson.GetRawText());
+
+                if (productData is null)
+                {
+                    throw new InvalidOperationException("productData is null after deserialising from JsonElement.GetRawText()");
+                }
+
+                result.Add(productData);
+
+                await page.EvaluateAsync("CatalogueScanner_ColesOnline.instance.nextPage()").ConfigureAwait(false);
+                currentPageNum = await GetCurrentPageNum().ConfigureAwait(false);
             }
 
-            return productData;
+            return result;
+
+            async Task<int> GetCurrentPageNum() => await page.EvaluateAsync<int>("CatalogueScanner_ColesOnline.instance.currentPageNum").ConfigureAwait(false);
         }
     }
 }

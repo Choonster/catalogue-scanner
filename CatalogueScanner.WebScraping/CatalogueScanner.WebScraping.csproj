@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,21 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Playwright" Version="1.17.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="JavaScript\JavaScriptFiles.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>JavaScriptFiles.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="JavaScript\JavaScriptFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>JavaScriptFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
