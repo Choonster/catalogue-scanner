@@ -268,7 +268,24 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
 
     public enum PromoType { MultibuyMultiSku, MultibuySingleSku };
 
-    public enum TicketType { M, MZero, MOne, SZero, SOne, STwentyZero, SFiftyZero }
+    public enum TicketType
+    {
+        M,
+        MZero,
+        MOne,
+        SZero,
+        SOne,
+        STenZero,
+        SFifteenZero,
+        STwentyZero,
+        STwentyFiveZero,
+        SThirtyZero,
+        SFourtyZero,
+        SFiftyZero,
+        V,
+        VZero,
+        XZero
+    }
 
     public class TicketTypeConverter : JsonConverter<TicketType>
     {
@@ -279,8 +296,16 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
             [TicketType.MOne] = "M_1",
             [TicketType.SZero] = "S_0",
             [TicketType.SOne] = "S_1",
-            [TicketType.SFiftyZero] = "S50_0",
+            [TicketType.STenZero] = "S10_0",
+            [TicketType.SFifteenZero] = "S15_0",
             [TicketType.STwentyZero] = "S20_0",
+            [TicketType.STwentyFiveZero] = "S25_0",
+            [TicketType.SThirtyZero] = "S30_0",
+            [TicketType.SFourtyZero] = "S40_0",
+            [TicketType.SFiftyZero] = "S50_0",
+            [TicketType.V] = "V",
+            [TicketType.VZero] = "V_0",
+            [TicketType.XZero] = "X_0",
         }.ToImmutableDictionary();
 
         private static readonly IDictionary<string, TicketType> stringToTicketType = ticketTypeToString
@@ -315,7 +340,7 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
 
             if (reader.TokenType != JsonToken.String)
             {
-                throw new JsonReaderException($"Unable to read ${reader.TokenType} value as {nameof(TicketType)}");
+                throw new JsonReaderException($"Unable to read {reader.TokenType} value as {nameof(TicketType)}");
             }
 
             if (!stringToTicketType.TryGetValue((string)stringValue, out var ticketType))
