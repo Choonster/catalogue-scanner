@@ -2,22 +2,22 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<None Include="..\.github\**" Link=".github\%(RecursiveDir)%(Filename)%(Extension)" />
 		<None Include="..\.config\**" Link=".config\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-	  <Content Include="..\Design.txt" Link="Design.txt" />
-	  <Content Include="..\TODO.txt" Link="TODO.txt" />
+		<Content Include="..\Design.txt" Link="Design.txt" />
+		<Content Include="..\TODO.txt" Link="TODO.txt" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-	  <None Include="..\.gitattributes" Link=".gitattributes" />
-	  <None Include="..\.gitignore" Link=".gitignore" />
-	  <None Include="..\Directory.Build.props" Link="Directory.Build.props" />
-	  <None Include="..\NuGet.config" Link="NuGet.config" />
-	  <None Include="..\README.md" Link="README.md" />
+		<None Include="..\.gitattributes" Link=".gitattributes" />
+		<None Include="..\.gitignore" Link=".gitignore" />
+		<None Include="..\Directory.Build.props" Link="Directory.Build.props" />
+		<None Include="..\NuGet.config" Link="NuGet.config" />
+		<None Include="..\README.md" Link="README.md" />
 	</ItemGroup>
 </Project>
