@@ -342,3 +342,4 @@ healthchecksdb
 /CatalogueScanner.DefaultHost/Properties/ServiceDependencies
 /CatalogueScanner.ConfigurationUI/Properties/ServiceDependencies
 /CatalogueScanner.WebScraping.API/Properties/ServiceDependencies
+/playwright-browsers
