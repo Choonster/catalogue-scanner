@@ -2,6 +2,7 @@
 using CatalogueScanner.WebScraping.Common.Dto.ColesOnline;
 using CatalogueScanner.WebScraping.JavaScript;
 using CatalogueScanner.WebScraping.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
 using Newtonsoft.Json;
@@ -18,8 +19,9 @@ namespace CatalogueScanner.WebScraping.Service
         private const string ColesBaseUrl = "https://shop.coles.com.au";
 
         private readonly ColesOnlineOptions options;
+        private readonly ILogger<ColesOnlineService> logger;
 
-        public ColesOnlineService(IOptionsSnapshot<ColesOnlineOptions> optionsAccessor)
+        public ColesOnlineService(IOptionsSnapshot<ColesOnlineOptions> optionsAccessor, ILogger<ColesOnlineService> logger)
         {
             #region null checks
             if (optionsAccessor is null)
@@ -29,6 +31,7 @@ namespace CatalogueScanner.WebScraping.Service
             #endregion
 
             options = optionsAccessor.Value;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             #region options null checks
             if (options.StoreId is null)
@@ -88,6 +91,8 @@ namespace CatalogueScanner.WebScraping.Service
 
             var currentPageNum = await GetCurrentPageNum().ConfigureAwait(false);
             var totalPageCount = await page.EvaluateAsync<int>("CatalogueScanner_ColesOnline.instance.totalPageCount").ConfigureAwait(false);
+
+            logger.LogWarning("Scanning {TotalPageCount} pages of Coles Online specials");
 
             while (currentPageNum <= totalPageCount)
             {
