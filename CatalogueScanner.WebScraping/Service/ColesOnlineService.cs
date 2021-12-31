@@ -1,4 +1,4 @@
-﻿using CatalogueScanner.Core.Utility;
+using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WebScraping.Common.Dto.ColesOnline;
 using CatalogueScanner.WebScraping.JavaScript;
 using CatalogueScanner.WebScraping.Options;
@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.WebScraping.Service
@@ -48,8 +49,10 @@ namespace CatalogueScanner.WebScraping.Service
 
         public Uri ProductUrlTemplate => new($"{ColesBaseUrl}/a/{options.StoreId}/product/[productToken]");
 
-        public async Task<IEnumerable<ColrsCatalogEntryList>> GetSpecialsAsync()
+        public async Task<IEnumerable<ColrsCatalogEntryList>> GetSpecialsAsync(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             using var playwright = await Playwright.CreateAsync().ConfigureAwait(false);
 
             var browser = await playwright.Chromium.LaunchAsync().ConfigureAwait(false);
@@ -96,6 +99,8 @@ namespace CatalogueScanner.WebScraping.Service
 
             while (currentPageNum <= totalPageCount)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 logger.LogWarning("Page {CurrentPageNum}/{TotalPageCount} - Starting", currentPageNum, totalPageCount);
 
                 // The server returns the JSON data in compressed form with keys like "p1" and "a" that then get converted to full keys like "name" and "attributesMap".

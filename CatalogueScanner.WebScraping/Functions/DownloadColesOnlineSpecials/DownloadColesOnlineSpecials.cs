@@ -5,6 +5,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.WebScraping.Functions
@@ -20,10 +21,12 @@ namespace CatalogueScanner.WebScraping.Functions
 
         [Timeout("-1")]
         [FunctionName(WebScrapingFunctionNames.DownloadColesOnlineSpecials)]
-        public async Task<Catalogue> Run([ActivityTrigger] DateRange specialsDateRange)
+        public async Task<Catalogue> Run([ActivityTrigger] DateRange specialsDateRange, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var productUrlTemplate = colesOnlineService.ProductUrlTemplate;
-            var specials = await colesOnlineService.GetSpecialsAsync().ConfigureAwait(false);
+            var specials = await colesOnlineService.GetSpecialsAsync(cancellationToken).ConfigureAwait(false);
 
             var items = specials
                 .SelectMany(s => s.Products)
