@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -113,17 +112,22 @@ namespace CatalogueScanner.WebScraping.Service
                 logger.LogWarning("Page {CurrentPageNum}/{TotalPageCount} - Data Loaded", currentPageNum, totalPageCount);
 
                 // Playwright's EvaluateArgumentValueConverter doesn't seem to be able to deserialise to ColrsCatalogEntryList (and doesn't handle custom names),
-                // so evaluate the expression as a JsonElement and then re-serialise and deserialise to ColrsCatalogEntryList (using Newtonsoft.Json rather than System.Text.Json).
-                var productDataJson = await page.EvaluateAsync<JsonElement>("CatalogueScanner_ColesOnline.instance.productListData")
+                // so serialise the data to JSON in the browser and then deserialise to ColrsCatalogEntryList (using Newtonsoft.Json rather than System.Text.Json).
+                var productDataJson = await page.EvaluateAsync<string>("JSON.stringify(CatalogueScanner_ColesOnline.instance.productListData)")
                                                 .ConfigureAwait(false);
+
+                if (productDataJson is null)
+                {
+                    throw new InvalidOperationException($"{nameof(productDataJson)} is null after evaluating productListData expression");
+                }
 
                 logger.LogWarning("Page {CurrentPageNum}/{TotalPageCount} - Data Received from Playwright", currentPageNum, totalPageCount);
 
-                var productData = JsonConvert.DeserializeObject<ColrsCatalogEntryList>(productDataJson.GetRawText());
+                var productData = JsonConvert.DeserializeObject<ColrsCatalogEntryList>(productDataJson);
 
                 if (productData is null)
                 {
-                    throw new InvalidOperationException("productData is null after deserialising from JsonElement.GetRawText()");
+                    throw new InvalidOperationException($"{nameof(productData)} is null after deserialising from {nameof(productDataJson)}");
                 }
 
                 result.Add(productData);
