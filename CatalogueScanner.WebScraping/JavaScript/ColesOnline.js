@@ -2,7 +2,7 @@
     static instance = new CatalogueScanner_ColesOnline();
 
     get #productListControler() {
-        return angular.element(document.querySelector('[data-colrs-product-list]')).data()?.$colrsProductListController;
+        return angular?.element(document.querySelector('[data-colrs-product-list]')).data()?.$colrsProductListController;
     }
 
     get productListData() {
@@ -15,7 +15,7 @@
     }
 
     get #paginationController() {
-        return angular.element(document.querySelector('[data-colrs-pagination]')).data()?.$colrsPaginationController;
+        return angular?.element(document.querySelector('[data-colrs-pagination]')).data()?.$colrsPaginationController;
     }
 
     get isPaginationLoaded() {
