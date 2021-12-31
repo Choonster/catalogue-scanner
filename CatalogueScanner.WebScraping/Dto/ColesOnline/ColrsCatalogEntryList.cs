@@ -163,7 +163,7 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
     public partial class Price
     {
         [JsonProperty("listPrice")]
-        public double ListPrice { get; set; }
+        public double? ListPrice { get; set; }
 
         [JsonProperty("offerPrice")]
         public double OfferPrice { get; set; }
