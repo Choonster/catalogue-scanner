@@ -96,6 +96,8 @@ namespace CatalogueScanner.WebScraping.Service
 
             while (currentPageNum <= totalPageCount)
             {
+                logger.LogWarning("Page {CurrentPageNum}/{TotalPageCount} - Starting", currentPageNum, totalPageCount);
+
                 // The server returns the JSON data in compressed form with keys like "p1" and "a" that then get converted to full keys like "name" and "attributesMap".
                 // Wait until the data has been decompressed before we read it.
                 await page.WaitForFunctionAsync(
@@ -103,10 +105,14 @@ namespace CatalogueScanner.WebScraping.Service
                     options: new PageWaitForFunctionOptions { Timeout = 0 }
                 ).ConfigureAwait(false);
 
+                logger.LogWarning("Page {CurrentPageNum}/{TotalPageCount} - Data Loaded", currentPageNum, totalPageCount);
+
                 // Playwright's EvaluateArgumentValueConverter doesn't seem to be able to deserialise to ColrsCatalogEntryList (and doesn't handle custom names),
                 // so evaluate the expression as a JsonElement and then re-serialise and deserialise to ColrsCatalogEntryList (using Newtonsoft.Json rather than System.Text.Json).
                 var productDataJson = await page.EvaluateAsync<JsonElement>("CatalogueScanner_ColesOnline.instance.productListData")
                                                 .ConfigureAwait(false);
+
+                logger.LogWarning("Page {CurrentPageNum}/{TotalPageCount} - Data Received from Playwright", currentPageNum, totalPageCount);
 
                 var productData = JsonConvert.DeserializeObject<ColrsCatalogEntryList>(productDataJson.GetRawText());
 
@@ -117,8 +123,15 @@ namespace CatalogueScanner.WebScraping.Service
 
                 result.Add(productData);
 
+                logger.LogWarning("Page {CurrentPageNum}/{TotalPageCount} - Data added to result", currentPageNum, totalPageCount);
+
                 await page.EvaluateAsync("CatalogueScanner_ColesOnline.instance.nextPage()").ConfigureAwait(false);
+
+                logger.LogWarning("Page {CurrentPageNum}/{TotalPageCount} - Next page loaded", currentPageNum, totalPageCount);
+
                 currentPageNum = await GetCurrentPageNum().ConfigureAwait(false);
+
+                logger.LogWarning("Page {CurrentPageNum}/{TotalPageCount} - Page number updated", currentPageNum, totalPageCount);
             }
 
             return result;
