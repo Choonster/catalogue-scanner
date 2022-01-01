@@ -22,15 +22,11 @@
         return typeof this.#paginationController !== 'undefined';
     }
 
-    get currentPageNum() {
-        return this.#paginationController.currPageNum;
-    }
-
     get totalPageCount() {
         return this.#paginationController.totalPageCount;
     }
 
-    async nextPage() {
-        return await this.#productListControler.pagination(this.currentPageNum + 1);
+    async loadPage(pageNum) {
+        return await this.#productListControler.pagination(pageNum);
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -63,15 +64,23 @@ namespace CatalogueScanner.WebScraping.Functions
                 context.SetCustomStatus("Downloading");
                 log.LogDebug($"Downloading - {scanStateId.EntityKey}");
 
-                var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(WebScrapingFunctionNames.DownloadColesOnlineSpecials, specialsDateRange).ConfigureAwait(true);
+                var totalPageCount = await context.CallActivityAsync<int>(WebScrapingFunctionNames.GetColesOnlineSpecialsPageCount, null).ConfigureAwait(true);
+
+                var downloadTasks = Enumerable.Range(0, totalPageCount)
+                      .Select(pageIndex => context.CallActivityAsync<IEnumerable<CatalogueItem>>(WebScrapingFunctionNames.DownloadColesOnlineSpecialsPage, pageIndex + 1))
+                      .ToList();
+
+                await Task.WhenAll(downloadTasks).ConfigureAwait(true);
+
+                await context.CallActivityAsync(WebScrapingFunctionNames.ClosePlaywrightBrowser, null).ConfigureAwait(true);
                 #endregion
 
                 #region Filter catalouge items
                 context.SetCustomStatus("Filtering");
                 log.LogDebug($"Filtering - {scanStateId.EntityKey}");
-                log.LogWarning("Download returned {NumItems} catalogue items", downloadedCatalogue.Items.Count);
 
-                var itemTasks = downloadedCatalogue.Items
+                var itemTasks = downloadTasks
+                    .SelectMany(task => task.Result)
                     .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
                     .ToList();
 
@@ -91,7 +100,7 @@ namespace CatalogueScanner.WebScraping.Functions
 
                 if (filteredItems.Any())
                 {
-                    var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
+                    var filteredCatalogue = new Catalogue("Coles Online", specialsDateRange.StartDate, specialsDateRange.EndDate, filteredItems);
 
                     await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
                 }
@@ -110,15 +119,15 @@ namespace CatalogueScanner.WebScraping.Functions
 
                 log.LogDebug($"Completed - {scanStateId.EntityKey}");
                 context.SetCustomStatus("Completed");
-            }
         }
+    }
 
         /// <summary>
         /// Function that triggers the <see cref="RunOrchestrator"/> orchestrator function on a timer.
         /// </summary>
         [FunctionName(WebScrapingFunctionNames.ScanColesOnlineSpecialsTimerStart)]
         public static async Task TimerStart(
-            [TimerTrigger("%" + WebScrapingAppSettingNames.ColesOnlineCronExpression +"%")] TimerInfo timer,
+            [TimerTrigger("%" + WebScrapingAppSettingNames.ColesOnlineCronExpression + "%")] TimerInfo timer,
             [DurableClient] IDurableClient starter,
             ILogger log
         )
