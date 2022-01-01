@@ -64,10 +64,12 @@ namespace CatalogueScanner.WebScraping.Functions
                 context.SetCustomStatus("Downloading");
                 log.LogDebug($"Downloading - {scanStateId.EntityKey}");
 
+                var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
+
                 var totalPageCount = await context.CallActivityAsync<int>(WebScrapingFunctionNames.GetColesOnlineSpecialsPageCount, null).ConfigureAwait(true);
 
                 var downloadTasks = Enumerable.Range(0, totalPageCount)
-                      .Select(pageIndex => context.CallActivityAsync<IEnumerable<CatalogueItem>>(WebScrapingFunctionNames.DownloadColesOnlineSpecialsPage, pageIndex + 1))
+                      .Select(pageIndex => context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(WebScrapingFunctionNames.DownloadColesOnlineSpecialsPage, retryOptions, pageIndex + 1))
                       .ToList();
 
                 await Task.WhenAll(downloadTasks).ConfigureAwait(true);
@@ -119,8 +121,8 @@ namespace CatalogueScanner.WebScraping.Functions
 
                 log.LogDebug($"Completed - {scanStateId.EntityKey}");
                 context.SetCustomStatus("Completed");
+            }
         }
-    }
 
         /// <summary>
         /// Function that triggers the <see cref="RunOrchestrator"/> orchestrator function on a timer.
