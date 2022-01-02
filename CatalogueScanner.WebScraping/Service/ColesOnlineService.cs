@@ -106,7 +106,7 @@ namespace CatalogueScanner.WebScraping.Service
         {
             var page = await context.NewPageAsync().ConfigureAwait(false);
 
-            page.SetDefaultTimeout(0);
+            page.SetDefaultTimeout((float)TimeSpan.FromMinutes(5).TotalMilliseconds);
 
             await page.AddInitScriptAsync(script: JavaScriptFiles.ColesOnline).ConfigureAwait(false);
 
