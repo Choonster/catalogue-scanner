@@ -8,7 +8,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using System;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.Core.Functions.Api
+namespace CatalogueScanner.Core.Functions.Api.CatalogueScanState
 {
     /// <summary>
     /// Web API function that updates the scan state for a catalogue.

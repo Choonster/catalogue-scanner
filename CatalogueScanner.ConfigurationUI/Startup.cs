@@ -5,6 +5,7 @@ using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
+using CurrieTechnologies.Razor.Clipboard;
 using MatBlazor;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -14,11 +15,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
 using OrchardCore.Localization;
 using OrchardCore.Localization.PortableObject;
-using System;
 
 namespace CatalogueScanner.ConfigurationUI
 {
@@ -38,6 +37,15 @@ namespace CatalogueScanner.ConfigurationUI
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddMatBlazor();
+            services.AddClipboard();
+
+            services.AddMatToaster(config =>
+            {
+                config.Position = MatToastPosition.BottomCenter;
+                config.PreventDuplicates = true;
+                config.NewestOnTop = true;
+                config.ShowCloseButton = false;
+            });
 
             services.AddScoped<TokenProvider>();
 
@@ -48,25 +56,8 @@ namespace CatalogueScanner.ConfigurationUI
 
             services.Configure<CatalogueScannerApiOptions>(Configuration.GetSection(CatalogueScannerApiOptions.CatalogueScannerApi));
 
-            services.AddHttpClient(CatalogueScannerApiOptions.CatalogueScannerApi, (serviceProvider, httpClient) =>
-            {
-                var options = serviceProvider
-                    .GetRequiredService<IOptions<CatalogueScannerApiOptions>>()
-                    .Value;
-
-                if (options.BaseAddress == null)
-                {
-                    throw new InvalidOperationException($"{CatalogueScannerApiOptions.CatalogueScannerApi}:{nameof(options.BaseAddress)} app setting must be configured");
-                }
-
-                httpClient.BaseAddress = options.BaseAddress;
-            });
-
-            services.AddHttpClient<CatalogueScanStateService>(CatalogueScannerApiOptions.CatalogueScannerApi, (httpClient) =>
-            {
-                var baseAddress = httpClient.BaseAddress ?? throw new InvalidOperationException($"{nameof(httpClient)}.{nameof(httpClient.BaseAddress)} is null");
-                httpClient.BaseAddress = httpClient.BaseAddress.AppendPath("CatalogueScanState/");
-            });
+            services.AddCatalogueScannerApiHttpClient<CatalogueScanStateService>("CatalogueScanState");
+            services.AddCatalogueScannerApiHttpClient<ManagementService>("Management");
 
             services.AddSingleton<ILocalizationFileLocationProvider, ContentRootPoFileLocationProvider>();
 
@@ -116,6 +107,8 @@ namespace CatalogueScanner.ConfigurationUI
 
             logger.LogWarning("AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled: {value}", AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled);
         }
+
+
 
         private class DummyFunctionsHostBuilder : IFunctionsHostBuilder
         {
