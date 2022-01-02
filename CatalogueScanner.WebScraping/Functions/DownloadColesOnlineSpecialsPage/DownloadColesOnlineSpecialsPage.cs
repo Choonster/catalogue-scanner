@@ -19,7 +19,7 @@ namespace CatalogueScanner.WebScraping.Functions
             this.colesOnlineService = colesOnlineService;
         }
 
-        [Timeout("-1")]
+        [Timeout("00:10:00")]
         [FunctionName(WebScrapingFunctionNames.DownloadColesOnlineSpecialsPage)]
         public async Task<IEnumerable<CatalogueItem>> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
         {
