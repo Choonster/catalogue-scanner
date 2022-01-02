@@ -1,0 +1,55 @@
+﻿@page "/management/orchestrations"
+
+@using CatalogueScanner.ConfigurationUI.Service
+@using CurrieTechnologies.Razor.Clipboard
+@using Microsoft.Extensions.Logging
+
+@inject ManagementService ManagementService
+@inject ILogger<CatalogueScanStates> Logger
+@inject IMatDialogService DialogService
+@inject IMatToaster Toaster
+@inject TokenProvider TokenProvider
+@inject ClipboardService Clipboard
+
+<div class="loading-spinner-container">
+    <MatH3 Class="table-page-header">Orchestration Management</MatH3>
+
+    <section>
+        <EditForm class="inline-form-row" Model="this" OnValidSubmit="LoadCheckStatusEndpoints">
+            <MatInputTextComponent @bind-Value="instanceId" Label="Instance ID" />
+
+            <MatButton Type="submit">Load Check Status Endpoints</MatButton>
+        </EditForm>
+
+        @if (endpoints is not null)
+        {
+            <MatTable Items="endpoints" ShowPaging="false">
+                <MatTableHeader>
+                    <td>Name</td>
+                    <td>Value</td>
+                    <td></td>
+                </MatTableHeader>
+
+                <MatTableRow Context="endpoint">
+                    <td>@endpoint.Key</td>
+                    <td>@endpoint.Value</td>
+                    <td>
+                        @if (endpoint.Key.Contains("Uri"))
+                        {
+                        <MatButton OnClick="@(args => CopyPowerShellRequest(endpoint.Key))">Copy PowerShell Request Script</MatButton>
+                        }
+                </td>
+            </MatTableRow>
+        </MatTable>
+        }
+    </section>
+
+    <section>
+        <MatButton OnClick=@(args => CleanEntityStorage())>Clean Entity Storage</MatButton>
+    </section>
+
+    @if (loading)
+    {
+        <LoadingSpinner></LoadingSpinner>
+    }
+</div>

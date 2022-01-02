@@ -70,6 +70,15 @@ app {
     transform: translate(0, 0);
 }
 
+.inline-form-row {
+    display: flex;
+    align-items: center;
+}
+
+    .inline-form-row :not(:last-child) {
+        margin-right: 10px
+    }
+
 
 #blazor-error-ui {
     background: lightyellow;

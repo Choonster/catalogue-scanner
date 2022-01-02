@@ -13,13 +13,23 @@
         public const string SendCatalogueDigestEmail = "SendCatalogueDigestEmail";
 
         /// <summary>
-        /// The name of the <see cref="Functions.Api.ListCatalogueScanStates"/> function
+        /// The name of the <see cref="Functions.Api.CatalogueScanState.ListCatalogueScanStates"/> function
         /// </summary>
         public const string ListCatalogueScanStates = "ListCatalogueScanStates";
 
         /// <summary>
-        /// The name of the <see cref="Functions.Api.UpdateCatalogueScanState"/> function.
+        /// The name of the <see cref="Functions.Api.CatalogueScanState.UpdateCatalogueScanState"/> function.
         /// </summary>
         public const string UpdateCatalogueScanState = "UpdateCatalogueScanState";
+
+        /// <summary>
+        /// The name of the <see cref="Functions.Api.Management.CleanEntityStorage"/> function.
+        /// </summary>
+        public const string CleanEntityStorage = "CleanEntityStorage";
+
+        /// <summary>
+        /// The name of the <see cref="Functions.Api.Management.GetCheckStatusEndpoints"/> function.
+        /// </summary>
+        public const string GetCheckStatusEndpoints = "GetCheckStatusEndpoints";
     }
 }
