@@ -51,7 +51,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
             var method = new HttpMethod(httpMethodRegex.Match(key).Groups["Method"].Value);
 
             var script = @$"
-$headers =  $headers = @{{ Authorization = 'bearer {TokenProvider.AccessToken}' }}
+$headers = @{{ Authorization = 'bearer {TokenProvider.AccessToken}' }}
 Invoke-RestMethod -Method {method.Method} -Headers $headers -Uri '{uri}'
             ".Trim();
 
