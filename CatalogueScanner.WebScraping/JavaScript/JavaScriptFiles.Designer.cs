@@ -65,7 +65,7 @@ namespace CatalogueScanner.WebScraping.JavaScript {
         ///    static instance = new CatalogueScanner_ColesOnline();
         ///
         ///    get #productListControler() {
-        ///        return angular.element(document.querySelector(&apos;[data-colrs-product-list]&apos;)).data()?.$colrsProductListController;
+        ///        return angular?.element(document.querySelector(&apos;[data-colrs-product-list]&apos;)).data()?.$colrsProductListController;
         ///    }
         ///
         ///    get productListData() {
@@ -74,7 +74,7 @@ namespace CatalogueScanner.WebScraping.JavaScript {
         ///
         ///    get isDataLoaded() {
         ///        const productListData = this.productListData;
-        ///        return typeof productListData?.products[productListData?.produ [rest of string was truncated]&quot;;.
+        ///        return typeof productListData?.products[productListData?.prod [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ColesOnline {
             get {
