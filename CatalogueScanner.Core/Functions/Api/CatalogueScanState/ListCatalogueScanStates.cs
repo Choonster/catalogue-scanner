@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.Core.Functions.Api
+namespace CatalogueScanner.Core.Functions.Api.CatalogueScanState
 {
     /// <summary>
     /// Web API function that lists catalogue scan states.
