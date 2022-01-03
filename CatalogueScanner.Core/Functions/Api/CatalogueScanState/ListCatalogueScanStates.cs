@@ -51,6 +51,11 @@ namespace CatalogueScanner.Core.Functions.Api.CatalogueScanState
             {
                 var dto = status.State.ToObject<CatalogueScanStateDto>();
 
+                if (dto is null)
+                {
+                    throw new InvalidOperationException($"Entity with ID {status.EntityId} has no State");
+                }
+
                 dto.LastOperationTime = status.LastOperationTime;
 
                 return dto;
