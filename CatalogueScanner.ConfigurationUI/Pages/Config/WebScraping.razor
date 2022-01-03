@@ -1,0 +1,28 @@
+﻿@page "/config/webscraping"
+
+@using CatalogueScanner.Configuration;
+@using CatalogueScanner.WebScraping.Options;
+@using Microsoft.Extensions.Options;
+
+@inject IConfigurationSaver<ColesOnlineOptions> ColesOnlineConfigurationSaver;
+@inject IOptionsSnapshot<ColesOnlineOptions> ColesOnlineOptionsAccessor;
+
+<section>
+    <MatH3>Coles Online</MatH3>
+
+    <EditForm Model="ColesOnlineOptions" OnValidSubmit="SaveColesOnlineOptions">
+        <MatTextField Label="Store ID" @bind-Value="ColesOnlineOptions.StoreId">
+        </MatTextField>
+
+        <MatButton Type="submit">Save</MatButton>
+    </EditForm>
+</section>
+
+@code {
+    private ColesOnlineOptions ColesOnlineOptions => ColesOnlineOptionsAccessor.Value;
+
+    private async Task SaveColesOnlineOptions(EditContext editContext)
+    {
+        await ColesOnlineConfigurationSaver.SaveAsync((ColesOnlineOptions)editContext.Model);
+    }
+}

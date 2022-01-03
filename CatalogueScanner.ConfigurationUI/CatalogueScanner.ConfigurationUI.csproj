@@ -1,25 +1,38 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-	  <TargetFramework>net6.0</TargetFramework>
-	  <UserSecretsId>ce557102-d517-4c59-b52a-74dbc2b46748</UserSecretsId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<UserSecretsId>ce557102-d517-4c59-b52a-74dbc2b46748</UserSecretsId>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.1" />
-    <PackageReference Include="Azure.Identity" Version="1.5.0" />
-    <PackageReference Include="CurrieTechnologies.Razor.Clipboard" Version="1.4.0" />
-    <PackageReference Include="MatBlazor" Version="2.8.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
-    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.14.0" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="1.21.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.1" />
+		<PackageReference Include="Azure.Identity" Version="1.5.0" />
+		<PackageReference Include="CurrieTechnologies.Razor.Clipboard" Version="1.4.0" />
+		<PackageReference Include="MatBlazor" Version="2.8.0" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
+		<PackageReference Include="Microsoft.Azure.SignalR" Version="1.14.0" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="1.21.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj" />
-    <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
-    <ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
-    <ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj" />
+		<ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
+		<ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
+		<ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
+		<ProjectReference Include="..\CatalogueScanner.WebScraping\CatalogueScanner.WebScraping.csproj" />
+	</ItemGroup>
+
+	<Target Name="RemovePlaywrightFilesFromOutput" AfterTargets="CopyPlaywrightFilesToOutput">
+		<RemoveDir Directories="$(OutDir).playwright" />
+	</Target>
+
+	<Target Name="DeletePlaywrightShellFromOutput" AfterTargets="CopyPlaywrightShellToOutput">
+		<Delete Files="@(_CopyItemsShell->'$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)')"  />
+	</Target>
+
+	<Target Name="PlaywrightDeleteAfterPublish" AfterTargets="PlaywrightCopyAfterPublish">
+		<RemoveDir Directories="$(PublishDir).playwright" />
+	</Target>
 
 </Project>
