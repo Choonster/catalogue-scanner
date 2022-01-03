@@ -1,7 +1,7 @@
 ﻿using MatBlazor;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
+using Microsoft.JSInterop;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -11,15 +11,15 @@ namespace CatalogueScanner.ConfigurationUI.Service
 {
     public class HttpExceptionHandlingService
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IJSRuntime jsRuntime;
         private readonly IMatDialogService matDialogService;
         private readonly ILogger<HttpExceptionHandlingService> logger;
 
-        public HttpExceptionHandlingService(IHttpContextAccessor httpContextAccessor, IMatDialogService matDialogService, ILogger<HttpExceptionHandlingService> logger)
+        public HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogService matDialogService, ILogger<HttpExceptionHandlingService> logger)
         {
-            this.matDialogService = matDialogService ?? throw new ArgumentNullException(nameof(matDialogService));
-            this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.jsRuntime = jsRuntime;
+            this.matDialogService = matDialogService;
+            this.logger = logger;
         }
 
         public async Task HandleHttpExceptionAsync(HttpRequestException exception, string friendlyErrorMessage)
@@ -40,7 +40,7 @@ namespace CatalogueScanner.ConfigurationUI.Service
 
             var fullMessage = $"{friendlyErrorMessage}: {exception.Message}";
 
-            if (exception.StatusCode == HttpStatusCode.Unauthorized && AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled)
+            if (true || exception.StatusCode == HttpStatusCode.Unauthorized && AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled)
             {
                 fullMessage += "\n\nThis may have happened because your session has expired. Do you want to clear your session and refresh the page?";
 
@@ -48,14 +48,7 @@ namespace CatalogueScanner.ConfigurationUI.Service
 
                 if (shouldRefresh)
                 {
-                    var httpContext = httpContextAccessor.HttpContext;
-
-                    if (httpContext is null)
-                    {
-                        throw new InvalidOperationException("HttpContext is null");
-                    }
-
-                    httpContext.Response.Cookies.Delete("AppServiceAuthSession");
+                    await jsRuntime.InvokeVoidAsync("blazorClearAppServicesAuthenticationSession").ConfigureAwait(false);                    
                 }
             }
             else
