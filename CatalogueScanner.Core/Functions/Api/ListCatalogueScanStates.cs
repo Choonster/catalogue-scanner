@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.Core.Functions.Api.CatalogueScanState
+namespace CatalogueScanner.Core.Functions.Api
 {
     /// <summary>
     /// Web API function that lists catalogue scan states.
@@ -50,6 +50,11 @@ namespace CatalogueScanner.Core.Functions.Api.CatalogueScanState
             var entities = result.Entities.Select(status =>
             {
                 var dto = status.State.ToObject<CatalogueScanStateDto>();
+
+                if (dto is null)
+                {
+                    throw new InvalidOperationException($"Entity with ID {status.EntityId} has no State");
+                }
 
                 dto.LastOperationTime = status.LastOperationTime;
 

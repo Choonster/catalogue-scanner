@@ -107,12 +107,24 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
             // Create a Page instance and populate the standard (non-numeric) property names from the JSON
             var page = pageObject.ToObject<Page>(serializer);
 
+            if (page is null)
+            {
+                throw new JsonReaderException("page instance is null");
+            }
+
             // Add the numeric property names to the Items collection
             foreach (var property in pageObject.Properties())
             {
                 if (int.TryParse(property.Name, out var index))
                 {
-                    page.Items.Insert(index, property.Value.ToObject<Item>());
+                    var item = property.Value.ToObject<Item>();
+                    
+                    if (item is null)
+                    {
+                        throw new JsonReaderException($"item instance at index {index} is null");
+                    }
+
+                    page.Items.Insert(index, item);
                 }
             }
 
@@ -166,10 +178,10 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
             {
                 case JsonToken.Integer:
                 case JsonToken.Float:
-                    return (long)reader.Value;
+                    return (long)reader.Value!;
 
                 case JsonToken.String:
-                    var stringValue = (string)reader.Value;
+                    var stringValue = (string)reader.Value!;
 
                     if (long.TryParse(stringValue, out var longValue))
                     {
