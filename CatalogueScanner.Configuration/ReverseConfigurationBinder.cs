@@ -237,7 +237,7 @@ namespace CatalogueScanner.Configuration
                 return;
             }
 
-            FillPropertyValue(property, instance, config.GetSection(property.Name), settings);
+            FillPropertyValue(property, instance, config, settings);
         }
 
         private static Type? FindOpenGenericInterface(Type expected, Type actual)
