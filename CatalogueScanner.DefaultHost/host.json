@@ -11,6 +11,9 @@
   "extensions": {
     "durableTask": {
       "hubName": "%TaskHubName%"
+    },
+    "http": {
+      "EnableChunkedRequestBinding": true
     }
   }
 }
