@@ -19,7 +19,8 @@ namespace CatalogueScanner.WebScraping
             #endregion
 
             builder.Services
-                .AddScoped<ColesOnlineService>();
+                .AddScoped<ColesOnlineService>()
+                .AddSingleton<PlaywrightBrowserManager>();
 
             AddConfiguration(builder);
         }

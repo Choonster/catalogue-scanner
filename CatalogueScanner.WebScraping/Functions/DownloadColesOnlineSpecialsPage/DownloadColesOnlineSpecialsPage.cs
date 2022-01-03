@@ -1,28 +1,41 @@
 using CatalogueScanner.Core.Dto.FunctionResult;
-using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WebScraping.Service;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.WebScraping.Functions
 {
-    public class DownloadColesOnlineSpecials
+    public class DownloadColesOnlineSpecialsPage
     {
         private readonly ColesOnlineService colesOnlineService;
 
-        public DownloadColesOnlineSpecials(ColesOnlineService colesOnlineService)
+        public DownloadColesOnlineSpecialsPage(ColesOnlineService colesOnlineService)
         {
             this.colesOnlineService = colesOnlineService;
         }
 
-        [FunctionName(WebScrapingFunctionNames.DownloadColesOnlineSpecials)]
-        public async Task<Catalogue> Run([ActivityTrigger] DateRange specialsDateRange)
+        [Timeout("00:07:30", ThrowOnTimeout = true)]
+        [FunctionName(WebScrapingFunctionNames.DownloadColesOnlineSpecialsPage)]
+        public async Task<IEnumerable<CatalogueItem>> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
         {
+            #region null checks
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+            #endregion
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var pageNum = context.GetInput<int>();
+
             var productUrlTemplate = colesOnlineService.ProductUrlTemplate;
-            var specials = await colesOnlineService.GetSpecialsAsync().ConfigureAwait(false);
+            var specials = await colesOnlineService.GetSpecialsPageAsync(context.InstanceId, pageNum, cancellationToken).ConfigureAwait(false);
 
             var items = specials.Products
                 .Select(product => new CatalogueItem
@@ -34,7 +47,7 @@ namespace CatalogueScanner.WebScraping.Functions
                 })
                 .ToList();
 
-            return new Catalogue("Coles Online", specialsDateRange.StartDate, specialsDateRange.EndDate, items);
+            return items;
         }
     }
 }

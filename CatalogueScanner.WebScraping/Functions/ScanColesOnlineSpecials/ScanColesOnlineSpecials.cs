@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,6 +41,8 @@ namespace CatalogueScanner.WebScraping.Functions
             var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, Store, dateKey));
             var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
 
+            log.LogInformation("Entering lock for {ScanStateId}", scanStateId);
+
             using (await context.LockAsync(scanStateId).ConfigureAwait(true))
             {
                 #region Check and update the catalogue's scan state
@@ -61,14 +64,25 @@ namespace CatalogueScanner.WebScraping.Functions
                 context.SetCustomStatus("Downloading");
                 log.LogDebug($"Downloading - {scanStateId.EntityKey}");
 
-                var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(WebScrapingFunctionNames.DownloadColesOnlineSpecials, specialsDateRange).ConfigureAwait(true);
+                var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
+
+                var totalPageCount = await context.CallActivityAsync<int>(WebScrapingFunctionNames.GetColesOnlineSpecialsPageCount, null).ConfigureAwait(true);
+
+                var downloadTasks = Enumerable.Range(0, totalPageCount)
+                      .Select(pageIndex => context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(WebScrapingFunctionNames.DownloadColesOnlineSpecialsPage, retryOptions, pageIndex + 1))
+                      .ToList();
+
+                await Task.WhenAll(downloadTasks).ConfigureAwait(true);
+
+                await context.CallActivityAsync(WebScrapingFunctionNames.ClosePlaywrightBrowser, null).ConfigureAwait(true);
                 #endregion
 
                 #region Filter catalouge items
                 context.SetCustomStatus("Filtering");
                 log.LogDebug($"Filtering - {scanStateId.EntityKey}");
 
-                var itemTasks = downloadedCatalogue.Items
+                var itemTasks = downloadTasks
+                    .SelectMany(task => task.Result)
                     .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
                     .ToList();
 
@@ -84,9 +98,11 @@ namespace CatalogueScanner.WebScraping.Functions
                     .Select(task => task.Result!)
                     .ToList();
 
+                log.LogDebug("{NumItems} items remain after filtering", filteredItems.Count);
+
                 if (filteredItems.Any())
                 {
-                    var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
+                    var filteredCatalogue = new Catalogue("Coles Online", specialsDateRange.StartDate, specialsDateRange.EndDate, filteredItems);
 
                     await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
                 }
@@ -113,7 +129,7 @@ namespace CatalogueScanner.WebScraping.Functions
         /// </summary>
         [FunctionName(WebScrapingFunctionNames.ScanColesOnlineSpecialsTimerStart)]
         public static async Task TimerStart(
-            [TimerTrigger("%" + WebScrapingAppSettingNames.ColesOnlineCronExpression +"%")] TimerInfo timer,
+            [TimerTrigger("%" + WebScrapingAppSettingNames.ColesOnlineCronExpression + "%")] TimerInfo timer,
             [DurableClient] IDurableClient starter,
             ILogger log
         )
