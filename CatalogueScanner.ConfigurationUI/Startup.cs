@@ -37,6 +37,7 @@ namespace CatalogueScanner.ConfigurationUI
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddHttpContextAccessor();
             services.AddMatBlazor();
             services.AddClipboard();
 
