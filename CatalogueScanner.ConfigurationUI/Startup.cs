@@ -63,6 +63,7 @@ namespace CatalogueScanner.ConfigurationUI
             services.AddSingleton<ILocalizationFileLocationProvider, ContentRootPoFileLocationProvider>();
 
             services.AddScoped<TimeZoneService>();
+            services.AddScoped<HttpExceptionHandlingService>();
 
             IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
 

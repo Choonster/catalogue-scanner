@@ -1,5 +1,4 @@
 ﻿using MatBlazor;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -26,9 +25,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
             }
             catch (HttpRequestException e)
             {
-                Logger.LogError(e, "Load Check Status Endpoints request failed");
-
-                await DialogService.AlertAsync($"Load Check Status Endpoints request failed: {e.Message}").ConfigureAwait(true);
+                await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Load Check Status Endpoints request failed").ConfigureAwait(false);
             }
 
             loading = false;
@@ -70,9 +67,7 @@ Invoke-RestMethod -Method {method.Method} -Headers $headers -Uri '{uri}'
             }
             catch (HttpRequestException e)
             {
-                Logger.LogError(e, "Clean Entity Storage request failed");
-
-                await DialogService.AlertAsync($"Clean Entity Storage request failed: {e.Message}").ConfigureAwait(true);
+                await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Clean Entity Storage request failed").ConfigureAwait(false);
             }
 
             loading = false;
