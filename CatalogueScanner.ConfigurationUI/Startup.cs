@@ -5,6 +5,7 @@ using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
+using CatalogueScanner.WebScraping;
 using CurrieTechnologies.Razor.Clipboard;
 using MatBlazor;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -70,7 +71,8 @@ namespace CatalogueScanner.ConfigurationUI
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
                 .AddPlugin<OrchardCoreLocalisationCatalogueScannerPlugin>()
-                .AddPlugin<SaleFinderCatalogueScannerPlugin>();
+                .AddPlugin<SaleFinderCatalogueScannerPlugin>()
+                .AddPlugin<WebScrapingCatalogueScannerPlugin>();
 
 
             string applicationInsightsConnectionString = Configuration["APPINSIGHTS_CONNECTIONSTRING"];
