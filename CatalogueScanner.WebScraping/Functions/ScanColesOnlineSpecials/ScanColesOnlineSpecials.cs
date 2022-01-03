@@ -41,7 +41,7 @@ namespace CatalogueScanner.WebScraping.Functions
             var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, Store, dateKey));
             var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
 
-            log.LogWarning("Entering lock for {ScanStateId}", scanStateId);
+            log.LogInformation("Entering lock for {ScanStateId}", scanStateId);
 
             using (await context.LockAsync(scanStateId).ConfigureAwait(true))
             {
@@ -52,7 +52,7 @@ namespace CatalogueScanner.WebScraping.Functions
                 var state = await scanState.GetState().ConfigureAwait(true);
                 if (state != ScanState.NotStarted)
                 {
-                    log.LogWarning($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
+                    log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
                     context.SetCustomStatus("Skipped");
                     return;
                 }
@@ -98,7 +98,7 @@ namespace CatalogueScanner.WebScraping.Functions
                     .Select(task => task.Result!)
                     .ToList();
 
-                log.LogWarning("{NumItems} items remain after filtering", filteredItems.Count);
+                log.LogDebug("{NumItems} items remain after filtering", filteredItems.Count);
 
                 if (filteredItems.Any())
                 {

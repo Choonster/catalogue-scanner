@@ -68,7 +68,7 @@ namespace CatalogueScanner.WebScraping.Service
 
             var page = await CreateAndInitialiseSpecialsPage(context).ConfigureAwait(false);
 
-            logger.LogWarning("Page {PageNum} - Starting", pageNum);
+            logger.LogDebug("Page {PageNum} - Starting", pageNum);
 
             await page.WaitForFunctionAsync("CatalogueScanner_ColesOnline.instance.isPaginationLoaded").ConfigureAwait(false);
 
@@ -78,7 +78,7 @@ namespace CatalogueScanner.WebScraping.Service
             // Wait until the data has been decompressed before we read it.
             await page.WaitForFunctionAsync("CatalogueScanner_ColesOnline.instance.isDataLoaded").ConfigureAwait(false);
 
-            logger.LogWarning("Page {PageNum} - Data Loaded", pageNum);
+            logger.LogDebug("Page {PageNum} - Data Loaded", pageNum);
 
             // Playwright's EvaluateArgumentValueConverter doesn't seem to be able to deserialise to ColrsCatalogEntryList (and doesn't handle custom names),
             // so serialise the data to JSON in the browser and then deserialise to ColrsCatalogEntryList (using Newtonsoft.Json rather than System.Text.Json).
@@ -90,7 +90,7 @@ namespace CatalogueScanner.WebScraping.Service
                 throw new InvalidOperationException($"{nameof(productDataJson)} is null after evaluating productListData expression");
             }
 
-            logger.LogWarning("Page {PageNum} - Data Received from Playwright", pageNum);
+            logger.LogDebug("Page {PageNum} - Data Received from Playwright", pageNum);
 
             var productData = JsonConvert.DeserializeObject<ColrsCatalogEntryList>(productDataJson);
 
