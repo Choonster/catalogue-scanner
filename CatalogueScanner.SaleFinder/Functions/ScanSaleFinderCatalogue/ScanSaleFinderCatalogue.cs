@@ -42,71 +42,81 @@ namespace CatalogueScanner.SaleFinder.Functions
             var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, catalogueDownloadInfo.Store, catalogueDownloadInfo.SaleId.ToString(CultureInfo.InvariantCulture)));
             var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
 
-            using (await context.LockAsync(scanStateId).ConfigureAwait(true))
+            try
             {
-                #region Check and update the catalogue's scan state
-                context.SetCustomStatus("CheckingState");
-                log.LogDebug($"Checking state - {scanStateId.EntityKey}");
-
-                var state = await scanState.GetState().ConfigureAwait(true);
-                if (state != ScanState.NotStarted)
+                using (await context.LockAsync(scanStateId).ConfigureAwait(true))
                 {
-                    log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
-                    context.SetCustomStatus("Skipped");
-                    return;
+                    #region Check and update the catalogue's scan state
+                    context.SetCustomStatus("CheckingState");
+                    log.LogDebug($"Checking state - {scanStateId.EntityKey}");
+
+                    var state = await scanState.GetState().ConfigureAwait(true);
+                    if (state != ScanState.NotStarted)
+                    {
+                        log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
+                        context.SetCustomStatus("Skipped");
+                        return;
+                    }
+
+                    await scanState.UpdateState(ScanState.InProgress).ConfigureAwait(true);
+                    #endregion
+
+                    #region Download catalogue
+                    context.SetCustomStatus("Downloading");
+                    log.LogDebug($"Downloading - {scanStateId.EntityKey}");
+
+                    var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderFunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
+                    #endregion
+
+                    #region Filter catalouge items
+                    context.SetCustomStatus("Filtering");
+                    log.LogDebug($"Filtering - {scanStateId.EntityKey}");
+
+                    var itemTasks = downloadedCatalogue.Items
+                        .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
+                        .ToList();
+
+                    await Task.WhenAll(itemTasks).ConfigureAwait(true);
+                    #endregion
+
+                    #region Send digest email
+                    context.SetCustomStatus("SendingDigestEmail");
+                    log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
+
+                    var filteredItems = itemTasks
+                        .Where(task => task.Result != null)
+                        .Select(task => task.Result!)
+                        .ToList();
+
+                    if (filteredItems.Any())
+                    {
+                        var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
+
+                        await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
+                    }
+                    else
+                    {
+                        log.LogInformation($"Catalogue {scanStateId.EntityKey} had no matching items, skipping digest email.");
+                    }
+                    #endregion
+
+                    #region Update catalogue's scan state
+                    context.SetCustomStatus("UpdatingState");
+                    log.LogDebug($"Updating state - {scanStateId.EntityKey}");
+
+                    await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
+                    #endregion
+
+                    log.LogDebug($"Completed - {scanStateId.EntityKey}");
+                    context.SetCustomStatus("Completed");
                 }
+            }
+            catch
+            {
+                await scanState.UpdateState(ScanState.Failed).ConfigureAwait(true);
+                context.SetCustomStatus("Failed");
 
-                await scanState.UpdateState(ScanState.InProgress).ConfigureAwait(true);
-                #endregion
-
-                #region Download catalogue
-                context.SetCustomStatus("Downloading");
-                log.LogDebug($"Downloading - {scanStateId.EntityKey}");
-
-                var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderFunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
-                #endregion
-
-                #region Filter catalouge items
-                context.SetCustomStatus("Filtering");
-                log.LogDebug($"Filtering - {scanStateId.EntityKey}");
-
-                var itemTasks = downloadedCatalogue.Items
-                    .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
-                    .ToList();
-
-                await Task.WhenAll(itemTasks).ConfigureAwait(true);
-                #endregion
-
-                #region Send digest email
-                context.SetCustomStatus("SendingDigestEmail");
-                log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
-
-                var filteredItems = itemTasks
-                    .Where(task => task.Result != null)
-                    .Select(task => task.Result!)
-                    .ToList();
-
-                if (filteredItems.Any())
-                {
-                    var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
-
-                    await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
-                }
-                else
-                {
-                    log.LogInformation($"Catalogue {scanStateId.EntityKey} had no matching items, skipping digest email.");
-                }
-                #endregion
-
-                #region Update catalogue's scan state
-                context.SetCustomStatus("UpdatingState");
-                log.LogDebug($"Updating state - {scanStateId.EntityKey}");
-
-                await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
-                #endregion
-
-                log.LogDebug($"Completed - {scanStateId.EntityKey}");
-                context.SetCustomStatus("Completed");
+                throw;
             }
         }
 

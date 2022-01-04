@@ -61,6 +61,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
                 [ScanState.NotStarted] = S["Not Started"],
                 [ScanState.InProgress] = S["In Progress"],
                 [ScanState.Completed] = S["Completed"],
+                [ScanState.Failed] = S["Failed"],
             };
 
             await OnPage(new MatPaginatorPageEvent { PageIndex = 0, PageSize = PageSize, Length = 0 }).ConfigureAwait(true);
