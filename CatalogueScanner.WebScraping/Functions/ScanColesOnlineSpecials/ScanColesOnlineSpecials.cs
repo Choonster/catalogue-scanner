@@ -41,86 +41,96 @@ namespace CatalogueScanner.WebScraping.Functions
             var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, Store, dateKey));
             var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
 
-            log.LogInformation("Entering lock for {ScanStateId}", scanStateId);
-
-            using (await context.LockAsync(scanStateId).ConfigureAwait(true))
+            try
             {
-                #region Check and update the catalogue's scan state
-                context.SetCustomStatus("CheckingState");
-                log.LogDebug($"Checking state - {scanStateId.EntityKey}");
+                log.LogInformation("Entering lock for {ScanStateId}", scanStateId);
 
-                var state = await scanState.GetState().ConfigureAwait(true);
-                if (state != ScanState.NotStarted)
+                using (await context.LockAsync(scanStateId).ConfigureAwait(true))
                 {
-                    log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
-                    context.SetCustomStatus("Skipped");
-                    return;
+                    #region Check and update the catalogue's scan state
+                    context.SetCustomStatus("CheckingState");
+                    log.LogDebug($"Checking state - {scanStateId.EntityKey}");
+
+                    var state = await scanState.GetState().ConfigureAwait(true);
+                    if (state != ScanState.NotStarted)
+                    {
+                        log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
+                        context.SetCustomStatus("Skipped");
+                        return;
+                    }
+
+                    await scanState.UpdateState(ScanState.InProgress).ConfigureAwait(true);
+                    #endregion
+
+                    #region Download catalogue
+                    context.SetCustomStatus("Downloading");
+                    log.LogDebug($"Downloading - {scanStateId.EntityKey}");
+
+                    var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
+
+                    var totalPageCount = await context.CallActivityAsync<int>(WebScrapingFunctionNames.GetColesOnlineSpecialsPageCount, null).ConfigureAwait(true);
+
+                    var downloadTasks = Enumerable.Range(0, totalPageCount)
+                          .Select(pageIndex => context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(WebScrapingFunctionNames.DownloadColesOnlineSpecialsPage, retryOptions, pageIndex + 1))
+                          .ToList();
+
+                    await Task.WhenAll(downloadTasks).ConfigureAwait(true);
+
+                    await context.CallActivityAsync(WebScrapingFunctionNames.ClosePlaywrightBrowser, null).ConfigureAwait(true);
+                    #endregion
+
+                    #region Filter catalouge items
+                    context.SetCustomStatus("Filtering");
+                    log.LogDebug($"Filtering - {scanStateId.EntityKey}");
+
+                    var itemTasks = downloadTasks
+                        .SelectMany(task => task.Result)
+                        .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
+                        .ToList();
+
+                    await Task.WhenAll(itemTasks).ConfigureAwait(true);
+                    #endregion
+
+                    #region Send digest email
+                    context.SetCustomStatus("SendingDigestEmail");
+                    log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
+
+                    var filteredItems = itemTasks
+                        .Where(task => task.Result != null)
+                        .Select(task => task.Result!)
+                        .ToList();
+
+                    log.LogDebug("{NumItems} items remain after filtering", filteredItems.Count);
+
+                    if (filteredItems.Any())
+                    {
+                        var filteredCatalogue = new Catalogue("Coles Online", specialsDateRange.StartDate, specialsDateRange.EndDate, filteredItems);
+
+                        await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
+                    }
+                    else
+                    {
+                        log.LogInformation($"Catalogue {scanStateId.EntityKey} had no matching items, skipping digest email.");
+                    }
+                    #endregion
+
+                    #region Update catalogue's scan state
+                    context.SetCustomStatus("UpdatingState");
+                    log.LogDebug($"Updating state - {scanStateId.EntityKey}");
+
+                    await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
+                    #endregion
+
+                    log.LogDebug($"Completed - {scanStateId.EntityKey}");
+                    context.SetCustomStatus("Completed");
                 }
+            }
+            catch
+            {
+                await scanState.UpdateState(ScanState.Failed).ConfigureAwait(true);
+                context.SetCustomStatus("Failed");
 
-                await scanState.UpdateState(ScanState.InProgress).ConfigureAwait(true);
-                #endregion
-
-                #region Download catalogue
-                context.SetCustomStatus("Downloading");
-                log.LogDebug($"Downloading - {scanStateId.EntityKey}");
-
-                var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
-
-                var totalPageCount = await context.CallActivityAsync<int>(WebScrapingFunctionNames.GetColesOnlineSpecialsPageCount, null).ConfigureAwait(true);
-
-                var downloadTasks = Enumerable.Range(0, totalPageCount)
-                      .Select(pageIndex => context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(WebScrapingFunctionNames.DownloadColesOnlineSpecialsPage, retryOptions, pageIndex + 1))
-                      .ToList();
-
-                await Task.WhenAll(downloadTasks).ConfigureAwait(true);
-
-                await context.CallActivityAsync(WebScrapingFunctionNames.ClosePlaywrightBrowser, null).ConfigureAwait(true);
-                #endregion
-
-                #region Filter catalouge items
-                context.SetCustomStatus("Filtering");
-                log.LogDebug($"Filtering - {scanStateId.EntityKey}");
-
-                var itemTasks = downloadTasks
-                    .SelectMany(task => task.Result)
-                    .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
-                    .ToList();
-
-                await Task.WhenAll(itemTasks).ConfigureAwait(true);
-                #endregion
-
-                #region Send digest email
-                context.SetCustomStatus("SendingDigestEmail");
-                log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
-
-                var filteredItems = itemTasks
-                    .Where(task => task.Result != null)
-                    .Select(task => task.Result!)
-                    .ToList();
-
-                log.LogDebug("{NumItems} items remain after filtering", filteredItems.Count);
-
-                if (filteredItems.Any())
-                {
-                    var filteredCatalogue = new Catalogue("Coles Online", specialsDateRange.StartDate, specialsDateRange.EndDate, filteredItems);
-
-                    await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
-                }
-                else
-                {
-                    log.LogInformation($"Catalogue {scanStateId.EntityKey} had no matching items, skipping digest email.");
-                }
-                #endregion
-
-                #region Update catalogue's scan state
-                context.SetCustomStatus("UpdatingState");
-                log.LogDebug($"Updating state - {scanStateId.EntityKey}");
-
-                await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
-                #endregion
-
-                log.LogDebug($"Completed - {scanStateId.EntityKey}");
-                context.SetCustomStatus("Completed");
+                throw;
             }
         }
 
