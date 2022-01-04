@@ -5,8 +5,7 @@
 @using Microsoft.Extensions.Logging
 
 @inject ManagementService ManagementService
-@inject ILogger<CatalogueScanStates> Logger
-@inject IMatDialogService DialogService
+@inject HttpExceptionHandlingService HttpExceptionHandlingService
 @inject IMatToaster Toaster
 @inject TokenProvider TokenProvider
 @inject ClipboardService Clipboard

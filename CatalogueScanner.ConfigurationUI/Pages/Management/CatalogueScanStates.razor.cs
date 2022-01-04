@@ -4,7 +4,6 @@ using CatalogueScanner.Core.Dto.Api;
 using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Functions.Entity;
 using MatBlazor;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -126,7 +125,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
                     Page = pageInfo,
                     LastOperationFrom = lastOperationFrom,
                     LastOperationTo = lastOperationTo?.WithTime(23, 59, 59),
-                };                
+                };
 
                 var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true);
 
@@ -161,9 +160,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
             }
             catch (HttpRequestException e)
             {
-                Logger.LogError(e, "List Catalogue Scan States request failed");
-
-                await DialogService.AlertAsync($"List Catalogue Scan States request failed: {e.Message}").ConfigureAwait(true);
+                await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "List Catalogue Scan States request failed").ConfigureAwait(false);
             }
 
             loading = false;
@@ -171,8 +168,19 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
         private async Task ResetScanState(CatalogueScanStateDto scanState)
         {
-            scanState.ScanState = ScanState.NotStarted;
-            await CatalogueScanStateService.UpdateCatalogueScanStateAsync(scanState).ConfigureAwait(true);
+            loading = true;
+
+            try
+            {
+                scanState.ScanState = ScanState.NotStarted;
+                await CatalogueScanStateService.UpdateCatalogueScanStateAsync(scanState).ConfigureAwait(true);
+            }
+            catch (HttpRequestException e)
+            {
+                await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Reset Scan State request failed").ConfigureAwait(false);
+            }
+
+            loading = false;
         }
     }
 }
