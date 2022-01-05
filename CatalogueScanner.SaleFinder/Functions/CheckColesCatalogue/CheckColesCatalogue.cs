@@ -8,6 +8,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +22,6 @@ namespace CatalogueScanner.SaleFinder.Functions
     {
         private const int ColesStoreId = 148;
         private const string ColesStoreName = "Coles";
-        private const string ThisWeeksCatalogue = "This week's catalogue";
         private static readonly Uri CatalaogueBaseUri = new("https://www.coles.com.au/catalogues-and-specials/view-all-available-catalogues");
 
         private readonly SaleFinderService saleFinderService;
@@ -43,10 +43,10 @@ namespace CatalogueScanner.SaleFinder.Functions
         }
 
         [FunctionName(SaleFinderFunctionNames.CheckColesCatalogue)]
-        [return: Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)]
-        public async Task<SaleFinderCatalogueDownloadInformation> RunAsync(
+        public async Task RunAsync(
             [TimerTrigger("%" + SaleFinderAppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
-            ILogger log
+            ILogger log,
+            [Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)] IAsyncCollector<SaleFinderCatalogueDownloadInformation> collector
         )
         {
             #region null checks
@@ -59,75 +59,64 @@ namespace CatalogueScanner.SaleFinder.Functions
             {
                 throw new ArgumentNullException(nameof(log));
             }
+
+            if (collector is null)
+            {
+                throw new ArgumentNullException(nameof(collector));
+            }
             #endregion
 
             var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(ColesStoreId, options.SaleFinderLocationId).ConfigureAwait(false);
 
-            var saleId = FindSaleId(viewResponse);
+            var saleIds = FindSaleIds(viewResponse).ToList();
 
-            log.LogInformation(S["Found sale ID: {0}", saleId]);
+            log.LogInformation(S["Found sale IDs: {0}"], saleIds);
 
-            return new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName);
+            foreach (var saleId in saleIds)
+            {
+                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName)).ConfigureAwait(false);
+            }
         }
 
-        private int FindSaleId(CatalogueViewResponse viewResponse)
+        private IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(viewResponse.Content);
 
-            var thisWeeksCatalogueHeader = doc.DocumentNode
-                .Descendants("h3")
-                .Where(node => node.HasClass("sale-name-cell"))
-                .Where(node => HtmlEntity.DeEntitize(node.InnerText) == ThisWeeksCatalogue)
-                .FirstOrDefault();
-
-            if (thisWeeksCatalogueHeader is null)
-            {
-                throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" cell in HTML content.", ThisWeeksCatalogue]}\n\n{viewResponse.Content}");
-            }
-
-            var parentTile = thisWeeksCatalogueHeader
-                .Ancestors("div")
-                .Where(node => node.HasClass("sf-catalogues-tile"))
-                .FirstOrDefault();
-
-            if (parentTile is null)
-            {
-                throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" parent tile in HTML content.", ThisWeeksCatalogue]}\n\n{viewResponse.Content}");
-            }
-
-            var viewLink = parentTile
+            var viewLinks = doc.DocumentNode
                 .Descendants("a")
                 .Where(node => node.Attributes["href"] != null)
                 .Where(node => node.HasClass("sf-view-button"))
-                .FirstOrDefault();
+                .ToList();
 
-            if (viewLink is null)
+            if (!viewLinks.Any())
             {
-                throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" link in HTML content.", "View"]}\n\n{viewResponse.Content}");
+                throw new UnableToFindSaleIdException($"{S["Didn't find .sf-view-button links in HTML content."]}\n\n{viewResponse.Content}");
             }
 
-            var url = new Uri(CatalaogueBaseUri, viewLink.Attributes["href"].Value);
-
-            foreach (var param in url.Fragment.Split('&'))
+            foreach (var viewLink in viewLinks)
             {
-                var parts = param.Split('=');
+                var url = new Uri(CatalaogueBaseUri, viewLink.Attributes["href"].Value);
 
-                if (parts.Length < 2)
+                foreach (var param in url.Fragment.Split('&'))
                 {
-                    continue;
-                }
+                    var parts = param.Split('=');
 
-                var name = parts[0];
-                var value = parts[1];
+                    if (parts.Length < 2)
+                    {
+                        continue;
+                    }
 
-                if (name == "saleId")
-                {
-                    return int.Parse(value, CultureInfo.InvariantCulture);
+                    var name = parts[0];
+                    var value = parts[1];
+
+                    if (name == "saleId")
+                    {
+                        yield return int.Parse(value, CultureInfo.InvariantCulture);
+                        break;
+                    }
                 }
             }
-
-            throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" parameter in \"{1}\" link in HTML content.", "saleId", "View"]}\n\n{viewResponse.Content}");
         }
     }
 }
