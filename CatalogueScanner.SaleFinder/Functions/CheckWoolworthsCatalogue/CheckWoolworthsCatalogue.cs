@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Functions
@@ -42,7 +43,8 @@ namespace CatalogueScanner.SaleFinder.Functions
         [return: Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)]
         public async Task<SaleFinderCatalogueDownloadInformation> RunAsync(
             [TimerTrigger("%" + SaleFinderAppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
-            ILogger log
+            ILogger log,
+            CancellationToken cancellationToken
         )
         {
             #region null checks
@@ -57,7 +59,12 @@ namespace CatalogueScanner.SaleFinder.Functions
             }
             #endregion
 
-            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(WoolworthsStoreId, options.SaleFinderLocationId).ConfigureAwait(false);
+            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(WoolworthsStoreId, options.SaleFinderLocationId, cancellationToken).ConfigureAwait(false);
+
+            if (viewResponse is null)
+            {
+                throw new InvalidOperationException("viewResponse is null");
+            }
 
             var saleId = FindSaleId(viewResponse);
 
