@@ -128,7 +128,7 @@ namespace CatalogueScanner.WebScraping.Dto.ColesOnline
         public long PageSize { get; set; }
         public string? SearchTerm { get; set; }
         public string? CategoryId { get; set; }
-        public long SearchType { get; set; }
+        public string? SearchType { get; set; }
         public string? Manufacturer { get; set; }
         public string? ProfileName { get; set; }
         public string? SearchSource { get; set; }
