@@ -8,6 +8,7 @@ namespace CatalogueScanner.WebScraping.Dto.ColesOnline
     )]
     [JsonSerializable(typeof(ColrsCatalogEntryList))]
     [JsonSerializable(typeof(PromoType))] // TODO: Remove when https://github.com/dotnet/runtime/pull/62643 is merged/released
+    [JsonSerializable(typeof(bool))]
     public partial class ColesOnlineSerializerContext : JsonSerializerContext
     {
     }

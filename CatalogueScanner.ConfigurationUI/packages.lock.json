@@ -215,10 +215,10 @@
       },
       "Macross.Json.Extensions": {
         "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "LgC+ZlbequOJsQtP+h1/ldhF9EJVx1zRTTEDjTuziMnymOOTWgzxFlqYQ748lvlCdQYOhNkAjOqHVOsfCWgOhA==",
+        "resolved": "2.2.0",
+        "contentHash": "g1rUYJsadmi3ecxP6dVa2o+J4449TZYriBzxk9we2JOPfy9FyhwuRKIiPs8OQtx5dUcDAIpabA3a69jxZf68PQ==",
         "dependencies": {
-          "System.Text.Json": "4.7.0"
+          "System.Text.Json": "4.7.2"
         }
       },
       "Microsoft.ApplicationInsights": {
@@ -2019,6 +2019,7 @@
         "dependencies": {
           "CatalogueScanner.Core": "1.0.0",
           "DotNext.Threading": "4.1.3",
+          "Macross.Json.Extensions": "2.2.0",
           "Microsoft.Playwright": "1.17.3"
         }
       }
