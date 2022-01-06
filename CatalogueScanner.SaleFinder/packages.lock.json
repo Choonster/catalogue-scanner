@@ -103,6 +103,14 @@
           "System.Reflection.Emit": "4.3.0"
         }
       },
+      "Macross.Json.Extensions": {
+        "type": "Transitive",
+        "resolved": "2.2.0",
+        "contentHash": "g1rUYJsadmi3ecxP6dVa2o+J4449TZYriBzxk9we2JOPfy9FyhwuRKIiPs8OQtx5dUcDAIpabA3a69jxZf68PQ==",
+        "dependencies": {
+          "System.Text.Json": "4.7.2"
+        }
+      },
       "Microsoft.ApplicationInsights": {
         "type": "Transitive",
         "resolved": "2.12.2",
@@ -1375,8 +1383,8 @@
       },
       "System.Text.Json": {
         "type": "Transitive",
-        "resolved": "4.6.0",
-        "contentHash": "4F8Xe+JIkVoDJ8hDAZ7HqLkjctN/6WItJIzQaifBwClC7wmoLSda/Sv2i6i1kycqDb3hWF4JCVbpAweyOKHEUA=="
+        "resolved": "4.7.2",
+        "contentHash": "TcMd95wcrubm9nHvJEQs70rC0H/8omiSGGpU4FQ/ZA1URIqD4pjmFJh2Mfv1yH1eHgJDWTi2hMDXwTET+zOOyg=="
       },
       "System.Threading": {
         "type": "Transitive",
@@ -1430,6 +1438,7 @@
         "dependencies": {
           "CatalogueScanner.Configuration": "1.0.0",
           "HtmlAgilityPack": "1.11.39",
+          "Macross.Json.Extensions": "2.2.0",
           "Microsoft.Azure.Functions.Extensions": "1.1.0",
           "Microsoft.Azure.WebJobs.Extensions": "4.0.1",
           "Microsoft.Azure.WebJobs.Extensions.DurableTask": "2.6.0",

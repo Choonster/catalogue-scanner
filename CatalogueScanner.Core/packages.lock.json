@@ -8,6 +8,15 @@
         "resolved": "1.11.39",
         "contentHash": "9xk8l+68NaHe3RmfzAOO0A5DcotDO4lAilUnmZpu6h/EpBCfDVrxr7aNClIGK/p3vPiypVzpUCENm72UKfIVjg=="
       },
+      "Macross.Json.Extensions": {
+        "type": "Direct",
+        "requested": "[2.2.0, )",
+        "resolved": "2.2.0",
+        "contentHash": "g1rUYJsadmi3ecxP6dVa2o+J4449TZYriBzxk9we2JOPfy9FyhwuRKIiPs8OQtx5dUcDAIpabA3a69jxZf68PQ==",
+        "dependencies": {
+          "System.Text.Json": "4.7.2"
+        }
+      },
       "Microsoft.Azure.Functions.Extensions": {
         "type": "Direct",
         "requested": "[1.1.0, )",
@@ -1384,8 +1393,8 @@
       },
       "System.Text.Json": {
         "type": "Transitive",
-        "resolved": "4.6.0",
-        "contentHash": "4F8Xe+JIkVoDJ8hDAZ7HqLkjctN/6WItJIzQaifBwClC7wmoLSda/Sv2i6i1kycqDb3hWF4JCVbpAweyOKHEUA=="
+        "resolved": "4.7.2",
+        "contentHash": "TcMd95wcrubm9nHvJEQs70rC0H/8omiSGGpU4FQ/ZA1URIqD4pjmFJh2Mfv1yH1eHgJDWTi2hMDXwTET+zOOyg=="
       },
       "System.Threading": {
         "type": "Transitive",
