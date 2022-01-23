@@ -8,6 +8,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +19,6 @@ namespace CatalogueScanner.SaleFinder.Functions
     {
         private const int WoolworthsStoreId = 126;
         private const string WoolworthsStoreName = "Woolworths";
-        private const string WeeklySpecialsCatalogue = "Weekly Specials Catalogue";
         private static readonly Uri CatalaogueBaseUri = new("https://www.woolworths.com.au/shop/catalogue");
 
         private readonly SaleFinderService saleFinderService;
@@ -40,10 +40,10 @@ namespace CatalogueScanner.SaleFinder.Functions
         }
 
         [FunctionName(SaleFinderFunctionNames.CheckWoolworthsCatalogue)]
-        [return: Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)]
-        public async Task<SaleFinderCatalogueDownloadInformation> RunAsync(
+        public async Task RunAsync(
             [TimerTrigger("%" + SaleFinderAppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
             ILogger log,
+            [Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)] IAsyncCollector<SaleFinderCatalogueDownloadInformation> collector,
             CancellationToken cancellationToken
         )
         {
@@ -57,6 +57,11 @@ namespace CatalogueScanner.SaleFinder.Functions
             {
                 throw new ArgumentNullException(nameof(log));
             }
+
+            if (collector is null)
+            {
+                throw new ArgumentNullException(nameof(collector));
+            }
             #endregion
 
             var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(WoolworthsStoreId, options.SaleFinderLocationId, cancellationToken).ConfigureAwait(false);
@@ -66,37 +71,43 @@ namespace CatalogueScanner.SaleFinder.Functions
                 throw new InvalidOperationException("viewResponse is null");
             }
 
-            var saleId = FindSaleId(viewResponse);
+            var saleIds = FindSaleIds(viewResponse).ToList();
 
-            log.LogInformation(S["Found sale ID: {0}", saleId]);
+            log.LogInformation(S["Found sale IDs: {0}"], saleIds);
 
-            return new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName);
+            foreach (var saleId in saleIds)
+            {
+                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName)).ConfigureAwait(false);
+            }
         }
 
-        private int FindSaleId(CatalogueViewResponse viewResponse)
+        private IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(viewResponse.Content);
 
-            var weeklySpecialsCatalogueContainer = doc.DocumentNode
+            var catalogueContainers = doc.DocumentNode
                 .Descendants("div")
                 .Where(node => node.HasClass("sale-container"))
                 .Where(node => node.GetDataAttribute("saleid") != null)
-                .Where(node => node.GetDataAttribute("salename")?.DeEntitizeValue.Contains(WeeklySpecialsCatalogue, StringComparison.InvariantCultureIgnoreCase) ?? false)
-                .FirstOrDefault();
+                .ToList();
 
-            if (weeklySpecialsCatalogueContainer is null)
+            if (!catalogueContainers.Any())
             {
-                throw new UnableToFindSaleIdException($"{S["Didn't find \"{0}\" container in HTML content.", WeeklySpecialsCatalogue]}\n\n{viewResponse.Content}");
+                throw new UnableToFindSaleIdException($"{S["Didn't find .sale-container elements in HTML content."]}\n\n{viewResponse.Content}");
             }
 
-            var saleIdValue = weeklySpecialsCatalogueContainer.GetDataAttribute("saleid").Value;
-            if (!int.TryParse(saleIdValue, out var saleId))
+            foreach (var catalogueContainer in catalogueContainers)
             {
-                throw new UnableToFindSaleIdException($"{S["Found invalid \"{0}\" attribute value \"{1}\" in HTML content.", "data-saleid", saleIdValue]}\n\n{viewResponse.Content}");
-            }
+                var saleIdValue = catalogueContainer.GetDataAttribute("saleid").Value;
 
-            return saleId;
+                if (!int.TryParse(saleIdValue, out var saleId))
+                {
+                    throw new UnableToFindSaleIdException($"{S["Found invalid \"{0}\" attribute value \"{1}\" in HTML content.", "data-saleid", saleIdValue]}\n\n{viewResponse.Content}");
+                }
+
+                yield return saleId;
+            }
         }
     }
 }
