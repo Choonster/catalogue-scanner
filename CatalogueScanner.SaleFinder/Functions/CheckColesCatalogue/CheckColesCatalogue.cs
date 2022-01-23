@@ -81,7 +81,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             foreach (var saleId in saleIds)
             {
-                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName)).ConfigureAwait(false);
+                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName), cancellationToken).ConfigureAwait(false);
             }
         }
 

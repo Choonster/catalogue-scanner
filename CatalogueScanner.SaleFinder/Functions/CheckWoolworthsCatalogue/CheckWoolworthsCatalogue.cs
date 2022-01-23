@@ -77,7 +77,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             foreach (var saleId in saleIds)
             {
-                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName)).ConfigureAwait(false);
+                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName), cancellationToken).ConfigureAwait(false);
             }
         }
 
