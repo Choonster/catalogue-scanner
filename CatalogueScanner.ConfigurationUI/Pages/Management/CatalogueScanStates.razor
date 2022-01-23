@@ -15,6 +15,9 @@
     <div class="date-range-row">
         <DatePicker Value="lastOperationFrom" ValueChanged="@((DateTime? minDate) => OnFromDateChanged(minDate))" Maximum="lastOperationTo" Label="Last Operation From (Local)"></DatePicker>
         <DatePicker Value="lastOperationTo" ValueChanged="@((DateTime? maxDate) => OnToDateChanged(maxDate))" Minimum="lastOperationFrom" Label="Last Operation To (Local)"></DatePicker>
+        <MatTooltip Tooltip="Refresh" Context="tooltip">
+            <MatIconButton RefBack="tooltip" Icon="refresh" OnClick="@(args => OnDateRangeChanged())"></MatIconButton>
+        </MatTooltip>
     </div>
 
     <MatTable Items="tableData" @bind-PageSize="pageInfo.PageSize" ShowPaging="false">
@@ -36,7 +39,7 @@
             {
                 <td class="actions">
                     <MatTooltip Tooltip="Reset" Context="tooltip">
-                        <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => ResetScanState(scanState))"></MatIconButton>
+                        <MatIconButton RefBack="tooltip" Icon="delete" OnClick="@(args => ResetScanState(scanState))"></MatIconButton>
                     </MatTooltip>
                 </td>
 
