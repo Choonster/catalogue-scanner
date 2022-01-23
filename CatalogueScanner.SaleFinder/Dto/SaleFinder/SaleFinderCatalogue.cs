@@ -209,154 +209,24 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
         }
     }
 
-    /// <summary>
-    /// Converter that can parse numbers in scientific notation/exponent format (e.g. 3.07446E+18) as <see cref="long"/> values, in addition to the standard integer/floating-point formats.
-    /// 
-    /// Note that the scientific notation/floating-point formats are only supported in the range of <see cref="double"/>.
-    /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Instantiated by System.Text.Json using reflection")]
-    internal class ExponentInt64Converter : JsonConverter<long?>
-    {
-        public override long? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            #region null checks
-            if (typeToConvert is null)
-            {
-                throw new ArgumentNullException(nameof(typeToConvert));
-            }
-
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            #endregion
-
-            switch (reader.TokenType)
-            {
-                case JsonTokenType.Number:
-                    return reader.GetInt64();
-
-                case JsonTokenType.String:
-                    var stringValue = reader.GetString();
-
-                    if (long.TryParse(stringValue, out var longValue))
-                    {
-                        return longValue;
-                    }
-
-                    if (double.TryParse(stringValue, out var doubleValue))
-                    {
-                        return (long)doubleValue;
-                    }
-
-                    break;
-            }
-
-            throw new JsonException($"Error reading {typeof(long).Name} from {typeof(Utf8JsonReader).Name}. Current item is not a number or numeric string: {reader.TokenType}");
-        }
-
-        public override void Write(Utf8JsonWriter writer, long? value, JsonSerializerOptions options)
-        {
-            #region null checks
-            if (writer is null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
-
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            #endregion
-
-            if (value.HasValue)
-            {
-                writer.WriteNumberValue(value.Value);
-            }
-            else
-            {
-                writer.WriteNullValue();
-            }
-        }
-    }
-
     // Adapted from JsonMicrosoftDateTimeOffsetConverter in Macross.Json.Extensions
-    internal class SaleFinderDateTimeOffsetConverter : JsonConverterFactory
+    internal class SaleFinderDateTimeOffsetConverter : BaseJsonNullableStructConverterFactory<DateTimeOffset>
     {
-        public override bool CanConvert(Type typeToConvert)
-        {
-            #region null checks
-            if (typeToConvert is null)
-            {
-                throw new ArgumentNullException(nameof(typeToConvert));
-            }
-            #endregion
+        protected override JsonConverter<DateTimeOffset> CreateBaseConverter(Type typeToConvert, JsonSerializerOptions options) =>
+            new Converter();
 
-            return typeToConvert == typeof(DateTimeOffset)
-                || (typeToConvert.IsGenericType && IsNullableDateTimeOffset(typeToConvert));
-        }
-
-        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
-        {
-            #region null checks
-            if (typeToConvert is null)
-            {
-                throw new ArgumentNullException(nameof(typeToConvert));
-            }
-
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            #endregion
-
-            return typeToConvert.IsGenericType
-                ? new JsonNullableDateTimeOffsetConverter()
-                : new JsonStandardDateTimeOffsetConverter();
-        }
-
-        private static bool IsNullableDateTimeOffset(Type typeToConvert)
-        {
-            var underlyingType = Nullable.GetUnderlyingType(typeToConvert);
-
-            return underlyingType != null && underlyingType == typeof(DateTimeOffset);
-        }
-
-        private class JsonStandardDateTimeOffsetConverter : JsonDateTimeOffsetConverter<DateTimeOffset>
-        {
-            public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-                => ReadDateTimeOffset(ref reader);
-
-            public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options)
-                => WriteDateTimeOffset(writer, value);
-        }
-
-        private class JsonNullableDateTimeOffsetConverter : JsonDateTimeOffsetConverter<DateTimeOffset?>
-        {
-            public override DateTimeOffset? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-                => ReadDateTimeOffset(ref reader);
-
-            public override void Write(Utf8JsonWriter writer, DateTimeOffset? value, JsonSerializerOptions options)
-                => WriteDateTimeOffset(writer, value!.Value);
-        }
-
-        private abstract class JsonDateTimeOffsetConverter<T> : JsonConverter<T>
+        private class Converter : JsonConverter<DateTimeOffset>
         {
             /// <summary>
             /// The date time format used by SaleFinder.
             /// </summary>
             private const string DateTimeFormat = "yyyy/MM/dd HH:mm:ss";
 
-            public static DateTimeOffset ReadDateTimeOffset(ref Utf8JsonReader reader)
+            public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
                 if (reader.TokenType != JsonTokenType.String)
                 {
-                    throw new JsonException($"Error reading {typeof(T).Name} from {typeof(Utf8JsonReader).Name}. Current item is not a string: {reader.TokenType}");
+                    throw new JsonException($"Error reading {typeof(DateTimeOffset)} from {typeof(Utf8JsonReader)}. Current item is not a string: {reader.TokenType}");
                 }
 
                 var formatted = reader.GetString()!;
@@ -364,12 +234,12 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
                 return DateTimeOffset.ParseExact(formatted, DateTimeFormat, CultureInfo.InvariantCulture);
             }
 
-            public static void WriteDateTimeOffset(Utf8JsonWriter writer, DateTimeOffset value) =>
+            public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) =>
                 writer.WriteStringValue(value.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
         }
     }
 
-    public class SaleFinderJsonCollectionItemConverter<TData, TCollection, TConverter> : BaseJsonCollectionItemConverter<TData, TCollection, TConverter>
+    internal class SaleFinderJsonCollectionItemConverter<TData, TCollection, TConverter> : BaseJsonCollectionItemConverter<TData, TCollection, TConverter>
         where TCollection : IEnumerable<TData>
         where TConverter : JsonConverter, new()
     {
