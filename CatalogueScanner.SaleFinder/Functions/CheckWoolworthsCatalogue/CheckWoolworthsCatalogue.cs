@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Functions
@@ -42,7 +43,8 @@ namespace CatalogueScanner.SaleFinder.Functions
         public async Task RunAsync(
             [TimerTrigger("%" + SaleFinderAppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
             ILogger log,
-            [Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)] IAsyncCollector<SaleFinderCatalogueDownloadInformation> collector
+            [Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)] IAsyncCollector<SaleFinderCatalogueDownloadInformation> collector,
+            CancellationToken cancellationToken
         )
         {
             #region null checks
@@ -62,7 +64,12 @@ namespace CatalogueScanner.SaleFinder.Functions
             }
             #endregion
 
-            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(WoolworthsStoreId, options.SaleFinderLocationId).ConfigureAwait(false);
+            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(WoolworthsStoreId, options.SaleFinderLocationId, cancellationToken).ConfigureAwait(false);
+
+            if (viewResponse is null)
+            {
+                throw new InvalidOperationException("viewResponse is null");
+            }
 
             var saleIds = FindSaleIds(viewResponse).ToList();
 
@@ -70,7 +77,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             foreach (var saleId in saleIds)
             {
-                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName)).ConfigureAwait(false);
+                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName), cancellationToken).ConfigureAwait(false);
             }
         }
 

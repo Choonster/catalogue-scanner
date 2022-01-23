@@ -1,13 +1,13 @@
 using CatalogueScanner.Core.Utility;
-using CatalogueScanner.WebScraping.Common.Dto.ColesOnline;
+using CatalogueScanner.WebScraping.Dto.ColesOnline;
 using CatalogueScanner.WebScraping.JavaScript;
 using CatalogueScanner.WebScraping.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
-using Newtonsoft.Json;
 using System;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -92,7 +92,7 @@ namespace CatalogueScanner.WebScraping.Service
 
             logger.LogDebug("Page {PageNum} - Data Received from Playwright", pageNum);
 
-            var productData = JsonConvert.DeserializeObject<ColrsCatalogEntryList>(productDataJson);
+            var productData = JsonSerializer.Deserialize(productDataJson, ColesOnlineSerializerContext.Default.ColrsCatalogEntryList);
 
             if (productData is null)
             {

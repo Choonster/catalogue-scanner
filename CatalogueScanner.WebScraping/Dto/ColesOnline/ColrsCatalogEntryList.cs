@@ -2,263 +2,187 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
+namespace CatalogueScanner.WebScraping.Dto.ColesOnline
 {
     public partial class ColrsCatalogEntryList
     {
-        [JsonProperty("type")]
         public string? Type { get; set; }
-
-        [JsonProperty("categories")]
         public Categories? Categories { get; set; }
 
-        [JsonProperty("facets")]
-        public IEnumerable<Facet> Facets { get; } = new List<Facet>();
+        [JsonInclude]
+        public IEnumerable<Facet> Facets { get; internal set; } = new List<Facet>();
 
-        [JsonProperty("products")]
-        public IEnumerable<Product> Products { get; } = new List<Product>();
+        [JsonInclude]
+        public IEnumerable<Product> Products { get; internal set; } = new List<Product>();
 
-        [JsonProperty("searchInfo")]
         public SearchInfo? SearchInfo { get; set; }
     }
 
     public partial class Categories
     {
-        [JsonProperty("parentCatgroup_id_search")]
-        public IDictionary<string, string> ParentCatgroupIdSearch { get; } = new Dictionary<string, string>();
+        [JsonInclude]
+        [JsonPropertyName("parentCatgroup_id_search")]
+        public IDictionary<string, string> ParentCatgroupIdSearch { get; internal set; } = new Dictionary<string, string>();
     }
 
     public partial class Facet
     {
-        [JsonProperty("values")]
-        public IEnumerable<Value> Values { get; } = new List<Value>();
+        [JsonInclude]
+        public IEnumerable<FacetValue> Values { get; internal set; } = new List<FacetValue>();
 
-        [JsonProperty("name")]
         public string? Name { get; set; }
-
-        [JsonProperty("showEspot")]
         public bool ShowEspot { get; set; }
     }
 
-    public partial class Value
+    public partial class FacetValue
     {
-        [JsonProperty("count")]
         public long Count { get; set; }
-
-        [JsonProperty("label")]
         public string? Label { get; set; }
-
-        [JsonProperty("value")]
-        public string? ValueValue { get; set; }
+        public string? Value { get; set; }
     }
 
     public partial class Product
     {
-        [JsonProperty("price")]
         public Price? Price { get; set; }
-
-        [JsonProperty("attributesMap")]
         public AttributesMap? AttributesMap { get; set; }
-
-        [JsonProperty("shortDescription")]
         public string? ShortDescription { get; set; }
 
-        [JsonProperty("singleSKUCatalogEntryID")]
+        [JsonPropertyName("singleSKUCatalogEntryID")]
         public string? SingleSkuCatalogEntryId { get; set; }
 
-        [JsonProperty("manufacturer")]
         public string? Manufacturer { get; set; }
-
-        [JsonProperty("name")]
         public string? Name { get; set; }
-
-        [JsonProperty("partNumber")]
         public string? PartNumber { get; set; }
-
-        [JsonProperty("seoToken")]
         public string? SeoToken { get; set; }
-
-        [JsonProperty("thumbnail")]
         public string? Thumbnail { get; set; }
 
-        [JsonProperty("uniqueID")]
-
+        [JsonPropertyName("uniqueID")]
         public string? UniqueId { get; set; }
 
-        [JsonProperty("purchaseLimit")]
         public string? PurchaseLimit { get; set; }
-
-        [JsonProperty("unitPrice")]
         public string? UnitPrice { get; set; }
 
-        [JsonProperty("tickettype")]
-        [JsonConverter(typeof(TicketTypeConverter))]
+        [JsonPropertyName("tickettype")]
         public TicketType TicketType { get; set; }
 
-        [JsonProperty("promo_min_qty")]
+        [JsonPropertyName("promo_min_qty")]
         public string? PromoMinQty { get; set; }
 
-        [JsonProperty("promo_reward")]
+        [JsonPropertyName("promo_reward")]
         public string? PromoReward { get; set; }
 
-        [JsonProperty("promo_type")]
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonPropertyName("promo_type")]
         public PromoType? PromoType { get; set; }
 
-        [JsonProperty("promo_desc")]
+        [JsonPropertyName("promo_desc")]
         public string? PromoDesc { get; set; }
 
-        [JsonProperty("promo_id")]
-
+        [JsonPropertyName("promo_id")]
         public string? PromoId { get; set; }
 
-        [JsonProperty("available")]
         public bool? Available { get; set; }
-
-        [JsonProperty("rating")]
         public string? Rating { get; set; }
-
-        [JsonProperty("reviews")]
+    
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
         public long Reviews { get; set; }
     }
 
     public partial class AttributesMap
     {
-        [JsonProperty("AVERAGESIZE")]
-        public IEnumerable<string> AverageSize { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("AVERAGESIZE")]
+        public IEnumerable<string> AverageSize { get; internal set; } = new List<string>();
 
-        [JsonProperty("DELIVERYRESTRICTIONS")]
-        public IEnumerable<string> DeliveryRestrictions { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("DELIVERYRESTRICTIONS")]
+        public IEnumerable<string> DeliveryRestrictions { get; internal set; } = new List<string>();
 
-        [JsonProperty("ONLINESIZEDESCRIPTION")]
-        public IEnumerable<string> OnlinesizeDescription { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("ONLINESIZEDESCRIPTION")]
+        public IEnumerable<string> OnlinesizeDescription { get; internal set; } = new List<string>();
 
-        [JsonProperty("LIQUORAGERESTRICTIONFLAG")]
-        public IEnumerable<string> LiquorAgeRestrictionFlag { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("LIQUORAGERESTRICTIONFLAG")]
+        public IEnumerable<string> LiquorAgeRestrictionFlag { get; internal set; } = new List<string>();
 
-        [JsonProperty("PRIMARYAISLE")]
-        public IEnumerable<string> PrimaryAisle { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("PRIMARYAISLE")]
+        public IEnumerable<string> PrimaryAisle { get; internal set; } = new List<string>();
 
-        [JsonProperty("WEIGHTEDITEMINDICATOR")]
-        public IEnumerable<string> WeightedItemIndicator { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("WEIGHTEDITEMINDICATOR")]
+        public IEnumerable<string> WeightedItemIndicator { get; internal set; } = new List<string>();
 
-        [JsonProperty("EXCLUDEFROMSUBSTITUTIONFLAG")]
-        public IEnumerable<string> ExcludeFromSubstitutionFlag { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("EXCLUDEFROMSUBSTITUTIONFLAG")]
+        public IEnumerable<string> ExcludeFromSubstitutionFlag { get; internal set; } = new List<string>();
 
-        [JsonProperty("TOBACCOAGERESTRICTIONFLAG")]
-        public IEnumerable<string> TobaccoAgeRestrictionFlag { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("TOBACCOAGERESTRICTIONFLAG")]
+        public IEnumerable<string> TobaccoAgeRestrictionFlag { get; internal set; } = new List<string>();
 
-        [JsonProperty("TYPE")]
-        public IEnumerable<string> Type { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("TYPE")]
+        public IEnumerable<string> Type { get; internal set; } = new List<string>();
 
-        [JsonProperty("DISPLAYREVIEWS")]
-        public IEnumerable<string> Displayreviews { get; } = new List<string>();
+        [JsonInclude]
+        [JsonPropertyName("DISPLAYREVIEWS")]
+        public IEnumerable<string> Displayreviews { get; internal set; } = new List<string>();
     }
 
     public partial class Price
     {
-        [JsonProperty("listPrice")]
         public double? ListPrice { get; set; }
 
-        [JsonProperty("offerPrice")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
         public double OfferPrice { get; set; }
 
-        [JsonProperty("isNaN")]
+        [JsonPropertyName("isNaN")]
         public bool IsNaN { get; set; }
 
-        [JsonProperty("dollarValue")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
         public long DollarValue { get; set; }
 
-        [JsonProperty("centValue")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
         public long CentValue { get; set; }
     }
 
     public partial class SearchInfo
     {
-        [JsonProperty("pageSize")]
         public long PageSize { get; set; }
-
-        [JsonProperty("searchTerm")]
         public string? SearchTerm { get; set; }
-
-        [JsonProperty("categoryId")]
         public string? CategoryId { get; set; }
-
-        [JsonProperty("searchType")]
-        public long SearchType { get; set; }
-
-        [JsonProperty("manufacturer")]
+        public string? SearchType { get; set; }
         public string? Manufacturer { get; set; }
-
-        [JsonProperty("profileName")]
         public string? ProfileName { get; set; }
-
-        [JsonProperty("searchSource")]
         public string? SearchSource { get; set; }
-
-        [JsonProperty("intentSearchTerm")]
         public string? IntentSearchTerm { get; set; }
-
-        [JsonProperty("originalSearchTerm")]
         public string? OriginalSearchTerm { get; set; }
-
-        [JsonProperty("metaData")]
         public string? MetaData { get; set; }
-
-        [JsonProperty("currency")]
         public string? Currency { get; set; }
-
-        [JsonProperty("filterTerm")]
         public string? FilterTerm { get; set; }
-
-        [JsonProperty("filterType")]
         public string? FilterType { get; set; }
-
-        [JsonProperty("filterFacet")]
         public string? FilterFacet { get; set; }
-
-        [JsonProperty("maxPrice")]
         public string? MaxPrice { get; set; }
-
-        [JsonProperty("minPrice")]
         public string? MinPrice { get; set; }
-
-        [JsonProperty("orderBy")]
         public string? OrderBy { get; set; }
-
-        [JsonProperty("physicalStoreIds")]
         public string? PhysicalStoreIds { get; set; }
-
-        [JsonProperty("advancedFacetList")]
         public string? AdvancedFacetList { get; set; }
-
-        [JsonProperty("pageView")]
         public string? PageView { get; set; }
 
-        [JsonProperty("personaliseSearch")]
+        [JsonConverter(typeof(BooleanStringConverter))]
         public bool PersonaliseSearch { get; set; }
 
-        [JsonProperty("personaliseSort")]
+        [JsonConverter(typeof(BooleanStringConverter))]
         public bool PersonaliseSort { get; set; }
 
-        [JsonProperty("responseTemplate")]
         public string? ResponseTemplate { get; set; }
-
-        [JsonProperty("currentPage")]
         public long CurrentPage { get; set; }
-
-        [JsonProperty("totalCount")]
         public long TotalCount { get; set; }
-
-        [JsonProperty("showAddAllResults")]
         public bool ShowAddAllResults { get; set; }
-
-        [JsonProperty("params")]
         public Params? Params { get; set; }
     }
 
@@ -266,94 +190,63 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
     {
     }
 
-    public enum PromoType { MultibuyMultiSku, MultibuySingleSku };
-
-    public enum TicketType
+    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
+    public enum PromoType
     {
-        M,
-        MZero,
-        MOne,
-        SZero,
-        SOne,
-        STenZero,
-        SFifteenZero,
-        SFifteenOne,
-        STwentyZero,
-        STwentyFiveZero,
-        SThirtyZero,
-        SFourtyZero,
-        SFiftyZero,
-        V,
-        VZero,
-        XZero
+        MultibuyMultiSku,
+        MultibuySingleSku
     }
 
-    public class TicketTypeConverter : JsonConverter<TicketType>
+    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
+    public enum TicketType
     {
-        private static readonly IDictionary<TicketType, string> ticketTypeToString = new Dictionary<TicketType, string>
-        {
-            [TicketType.M] = "M",
-            [TicketType.MZero] = "M_0",
-            [TicketType.MOne] = "M_1",
-            [TicketType.SZero] = "S_0",
-            [TicketType.SOne] = "S_1",
-            [TicketType.STenZero] = "S10_0",
-            [TicketType.SFifteenZero] = "S15_0",
-            [TicketType.SFifteenOne] = "S15_1",
-            [TicketType.STwentyZero] = "S20_0",
-            [TicketType.STwentyFiveZero] = "S25_0",
-            [TicketType.SThirtyZero] = "S30_0",
-            [TicketType.SFourtyZero] = "S40_0",
-            [TicketType.SFiftyZero] = "S50_0",
-            [TicketType.V] = "V",
-            [TicketType.VZero] = "V_0",
-            [TicketType.XZero] = "X_0",
-        }.ToImmutableDictionary();
+        [JsonPropertyName("M")] M,
+        [JsonPropertyName("M_0")] MZero,
+        [JsonPropertyName("M_1")] MOne,
+        [JsonPropertyName("S_0")] SZero,
+        [JsonPropertyName("S_1")] SOne,
+        [JsonPropertyName("S10_0")] STenZero,
+        [JsonPropertyName("S15_0")] SFifteenZero,
+        [JsonPropertyName("S15_1")] SFifteenOne,
+        [JsonPropertyName("S20_0")] STwentyZero,
+        [JsonPropertyName("S25_0")] STwentyFiveZero,
+        [JsonPropertyName("S30_0")] SThirtyZero,
+        [JsonPropertyName("S40_0")] SFourtyZero,
+        [JsonPropertyName("S50_0")] SFiftyZero,
+        [JsonPropertyName("V")] V,
+        [JsonPropertyName("V_0")] VZero,
+        [JsonPropertyName("X_0")] XZero
+    }
 
-        private static readonly IDictionary<string, TicketType> stringToTicketType = ticketTypeToString
-               .Select(kvp => KeyValuePair.Create(kvp.Value, kvp.Key))
-               .ToImmutableDictionary();
+    public class BooleanStringConverter : JsonConverter<bool>
+    {
+        private const string TrueString = "true";
+        private const string FalseString = "false";
 
-        public override TicketType ReadJson(JsonReader reader, Type objectType, TicketType existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             #region null checks
-            if (reader is null)
+            if (typeToConvert is null)
             {
-                throw new ArgumentNullException(nameof(reader));
+                throw new ArgumentNullException(nameof(typeToConvert));
             }
 
-            if (objectType is null)
+            if (options is null)
             {
-                throw new ArgumentNullException(nameof(objectType));
-            }
-
-            if (serializer is null)
-            {
-                throw new ArgumentNullException(nameof(serializer));
+                throw new ArgumentNullException(nameof(options));
             }
             #endregion
 
-            var stringValue = reader.Value;
-
-            if (stringValue is null)
+            return reader.TokenType switch
             {
-                throw new JsonReaderException($"Unable to read null value as {nameof(TicketType)}");
-            }
-
-            if (reader.TokenType != JsonToken.String)
-            {
-                throw new JsonReaderException($"Unable to read {reader.TokenType} value as {nameof(TicketType)}");
-            }
-
-            if (!stringToTicketType.TryGetValue((string)stringValue, out var ticketType))
-            {
-                throw new JsonReaderException($"Unable to read unknown value \"{stringValue}\" as {nameof(TicketType)}");
-            }
-
-            return ticketType;
+                JsonTokenType.True => true,
+                JsonTokenType.False => false,
+                JsonTokenType.String => bool.Parse(reader.GetString()!),
+                _ => throw new JsonException($"Error reading {typeof(bool).Name} from {typeof(Utf8JsonReader).Name}. Current item is not a boolean or string: {reader.TokenType}"),
+            };
         }
 
-        public override void WriteJson(JsonWriter writer, TicketType value, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
         {
             #region null checks
             if (writer is null)
@@ -361,18 +254,13 @@ namespace CatalogueScanner.WebScraping.Common.Dto.ColesOnline
                 throw new ArgumentNullException(nameof(writer));
             }
 
-            if (serializer is null)
+            if (options is null)
             {
-                throw new ArgumentNullException(nameof(serializer));
+                throw new ArgumentNullException(nameof(options));
             }
             #endregion
 
-            if (!ticketTypeToString.TryGetValue(value, out var stringValue))
-            {
-                throw new JsonReaderException($"Unable to write unknown {nameof(TicketType)} value \"{value}\"");
-            }
-
-            writer.WriteValue(stringValue);
+            writer.WriteStringValue(value ? TrueString : FalseString);
         }
     }
 }

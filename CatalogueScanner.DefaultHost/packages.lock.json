@@ -148,10 +148,10 @@
       },
       "Macross.Json.Extensions": {
         "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "LgC+ZlbequOJsQtP+h1/ldhF9EJVx1zRTTEDjTuziMnymOOTWgzxFlqYQ748lvlCdQYOhNkAjOqHVOsfCWgOhA==",
+        "resolved": "2.2.0",
+        "contentHash": "g1rUYJsadmi3ecxP6dVa2o+J4449TZYriBzxk9we2JOPfy9FyhwuRKIiPs8OQtx5dUcDAIpabA3a69jxZf68PQ==",
         "dependencies": {
-          "System.Text.Json": "4.7.0"
+          "System.Text.Json": "4.7.2"
         }
       },
       "Microsoft.ApplicationInsights": {
@@ -165,8 +165,8 @@
       },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Transitive",
-        "resolved": "5.2.7",
-        "contentHash": "/76fAHknzvFqbznS6Uj2sOyE9rJB3PltY+f53TH8dX9RiGhk02EhuFCWljSj5nnqKaTsmma8DFR50OGyQ4yJ1g==",
+        "resolved": "5.2.4",
+        "contentHash": "OdBVC2bQWkf9qDd7Mt07ev4SwIdu6VmLBMTWC0D5cOP/HWSXyv/77otwtXVrAo42duNjvXOjzjP5oOI9m1+DTQ==",
         "dependencies": {
           "Newtonsoft.Json": "10.0.1",
           "Newtonsoft.Json.Bson": "1.0.1"
@@ -950,8 +950,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "13.0.1",
-        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+        "resolved": "11.0.2",
+        "contentHash": "IvJe1pj7JHEsP8B8J8DwlMEx8UInrs/x+9oVY+oCD13jpLu4JbJU2WCIsMRn5C4yW9+DgkaO8uiVE5VHKjpmdQ=="
       },
       "Newtonsoft.Json.Bson": {
         "type": "Transitive",
@@ -1014,14 +1014,6 @@
           "Microsoft.NETCore.Platforms": "1.1.0",
           "Microsoft.NETCore.Targets": "1.1.0",
           "System.Runtime": "4.3.0"
-        }
-      },
-      "System.Collections.Immutable": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "l4zZJ1WU2hqpQQHXz1rvC3etVZN+2DLmQMO79FhOTZHMn8tDRr+WU287sbomD0BETlmKDn0ygUgVy9k5xkkJdA==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
       "System.ComponentModel": {
@@ -1530,7 +1522,7 @@
         "dependencies": {
           "CatalogueScanner.Configuration": "1.0.0",
           "HtmlAgilityPack": "1.11.39",
-          "Microsoft.AspNet.WebApi.Client": "5.2.7",
+          "Macross.Json.Extensions": "2.2.0",
           "Microsoft.Azure.Functions.Extensions": "1.1.0",
           "Microsoft.Azure.WebJobs.Extensions": "4.0.1",
           "Microsoft.Azure.WebJobs.Extensions.DurableTask": "2.6.0",
@@ -1538,9 +1530,7 @@
           "Microsoft.Azure.WebJobs.Extensions.SendGrid": "3.0.2",
           "Microsoft.Azure.WebJobs.Extensions.Storage": "5.0.0",
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "4.5.1",
-          "Microsoft.Extensions.Localization.Abstractions": "6.0.1",
-          "Newtonsoft.Json": "13.0.1",
-          "System.Collections.Immutable": "6.0.0"
+          "Microsoft.Extensions.Localization.Abstractions": "6.0.1"
         }
       },
       "cataloguescanner.localisation.orchardcore": {

@@ -48,12 +48,7 @@ namespace CatalogueScanner.Core.Serialisation
                 return 0;
             }
 
-            if (Position + count >= Length)
-            {
-                return (int)Math.Max(Position + count - Length, 0);
-            }
-
-            return count;
+            return (int) Math.Min(count, Length - Position);
         }
 
         public override int Read(byte[] buffer, int offset, int count)
