@@ -209,6 +209,7 @@ namespace CatalogueScanner.WebScraping.Dto.ColesOnline
         [JsonPropertyName("S15_0")] SFifteenZero,
         [JsonPropertyName("S15_1")] SFifteenOne,
         [JsonPropertyName("S20_0")] STwentyZero,
+        [JsonPropertyName("S20_1")] STwentyOne,
         [JsonPropertyName("S25_0")] STwentyFiveZero,
         [JsonPropertyName("S30_0")] SThirtyZero,
         [JsonPropertyName("S40_0")] SFourtyZero,
