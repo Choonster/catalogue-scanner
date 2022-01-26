@@ -68,6 +68,11 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(IgaStoreId, options.SaleFinderLocationId).ConfigureAwait(false);
 
+            if (viewResponse is null)
+            {
+                throw new InvalidOperationException("viewResponse is null");
+            }
+
             var saleIds = FindSaleIds(viewResponse).ToList();
 
             log.LogInformation(S["Found sale IDs: {0}"], saleIds);
