@@ -8,6 +8,8 @@
 @inject IOptionsSnapshot<ColesOptions> ColesOptionsAccessor;
 @inject IConfigurationSaver<WoolworthsOptions> WoolworthsConfigurationSaver;
 @inject IOptionsSnapshot<WoolworthsOptions> WoolworthsOptionsAccessor;
+@inject IConfigurationSaver<IgaOptions> IgaConfigurationSaver;
+@inject IOptionsSnapshot<IgaOptions> IgaOptionsAccessor;
 
 <section>
     <MatH3>Coles</MatH3>
@@ -31,9 +33,22 @@
     </EditForm>
 </section>
 
+
+<section>
+    <MatH3>IGA</MatH3>
+
+    <EditForm Model="IgaOptions" OnValidSubmit="SaveIgaOptions">
+        <MatNumericUpDownField Label="Sale Finder Location ID" @bind-Value="IgaOptions.SaleFinderLocationId">
+        </MatNumericUpDownField>
+
+        <MatButton Type="submit">Save</MatButton>
+    </EditForm>
+</section>
+
 @code {
     private ColesOptions ColesOptions => ColesOptionsAccessor.Value;
     private WoolworthsOptions WoolworthsOptions => WoolworthsOptionsAccessor.Value;
+    private IgaOptions IgaOptions => IgaOptionsAccessor.Value;
 
     private async Task SaveColesOptions(EditContext editContext)
     {
@@ -43,5 +58,10 @@
     private async Task SaveWoolworthsOptions(EditContext editContext)
     {
         await WoolworthsConfigurationSaver.SaveAsync((WoolworthsOptions)editContext.Model);
+    }
+
+    private async Task SaveIgaOptions(EditContext editContext)
+    {
+        await IgaConfigurationSaver.SaveAsync((IgaOptions)editContext.Model);
     }
 }

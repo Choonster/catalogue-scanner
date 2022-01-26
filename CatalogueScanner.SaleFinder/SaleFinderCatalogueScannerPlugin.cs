@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 
 namespace CatalogueScanner.SaleFinder
 {
@@ -44,7 +43,8 @@ namespace CatalogueScanner.SaleFinder
 
             builder.Services
                 .ConfigureOptions<ColesOptions>(saleFinderSection.GetSection(ColesOptions.Coles))
-                .ConfigureOptions<WoolworthsOptions>(saleFinderSection.GetSection(WoolworthsOptions.Woolworths));
+                .ConfigureOptions<WoolworthsOptions>(saleFinderSection.GetSection(WoolworthsOptions.Woolworths))
+                .ConfigureOptions<IgaOptions>(saleFinderSection.GetSection(IgaOptions.Iga));
         }
     }
 }
