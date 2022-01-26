@@ -1,7 +1,6 @@
 ﻿using CatalogueScanner.Core.Serialisation;
 using System;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
 {
@@ -11,12 +10,12 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
     /// </summary>
     public class ExponentInt64Converter : BaseJsonNullableStructConverterFactory<long>
     {
-        protected override JsonConverter<long> CreateBaseConverter(Type typeToConvert, JsonSerializerOptions options) =>
+        protected override IBaseConverter CreateBaseConverter(Type typeToConvert, JsonSerializerOptions options) =>
             new Converter();
 
-        private class Converter : JsonConverter<long>
+        private class Converter : IBaseConverter
         {
-            public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            public long? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
                 #region null checks
                 if (typeToConvert is null)
@@ -48,13 +47,18 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
                             return (long)doubleValue;
                         }
 
-                        break;
+                        if (string.IsNullOrEmpty(stringValue))
+                        {
+                            return null;
+                        }
+
+                        throw new JsonException($"Error reading {typeof(long)} from {typeof(Utf8JsonReader)}. Value {JsonSerializer.Serialize(stringValue)} cannot be parsed.");
                 }
 
                 throw new JsonException($"Error reading {typeof(long)} from {typeof(Utf8JsonReader)}. Current item is not a number or numeric string: {reader.TokenType}");
             }
 
-            public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options)
+            public void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options)
             {
                 #region null checks
                 if (writer is null)
