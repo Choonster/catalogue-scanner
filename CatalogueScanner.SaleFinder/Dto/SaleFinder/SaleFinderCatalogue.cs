@@ -212,17 +212,17 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
     // Adapted from JsonMicrosoftDateTimeOffsetConverter in Macross.Json.Extensions
     internal class SaleFinderDateTimeOffsetConverter : BaseJsonNullableStructConverterFactory<DateTimeOffset>
     {
-        protected override JsonConverter<DateTimeOffset> CreateBaseConverter(Type typeToConvert, JsonSerializerOptions options) =>
+        protected override IBaseConverter CreateBaseConverter(Type typeToConvert, JsonSerializerOptions options) =>
             new Converter();
 
-        private class Converter : JsonConverter<DateTimeOffset>
+        private class Converter : IBaseConverter
         {
             /// <summary>
             /// The date time format used by SaleFinder.
             /// </summary>
             private const string DateTimeFormat = "yyyy/MM/dd HH:mm:ss";
 
-            public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            public DateTimeOffset? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
                 if (reader.TokenType != JsonTokenType.String)
                 {
@@ -234,7 +234,7 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
                 return DateTimeOffset.ParseExact(formatted, DateTimeFormat, CultureInfo.InvariantCulture);
             }
 
-            public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) =>
+            public void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) =>
                 writer.WriteStringValue(value.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
         }
     }

@@ -44,7 +44,8 @@ namespace CatalogueScanner.SaleFinder
             builder.Services
                 .ConfigureOptions<ColesOptions>(saleFinderSection.GetSection(ColesOptions.Coles))
                 .ConfigureOptions<WoolworthsOptions>(saleFinderSection.GetSection(WoolworthsOptions.Woolworths))
-                .ConfigureOptions<IgaOptions>(saleFinderSection.GetSection(IgaOptions.Iga));
+                .ConfigureOptions<IgaOptions>(saleFinderSection.GetSection(IgaOptions.Iga))
+            ;
         }
     }
 }
