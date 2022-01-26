@@ -12,6 +12,11 @@
         /// </summary>
         public const string CheckWoolworthsCatalogue = "CheckWoolworthsCatalogue";
 
+        /// <summary>
+        /// The name of the <see cref="Functions.CheckIgaCatalogue"/> function.
+        /// </summary>
+        public const string CheckIgaCatalogue = "CheckIgaCatalogue";
+
 
         /// <summary>
         /// The name of the <see cref="Functions.ScanSaleFinderCatalogue"/> orchestrator function.
