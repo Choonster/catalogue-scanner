@@ -11,8 +11,8 @@
 		<PackageReference Include="CurrieTechnologies.Razor.Clipboard" Version="1.4.0" />
 		<PackageReference Include="MatBlazor" Version="2.8.0" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
-		<PackageReference Include="Microsoft.Azure.SignalR" Version="1.14.0" />
-		<PackageReference Include="Microsoft.Identity.Web" Version="1.21.1" />
+		<PackageReference Include="Microsoft.Azure.SignalR" Version="1.15.1" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="1.22.3" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -28,7 +28,7 @@
 	</Target>
 
 	<Target Name="DeletePlaywrightShellFromOutput" AfterTargets="CopyPlaywrightShellToOutput">
-		<Delete Files="@(_CopyItemsShell->'$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)')"  />
+		<Delete Files="@(_CopyItemsShell->'$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
 	<Target Name="PlaywrightDeleteAfterPublish" AfterTargets="PlaywrightCopyAfterPublish">
