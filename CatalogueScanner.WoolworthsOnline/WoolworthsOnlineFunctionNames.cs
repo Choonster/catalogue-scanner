@@ -3,33 +3,33 @@
     public static class WoolworthsOnlineFunctionNames
     {
         /// <summary>
-        /// The name of the <see cref="Functions.ScanColesOnlineSpecials"/> orchestrator function.
+        /// The name of the <see cref="Functions.ScanWoolworthsOnlineSpecials"/> orchestrator function.
         /// </summary>
-        public const string ScanColesOnlineSpecials = "ScanColesOnlineSpecials";
+        public const string ScanWoolworthsOnlineSpecials = "ScanWoolworthsOnlineSpecials";
 
         /// <summary>
-        /// The name of the <see cref="Functions.ScanColesOnlineSpecials"/> orchestration trigger function.
+        /// The name of the <see cref="Functions.ScanWoolworthsOnlineSpecials"/> orchestration trigger function.
         /// </summary>
-        public const string ScanColesOnlineSpecialsTimerStart = "ScanColesOnlineSpecials_TimerStart";
+        public const string ScanWoolworthsOnlineSpecialsTimerStart = "ScanWoolworthsOnlineSpecials_TimerStart";
 
         /// <summary>
-        /// The name of the <see cref="Functions.GetColesOnlineSpecialsDates"/> activity function.
+        /// The name of the <see cref="Functions.GetWoolworthsOnlineSpecialsDates"/> activity function.
         /// </summary>
-        public const string GetColesOnlineSpecialsDates = "GetColesOnlineSpecialsDates";
+        public const string GetWoolworthsOnlineSpecialsDates = "GetWoolworthsOnlineSpecialsDates";
 
         /// <summary>
-        /// The name of the <see cref="Functions.GetColesOnlineSpecialsPageCount"/> activity function.
+        /// The name of the <see cref="Functions.GetWoolworthsOnlineSpecialsCategories"/> activity function.
         /// </summary>
-        public const string GetColesOnlineSpecialsPageCount = "GetColesOnlineSpecialsPageCount";
+        public const string GetWoolworthsOnlineSpecialsCategories = "GetWoolworthsOnlineSpecialsCategories";
 
         /// <summary>
-        /// The name of the <see cref="Functions.DownloadColesOnlineSpecialsPage"/> activity function.
+        /// The name of the <see cref="Functions.GetWoolworthsOnlineSpecialsPageCount"/> activity function.
         /// </summary>
-        public const string DownloadColesOnlineSpecialsPage = "DownloadColesOnlineSpecialsPage";
+        public const string GetWoolworthsOnlineSpecialsPageCount = "GetWoolworthsOnlineSpecialsPageCount";
 
         /// <summary>
-        /// The name of the <see cref="Functions.ClosePlaywrightBrowser"/> activity function.
+        /// The name of the <see cref="Functions.DownloadWoolworthsOnlineSpecialsPage"/> activity function.
         /// </summary>
-        public const string ClosePlaywrightBrowser = "ClosePlaywrightBrowser";
+        public const string DownloadWoolworthsOnlineSpecialsPage = "DownloadWoolworthsOnlineSpecialsPage";        
     }
 }

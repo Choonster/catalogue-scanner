@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.WebScrapin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_Shared", "_Shared\_Shared.csproj", "{B46EECA8-3FFE-4585-9600-28EDC694BBBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogueScanner.WoolworthsOnline", "CatalogueScanner.WoolworthsOnline\CatalogueScanner.WoolworthsOnline.csproj", "{7278049F-6A7E-429E-BCF5-CFDC477361D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.WoolworthsOnline", "CatalogueScanner.WoolworthsOnline\CatalogueScanner.WoolworthsOnline.csproj", "{7278049F-6A7E-429E-BCF5-CFDC477361D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

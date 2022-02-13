@@ -3,6 +3,7 @@ using CatalogueScanner.Core.Host;
 using CatalogueScanner.WoolworthsOnline.Options;
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace CatalogueScanner.WoolworthsOnline
 {
@@ -20,7 +21,7 @@ namespace CatalogueScanner.WoolworthsOnline
             builder.Services
                 .AddHttpClient<WoolworthsOnlineService>(client =>
                 {
-                    client.BaseAddress = new Uri("https://www.woolworths.com.au/apis/ui");
+                    client.BaseAddress = new Uri("https://www.woolworths.com.au/apis/ui/");
                 });
 
             AddConfiguration(builder);

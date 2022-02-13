@@ -3,10 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
 {
@@ -121,7 +118,7 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
         public long MinimumQuantity { get; set; }
         public bool HasBeenBoughtBefore { get; set; }
         public bool IsInTrolley { get; set; }
-        public Source Source { get; set; }
+        public string Source { get; set; }
         public long SupplyLimit { get; set; }
         public string? MaxSupplyLimitMessage { get; set; }
         public bool IsRanged { get; set; }
@@ -261,13 +258,6 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
     {
         Special,
         PriceDropped,
-    }
-
-    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
-    public enum Source
-    {
-        [JsonPropertyName("SpecialsGroup.Half Price")] SpecialsGroupHalfPrice,
-        [JsonPropertyName("SpecialsGroup.Buy More Save More")] SpecialsGroupBuyMoreSaveMore,
     }
 
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]

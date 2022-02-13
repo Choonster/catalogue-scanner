@@ -1572,6 +1572,12 @@
           "DotNext.Threading": "4.2.0",
           "Microsoft.Playwright": "1.18.1"
         }
+      },
+      "cataloguescanner.woolworthsonline": {
+        "type": "Project",
+        "dependencies": {
+          "CatalogueScanner.Core": "1.0.0"
+        }
       }
     }
   }

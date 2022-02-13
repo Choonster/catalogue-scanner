@@ -16,6 +16,7 @@
 		<ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
 		<ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
 		<ProjectReference Include="..\CatalogueScanner.WebScraping\CatalogueScanner.WebScraping.csproj" />
+		<ProjectReference Include="..\CatalogueScanner.WoolworthsOnline\CatalogueScanner.WoolworthsOnline.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
