@@ -77,7 +77,7 @@ namespace CatalogueScanner.Configuration
         private async Task RefreshAsync(CancellationToken cancellationToken = default)
         {
             await configurationClient.SetConfigurationSettingAsync(ConfigurationConstants.SentinelKey, DateTime.UtcNow.ToString("o"), cancellationToken: cancellationToken).ConfigureAwait(false);
-            await configurationRefresher.RefreshAsync().ConfigureAwait(false);
+            await configurationRefresher.RefreshAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }
