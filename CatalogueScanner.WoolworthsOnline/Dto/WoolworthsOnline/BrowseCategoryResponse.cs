@@ -115,10 +115,10 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
         public double InstoreWasPrice { get; set; }
         public long QuantityInTrolley { get; set; }
         public Unit Unit { get; set; }
-        public long MinimumQuantity { get; set; }
+        public double MinimumQuantity { get; set; }
         public bool HasBeenBoughtBefore { get; set; }
         public bool IsInTrolley { get; set; }
-        public string Source { get; set; }
+        public string? Source { get; set; }
         public long SupplyLimit { get; set; }
         public string? MaxSupplyLimitMessage { get; set; }
         public bool IsRanged { get; set; }
@@ -144,7 +144,7 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
         public bool IsPurchasable { get; set; }
         public bool InstoreIsPurchasable { get; set; }
         public bool AgeRestricted { get; set; }
-        public long DisplayQuantity { get; set; }
+        public double DisplayQuantity { get; set; }
         public object? RichDescription { get; set; }
         public bool IsDeliveryPass { get; set; }
         public bool HideWasSavedPrice { get; set; }
@@ -170,8 +170,7 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
 
         public string? Variety { get; set; }
 
-        [JsonInclude]
-        public IDictionary<string, long> Rating { get; internal set; } = new Dictionary<string, long>();
+        public Rating? Rating { get; set; }
 
         public bool HasProductSubs { get; set; }
         public bool IsSponsoredAd { get; set; }
@@ -205,7 +204,7 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
     public class MultibuyData
     {
         public long Quantity { get; set; }
-        public long Price { get; set; }
+        public decimal Price { get; set; }
         public string? CupTag { get; set; }
     }
 
@@ -246,6 +245,24 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
         public IEnumerable<object> Groups { get; internal set; } = new List<object>();
     }
 
+    public class Rating
+    {
+        public double Average { get; set; }
+        public long FiveStarCount { get; set; }
+        public double FiveStarPercentage { get; set; }
+        public long FourStarCount { get; set; }
+        public double FourStarPercentage { get; set; }
+        public long OneStarCount { get; set; }
+        public double OneStarPercentage { get; set; }
+        public long RatingCount { get; set; }
+        public long RatingSum { get; set; }
+        public long ReviewCount { get; set; }
+        public long ThreeStarCount { get; set; }
+        public double ThreeStarPercentage { get; set; }
+        public long TwoStarCount { get; set; }
+        public double TwoStarPercentage { get; set; }
+    }
+
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]
     public enum TagType
     {
@@ -269,6 +286,7 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]
     public enum Unit
     {
-        Each
+        Each,
+        KG
     }
 }
