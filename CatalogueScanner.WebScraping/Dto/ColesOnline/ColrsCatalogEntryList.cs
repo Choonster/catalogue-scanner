@@ -203,6 +203,7 @@ namespace CatalogueScanner.WebScraping.Dto.ColesOnline
         [JsonPropertyName("M")] M,
         [JsonPropertyName("M_0")] MZero,
         [JsonPropertyName("M_1")] MOne,
+        [JsonPropertyName("N_0")] NZero,
         [JsonPropertyName("S_0")] SZero,
         [JsonPropertyName("S_1")] SOne,
         [JsonPropertyName("S10_0")] STenZero,
@@ -212,8 +213,10 @@ namespace CatalogueScanner.WebScraping.Dto.ColesOnline
         [JsonPropertyName("S20_1")] STwentyOne,
         [JsonPropertyName("S25_0")] STwentyFiveZero,
         [JsonPropertyName("S30_0")] SThirtyZero,
+        [JsonPropertyName("S30_1")] SThirtyOne,
         [JsonPropertyName("S40_0")] SFourtyZero,
         [JsonPropertyName("S50_0")] SFiftyZero,
+        [JsonPropertyName("S501_1")] SFiftyOne,
         [JsonPropertyName("V")] V,
         [JsonPropertyName("V_0")] VZero,
         [JsonPropertyName("X_0")] XZero
