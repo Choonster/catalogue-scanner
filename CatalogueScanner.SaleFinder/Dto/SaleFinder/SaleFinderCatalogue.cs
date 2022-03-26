@@ -69,7 +69,9 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
 
     public partial class Item
     {
-        public string? VideoId { get; set; }
+        [JsonConverter(typeof(ExponentInt64Converter))]
+        public long? VideoId { get; set; }
+
         public Shape Shape { get; set; }
 
         [JsonInclude]
