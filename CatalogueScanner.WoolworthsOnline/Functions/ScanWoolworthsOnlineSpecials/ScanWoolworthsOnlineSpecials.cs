@@ -1,4 +1,4 @@
-using CatalogueScanner.Core;
+﻿using CatalogueScanner.Core;
 using CatalogueScanner.Core.Dto.EntityKey;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
@@ -73,16 +73,23 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
                         null
                     ).ConfigureAwait(true);
 
+                    var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
+
                     var itemPages = new List<IEnumerable<CatalogueItem>>();
 
                     foreach (var category in categories)
                     {
-                        var pageCount = await context.CallActivityAsync<int>(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount, category.CategoryId).ConfigureAwait(true);
+                        var pageCount = await context.CallActivityWithRetryAsync<int>(
+                            WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount,
+                            retryOptions,
+                            category.CategoryId
+                        ).ConfigureAwait(true);
 
                         var downloadTasks = Enumerable.Range(0, pageCount)
                             .Select(pageIndex =>
-                                context.CallActivityAsync<IEnumerable<CatalogueItem>>(
+                                context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
                                     WoolworthsOnlineFunctionNames.DownloadWoolworthsOnlineSpecialsPage,
+                                    retryOptions,
                                     new DownloadWoolworthsOnlineSpecialsPageInput
                                     {
                                         CategoryId = category.CategoryId,
