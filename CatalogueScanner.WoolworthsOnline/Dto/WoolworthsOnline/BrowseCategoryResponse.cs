@@ -275,6 +275,7 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
     {
         Special,
         PriceDropped,
+        LowPrice
     }
 
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]
