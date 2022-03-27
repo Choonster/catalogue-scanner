@@ -6,6 +6,7 @@ using CatalogueScanner.DefaultHost;
 using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
 using CatalogueScanner.WebScraping;
+using CatalogueScanner.WoolworthsOnline;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -70,7 +71,8 @@ namespace CatalogueScanner.DefaultHost
                 .AddPlugin<CoreCatalogueScannerPlugin>()
                 .AddPlugin<OrchardCoreLocalisationCatalogueScannerPlugin>()
                 .AddPlugin<SaleFinderCatalogueScannerPlugin>()
-                .AddPlugin<WebScrapingCatalogueScannerPlugin>();
+                .AddPlugin<WebScrapingCatalogueScannerPlugin>()
+                .AddPlugin<WoolworthsOnlineCatalogueScannerPlugin>();
         }
     }
 }
