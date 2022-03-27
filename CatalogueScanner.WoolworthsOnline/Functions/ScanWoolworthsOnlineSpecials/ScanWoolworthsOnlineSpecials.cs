@@ -1,4 +1,4 @@
-﻿using CatalogueScanner.Core;
+using CatalogueScanner.Core;
 using CatalogueScanner.Core.Dto.EntityKey;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
@@ -89,7 +89,8 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
                                         PageNumber = pageIndex + 1,
                                     }
                                 )
-                            );
+                            )
+                            .ToList();
 
                         await Task.WhenAll(downloadTasks).ConfigureAwait(true);
 
