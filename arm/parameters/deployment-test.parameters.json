@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appConfigurationName": {
+            "value": "catalogue-scanner-deployment-test-config"
+        },
+        "logAnalyticsWorkspaceName": {
+            "value": "catalogue-scanner-deployment-test-log-analytics"
+        },
+        "functionAppName": {
+            "value": "catalogue-scanner-deployment-test"
+        },
+        "storageAccountName": {
+            "value": "csdeploymentteststorage"
+        },
+        "sendGridApiKey": {
+            "value": "SG.12345678"
+        },
+        "configurationUiName": {
+            "value": "catalogue-scanner-deployment-test-configuration-ui"
+        },
+        "signalRServiceName": {
+            "value": "catalogue-scanner-deployment-test-signalr"
+        }
+    }
+}
