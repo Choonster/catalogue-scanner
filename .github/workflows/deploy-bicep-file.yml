@@ -32,4 +32,4 @@ jobs:
     - uses: azure/cli@v1
       with:
         inlineScript: |
-          az group delete --name ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
+          az group delete --name ${{ secrets.ARM_DEPLOYMENT_TEST_RG }} --yes
