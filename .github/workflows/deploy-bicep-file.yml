@@ -21,7 +21,6 @@ jobs:
           failOnStdErr: false
 
       - name: Delete Resources
-        uses: azure/cli@v1
         uses: azure/arm-deploy@v1
         with:
           resourceGroupName: ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
