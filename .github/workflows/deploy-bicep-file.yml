@@ -1,0 +1,32 @@
+on:
+  push:
+
+name: Deploy Bicep file to Azure
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.ARM_DEPLOYMENT_TEST_CREDENTIALS }}
+
+      - name: Deploy Bicep file
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
+          template: arm/main.bicep
+          parameters: arm/parameters/deployment-test.parameters.json
+          failOnStdErr: false
+
+      - name: Delete Resources
+        uses: azure/arm-deploy@v1
+        with:
+          resourceGroupName: ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
+          template: arm/empty.bicep
+          deploymentMode: Complete
+          failOnStdErr: false
