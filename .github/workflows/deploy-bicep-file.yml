@@ -12,13 +12,24 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.ARM_DEPLOYMENT_TEST_CREDENTIALS }}
+    
+      # Create the resource group if it doesn't already exist
+    - uses: azure/cli@v1
+      with:
+        inlineScript: |
+          az group create --name ${{ secrets.ARM_DEPLOYMENT_TEST_RG }} --location ${{ secrets.ARM_DEPLOYMENT_TEST_LOCATION }}
 
       # Deploy Bicep file
     - name: deploy
       uses: azure/arm-deploy@v1
       with:
-        subscriptionId: ${{ secrets.ARM_DEPLOYMENT_TEST_SUBSCRIPTION }}
         resourceGroupName: ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
         template: arm/main.bicep
         parameters: arm/parameters/deployment-test.parameters.json
         failOnStdErr: false
+
+      # Delete the resource group
+    - uses: azure/cli@v1
+      with:
+        inlineScript: |
+          az group delete --name ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
