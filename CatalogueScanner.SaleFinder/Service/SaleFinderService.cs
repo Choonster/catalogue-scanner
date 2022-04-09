@@ -21,11 +21,14 @@ namespace CatalogueScanner.SaleFinder.Service
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public Task<CatalogueViewResponse?> GetCatalogueViewDataAsync(int storeId, int locationId, CancellationToken cancellationToken = default) =>
-            GetAsync($"/catalogues/view/{storeId}/?format=json&locationId={locationId}", SaleFinderSerializerContext.Default.CatalogueViewResponse, cancellationToken: cancellationToken);
+        public async Task<CatalogueViewResponse?> GetCatalogueViewDataAsync(int storeId, int locationId, CancellationToken cancellationToken = default) =>
+            await GetAsync($"/catalogues/view/{storeId}/?format=json&locationId={locationId}", SaleFinderSerializerContext.Default.CatalogueViewResponse, cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        public Task<SaleFinderCatalogue?> GetCatalogueAsync(int saleId, CancellationToken cancellationToken = default) =>
-            GetAsync($"/catalogue/svgData/{saleId}/?format=json", SaleFinderSerializerContext.Default.SaleFinderCatalogue, CALLBACK_NAME, cancellationToken);
+        public async Task<SaleFinderCatalogue?> GetCatalogueAsync(int saleId, CancellationToken cancellationToken = default) =>
+            await GetAsync($"/catalogue/svgData/{saleId}/?format=json", SaleFinderSerializerContext.Default.SaleFinderCatalogue, CALLBACK_NAME, cancellationToken).ConfigureAwait(false);
+
+        public async Task<string?> GetItemTooltipAsync(long itemId, CancellationToken cancellationToken = default) =>
+            await GetAsync($"/item/tooltip/{itemId}?", SaleFinderSerializerContext.Default.String, cancellationToken: cancellationToken).ConfigureAwait(false);
 
         private async Task<T?> GetAsync<T>(string path, JsonTypeInfo<T> jsonTypeInfo, string? callbackName = null, CancellationToken cancellationToken = default)
         {

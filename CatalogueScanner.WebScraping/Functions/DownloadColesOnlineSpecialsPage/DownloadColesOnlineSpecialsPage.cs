@@ -44,6 +44,9 @@ namespace CatalogueScanner.WebScraping.Functions
                     Name = $"{product.Manufacturer} {product.Name}",
                     Sku = product.SingleSkuCatalogEntryId,
                     Uri = new Uri(productUrlTemplate.AbsoluteUri.Replace("[productToken]", product.SeoToken, StringComparison.OrdinalIgnoreCase)),
+                    Price = product.Price?.OfferPrice,
+                    MultiBuyQuantity = product.PromoMinQty,
+                    MultiBuyTotalPrice = product.PromoMinQty * product.PromoReward,
                 })
                 .ToList();
 

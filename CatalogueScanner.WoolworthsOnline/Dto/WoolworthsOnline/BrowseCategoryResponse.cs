@@ -86,15 +86,15 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
         public long Stockcode { get; set; }
         public string? Barcode { get; set; }
         public long GtinFormat { get; set; }
-        public double? CupPrice { get; set; }
-        public double? InstoreCupPrice { get; set; }
+        public decimal? CupPrice { get; set; }
+        public decimal? InstoreCupPrice { get; set; }
         public string? CupMeasure { get; set; }
         public string? CupString { get; set; }
         public string? InstoreCupString { get; set; }
         public bool HasCupPrice { get; set; }
         public bool InstoreHasCupPrice { get; set; }
-        public double? Price { get; set; }
-        public double? InstorePrice { get; set; }
+        public decimal? Price { get; set; }
+        public decimal? InstorePrice { get; set; }
         public string? Name { get; set; }
         public string? DisplayName { get; set; }
 
@@ -109,10 +109,10 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
         public bool IsOnSpecial { get; set; }
         public bool InstoreIsOnSpecial { get; set; }
         public bool IsEdrSpecial { get; set; }
-        public double? SavingsAmount { get; set; }
-        public double? InstoreSavingsAmount { get; set; }
-        public double WasPrice { get; set; }
-        public double InstoreWasPrice { get; set; }
+        public decimal? SavingsAmount { get; set; }
+        public decimal? InstoreSavingsAmount { get; set; }
+        public decimal WasPrice { get; set; }
+        public decimal InstoreWasPrice { get; set; }
         public long QuantityInTrolley { get; set; }
         public Unit Unit { get; set; }
         public double MinimumQuantity { get; set; }

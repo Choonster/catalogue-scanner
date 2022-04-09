@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -52,7 +53,7 @@ namespace CatalogueScanner.Core.Functions
             S = pluralStringLocalizer ?? throw new ArgumentNullException(nameof(pluralStringLocalizer));
         }
 
-        [FunctionName("SendCatalogueDigestEmail")]
+        [FunctionName(CoreFunctionNames.SendCatalogueDigestEmail)]
         [return: SendGrid]
         public SendGridMessage Run([ActivityTrigger] Catalogue filteredCatalogue)
         {
@@ -73,13 +74,15 @@ namespace CatalogueScanner.Core.Functions
 
             message.AddTo(options.ToEmail, options.ToName);
 
-            message.AddContent(MimeType.Html, GetHtmlContent(summary!, filteredCatalogue));
-            message.AddContent(MimeType.Text, GetPlainTextContent(summary!, filteredCatalogue));
+            var hasMultiBuyItems = filteredCatalogue.Items.Any(HasMultiBuyPrice);
+
+            message.AddContent(MimeType.Html, GetHtmlContent(summary!, filteredCatalogue, hasMultiBuyItems));
+            message.AddContent(MimeType.Text, GetPlainTextContent(summary!, filteredCatalogue, hasMultiBuyItems));
 
             return message;
         }
 
-        private string GetHtmlContent(string summary, Catalogue filteredCatalogue)
+        private string GetHtmlContent(string summary, Catalogue filteredCatalogue, bool hasMultiBuyItems)
         {
             var htmlDocument = new HtmlDocument();
             htmlDocument.LoadHtml(EmailTemplates.HtmlTemplate);
@@ -113,6 +116,12 @@ namespace CatalogueScanner.Core.Functions
 
             var headerRow = thead.AppendChild(htmlDocument.CreateElement("tr"));
             headerRow.AppendChild(ElementWithText("th", S["Product Name"]!));
+            headerRow.AppendChild(ElementWithText("th", S["Price"]));
+
+            if (hasMultiBuyItems)
+            {
+                headerRow.AppendChild(ElementWithText("th", S["Multi-Buy Price"]));
+            }
             #endregion
 
             #region Table body
@@ -133,6 +142,15 @@ namespace CatalogueScanner.Core.Functions
                     else
                     {
                         productNameCell.AppendChild(htmlDocument.CreateTextNode(ItemName(catalogueItem)));
+                    }
+
+                    var priceCell = row.AppendChild(ElementWithText("td", Price(filteredCatalogue, catalogueItem.Price)));
+                    priceCell.AddClass("price");
+
+                    if (hasMultiBuyItems)
+                    {
+                        var multiBuyPriceCell = row.AppendChild(ElementWithText("td", MultiBuyPrice(filteredCatalogue, catalogueItem)));
+                        multiBuyPriceCell.AddClass("multi-buy-price");
                     }
 
                     return row;
@@ -160,7 +178,7 @@ namespace CatalogueScanner.Core.Functions
             }
         }
 
-        private string GetPlainTextContent(string summary, Catalogue filteredCatalogue)
+        private string GetPlainTextContent(string summary, Catalogue filteredCatalogue, bool hasMultiBuyItems)
         {
             var content = new StringBuilder(EmailTemplates.PlainTextTemplate);
 
@@ -178,6 +196,16 @@ namespace CatalogueScanner.Core.Functions
                             row += $" ({catalogueItem.Uri.AbsoluteUri})";
                         }
 
+                        if (catalogueItem.Price != null)
+                        {
+                            row += $" - {Price(filteredCatalogue, catalogueItem.Price)}";
+                        }
+
+                        if (hasMultiBuyItems && HasMultiBuyPrice(catalogueItem))
+                        {
+                            row += $" - {MultiBuyPrice(filteredCatalogue, catalogueItem)}";
+                        }
+
                         return row;
                     })
             );
@@ -188,5 +216,20 @@ namespace CatalogueScanner.Core.Functions
         }
 
         private string ItemName(CatalogueItem catalogueItem) => catalogueItem.Name ?? S["Unknown Item"]!;
+
+        private static string Price(Catalogue catalogue, decimal? price) =>
+            price?.ToString("C", catalogue.CurrencyCulture) ?? string.Empty;
+
+        private static bool HasMultiBuyPrice(CatalogueItem catalogueItem) =>
+            catalogueItem.MultiBuyQuantity != null && catalogueItem.MultiBuyTotalPrice != null;
+
+        private string MultiBuyPrice(Catalogue catalogue, CatalogueItem catalogueItem) =>
+            HasMultiBuyPrice(catalogueItem)
+                ? S[
+                    "{0} for {1}",
+                    catalogueItem.MultiBuyQuantity!.Value.ToString(CultureInfo.CurrentCulture),
+                    Price(catalogue, catalogueItem.MultiBuyTotalPrice)
+                ]
+                : string.Empty;
     }
 }

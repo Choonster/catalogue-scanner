@@ -57,6 +57,9 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
                             Name = product.DisplayName,
                             Sku = product.Stockcode.ToString(CultureInfo.InvariantCulture),
                             Uri = new Uri(productUrlTemplate.AbsoluteUri.Replace("[stockCode]", product.Stockcode.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase)),
+                            Price = product.Price,
+                            MultiBuyQuantity = product.CentreTag?.MultibuyData?.Quantity,
+                            MultiBuyTotalPrice = product.CentreTag?.MultibuyData?.Price,
                         }
                     )
                 )

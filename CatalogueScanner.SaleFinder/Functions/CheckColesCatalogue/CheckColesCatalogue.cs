@@ -1,3 +1,4 @@
+using CatalogueScanner.Core;
 using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using CatalogueScanner.SaleFinder.Dto.SaleFinder;
 using CatalogueScanner.SaleFinder.Options;
@@ -81,7 +82,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             foreach (var saleId in saleIds)
             {
-                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName), cancellationToken).ConfigureAwait(false);
+                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName, CurrencyCultures.AustralianDollar), cancellationToken).ConfigureAwait(false);
             }
         }
 
