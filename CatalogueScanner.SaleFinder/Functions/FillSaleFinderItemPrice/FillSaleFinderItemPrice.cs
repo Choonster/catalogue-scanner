@@ -1,8 +1,10 @@
 using CatalogueScanner.Core.Dto.FunctionResult;
+using CatalogueScanner.SaleFinder.Dto.FunctionInput;
 using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -14,8 +16,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 {
     public class FillSaleFinderItemPrice
     {
-        private static readonly Regex MultiBuyNForRegex = new(@"(\d+) for");
-        private static readonly Regex MultiBuyPriceRegex = new(@"\$(\d+.\d+)");
+        private static readonly Regex MultiBuyNForRegex = new(@"(?:Any\s*)?(\d+)\s+for");
 
         private readonly SaleFinderService saleFinderService;
 
@@ -26,76 +27,97 @@ namespace CatalogueScanner.SaleFinder.Functions
 
         [FunctionName(SaleFinderFunctionNames.FillSaleFinderItemPrice)]
         public async Task<CatalogueItem> Run(
-            [ActivityTrigger] CatalogueItem item,
+            [ActivityTrigger] FillSaleFinderItemPriceInput input,
+            ILogger log,
             CancellationToken cancellationToken
         )
         {
             #region null checks
-            if (item is null)
+            if (input is null)
             {
-                throw new ArgumentNullException(nameof(item));
+                throw new ArgumentNullException(nameof(input));
             }
             #endregion
+
+            var item = input.Item;
 
             if (item.Id is null)
             {
                 return item;
             }
 
-            var tooltipHtml = await saleFinderService.GetItemTooltipAsync(long.Parse(item.Id, CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
+            var tooltipHtml = await saleFinderService.GetItemTooltipAsync(ParseLong(item.Id), cancellationToken).ConfigureAwait(false);
 
             if (tooltipHtml is null)
             {
-                throw new InvalidOperationException("tooltipHtml is null");
+                throw Error("tooltipHtml is null");
             }
 
             var doc = new HtmlDocument();
             doc.LoadHtml(tooltipHtml);
 
+            // Some items don't have prices, e.g. when they're out of stock
             var nowPriceSpan = DescendantByNameAndClass(doc.DocumentNode, "span", "sf-nowprice");
 
             if (nowPriceSpan is null)
             {
-                throw new InvalidOperationException($"Unable to find span.sf-nowprice");
+                return item;
             }
 
-            var dollarSpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-dollar");
-            var centsSpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-cents");
+            var priceDisplaySpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-pricedisplay");
+
+            if (priceDisplaySpan is null)
+            {
+                throw Error("Unabe to find span.sf-pricedisplay");
+            }
+
+            // Woolworths uses individual dollar and cents spans inside .sf-pricedisplay, other stores have the price with dollar sign as the inner text of .sf-pricedisplay
+            decimal price;
+
+            var dollarSpan = DescendantByNameAndClass(priceDisplaySpan, "span", "sf-dollar");
+            var centsSpan = DescendantByNameAndClass(priceDisplaySpan, "span", "sf-cents");
 
             if (dollarSpan is not null && centsSpan is not null)
             {
-                item.Price = decimal.Parse(dollarSpan.InnerText, CultureInfo.InvariantCulture) + (decimal.Parse(centsSpan.InnerText, CultureInfo.InvariantCulture) / 100);
+                price = ParseDecimal(dollarSpan.InnerText) + (ParseDecimal(centsSpan.InnerText) / 100);
+            }
+            else
+            {
+                price = decimal.Parse(priceDisplaySpan.InnerText, NumberStyles.Currency, input.CurrencyCulture);
             }
 
+            // The .sf-saleoptiondesc span is only present for multi-buy prices (e.g. 2 for $10)
             var saleOptionDescSpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-saleoptiondesc");
-            var priceDisplaySpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-pricedisplay");
 
-            if (saleOptionDescSpan is not null && priceDisplaySpan is not null)
+            if (saleOptionDescSpan is not null)
             {
                 var saleOptionDescText = saleOptionDescSpan.InnerText;
                 var multiBuyNForMatch = MultiBuyNForRegex.Match(saleOptionDescText);
-                
-                if (!multiBuyNForMatch.Success)
+
+                if (multiBuyNForMatch.Success)
                 {
-                    throw new InvalidOperationException($"Unknown format for span.sf-saleoptiondesc: \"{saleOptionDescText}\"");
+                    item.MultiBuyQuantity = ParseLong(multiBuyNForMatch.Groups[1].Value);
+                    item.MultiBuyTotalPrice = price;
                 }
-
-                var priceDisplayText = priceDisplaySpan.InnerText;
-                var multiBuyPriceMatch = MultiBuyPriceRegex.Match(priceDisplayText);
-
-                if (!multiBuyPriceMatch.Success)
+                else
                 {
-                    throw new InvalidOperationException($"Unknown format for span.sf-pricedisplay: \"{priceDisplayText}\"");
+                    log.LogError(Error($"Unknown format for span.sf-saleoptiondesc: \"{saleOptionDescText}\"").Message);
                 }
-
-                item.MultiBuyQuantity = long.Parse(multiBuyNForMatch.Groups[1].Value, CultureInfo.InvariantCulture);
-                item.MultiBuyTotalPrice = decimal.Parse(multiBuyPriceMatch.Groups[1].Value, CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                item.Price = price;
             }
 
             return item;
+
+            InvalidOperationException Error(string message) => new($"Item ID {item!.Id}: {message}");
         }
 
         private static HtmlNode? DescendantByNameAndClass(HtmlNode node, string name, string className) =>
             node.Descendants(name).FirstOrDefault(node => node.HasClass(className));
+
+        private static long ParseLong(string s) => long.Parse(s, CultureInfo.InvariantCulture);
+        private static decimal ParseDecimal(string s) => decimal.Parse(s, CultureInfo.InvariantCulture);
     }
 }

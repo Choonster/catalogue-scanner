@@ -2,6 +2,7 @@ using CatalogueScanner.Core;
 using CatalogueScanner.Core.Dto.EntityKey;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
+using CatalogueScanner.SaleFinder.Dto.FunctionInput;
 using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -73,8 +74,12 @@ namespace CatalogueScanner.SaleFinder.Functions
                     log.LogDebug($"Filling Prices - {scanStateId.EntityKey}");
 
                     var itemsWithPrices = await Task.WhenAll(
-                        downloadedCatalogue.Items
-                            .Select(item => context.CallActivityAsync<CatalogueItem>(SaleFinderFunctionNames.FillSaleFinderItemPrice, item))
+                        downloadedCatalogue.Items.Select(item =>
+                            context.CallActivityAsync<CatalogueItem>(
+                                SaleFinderFunctionNames.FillSaleFinderItemPrice,
+                                new FillSaleFinderItemPriceInput(catalogueDownloadInfo.CurrencyCulture, item)
+                            )
+                        )
                     ).ConfigureAwait(true);
                     #endregion
 
