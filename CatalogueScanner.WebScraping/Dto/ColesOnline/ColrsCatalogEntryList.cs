@@ -68,11 +68,13 @@ namespace CatalogueScanner.WebScraping.Dto.ColesOnline
         [JsonPropertyName("tickettype")]
         public TicketType TicketType { get; set; }
 
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
         [JsonPropertyName("promo_min_qty")]
-        public string? PromoMinQty { get; set; }
+        public long? PromoMinQty { get; set; }
 
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
         [JsonPropertyName("promo_reward")]
-        public string? PromoReward { get; set; }
+        public decimal? PromoReward { get; set; }
 
         [JsonPropertyName("promo_type")]
         public PromoType? PromoType { get; set; }
@@ -138,7 +140,7 @@ namespace CatalogueScanner.WebScraping.Dto.ColesOnline
         public double? ListPrice { get; set; }
 
         [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
-        public double OfferPrice { get; set; }
+        public decimal OfferPrice { get; set; }
 
         [JsonPropertyName("isNaN")]
         public bool IsNaN { get; set; }

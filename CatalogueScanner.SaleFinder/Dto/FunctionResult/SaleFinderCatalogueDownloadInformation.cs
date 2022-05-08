@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Globalization;
 
 namespace CatalogueScanner.SaleFinder.Dto.FunctionResult
 {
@@ -25,11 +26,17 @@ namespace CatalogueScanner.SaleFinder.Dto.FunctionResult
         /// </summary>
         public string Store { get; set; }
 
-        public SaleFinderCatalogueDownloadInformation(int saleId, Uri baseUri, string store)
+        /// <summary>
+        /// The culture used to display prices in the digest email.
+        /// </summary>
+        public CultureInfo CurrencyCulture { get; set; }
+
+        public SaleFinderCatalogueDownloadInformation(int saleId, Uri baseUri, string store, CultureInfo currencyCulture)
         {
             SaleId = saleId;
             BaseUri = baseUri;
             Store = store;
+            CurrencyCulture = currencyCulture;
         }
     }
 }

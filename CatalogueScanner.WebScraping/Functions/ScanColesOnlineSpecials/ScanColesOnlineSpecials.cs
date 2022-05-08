@@ -104,7 +104,7 @@ namespace CatalogueScanner.WebScraping.Functions
 
                     if (filteredItems.Any())
                     {
-                        var filteredCatalogue = new Catalogue("Coles Online", specialsDateRange.StartDate, specialsDateRange.EndDate, filteredItems);
+                        var filteredCatalogue = new Catalogue("Coles Online", specialsDateRange.StartDate, specialsDateRange.EndDate, CurrencyCultures.AustralianDollar, filteredItems);
 
                         await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
                     }

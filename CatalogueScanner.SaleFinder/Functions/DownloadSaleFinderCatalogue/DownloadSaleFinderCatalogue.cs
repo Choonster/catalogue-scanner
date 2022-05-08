@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Functions
@@ -29,7 +30,8 @@ namespace CatalogueScanner.SaleFinder.Functions
         [FunctionName(SaleFinderFunctionNames.DownloadSaleFinderCatalogue)]
         public async Task<Catalogue> RunAsync(
             [ActivityTrigger] SaleFinderCatalogueDownloadInformation downloadInformation,
-            ILogger log
+            ILogger log,
+            CancellationToken cancellationToken
         )
         {
             #region null checks
@@ -44,7 +46,7 @@ namespace CatalogueScanner.SaleFinder.Functions
             }
             #endregion
 
-            var catalogue = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId).ConfigureAwait(false);
+            var catalogue = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId, cancellationToken).ConfigureAwait(false);
 
             if (catalogue is null)
             {
@@ -65,7 +67,7 @@ namespace CatalogueScanner.SaleFinder.Functions
                 })
                 .ToList();
 
-            return new Catalogue(downloadInformation.Store, catalogue.StartDate, catalogue.EndDate, items);
+            return new Catalogue(downloadInformation.Store, catalogue.StartDate, catalogue.EndDate, downloadInformation.CurrencyCulture, items);
         }
     }
 }

@@ -1,3 +1,4 @@
+using CatalogueScanner.Core;
 using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using CatalogueScanner.SaleFinder.Dto.SaleFinder;
 using CatalogueScanner.SaleFinder.Options;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Functions
@@ -46,7 +48,8 @@ namespace CatalogueScanner.SaleFinder.Functions
         public async Task RunAsync(
             [TimerTrigger("%" + SaleFinderAppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
             ILogger log,
-            [Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)] IAsyncCollector<SaleFinderCatalogueDownloadInformation> collector
+            [Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)] IAsyncCollector<SaleFinderCatalogueDownloadInformation> collector,
+            CancellationToken cancellationToken
         )
         {
             #region null checks
@@ -66,7 +69,7 @@ namespace CatalogueScanner.SaleFinder.Functions
             }
             #endregion
 
-            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(IgaStoreId, options.SaleFinderLocationId).ConfigureAwait(false);
+            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(IgaStoreId, options.SaleFinderLocationId, cancellationToken).ConfigureAwait(false);
 
             if (viewResponse is null)
             {
@@ -79,7 +82,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             foreach (var saleId in saleIds)
             {
-                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, IgaStoreName)).ConfigureAwait(false);
+                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, IgaStoreName, CurrencyCultures.AustralianDollar), cancellationToken).ConfigureAwait(false);
             }
         }
 

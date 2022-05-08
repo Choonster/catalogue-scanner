@@ -38,5 +38,10 @@
         /// The name of the <see cref="Functions.DownloadSaleFinderCatalogue"/> activity function.
         /// </summary>
         public const string DownloadSaleFinderCatalogue = "DownloadSaleFinderCatalogue";
+
+        /// <summary>
+        /// The name of the <see cref="Functions.FillSaleFinderItemPrice"/> activity function.
+        /// </summary>
+        public const string FillSaleFinderItemPrice = "FillSaleFinderItemPrice";
     }
 }

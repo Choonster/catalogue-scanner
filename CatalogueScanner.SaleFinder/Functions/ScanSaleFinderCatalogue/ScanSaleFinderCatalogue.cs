@@ -2,6 +2,7 @@ using CatalogueScanner.Core;
 using CatalogueScanner.Core.Dto.EntityKey;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
+using CatalogueScanner.SaleFinder.Dto.FunctionInput;
 using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -68,11 +69,25 @@ namespace CatalogueScanner.SaleFinder.Functions
                     var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderFunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
                     #endregion
 
+                    #region Fill prices
+                    context.SetCustomStatus("FillingPrices");
+                    log.LogDebug($"Filling Prices - {scanStateId.EntityKey}");
+
+                    var itemsWithPrices = await Task.WhenAll(
+                        downloadedCatalogue.Items.Select(item =>
+                            context.CallActivityAsync<CatalogueItem>(
+                                SaleFinderFunctionNames.FillSaleFinderItemPrice,
+                                new FillSaleFinderItemPriceInput(catalogueDownloadInfo.CurrencyCulture, item)
+                            )
+                        )
+                    ).ConfigureAwait(true);
+                    #endregion
+
                     #region Filter catalouge items
                     context.SetCustomStatus("Filtering");
                     log.LogDebug($"Filtering - {scanStateId.EntityKey}");
 
-                    var itemTasks = downloadedCatalogue.Items
+                    var itemTasks = itemsWithPrices
                         .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
                         .ToList();
 
@@ -90,7 +105,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
                     if (filteredItems.Any())
                     {
-                        var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, filteredItems);
+                        var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, downloadedCatalogue.CurrencyCulture, filteredItems);
 
                         await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
                     }

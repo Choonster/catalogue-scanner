@@ -14,5 +14,11 @@ namespace CatalogueScanner.Core.Dto.FunctionResult
         public Uri? Uri { get; set; }
 
         public string? Name { get; set; }
+
+        public decimal? Price { get; set; }
+
+        public long? MultiBuyQuantity { get; set; }
+
+        public decimal? MultiBuyTotalPrice { get; set; }
     }
 }
