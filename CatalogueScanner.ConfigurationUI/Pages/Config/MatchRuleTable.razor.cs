@@ -1,4 +1,5 @@
 ﻿using CatalogueScanner.ConfigurationUI.ViewModel;
+using CatalogueScanner.Core.MatchRule;
 using MatBlazor;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -11,9 +12,10 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
 {
     public partial class MatchRuleTable
     {
-        private static readonly PropertyMatchType[] propertyMatchTypes = Enum.GetValues(typeof(PropertyMatchType)).Cast<PropertyMatchType>().ToArray();
+        private static readonly PropertyMatchType[] allPropertyMatchTypes = Enum.GetValues(typeof(PropertyMatchType)).Cast<PropertyMatchType>().ToArray();
+        private static readonly PropertyMatchType[] stringPropertyMatchType = allPropertyMatchTypes.Where(matchType => matchType.IsStringMatchType()).ToArray();
         private static readonly CatalogueItemProperty[] properties = Enum.GetValues(typeof(CatalogueItemProperty)).Cast<CatalogueItemProperty>().ToArray();
-
+        
         [Parameter]
         public ICollection<BaseMatchRuleViewModel> MatchRules { get; set; } = new List<BaseMatchRuleViewModel>();
 

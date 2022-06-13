@@ -21,16 +21,34 @@ namespace CatalogueScanner.ConfigurationUI.ViewModel
 
     public class SinglePropertyMatchRuleViewModel : BaseMatchRuleViewModel
     {
+        private CatalogueItemProperty property;
+
         public override MatchRuleType MatchRuleType => MatchRuleType.SingleProperty;
 
         public bool InEditMode { get; set; }
 
-        public CatalogueItemProperty Property { get; set; }
+        public CatalogueItemProperty Property
+        {
+            get => property;
+            set
+            {
+                property = value;
+                OnPropertyChanged();
+            }
+        }
 
         public PropertyMatchType MatchType { get; set; }
 
         [Required]
         public string Value { get; set; } = string.Empty;
+
+        private void OnPropertyChanged()
+        {
+            if (MatchType.IsNumericMatchType() && !property.IsNumericProperty())
+            {
+                MatchType = PropertyMatchType.Exact;
+            }
+        }       
     }
 
     public class CompoundMatchRuleViewModel : BaseMatchRuleViewModel
