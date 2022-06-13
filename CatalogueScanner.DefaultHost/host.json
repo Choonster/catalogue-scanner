@@ -10,7 +10,8 @@
   },
   "extensions": {
     "durableTask": {
-      "hubName": "%TaskHubName%"
+      "hubName": "%TaskHubName%",
+      "maxConcurrentActivityFunctions": 5
     },
     "http": {
       "EnableChunkedRequestBinding": true
