@@ -275,19 +275,20 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
     {
         Special,
         PriceDropped,
-        LowPrice
+        LowPrice,
     }
 
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]
     public enum SupplyLimitSource
     {
-        ProductLimit
+        ProductLimit,
+        StockQuantity,
     }
 
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]
     public enum Unit
     {
         Each,
-        KG
+        KG,
     }
 }
