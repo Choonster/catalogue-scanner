@@ -1,4 +1,4 @@
-﻿@using CatalogueScanner.ConfigurationUI.ViewModel;
+@using CatalogueScanner.ConfigurationUI.ViewModel;
 @using CatalogueScanner.Core.MatchRule;
 
 @using static CatalogueScanner.Core.MatchRule.SinglePropertyCatalogueItemMatchRule;
@@ -37,7 +37,7 @@
                             <td class="match-type">
                                 @if (singlePropertyMatchRule.InEditMode)
                                 {
-                                    <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="singlePropertyMatchRule.Property.IsNumericProperty() ? allPropertyMatchTypes : stringPropertyMatchType">
+                                    <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="singlePropertyMatchRule.MatchTypes">
                                     </MatSelectItem>
                                 }
                                 else

@@ -1,6 +1,7 @@
 ﻿using CatalogueScanner.Core.MatchRule;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using static CatalogueScanner.Core.MatchRule.CompoundCatalogueItemMatchRule;
 using static CatalogueScanner.Core.MatchRule.SinglePropertyCatalogueItemMatchRule;
@@ -23,6 +24,8 @@ namespace CatalogueScanner.ConfigurationUI.ViewModel
     {
         private CatalogueItemProperty property;
 
+        public IReadOnlyList<PropertyMatchType>? MatchTypes { get; set; }
+
         public override MatchRuleType MatchRuleType => MatchRuleType.SingleProperty;
 
         public bool InEditMode { get; set; }
@@ -33,6 +36,7 @@ namespace CatalogueScanner.ConfigurationUI.ViewModel
             set
             {
                 property = value;
+
                 OnPropertyChanged();
             }
         }
@@ -48,7 +52,7 @@ namespace CatalogueScanner.ConfigurationUI.ViewModel
             {
                 MatchType = PropertyMatchType.Exact;
             }
-        }       
+        }
     }
 
     public class CompoundMatchRuleViewModel : BaseMatchRuleViewModel
@@ -57,6 +61,6 @@ namespace CatalogueScanner.ConfigurationUI.ViewModel
 
         public CompoundMatchType MatchType { get; set; }
 
-        public ICollection<BaseMatchRuleViewModel> ChildRules { get; } = new List<BaseMatchRuleViewModel>();
+        public ObservableCollection<BaseMatchRuleViewModel> ChildRules { get; } = new ObservableCollection<BaseMatchRuleViewModel>();
     }
 }
