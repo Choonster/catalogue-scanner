@@ -1,4 +1,4 @@
-@using CatalogueScanner.ConfigurationUI.ViewModel;
+﻿@using CatalogueScanner.ConfigurationUI.ViewModel;
 @using CatalogueScanner.Core.MatchRule;
 
 @using static CatalogueScanner.Core.MatchRule.SinglePropertyCatalogueItemMatchRule;
@@ -88,7 +88,7 @@
                             </td>
 
                             <td class="compound-children" colspan="3">
-                                <span class="compound-match-type">@compoundMatchRule.MatchType</span> compound rule with <span class="compound-child-count">@compoundMatchRule.ChildRules.Count</span> child rules.
+                                <MatchRuleDescription MatchRule="compoundMatchRule"></MatchRuleDescription>
                             </td>
                         }
 
