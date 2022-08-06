@@ -119,7 +119,7 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
         public bool HasBeenBoughtBefore { get; set; }
         public bool IsInTrolley { get; set; }
         public string? Source { get; set; }
-        public long SupplyLimit { get; set; }
+        public double SupplyLimit { get; set; }
         public string? MaxSupplyLimitMessage { get; set; }
         public bool IsRanged { get; set; }
         public bool IsInStock { get; set; }
