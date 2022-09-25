@@ -10,7 +10,7 @@ namespace CatalogueScanner.Core.MatchRule
 
         public CatalogueItemProperty Property { get; set; }
         public PropertyMatchType MatchType { get; set; }
-        public string Value { get; set; } = null!;       
+        public string Value { get; set; } = null!;
 
         public bool ItemMatches(CatalogueItem item)
         {
@@ -40,7 +40,7 @@ namespace CatalogueScanner.Core.MatchRule
 
                 if (underlyingType == typeof(long))
                 {
-                    if (!long.TryParse(Value,  out var ruleValue))
+                    if (!long.TryParse(Value, out var ruleValue))
                     {
                         return false;
                     }

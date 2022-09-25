@@ -4,9 +4,7 @@ using CatalogueScanner.Core.Extensions;
 using CatalogueScanner.Core.Options;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.ConfigurationUI.Pages.Config
@@ -20,7 +18,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
 
         protected override void OnInitialized()
         {
-            matchRuleViewModels = new ObservableCollection<BaseMatchRuleViewModel>( MatchingOptions.Rules.ToViewModel());
+            matchRuleViewModels = new ObservableCollection<BaseMatchRuleViewModel>(MatchingOptions.Rules.ToViewModel());
 
             base.OnInitialized();
         }
