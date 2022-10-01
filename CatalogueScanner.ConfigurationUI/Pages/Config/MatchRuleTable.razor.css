@@ -6,7 +6,3 @@
 ::deep .match-rules-table .value .mdc-text-field {
     width: 100%;
 }
-
-::deep .match-rules-table .compound-children .compound-match-type, .match-rules-table .compound-children .compound-child-count {
-    font-weight: bold;
-}

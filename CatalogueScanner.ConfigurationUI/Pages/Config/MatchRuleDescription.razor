@@ -1,0 +1,41 @@
+﻿@using CatalogueScanner.ConfigurationUI.ViewModel
+
+<span class="match-rule-description">
+    @if (MatchRule is SinglePropertyMatchRuleViewModel singlePropertyMatchRule)
+    {
+        <text>@singlePropertyMatchRule.Property @singlePropertyMatchRule.MatchType "@singlePropertyMatchRule.Value"</text>
+    }
+    else if (MatchRule is CompoundMatchRuleViewModel compoundMatchRule)
+    {
+        <text>
+            <span class="compound-match-type">@compoundMatchRule.MatchType</span> compound rule with <span class="compound-child-count">@compoundMatchRule.ChildRules.Count</span> child rules:
+
+            @for (var i = 0; i < compoundMatchRule.ChildRules.Count; i++)
+            {
+                var childRule = compoundMatchRule.ChildRules[i];
+
+                if (childRule is CompoundMatchRuleViewModel)
+                {
+                    <text>(</text>
+                }
+
+                <MatchRuleDescription MatchRule="childRule"></MatchRuleDescription>
+
+                if (childRule is CompoundMatchRuleViewModel)
+                {
+                    <text>)</text>
+                }
+
+                if (i < (compoundMatchRule.ChildRules.Count - 1))
+                {
+                    <text>, </text>
+                }
+            }
+        </text>
+    }
+</span>
+
+@code {
+    [Parameter]
+    public BaseMatchRuleViewModel? MatchRule { get; set; }
+}

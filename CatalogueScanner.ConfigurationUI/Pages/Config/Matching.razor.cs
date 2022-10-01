@@ -4,8 +4,7 @@ using CatalogueScanner.Core.Extensions;
 using CatalogueScanner.Core.Options;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.ConfigurationUI.Pages.Config
@@ -15,11 +14,11 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
     {
         private MatchingOptions MatchingOptions => MatchingOptionsAccessor.Value;
 
-        private List<BaseMatchRuleViewModel> matchRuleViewModels = new();
+        private ObservableCollection<BaseMatchRuleViewModel> matchRuleViewModels = new();
 
         protected override void OnInitialized()
         {
-            matchRuleViewModels = MatchingOptions.Rules.ToViewModel().ToList();
+            matchRuleViewModels = new ObservableCollection<BaseMatchRuleViewModel>(MatchingOptions.Rules.ToViewModel());
 
             base.OnInitialized();
         }

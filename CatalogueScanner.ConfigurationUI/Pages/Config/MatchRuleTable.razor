@@ -1,6 +1,8 @@
 ﻿@using CatalogueScanner.ConfigurationUI.ViewModel;
 @using CatalogueScanner.Core.MatchRule;
 
+@using static CatalogueScanner.Core.MatchRule.SinglePropertyCatalogueItemMatchRule;
+
 @inject IMatDialogService DialogService;
 
 <div>
@@ -35,7 +37,7 @@
                             <td class="match-type">
                                 @if (singlePropertyMatchRule.InEditMode)
                                 {
-                                    <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="propertyMatchTypes">
+                                    <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="singlePropertyMatchRule.MatchTypes">
                                     </MatSelectItem>
                                 }
                                 else
@@ -86,7 +88,7 @@
                             </td>
 
                             <td class="compound-children" colspan="3">
-                                <span class="compound-match-type">@compoundMatchRule.MatchType</span> compound rule with <span class="compound-child-count">@compoundMatchRule.ChildRules.Count</span> child rules.
+                                <MatchRuleDescription MatchRule="compoundMatchRule"></MatchRuleDescription>
                             </td>
                         }
 

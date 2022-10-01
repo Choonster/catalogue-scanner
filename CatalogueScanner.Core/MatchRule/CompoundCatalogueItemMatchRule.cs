@@ -13,16 +13,14 @@ namespace CatalogueScanner.Core.MatchRule
 
         public ICollection<ICatalogueItemMatchRule> ChildRules { get; } = new List<ICatalogueItemMatchRule>();
 
-        public bool ItemMatches(CatalogueItem item)
-        {
-            return MatchType switch
+        public bool ItemMatches(CatalogueItem item) =>
+            MatchType switch
             {
                 CompoundMatchType.And => ChildRules.All(rule => rule.ItemMatches(item)),
                 CompoundMatchType.Or => ChildRules.Any(rule => rule.ItemMatches(item)),
                 CompoundMatchType.Not => !ChildRules.Any(rule => rule.ItemMatches(item)),
                 _ => throw new InvalidOperationException($"Unkown MatchType {MatchType}")
             };
-        }
 
         public enum CompoundMatchType
         {

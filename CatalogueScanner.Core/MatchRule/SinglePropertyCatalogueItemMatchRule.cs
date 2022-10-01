@@ -1,8 +1,5 @@
 ﻿using CatalogueScanner.Core.Dto.FunctionResult;
 using System;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace CatalogueScanner.Core.MatchRule
@@ -15,35 +12,71 @@ namespace CatalogueScanner.Core.MatchRule
         public PropertyMatchType MatchType { get; set; }
         public string Value { get; set; } = null!;
 
-
-        // Maps enum values to the corresponding class properties
-        private static readonly IImmutableDictionary<CatalogueItemProperty, PropertyInfo> properties =
-            Enum.GetValues(typeof(CatalogueItemProperty))
-            .Cast<CatalogueItemProperty>()
-            .ToImmutableDictionary(
-                property => property,
-                property => typeof(CatalogueItem).GetProperty(property.ToString()) ??
-                    throw new InvalidOperationException($"Couldn't find property with name \"{property}\" on type {typeof(CatalogueItem).FullName}")
-            );
-
         public bool ItemMatches(CatalogueItem item)
         {
-            var property = properties[Property];
-            var value = property.GetValue(item)?.ToString();
+            var property = Property.GetPropertyInfo();
 
-            if (value is null)
+            if (MatchType.IsStringMatchType())
             {
-                return false;
+                var propertyValue = property.GetValue(item)?.ToString();
+
+                if (propertyValue is null)
+                {
+                    return false;
+                }
+
+                return MatchType switch
+                {
+                    PropertyMatchType.Exact => propertyValue == Value,
+                    PropertyMatchType.Contains => propertyValue.Contains(Value, StringComparison.InvariantCulture),
+                    PropertyMatchType.ContainsIgnoreCase => propertyValue.Contains(Value, StringComparison.InvariantCultureIgnoreCase),
+                    PropertyMatchType.Regex => Regex.IsMatch(propertyValue, Value),
+                    _ => throw new InvalidOperationException($"Unknown MatchType {MatchType}"),
+                };
+            }
+            else if (MatchType.IsNumericMatchType())
+            {
+                var underlyingType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+                if (underlyingType == typeof(long))
+                {
+                    if (!long.TryParse(Value, out var ruleValue))
+                    {
+                        return false;
+                    }
+
+                    var propertyValue = (long)property.GetValue(item)!;
+
+                    return MatchType switch
+                    {
+                        PropertyMatchType.LessThan => propertyValue < ruleValue,
+                        PropertyMatchType.GreaterThan => propertyValue > ruleValue,
+                        _ => throw new InvalidOperationException($"Unknown MatchType {MatchType}"),
+                    };
+                }
+                else if (underlyingType == typeof(decimal))
+                {
+                    if (!decimal.TryParse(Value, out var ruleValue))
+                    {
+                        return false;
+                    }
+
+                    var propertyValue = (decimal)property.GetValue(item)!;
+
+                    return MatchType switch
+                    {
+                        PropertyMatchType.LessThan => propertyValue < ruleValue,
+                        PropertyMatchType.GreaterThan => propertyValue > ruleValue,
+                        _ => throw new InvalidOperationException($"Unknown MatchType {MatchType}"),
+                    };
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Unsupported property type {property.PropertyType}");
+                }
             }
 
-            return MatchType switch
-            {
-                PropertyMatchType.Exact => value == Value,
-                PropertyMatchType.Contains => value.Contains(Value, StringComparison.InvariantCulture),
-                PropertyMatchType.ContainsIgnoreCase => value.Contains(Value, StringComparison.InvariantCultureIgnoreCase),
-                PropertyMatchType.Regex => Regex.IsMatch(value, Value),
-                _ => throw new InvalidOperationException($"Unknown MatchType {MatchType}"),
-            };
+            throw new InvalidOperationException($"Unknown MatchType {MatchType}");
         }
 
         public enum CatalogueItemProperty
@@ -52,6 +85,9 @@ namespace CatalogueScanner.Core.MatchRule
             Sku,
             Uri,
             Name,
+            Price,
+            MultiBuyQuantity,
+            MultiBuyTotalPrice,
         }
 
         public enum PropertyMatchType
@@ -60,6 +96,8 @@ namespace CatalogueScanner.Core.MatchRule
             Contains,
             ContainsIgnoreCase,
             Regex,
+            LessThan,
+            GreaterThan,
         }
     }
 }
