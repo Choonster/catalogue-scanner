@@ -1,5 +1,8 @@
 name: Deploy Catalogue Scanner to Azure Functions
 
+permissions:
+  id-token: write
+
 on:
   workflow_call:
     inputs:
