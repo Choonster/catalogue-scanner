@@ -29,8 +29,16 @@ on:
         type: string
 
     secrets:
-      azure-credentials:
-        description: Azure credentials to deploy with
+      azure-client-id:
+        description: Azure application (client) ID to deploy with
+        required: true
+
+      azure-tenant-id:
+        description: Azure directory (tenant) ID to deploy to
+        required: true
+
+      azure-subscription-id:
+        description: Azure subscription ID to deploy to
         required: true
 
 jobs:
@@ -47,7 +55,9 @@ jobs:
       - name: Azure Login
         uses: Azure/login@v1
         with:
-          creds: ${{ secrets.azure-credentials }}
+          client-id: ${{ secrets.azure-client-id }}
+          tenant-id: ${{ secrets.azure-tenant-id }}
+          subscription-id: ${{ secrets.azure-subscription-id }}
 
       - name: Publish to Azure
         uses: Azure/functions-action@v1
