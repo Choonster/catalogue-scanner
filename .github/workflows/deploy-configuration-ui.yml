@@ -1,18 +1,23 @@
-name: 'Deploy Catalogue Scanner Configuration UI to Azure App Service'
+name: Deploy Catalogue Scanner Configuration UI to Azure App Service
 
 on:
   workflow_call:
     inputs:
+      environment:
+        description: Name of the GitHub Environment to deploy to
+        required: true
+        type: string
+
       artifact-name:
-       description: Name of the Build Artifact to deploy
-       required: true
-       type: string
-      
+        description: Name of the Build Artifact to deploy
+        required: true
+        type: string
+
       output-path:
         description: Path of the build output in the Build Artifact
         required: true
         type: string
-       
+
       app-name:
         description: Name of the Azure App Service to deploy to
         required: true
@@ -31,6 +36,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
 
     steps:
       - name: Download Artifact
@@ -42,10 +48,10 @@ jobs:
         uses: Azure/login@v1
         with:
           creds: ${{ secrets.azure-credentials }}
-        
+
       - name: Publish to Azure
         uses: Azure/webapps-deploy@v2
         with:
-          app-name: '${{ inputs.app-name }}'
-          slot-name: '${{ inputs.slot-name }}'
-          package: '${{ inputs.output-path }}'
+          app-name: ${{ inputs.app-name }}
+          slot-name: ${{ inputs.slot-name }}
+          package: ${{ inputs.output-path }}

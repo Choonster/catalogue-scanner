@@ -7,12 +7,13 @@ on:
 
 jobs:
   build:
-    uses: 'Choonster/catalogue-scanner/.github/workflows/build-application.yml@master'
+    uses: Choonster/catalogue-scanner/.github/workflows/build-application.yml@master
 
   deploy-functions-app:
-    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-functions-app.yml@master'
+    uses: Choonster/catalogue-scanner/.github/workflows/deploy-functions-app.yml@master
     needs: build
     with:
+      environment: Production
       artifact-name: ${{ needs.build.outputs.functions-app-artifact-name }}
       output-path: ${{ needs.build.outputs.functions-app-output-path }}
       app-name: catalogue-scanner
@@ -20,9 +21,10 @@ jobs:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
   deploy-configuration-ui:
-    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-configuration-ui.yml@master'
+    uses: Choonster/catalogue-scanner/.github/workflows/deploy-configuration-ui.yml@master
     needs: build
     with:
+      environment: Production
       artifact-name: ${{ needs.build.outputs.configuration-ui-artifact-name }}
       output-path: ${{ needs.build.outputs.configuration-ui-output-path }}
       app-name: catalogue-scanner-configuration-ui
