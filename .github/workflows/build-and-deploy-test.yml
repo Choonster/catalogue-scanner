@@ -7,10 +7,10 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/build-application.yml@master
+    uses: ./.github/workflows/build-application.yml
 
   deploy-functions-app:
-    uses: ./.github/workflows/deploy-functions-app.yml@master
+    uses: ./.github/workflows/deploy-functions-app.yml
     needs: build
     with:
       environment: Test
@@ -23,7 +23,7 @@ jobs:
       azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   deploy-configuration-ui:
-    uses: ./.github/workflows/deploy-configuration-ui.yml@master
+    uses: ./.github/workflows/deploy-configuration-ui.yml
     needs: build
     with:
       environment: Test
