@@ -13,7 +13,7 @@ jobs:
     uses: ./.github/workflows/deploy-functions-app.yml
     needs: build
     with:
-      environment: Test
+      environment: Test (Functions App)
       artifact-name: ${{ needs.build.outputs.functions-app-artifact-name }}
       output-path: ${{ needs.build.outputs.functions-app-output-path }}
       app-name: catalogue-scanner-test
@@ -26,7 +26,7 @@ jobs:
     uses: ./.github/workflows/deploy-configuration-ui.yml
     needs: build
     with:
-      environment: Test
+      environment: Test (Configuration UI)
       artifact-name: ${{ needs.build.outputs.configuration-ui-artifact-name }}
       output-path: ${{ needs.build.outputs.configuration-ui-output-path }}
       app-name: catalogue-scanner-configuration-ui-test
