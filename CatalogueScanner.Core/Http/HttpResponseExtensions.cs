@@ -19,15 +19,17 @@ namespace CatalogueScanner.Core.Http
             {
                 var message = $"Response status code does not indicate success: {(int)response.StatusCode} ({response.ReasonPhrase}).";
 
+                string responseContent;
                 try
                 {
-                    var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    throw new HttpDetailedRequestException(message, null, response.StatusCode, responseContent);
+                    responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
                     throw new HttpDetailedRequestException(message, ex, response.StatusCode, null);
                 }
+
+                throw new HttpDetailedRequestException(message, null, response.StatusCode, responseContent);
             }
 
             return response;

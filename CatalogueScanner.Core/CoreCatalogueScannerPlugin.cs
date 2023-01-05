@@ -1,9 +1,11 @@
 ﻿using CatalogueScanner.Configuration;
 using CatalogueScanner.Core.Extensions;
 using CatalogueScanner.Core.Host;
+using CatalogueScanner.Core.Host.ApplicationInsights;
 using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.Core.MatchRule;
 using CatalogueScanner.Core.Options;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -24,6 +26,8 @@ namespace CatalogueScanner.Core
                 throw new ArgumentNullException(nameof(builder));
             }
             #endregion
+
+            builder.Services.AddSingleton<ITelemetryInitializer, HttpDetailedRequestExceptionTelemetryInitializer>();
 
             SetLocalisationCulture();
             AddFunctionsPathOptions(builder);
