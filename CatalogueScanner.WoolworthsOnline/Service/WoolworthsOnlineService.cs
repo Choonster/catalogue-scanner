@@ -1,4 +1,5 @@
-﻿using CatalogueScanner.Core.Utility;
+﻿using CatalogueScanner.Core.Http;
+using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 using System;
 using System.Net.Http;
@@ -92,11 +93,11 @@ namespace CatalogueScanner.WoolworthsOnline.Service
             return (int)(response.TotalRecordCount / pageSize + 1);
         }
 
-        private async Task<TResponse?> GetAsync<TResponse>(string path, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken )
+        private async Task<TResponse?> GetAsync<TResponse>(string path, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken)
         {
-            var response = await httpClient.GetAsync(new Uri(path , UriKind.Relative), cancellationToken).ConfigureAwait(false);
+            var response = await httpClient.GetAsync(new Uri(path, UriKind.Relative), cancellationToken).ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
+            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
 
             return await response.Content.ReadFromJsonAsync(responseTypeInfo, cancellationToken).ConfigureAwait(false);
         }
@@ -105,7 +106,7 @@ namespace CatalogueScanner.WoolworthsOnline.Service
         {
             var response = await httpClient.PostAsJsonAsync(new Uri(path, UriKind.Relative), request, requestTypeInfo, cancellationToken).ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
+            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
 
             return await response.Content.ReadFromJsonAsync(responseTypeInfo, cancellationToken).ConfigureAwait(false);
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CatalogueScanner.Core.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Identity.Web;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace CatalogueScanner.ConfigurationUI.Service
 
             var response = await HttpClient.GetAsync(new Uri(path + queryString, UriKind.Relative)).ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
+            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
 
             return await response.Content.ReadAsAsync<TResponse>().ConfigureAwait(false);
         }
@@ -39,7 +40,7 @@ namespace CatalogueScanner.ConfigurationUI.Service
         {
             var response = await HttpClient.PostAsJsonAsync(new Uri(path, UriKind.Relative), request).ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
+            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
 
             return await response.Content.ReadAsAsync<TResponse>().ConfigureAwait(false);
         }
