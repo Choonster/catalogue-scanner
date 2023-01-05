@@ -2,8 +2,8 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "poextractor": {
-      "version": "0.5.0",
+    "orchardcorecontrib.poextractor": {
+      "version": "1.0.0-preview",
       "commands": [
         "extractpo"
       ]

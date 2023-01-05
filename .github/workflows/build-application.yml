@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build application
         uses: ./.github/actions/build-catalogue-scanner
@@ -74,13 +74,13 @@ jobs:
           name: ${{ format('CatalogueScanner.ConfigurationUI-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
 
       - name: Archive Functions App
-        uses: alehechka/upload-tartifact@v1
+        uses: Choonster/upload-tartifact@7f320c4284bb1a63685f5b5a748c20ec6d07fb98
         with:
           name: ${{ steps.sanitise-functions-app-artifact-name.outputs.sanitised-name }}
           path: ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
 
       - name: Archive Configuration UI
-        uses: alehechka/upload-tartifact@v1
+        uses: Choonster/upload-tartifact@7f320c4284bb1a63685f5b5a748c20ec6d07fb98
         with:
           name: ${{ steps.sanitise-configuration-ui-artifact-name.outputs.sanitised-name }}
           path: ${{ env.CONFIGURATION_UI_OUTPUT_PATH }}

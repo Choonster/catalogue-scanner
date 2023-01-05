@@ -34,4 +34,4 @@ runs:
         # - Forward slash /
 
         $sanitisedName = [regex]::Replace($env:ARTIFACT_NAME, "["":<>|*?`r`n\\/]", '-')
-        echo "::set-output name=sanitised-name::$sanitisedName"
+        echo "sanitised-name=$sanitisedName" >> $GITHUB_OUTPUT
