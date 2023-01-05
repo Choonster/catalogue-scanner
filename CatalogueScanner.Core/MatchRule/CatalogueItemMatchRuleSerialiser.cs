@@ -54,11 +54,11 @@ namespace CatalogueScanner.Core.MatchRule
                        switch (matchRuleType)
                        {
                            case MatchRuleType.SingleProperty:
-                               return childSection.Get<SinglePropertyCatalogueItemMatchRule>();
+                               return childSection.Get<SinglePropertyCatalogueItemMatchRule>()!;
 
                            case MatchRuleType.Compound:
                                {
-                                   var matchRule = childSection.Get<CompoundCatalogueItemMatchRule>();
+                                   var matchRule = childSection.Get<CompoundCatalogueItemMatchRule>()!;
 
                                    matchRule.ChildRules.AddRange(DeserialiseMatchRules(childSection.GetSection("ChildRules")));
 

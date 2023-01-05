@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNext.Threading" Version="4.2.0" />
-    <PackageReference Include="Microsoft.Playwright" Version="1.18.1" />
+    <PackageReference Include="DotNext.Threading" Version="4.8.2" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.28.0" />
   </ItemGroup>
 
   <ItemGroup>

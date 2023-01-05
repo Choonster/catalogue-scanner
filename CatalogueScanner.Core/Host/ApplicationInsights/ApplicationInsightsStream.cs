@@ -147,5 +147,15 @@ namespace CatalogueScanner.Core.Host.ApplicationInsights
 
             SetLength(0);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                reader.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }
