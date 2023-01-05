@@ -1,25 +1,25 @@
-name: 'Build Catalogue Scanner'
-description: 'Sets up the required .NET SDKs and builds the Catalogue Scanner solution'
+name: Build Catalogue Scanner
+description: Sets up the required .NET SDKs and builds the Catalogue Scanner solution
 
 inputs:
   solution-file:
-    description: 'The path of the solution file to build. Defaults to building the current directory if not provided.'
-    required: false    
-    default: '.'    
-    
-  configuration:
-    description: 'The build configuration to use'
+    description: The path of the solution file to build. Defaults to building the current directory if not provided.
     required: false
-    default: 'Release'
-    
+    default: .
+
+  configuration:
+    description: The build configuration to use
+    required: false
+    default: Release
+
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Setup .NET 5
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
-        
+
     - name: Setup .NET 6
       uses: actions/setup-dotnet@v1
       with:

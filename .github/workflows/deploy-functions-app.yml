@@ -1,18 +1,26 @@
-name: 'Deploy Catalogue Scanner to Azure Functions'
+name: Deploy Catalogue Scanner to Azure Functions
+
+permissions:
+  id-token: write
 
 on:
   workflow_call:
     inputs:
+      environment:
+        description: Name of the GitHub Environment to deploy to
+        required: true
+        type: string
+
       artifact-name:
-       description: Name of the Build Artifact to deploy
-       required: true
-       type: string
-      
+        description: Name of the Build Artifact to deploy
+        required: true
+        type: string
+
       output-path:
         description: Path of the build output in the Build Artifact
         required: true
         type: string
-       
+
       app-name:
         description: Name of the Functions App to deploy to
         required: true
@@ -24,13 +32,22 @@ on:
         type: string
 
     secrets:
-      azure-credentials:
-        description: Azure credentials to deploy with
+      azure-client-id:
+        description: Azure application (client) ID to deploy with
+        required: true
+
+      azure-tenant-id:
+        description: Azure directory (tenant) ID to deploy to
+        required: true
+
+      azure-subscription-id:
+        description: Azure subscription ID to deploy to
         required: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
 
     steps:
       - name: Download Artifact
@@ -41,11 +58,13 @@ jobs:
       - name: Azure Login
         uses: Azure/login@v1
         with:
-          creds: ${{ secrets.azure-credentials }}
-        
+          client-id: ${{ secrets.azure-client-id }}
+          tenant-id: ${{ secrets.azure-tenant-id }}
+          subscription-id: ${{ secrets.azure-subscription-id }}
+
       - name: Publish to Azure
         uses: Azure/functions-action@v1
         with:
-          app-name: '${{ inputs.app-name }}'
-          slot-name: '${{ inputs.slot-name }}'
-          package: '${{ inputs.output-path }}'
+          app-name: ${{ inputs.app-name }}
+          slot-name: ${{ inputs.slot-name }}
+          package: ${{ inputs.output-path }}

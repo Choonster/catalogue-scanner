@@ -1,18 +1,18 @@
-name: 'Sanitise Artifact Name'
-description: 'Sanitises a name for use with Build Artifacts'
+name: Sanitise Artifact Name
+description: Sanitises a name for use with Build Artifacts
 
 inputs:
   name:
-    description: 'The name to be sanitised'
+    description: The name to be sanitised
     required: true
 
 outputs:
   sanitised-name:
-    description: 'The sanitised name'
+    description: The sanitised name
     value: ${{ steps.sanitise-name.outputs.sanitised-name }}
-    
+
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Sanitise name
       id: sanitise-name
