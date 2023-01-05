@@ -1,4 +1,5 @@
-﻿using CatalogueScanner.SaleFinder.Dto.SaleFinder;
+﻿using CatalogueScanner.Core.Http;
+using CatalogueScanner.SaleFinder.Dto.SaleFinder;
 using System;
 using System.Net.Http;
 using System.Text.Json.Serialization.Metadata;
@@ -34,7 +35,7 @@ namespace CatalogueScanner.SaleFinder.Service
         {
             var response = await httpClient.GetAsync(new Uri(path + $"&callback={callbackName}", UriKind.Relative), cancellationToken).ConfigureAwait(false);
 
-            response.EnsureSuccessStatusCode();
+            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
 
             return await response.Content.ReadSaleFinderResponseAsAync(jsonTypeInfo, callbackName, cancellationToken).ConfigureAwait(false);
         }
