@@ -7,24 +7,30 @@ on:
 
 jobs:
   build:
-    uses: 'Choonster/catalogue-scanner/.github/workflows/build-application.yml@master'
+    uses: ./.github/workflows/build-application.yml
 
   deploy-functions-app:
-    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-functions-app.yml@master'
+    uses: ./.github/workflows/deploy-functions-app.yml
     needs: build
     with:
+      environment: Test
       artifact-name: ${{ needs.build.outputs.functions-app-artifact-name }}
       output-path: ${{ needs.build.outputs.functions-app-output-path }}
       app-name: catalogue-scanner-test
     secrets:
-      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   deploy-configuration-ui:
-    uses: 'Choonster/catalogue-scanner/.github/workflows/deploy-configuration-ui.yml@master'
+    uses: ./.github/workflows/deploy-configuration-ui.yml
     needs: build
     with:
+      environment: Test
       artifact-name: ${{ needs.build.outputs.configuration-ui-artifact-name }}
       output-path: ${{ needs.build.outputs.configuration-ui-output-path }}
       app-name: catalogue-scanner-configuration-ui-test
     secrets:
-      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

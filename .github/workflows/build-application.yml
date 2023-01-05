@@ -1,42 +1,42 @@
-name: 'Build Application'
+name: Build Application
 
 on:
   workflow_call:
     inputs:
       build-configuration:
-        description: 'The build configuration to use'
+        description: The build configuration to use
         required: false
         type: string
-        default: 'Release'
-    
+        default: Release
+
     outputs:
       functions-app-artifact-name:
         description: Name of the Build Artifact for the Functions App
         value: ${{ jobs.build.outputs.functions-app-artifact-name }}
-      
+
       functions-app-output-path:
         description: Path of the Functions App build output within the Build Artifact
         value: ${{ jobs.build.outputs.functions-app-output-path }}
-      
+
       configuration-ui-artifact-name:
         description: Name of the Build Artifact for the Configuration UI
         value: ${{ jobs.build.outputs.configuration-ui-artifact-name }}
-      
+
       configuration-ui-output-path:
         description: Path of the Configuration UI build output within the Build Artifact
         value: ${{ jobs.build.outputs.configuration-ui-output-path }}
 
 env:
   SHA_SUFFIX: ${{ github.ref_type == 'branch' && format('-{0}', github.sha) || '' }}
-  FUNCTIONS_APP_PROJECT_PATH: 'CatalogueScanner.DefaultHost/CatalogueScanner.DefaultHost.csproj'
-  FUNCTIONS_APP_OUTPUT_PATH: 'CatalogueScanner.DefaultHost/output'
-  CONFIGURATION_UI_PROJECT_PATH: 'CatalogueScanner.ConfigurationUI/CatalogueScanner.ConfigurationUI.csproj'
-  CONFIGURATION_UI_OUTPUT_PATH: 'CatalogueScanner.ConfigurationUI/output'
+  FUNCTIONS_APP_PROJECT_PATH: CatalogueScanner.DefaultHost/CatalogueScanner.DefaultHost.csproj
+  FUNCTIONS_APP_OUTPUT_PATH: CatalogueScanner.DefaultHost/output
+  CONFIGURATION_UI_PROJECT_PATH: CatalogueScanner.ConfigurationUI/CatalogueScanner.ConfigurationUI.csproj
+  CONFIGURATION_UI_OUTPUT_PATH: CatalogueScanner.ConfigurationUI/output
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     outputs:
       functions-app-artifact-name: ${{ steps.sanitise-functions-app-artifact-name.outputs.sanitised-name }}
       functions-app-output-path: ${{ env.FUNCTIONS_APP_OUTPUT_PATH }}
@@ -54,7 +54,7 @@ jobs:
 
       - name: Publish Functions App to folder
         run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.FUNCTIONS_APP_OUTPUT_PATH }} ${{ env.FUNCTIONS_APP_PROJECT_PATH }}
-      
+
       - name: Publish Configuration UI to folder
         run: dotnet publish --no-build --configuration ${{ inputs.build-configuration }} --output ${{ env.CONFIGURATION_UI_OUTPUT_PATH }} ${{ env.CONFIGURATION_UI_PROJECT_PATH }}
 
@@ -63,16 +63,16 @@ jobs:
 
       - name: Sanitise Functions App artifact name
         id: sanitise-functions-app-artifact-name
-        uses: ./.github/actions/sanitise-artifact-name          
+        uses: ./.github/actions/sanitise-artifact-name
         with:
           name: ${{ format('CatalogueScanner-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
 
       - name: Sanitise Configuration UI artifact name
         id: sanitise-configuration-ui-artifact-name
-        uses: ./.github/actions/sanitise-artifact-name          
+        uses: ./.github/actions/sanitise-artifact-name
         with:
           name: ${{ format('CatalogueScanner.ConfigurationUI-{0}{1}', github.ref_name, env.SHA_SUFFIX) }}
-     
+
       - name: Archive Functions App
         uses: alehechka/upload-tartifact@v1
         with:
