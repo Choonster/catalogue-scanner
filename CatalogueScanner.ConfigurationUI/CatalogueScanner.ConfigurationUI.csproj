@@ -6,13 +6,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.1" />
-		<PackageReference Include="Azure.Identity" Version="1.5.0" />
-		<PackageReference Include="CurrieTechnologies.Razor.Clipboard" Version="1.4.0" />
+		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
+		<PackageReference Include="Azure.Identity" Version="1.8.0" />
+		<PackageReference Include="CurrieTechnologies.Razor.Clipboard" Version="1.6.0" />
 		<PackageReference Include="MatBlazor" Version="2.8.0" />
-		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
-		<PackageReference Include="Microsoft.Azure.SignalR" Version="1.15.1" />
-		<PackageReference Include="Microsoft.Identity.Web" Version="1.22.3" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+		<PackageReference Include="Microsoft.Azure.SignalR" Version="1.19.2" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="1.25.10" />
 	</ItemGroup>
 
 	<ItemGroup>

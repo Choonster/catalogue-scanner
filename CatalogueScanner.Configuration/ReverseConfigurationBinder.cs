@@ -192,17 +192,17 @@ namespace CatalogueScanner.Configuration
             }
 
             var keyValuePairType = typeof(KeyValuePair<,>).MakeGenericType(keyType, valueType);
-            var keyGetter = keyValuePairType.GetProperty(nameof(KeyValuePair<object, object>.Key), DeclaredOnlyLookup);
-            var valueGetter = keyValuePairType.GetProperty(nameof(KeyValuePair<object, object>.Value), DeclaredOnlyLookup);
+            var keyGetter = keyValuePairType.GetProperty(nameof(KeyValuePair<object, object>.Key), DeclaredOnlyLookup)!;
+            var valueGetter = keyValuePairType.GetProperty(nameof(KeyValuePair<object, object>.Value), DeclaredOnlyLookup)!;
 
             foreach (var pair in (IEnumerable)dictionary)
             {
-                var key = keyGetter!.GetValue(pair)!.ToString();
+                var key = keyGetter.GetValue(pair)!.ToString()!;
                 var child = config.GetSection(key);
 
                 FillInstance(
                    type: valueType,
-                   instance: valueGetter!.GetValue(pair),
+                   instance: valueGetter.GetValue(pair),
                    config: child,
                    settings: settings
                 );

@@ -34,6 +34,11 @@ namespace CatalogueScanner.ConfigurationUI
 
                       var connectionString = appConfig["ConnectionStrings:AzureAppConfiguration"];
 
+                      if (connectionString is null)
+                      {
+                          throw new InvalidOperationException("ConnectionStrings:AzureAppConfiguration app setting not set");
+                      }
+
                       hostBuilder.Properties[connectionStringPropertyName] = connectionString;
 
                       config.AddCatalogueScannerAzureAppConfiguration(connectionString, out var refresherSupplier);

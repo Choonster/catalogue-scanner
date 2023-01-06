@@ -77,10 +77,13 @@ namespace CatalogueScanner.ConfigurationUI
                 .AddPlugin<WebScrapingCatalogueScannerPlugin>();
 
 
-            string applicationInsightsConnectionString = Configuration["APPINSIGHTS_CONNECTIONSTRING"];
+            var applicationInsightsConnectionString = Configuration["APPINSIGHTS_CONNECTIONSTRING"];
             if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
             {
-                services.AddApplicationInsightsTelemetry(applicationInsightsConnectionString);
+                services.AddApplicationInsightsTelemetry(options =>
+                {
+                    options.ConnectionString = applicationInsightsConnectionString;
+                });
             }
         }
 
