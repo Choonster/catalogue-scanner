@@ -30,16 +30,16 @@
 	</ItemGroup>
 
 	<Target Name="MovePlaywrightFilesToOutputBin" AfterTargets="CopyPlaywrightFilesToOutput">
-		<Move SourceFiles="@(_CopyItems->'$(OutDir)\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" DestinationFiles="@(_CopyItems->'$(OutDir)\bin\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" />
-		<RemoveDir Directories="$(OutDir).playwright" />
-	</Target>
+		<ItemGroup>
+			<Content Remove="@(_PlaywrightCopyItems)" />
 
-	<Target Name="MovePlaywrightShellToOutputBin" AfterTargets="CopyPlaywrightShellToOutput">
-		<Move SourceFiles="@(_CopyItemsShell->'$(OutDir)\%(RecursiveDir)%(Filename)%(Extension)')" DestinationFiles="@(_CopyItemsShell->'$(OutDir)\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
-	</Target>
-
-	<Target Name="PlaywrightMoveToBinAfterPublish" AfterTargets="PlaywrightCopyAfterPublish">
-		<Move SourceFiles="@(_PublishCopyItems->'$(PublishDir)\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" DestinationFiles="@(_PublishCopyItems->'$(PublishDir)\bin\.playwright\%(RecursiveDir)%(Filename)%(Extension)')" />
-		<RemoveDir Directories="$(PublishDir).playwright" />
+			<Content Include="@(_PlaywrightCopyItems)">
+				<Link>bin\.playwright\%(_PlaywrightCopyItems.PlaywrightFolder)%(RecursiveDir)%(FileName)%(Extension)</Link>
+				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+				<PublishState>Included</PublishState>
+				<Visible>false</Visible>
+				<Pack>false</Pack>
+			</Content>
+		</ItemGroup>
 	</Target>
 </Project>

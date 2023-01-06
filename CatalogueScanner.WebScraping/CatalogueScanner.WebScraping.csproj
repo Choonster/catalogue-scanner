@@ -1,47 +1,49 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <NeutralLanguage>en</NeutralLanguage>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<NeutralLanguage>en</NeutralLanguage>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectCapability Include="AzureFunctions" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectCapability Include="AzureFunctions" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Localisation\**\*.po">
-      <Link>Localisation\CatalogueScanner.WebScraping\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Localisation\**\*.po">
+			<Link>Localisation\CatalogueScanner.WebScraping\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="DotNext.Threading" Version="4.8.2" />
-    <PackageReference Include="Microsoft.Playwright" Version="1.28.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="DotNext.Threading" Version="4.8.2" />
+		<PackageReference Include="Microsoft.Playwright" Version="1.28.0">
+			<ExcludeAssets>build;buildTransitive</ExcludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="JavaScript\JavaScriptFiles.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>JavaScriptFiles.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="JavaScript\JavaScriptFiles.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>JavaScriptFiles.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="JavaScript\JavaScriptFiles.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>JavaScriptFiles.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="JavaScript\JavaScriptFiles.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>JavaScriptFiles.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="Test Data\COLRS Catalog Entry List - Decompressed.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="Test Data\COLRS Catalog Entry List - Decompressed.json" />
+	</ItemGroup>
 
 </Project>
