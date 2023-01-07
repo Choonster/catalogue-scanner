@@ -16,11 +16,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\CatalogueScanner.ColesOnline\CatalogueScanner.ColesOnline.csproj" />
 		<ProjectReference Include="..\CatalogueScanner.Configuration\CatalogueScanner.Configuration.csproj" />
 		<ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
 		<ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
 		<ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
-		<ProjectReference Include="..\CatalogueScanner.WebScraping\CatalogueScanner.WebScraping.csproj" />
 	</ItemGroup>
 
 	<Target Name="RemovePlaywrightFilesFromOutput" AfterTargets="CopyPlaywrightFilesToOutput">

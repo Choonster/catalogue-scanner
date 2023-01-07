@@ -122,23 +122,6 @@
           "System.Diagnostics.EventLog": "6.0.0"
         }
       },
-      "DotNext": {
-        "type": "Transitive",
-        "resolved": "4.8.1",
-        "contentHash": "pG01kk2ecoBGQ6Y7r1+IgGKwCc6GPM2mOO5NF76wdxIhpbCNsy0wDYXnAZg8KyZr56x5MZaTFEhcYWglXQZr6w==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
-      },
-      "DotNext.Threading": {
-        "type": "Transitive",
-        "resolved": "4.8.2",
-        "contentHash": "hJISFK2JaG0O9dPBdS5e6tc0NHCDwVdg195DHJw5h4tyf2nCuW4HHIjnu/44iUSTvaABK0fQP+LXTB6RCydQ8w==",
-        "dependencies": {
-          "DotNext": "4.8.1",
-          "System.Threading.Channels": "7.0.0"
-        }
-      },
       "Google.Protobuf": {
         "type": "Transitive",
         "resolved": "3.21.9",
@@ -1514,11 +1497,6 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
-      "System.Threading.Channels": {
-        "type": "Transitive",
-        "resolved": "7.0.0",
-        "contentHash": "qmeeYNROMsONF6ndEZcIQ+VxR4Q/TX/7uIVLJqtwIWL7dDWeh0l1UIqgo4wYyjG//5lUNhwkLDSFl+pAWO6oiA=="
-      },
       "System.Threading.Tasks": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1546,6 +1524,12 @@
         "dependencies": {
           "NETStandard.Library": "1.6.1",
           "Newtonsoft.Json": "10.0.2"
+        }
+      },
+      "cataloguescanner.colesonline": {
+        "type": "Project",
+        "dependencies": {
+          "CatalogueScanner.Core": "[1.0.0, )"
         }
       },
       "cataloguescanner.configuration": {
@@ -1584,14 +1568,6 @@
         "type": "Project",
         "dependencies": {
           "CatalogueScanner.Core": "[1.0.0, )"
-        }
-      },
-      "cataloguescanner.webscraping": {
-        "type": "Project",
-        "dependencies": {
-          "CatalogueScanner.Core": "[1.0.0, )",
-          "DotNext.Threading": "[4.8.2, )",
-          "Microsoft.Playwright": "[1.28.0, )"
         }
       },
       "cataloguescanner.woolworthsonline": {

@@ -1,14 +1,13 @@
-﻿using CatalogueScanner.Core.Utility;
-using CatalogueScanner.WebScraping.Service;
+﻿using CatalogueScanner.ColesOnline.Service;
+using CatalogueScanner.Core.Utility;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using System;
 
-namespace CatalogueScanner.WebScraping.Functions
+namespace CatalogueScanner.ColesOnline.Functions
 {
     public static class GetColesOnlineSpecialsDates
     {
-        [FunctionName(WebScrapingFunctionNames.GetColesOnlineSpecialsDates)]
+        [FunctionName(ColesOnlineFunctionNames.GetColesOnlineSpecialsDates)]
         public static DateRange Run([ActivityTrigger] IDurableActivityContext context)
         {
             #region null checks

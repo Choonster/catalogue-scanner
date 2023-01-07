@@ -1,11 +1,11 @@
-﻿using CatalogueScanner.Configuration;
+﻿using CatalogueScanner.ColesOnline;
+using CatalogueScanner.Configuration;
 using CatalogueScanner.Core;
 using CatalogueScanner.Core.Host;
 using CatalogueScanner.Core.Host.ApplicationInsights;
 using CatalogueScanner.DefaultHost;
 using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
-using CatalogueScanner.WebScraping;
 using CatalogueScanner.WoolworthsOnline;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -70,8 +70,8 @@ namespace CatalogueScanner.DefaultHost
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
                 .AddPlugin<OrchardCoreLocalisationCatalogueScannerPlugin>()
+                .AddPlugin<ColesOnlineCatalogueScannerPlugin>()
                 .AddPlugin<SaleFinderCatalogueScannerPlugin>()
-                .AddPlugin<WebScrapingCatalogueScannerPlugin>()
                 .AddPlugin<WoolworthsOnlineCatalogueScannerPlugin>();
         }
     }

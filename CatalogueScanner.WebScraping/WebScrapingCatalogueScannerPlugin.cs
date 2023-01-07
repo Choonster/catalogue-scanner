@@ -1,6 +1,4 @@
-﻿using CatalogueScanner.Configuration;
-using CatalogueScanner.Core.Host;
-using CatalogueScanner.WebScraping.Options;
+﻿using CatalogueScanner.Core.Host;
 using CatalogueScanner.WebScraping.Service;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -19,7 +17,6 @@ namespace CatalogueScanner.WebScraping
             #endregion
 
             builder.Services
-                .AddScoped<ColesOnlineService>()
                 .AddSingleton<PlaywrightBrowserManager>();
 
             AddConfiguration(builder);
@@ -28,9 +25,6 @@ namespace CatalogueScanner.WebScraping
         private static void AddConfiguration(ICatalogueScannerHostBuilder builder)
         {
             var webScrapingSection = builder.Configuration.GetSection("WebScraping");
-
-            builder.Services
-                .ConfigureOptions<ColesOnlineOptions>(webScrapingSection.GetSection(ColesOnlineOptions.ColesOnline));
         }
     }
 }
