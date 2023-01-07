@@ -43,7 +43,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Test Data\COLRS Catalog Entry List - Decompressed.json" />
+	  <Folder Include="Dto\" />
+	  <Folder Include="Options\" />
+	  <Folder Include="Test Data\" />
 	</ItemGroup>
 
 </Project>

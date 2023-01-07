@@ -1,11 +1,8 @@
-using CatalogueScanner.WebScraping.Service;
+using CatalogueScanner.ColesOnline.Service;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace CatalogueScanner.WebScraping.Functions
+namespace CatalogueScanner.ColesOnline.Functions
 {
     public class GetColesOnlineSpecialsPageCount
     {
@@ -16,7 +13,7 @@ namespace CatalogueScanner.WebScraping.Functions
             this.colesOnlineService = colesOnlineService;
         }
 
-        [FunctionName(WebScrapingFunctionNames.GetColesOnlineSpecialsPageCount)]
+        [FunctionName(ColesOnlineFunctionNames.GetColesOnlineSpecialsPageCount)]
         public async Task<int> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
         {
             #region null checks
@@ -26,7 +23,7 @@ namespace CatalogueScanner.WebScraping.Functions
             }
             #endregion
 
-            return await colesOnlineService.GetSpecialsTotalPageCountAsync(context.InstanceId, cancellationToken).ConfigureAwait(false);
+            return await colesOnlineService.GetOnSpecialPageCountAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

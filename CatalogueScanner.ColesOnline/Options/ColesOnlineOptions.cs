@@ -1,9 +1,9 @@
-﻿namespace CatalogueScanner.WebScraping.Options
+﻿namespace CatalogueScanner.ColesOnline.Options
 {
     public class ColesOnlineOptions
     {
         public const string ColesOnline = "ColesOnline";
 
-        public string? StoreId { get; set; }
+        public long? FulfillmentStoreId { get; set; }
     }
 }

@@ -122,23 +122,6 @@
           "System.Diagnostics.EventLog": "6.0.0"
         }
       },
-      "DotNext": {
-        "type": "Transitive",
-        "resolved": "4.8.1",
-        "contentHash": "pG01kk2ecoBGQ6Y7r1+IgGKwCc6GPM2mOO5NF76wdxIhpbCNsy0wDYXnAZg8KyZr56x5MZaTFEhcYWglXQZr6w==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
-      },
-      "DotNext.Threading": {
-        "type": "Transitive",
-        "resolved": "4.8.2",
-        "contentHash": "hJISFK2JaG0O9dPBdS5e6tc0NHCDwVdg195DHJw5h4tyf2nCuW4HHIjnu/44iUSTvaABK0fQP+LXTB6RCydQ8w==",
-        "dependencies": {
-          "DotNext": "4.8.1",
-          "System.Threading.Channels": "7.0.0"
-        }
-      },
       "Google.Protobuf": {
         "type": "Transitive",
         "resolved": "3.21.9",
@@ -783,10 +766,11 @@
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Transitive",
-        "resolved": "3.1.18",
-        "contentHash": "Cd5n8pU5sVnke4qV87Lm6np0NQZLUG7vkgWgHxAmq+yAizIUCoDeqHc4MepV4YgH4kiY2VuYESVdCx7JbtkMnQ==",
+        "resolved": "6.0.0",
+        "contentHash": "k6PWQMuoBDGGHOQTtyois2u4AwyVcIwL2LaSLlTZQm2CYcJ1pxbt6jfAnpWmzENA/wfrYRI/X9DTLoUkE4AsLw==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.18"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
@@ -853,12 +837,13 @@
       },
       "Microsoft.Extensions.Http": {
         "type": "Transitive",
-        "resolved": "2.2.0",
-        "contentHash": "hZ8mz6FgxSeFtkHzw+Ad0QOt2yjjpq4WaG9itnkyChtXYTrDlbkw3af2WJ9wdEAAyYqOlQaVDB6MJSEo8dd/vw==",
+        "resolved": "6.0.0",
+        "contentHash": "15+pa2G0bAMHbHewaQIdr/y6ag2H3yh4rd9hTXavtWDzQBkvpe2RMqFg8BxDpcQWssmjmBApGPcw93QRz6YcMg==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.2.0",
-          "Microsoft.Extensions.Logging": "2.2.0",
-          "Microsoft.Extensions.Options": "2.2.0"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Logging": "6.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Options": "6.0.0"
         }
       },
       "Microsoft.Extensions.Localization.Abstractions": {
@@ -868,19 +853,20 @@
       },
       "Microsoft.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "3.1.18",
-        "contentHash": "1cYb4a/c1IfYLc5hEGQOL0t9g43gBIcqJQC5WrEZdXhScEuP1tFs1XgGjzK957Wwibi5O8h8Gulpd2VZeW0cvg==",
+        "resolved": "6.0.0",
+        "contentHash": "eIbyj40QDg1NDz0HBW0S5f3wrLVnKWnDJ/JtZ+yJDFnDj90VoPuoPmFkeaXrtu+0cKm5GRAwoDf+dBWXK0TUdg==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Binder": "3.1.18",
-          "Microsoft.Extensions.DependencyInjection": "3.1.18",
-          "Microsoft.Extensions.Logging.Abstractions": "3.1.18",
-          "Microsoft.Extensions.Options": "3.1.18"
+          "Microsoft.Extensions.DependencyInjection": "6.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Options": "6.0.0",
+          "System.Diagnostics.DiagnosticSource": "6.0.0"
         }
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "Transitive",
-        "resolved": "3.1.18",
-        "contentHash": "TmCtOpIU/dmdw50In0suE44ncPFqWKk9WK6T/+I8lKJtBdR1akBnvGBbGHx78Awnmq96DsZtuy9ujl+bNGaHSQ=="
+        "resolved": "6.0.0",
+        "contentHash": "/HggWBbTwy8TgebGSX5DBZ24ndhzi93sHUBDvP1IxbZD7FDokYzdAr6+vbWGjw2XAfR2EJ1sfKUotpjHnFWPxA=="
       },
       "Microsoft.Extensions.Logging.Configuration": {
         "type": "Transitive",
@@ -1064,8 +1050,11 @@
       },
       "System.Diagnostics.DiagnosticSource": {
         "type": "Transitive",
-        "resolved": "5.0.1",
-        "contentHash": "uXQEYqav2V3zP6OwkOKtLv+qIi6z3m1hsGyKwXX7ZA7htT4shoVccGxnJ9kVRFPNAsi1ArZTq2oh7WOto6GbkQ=="
+        "resolved": "6.0.0",
+        "contentHash": "frQDfv0rl209cKm1lnwTgFPzNigy2EKk1BS3uAvHvlBVKe5cymGyHO+Sj+NLv5VF/AhHsqPIUUwya5oV4CHMUw==",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+        }
       },
       "System.Diagnostics.EventLog": {
         "type": "Transitive",
@@ -1514,11 +1503,6 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
-      "System.Threading.Channels": {
-        "type": "Transitive",
-        "resolved": "7.0.0",
-        "contentHash": "qmeeYNROMsONF6ndEZcIQ+VxR4Q/TX/7uIVLJqtwIWL7dDWeh0l1UIqgo4wYyjG//5lUNhwkLDSFl+pAWO6oiA=="
-      },
       "System.Threading.Tasks": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1548,6 +1532,12 @@
           "Newtonsoft.Json": "10.0.2"
         }
       },
+      "cataloguescanner.colesonline": {
+        "type": "Project",
+        "dependencies": {
+          "CatalogueScanner.Core": "[1.0.0, )"
+        }
+      },
       "cataloguescanner.configuration": {
         "type": "Project",
         "dependencies": {
@@ -1570,6 +1560,7 @@
           "Microsoft.Azure.WebJobs.Extensions.SendGrid": "[3.0.2, )",
           "Microsoft.Azure.WebJobs.Extensions.Storage": "[5.0.1, )",
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "[5.2.0, )",
+          "Microsoft.Extensions.Http": "[6.0.0, )",
           "Microsoft.Extensions.Localization.Abstractions": "[6.0.12, )"
         }
       },
@@ -1584,14 +1575,6 @@
         "type": "Project",
         "dependencies": {
           "CatalogueScanner.Core": "[1.0.0, )"
-        }
-      },
-      "cataloguescanner.webscraping": {
-        "type": "Project",
-        "dependencies": {
-          "CatalogueScanner.Core": "[1.0.0, )",
-          "DotNext.Threading": "[4.8.2, )",
-          "Microsoft.Playwright": "[1.28.0, )"
         }
       },
       "cataloguescanner.woolworthsonline": {

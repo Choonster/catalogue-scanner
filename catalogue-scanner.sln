@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_Shared", "_Shared\_Shared.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CatalogueScanner.WoolworthsOnline", "CatalogueScanner.WoolworthsOnline\CatalogueScanner.WoolworthsOnline.csproj", "{7278049F-6A7E-429E-BCF5-CFDC477361D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogueScanner.ColesOnline", "CatalogueScanner.ColesOnline\CatalogueScanner.ColesOnline.csproj", "{3946D380-715D-4710-9F59-1CA8FBD645B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{7278049F-6A7E-429E-BCF5-CFDC477361D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7278049F-6A7E-429E-BCF5-CFDC477361D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7278049F-6A7E-429E-BCF5-CFDC477361D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3946D380-715D-4710-9F59-1CA8FBD645B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3946D380-715D-4710-9F59-1CA8FBD645B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3946D380-715D-4710-9F59-1CA8FBD645B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3946D380-715D-4710-9F59-1CA8FBD645B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

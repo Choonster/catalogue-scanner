@@ -59,27 +59,5 @@ namespace CatalogueScanner.WebScraping.JavaScript {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to class CatalogueScanner_ColesOnline {
-        ///    static instance = new CatalogueScanner_ColesOnline();
-        ///
-        ///    get #productListControler() {
-        ///        return angular?.element(document.querySelector(&apos;[data-colrs-product-list]&apos;)).data()?.$colrsProductListController;
-        ///    }
-        ///
-        ///    get productListData() {
-        ///        return this.#productListControler?.widget?.data;
-        ///    }
-        ///
-        ///    get isDataLoaded() {
-        ///        const productListData = this.productListData;
-        ///        return typeof productListData?.products[productListData?.prod [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ColesOnline {
-            get {
-                return ResourceManager.GetString("ColesOnline", resourceCulture);
-            }
-        }
     }
 }
