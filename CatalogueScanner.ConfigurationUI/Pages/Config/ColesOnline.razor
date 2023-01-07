@@ -11,8 +11,8 @@
     <MatH3>Coles Online</MatH3>
 
     <EditForm Model="ColesOnlineOptions" OnValidSubmit="SaveColesOnlineOptions">
-        <MatTextField Label="Store ID" @bind-Value="ColesOnlineOptions.StoreId">
-        </MatTextField>
+        <MatNumericUpDownField Label="Fulfillment Store ID" @bind-Value="ColesOnlineOptions.FulfillmentStoreId">
+        </MatNumericUpDownField>
 
         <MatButton Type="submit">Save</MatButton>
     </EditForm>

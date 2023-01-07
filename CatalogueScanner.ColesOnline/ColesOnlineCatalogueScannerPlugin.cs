@@ -30,12 +30,6 @@ namespace CatalogueScanner.ColesOnline
         {
             var colesOnlineSection = builder.Configuration.GetSection("ColesOnline");
 
-            var webScrapingSection = builder.Configuration.GetSection("WebScraping").GetSection(ColesOnlineOptions.ColesOnline);
-            if (webScrapingSection.GetChildren().Any())
-            {
-                builder.Services.Configure<ColesOnlineOptions>(webScrapingSection);
-            }
-
             builder.Services
                 .ConfigureOptions<ColesOnlineOptions>(colesOnlineSection.GetSection(ColesOnlineOptions.ColesOnline));
         }

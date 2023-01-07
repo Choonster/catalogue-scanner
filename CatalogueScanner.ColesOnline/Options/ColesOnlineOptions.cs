@@ -4,6 +4,6 @@
     {
         public const string ColesOnline = "ColesOnline";
 
-        public string? StoreId { get; set; }
+        public long? FulfillmentStoreId { get; set; }
     }
 }

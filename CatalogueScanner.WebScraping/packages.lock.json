@@ -757,10 +757,11 @@
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Transitive",
-        "resolved": "3.1.18",
-        "contentHash": "Cd5n8pU5sVnke4qV87Lm6np0NQZLUG7vkgWgHxAmq+yAizIUCoDeqHc4MepV4YgH4kiY2VuYESVdCx7JbtkMnQ==",
+        "resolved": "6.0.0",
+        "contentHash": "k6PWQMuoBDGGHOQTtyois2u4AwyVcIwL2LaSLlTZQm2CYcJ1pxbt6jfAnpWmzENA/wfrYRI/X9DTLoUkE4AsLw==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.18"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
@@ -827,12 +828,13 @@
       },
       "Microsoft.Extensions.Http": {
         "type": "Transitive",
-        "resolved": "2.2.0",
-        "contentHash": "hZ8mz6FgxSeFtkHzw+Ad0QOt2yjjpq4WaG9itnkyChtXYTrDlbkw3af2WJ9wdEAAyYqOlQaVDB6MJSEo8dd/vw==",
+        "resolved": "6.0.0",
+        "contentHash": "15+pa2G0bAMHbHewaQIdr/y6ag2H3yh4rd9hTXavtWDzQBkvpe2RMqFg8BxDpcQWssmjmBApGPcw93QRz6YcMg==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "2.2.0",
-          "Microsoft.Extensions.Logging": "2.2.0",
-          "Microsoft.Extensions.Options": "2.2.0"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Logging": "6.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Options": "6.0.0"
         }
       },
       "Microsoft.Extensions.Localization.Abstractions": {
@@ -842,19 +844,20 @@
       },
       "Microsoft.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "3.1.18",
-        "contentHash": "1cYb4a/c1IfYLc5hEGQOL0t9g43gBIcqJQC5WrEZdXhScEuP1tFs1XgGjzK957Wwibi5O8h8Gulpd2VZeW0cvg==",
+        "resolved": "6.0.0",
+        "contentHash": "eIbyj40QDg1NDz0HBW0S5f3wrLVnKWnDJ/JtZ+yJDFnDj90VoPuoPmFkeaXrtu+0cKm5GRAwoDf+dBWXK0TUdg==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Binder": "3.1.18",
-          "Microsoft.Extensions.DependencyInjection": "3.1.18",
-          "Microsoft.Extensions.Logging.Abstractions": "3.1.18",
-          "Microsoft.Extensions.Options": "3.1.18"
+          "Microsoft.Extensions.DependencyInjection": "6.0.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
+          "Microsoft.Extensions.Options": "6.0.0",
+          "System.Diagnostics.DiagnosticSource": "6.0.0"
         }
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "Transitive",
-        "resolved": "3.1.18",
-        "contentHash": "TmCtOpIU/dmdw50In0suE44ncPFqWKk9WK6T/+I8lKJtBdR1akBnvGBbGHx78Awnmq96DsZtuy9ujl+bNGaHSQ=="
+        "resolved": "6.0.0",
+        "contentHash": "/HggWBbTwy8TgebGSX5DBZ24ndhzi93sHUBDvP1IxbZD7FDokYzdAr6+vbWGjw2XAfR2EJ1sfKUotpjHnFWPxA=="
       },
       "Microsoft.Extensions.Logging.Configuration": {
         "type": "Transitive",
@@ -1025,8 +1028,11 @@
       },
       "System.Diagnostics.DiagnosticSource": {
         "type": "Transitive",
-        "resolved": "5.0.1",
-        "contentHash": "uXQEYqav2V3zP6OwkOKtLv+qIi6z3m1hsGyKwXX7ZA7htT4shoVccGxnJ9kVRFPNAsi1ArZTq2oh7WOto6GbkQ=="
+        "resolved": "6.0.0",
+        "contentHash": "frQDfv0rl209cKm1lnwTgFPzNigy2EKk1BS3uAvHvlBVKe5cymGyHO+Sj+NLv5VF/AhHsqPIUUwya5oV4CHMUw==",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+        }
       },
       "System.Diagnostics.EventLog": {
         "type": "Transitive",
@@ -1521,6 +1527,7 @@
           "Microsoft.Azure.WebJobs.Extensions.SendGrid": "[3.0.2, )",
           "Microsoft.Azure.WebJobs.Extensions.Storage": "[5.0.1, )",
           "Microsoft.Extensions.Configuration.AzureAppConfiguration": "[5.2.0, )",
+          "Microsoft.Extensions.Http": "[6.0.0, )",
           "Microsoft.Extensions.Localization.Abstractions": "[6.0.12, )"
         }
       }
