@@ -61,8 +61,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
     {
         public string? Id { get; set; }
 
-        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-        public long Value { get; set; }
+        public string? Value { get; set; }
     }
 
     public partial class CatalogGroupView
