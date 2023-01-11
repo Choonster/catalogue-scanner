@@ -263,6 +263,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         [JsonPropertyName("GROCERY")] Grocery,
         [JsonPropertyName("LIQUOR")] Liquor,
         [JsonPropertyName("MEAT")] Meat,
+        [JsonPropertyName("APPAREL")] Apparel,
     }
 
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]
