@@ -3,6 +3,7 @@ using CatalogueScanner.ConfigurationUI.ViewModel;
 using CatalogueScanner.Core.Dto.Api;
 using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Functions.Entity;
+using CatalogueScanner.Core.Utility;
 using MatBlazor;
 using System;
 using System.Collections.Generic;
@@ -63,6 +64,18 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
                 [ScanState.Completed] = S["Completed"],
                 [ScanState.Failed] = S["Failed"],
             };
+
+            var startOfWeek = new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Monday, TimeZoneInfo.Local);
+            var now = DateTimeOffset.Now;
+
+            lastOperationFrom = startOfWeek
+                .GetPreviousDate(now)
+                .LocalDateTime;
+
+            lastOperationTo = startOfWeek
+                .GetNextDate(now)
+                .LocalDateTime
+                .AddDays(-1);
 
             await OnPage(new MatPaginatorPageEvent { PageIndex = 0, PageSize = PageSize, Length = 0 }).ConfigureAwait(true);
         }
