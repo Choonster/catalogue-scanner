@@ -32,16 +32,8 @@ on:
         type: string
 
     secrets:
-      azure-client-id:
-        description: Azure application (client) ID to deploy with
-        required: true
-
-      azure-tenant-id:
-        description: Azure directory (tenant) ID to deploy to
-        required: true
-
-      azure-subscription-id:
-        description: Azure subscription ID to deploy to
+      azure-publish-profile:
+        description: Azure publish profile to deploy with
         required: true
 
 jobs:
@@ -55,16 +47,10 @@ jobs:
         with:
           name: ${{ inputs.artifact-name }}
 
-      - name: Azure Login
-        uses: Azure/login@v1
-        with:
-          client-id: ${{ secrets.azure-client-id }}
-          tenant-id: ${{ secrets.azure-tenant-id }}
-          subscription-id: ${{ secrets.azure-subscription-id }}
-
       - name: Publish to Azure
         uses: Azure/functions-action@v1
         with:
           app-name: ${{ inputs.app-name }}
           slot-name: ${{ inputs.slot-name }}
           package: ${{ inputs.output-path }}
+          publish-profile: ${{ secrets.azure-publish-profile }}

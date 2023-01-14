@@ -18,9 +18,7 @@ jobs:
       output-path: ${{ needs.build.outputs.functions-app-output-path }}
       app-name: catalogue-scanner-test
     secrets:
-      azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-      azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-      azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      azure-publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_TEST }}
 
   deploy-configuration-ui:
     uses: ./.github/workflows/deploy-configuration-ui.yml
