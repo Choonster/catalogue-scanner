@@ -1,3 +1,4 @@
+using CatalogueScanner.ColesOnline.Dto.FunctionInput;
 using CatalogueScanner.ColesOnline.Service;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
@@ -23,7 +24,14 @@ namespace CatalogueScanner.ColesOnline.Functions
             }
             #endregion
 
-            return await colesOnlineService.GetOnSpecialPageCountAsync(cancellationToken).ConfigureAwait(false);
+            var input = context.GetInput<GetColesOnlineSpecialsPageCountInput>();
+
+            if (input is null)
+            {
+                throw new InvalidOperationException("Activity function input not present");
+            }
+
+            return await colesOnlineService.GetOnSpecialPageCountAsync(input.BuildId, cancellationToken).ConfigureAwait(false);
         }
     }
 }

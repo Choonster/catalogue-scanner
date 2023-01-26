@@ -18,6 +18,11 @@
         public const string GetColesOnlineSpecialsDates = "GetColesOnlineSpecialsDates";
 
         /// <summary>
+        /// The name of the <see cref="Functions.GetColesOnlineBuildId"/> activity function.
+        /// </summary>
+        public const string GetColesOnlineBuildId = "GetColesOnlineBuildId";
+
+        /// <summary>
         /// The name of the <see cref="Functions.GetColesOnlineSpecialsPageCount"/> activity function.
         /// </summary>
         public const string GetColesOnlineSpecialsPageCount = "GetColesOnlineSpecialsPageCount";

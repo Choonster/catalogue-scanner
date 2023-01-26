@@ -7,6 +7,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase
     )]
     [JsonSerializable(typeof(BrowseResponse))]
+    [JsonSerializable(typeof(NextData))]
     public partial class ColesOnlineSerializerContext : JsonSerializerContext
     {
     }

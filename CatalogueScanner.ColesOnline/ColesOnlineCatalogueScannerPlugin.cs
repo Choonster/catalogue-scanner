@@ -20,7 +20,7 @@ namespace CatalogueScanner.ColesOnline
             builder.Services
                 .AddHttpClient<ColesOnlineService>(client =>
                 {
-                    client.BaseAddress = new Uri("https://www.coles.com.au/_next/data/20221222.02_v3.19.0/en/");
+                    client.BaseAddress = new Uri("https://www.coles.com.au/");
                 });
 
             AddConfiguration(builder);

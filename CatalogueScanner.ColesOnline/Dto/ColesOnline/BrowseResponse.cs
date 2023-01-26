@@ -5,12 +5,12 @@ using System.Text.Json.Serialization;
 
 namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
 {
-    public partial class BrowseResponse
+    public class BrowseResponse
     {
-        public PageProps? PageProps { get; set; }
+        public BrowseeResponsePageProps? PageProps { get; set; }
     }
 
-    public partial class PageProps
+    public class BrowseeResponsePageProps
     {
         public Uri? AssetsUrl { get; set; }
         public bool IsMobile { get; set; }
@@ -18,23 +18,23 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public Guid SearchSessionId { get; set; }
     }
 
-    public partial class SearchResults
+    public class SearchResults
     {
-        public object? DidYouMean { get; set; }
+        public IEnumerable<string> DidYouMean { get; } = new List<string>();
         public long NoOfResults { get; set; }
         public long Start { get; set; }
         public long PageSize { get; set; }
         public string? Keyword { get; set; }
         public long ResultType { get; set; }
-        public IEnumerable<Filter> Filters { get; set; } = new List<Filter>();
-        public IEnumerable<Banner> Banners { get; set; } = new List<Banner>();
+        public IEnumerable<Filter> Filters { get; } = new List<Filter>();
+        public IEnumerable<Banner> Banners { get; } = new List<Banner>();
         public PageRestrictions? PageRestrictions { get; set; }
-        public IEnumerable<SearchResult> Results { get; set; } = new List<SearchResult>();
-        public IEnumerable<CatalogGroupView> CatalogGroupView { get; set; } = new List<CatalogGroupView>();
+        public IEnumerable<SearchResult> Results { get; } = new List<SearchResult>();
+        public IEnumerable<CatalogGroupView> CatalogGroupView { get; } = new List<CatalogGroupView>();
         public ExcludedCatalogGroupView? ExcludedCatalogGroupView { get; set; }
     }
 
-    public partial class Banner
+    public class Banner
     {
         public string? AdId { get; set; }
         public string? AdSource { get; set; }
@@ -51,56 +51,56 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public string? BackgroundImagePosition { get; set; }
         public Uri? HeroImage { get; set; }
         public string? HeroImageAltText { get; set; }
-        
+
         [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-        public IEnumerable<long> ProductIds { get; set; } = new List<long>();
-        public IEnumerable<AdditionalField> AdditionalFields { get; set; } = new List<AdditionalField>();
+        public IEnumerable<long> ProductIds { get; } = new List<long>();
+        public IEnumerable<AdditionalField> AdditionalFields { get; } = new List<AdditionalField>();
     }
 
-    public partial class AdditionalField
+    public class AdditionalField
     {
         public string? Id { get; set; }
 
         public string? Value { get; set; }
     }
 
-    public partial class CatalogGroupView
+    public class CatalogGroupView
     {
         public long Level { get; set; }
         public string? Name { get; set; }
         public string? SeoToken { get; set; }
-        
+
         [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public long Id { get; set; }
 
         public long ProductCount { get; set; }
     }
 
-    public partial class ExcludedCatalogGroupView
+    public class ExcludedCatalogGroupView
     {
         public long ProductCount { get; set; }
     }
 
-    public partial class Filter
+    public class Filter
     {
         public string? Name { get; set; }
-        public IEnumerable<FilterValue> Values { get; set; } = new List<FilterValue>();
+        public IEnumerable<FilterValue> Values { get; } = new List<FilterValue>();
     }
 
-    public partial class FilterValue
+    public class FilterValue
     {
         public string? Id { get; set; }
         public string? DisplayText { get; set; }
         public long Count { get; set; }
     }
 
-    public partial class PageRestrictions
+    public class PageRestrictions
     {
         public bool TobaccoProducts { get; set; }
     }
 
     [JsonConverter(typeof(SearchResultConverter))]
-    public abstract partial class SearchResult
+    public abstract class SearchResult
     {
         internal const string TypePropertyName = "_type";
 
@@ -110,7 +110,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public string? AdSource { get; set; }
     }
 
-    public partial class Product : SearchResult
+    public class Product : SearchResult
     {
         public const string ProductType = "PRODUCT";
 
@@ -125,15 +125,15 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public string? Size { get; set; }
         public bool Availability { get; set; }
         public AvailabilityType? AvailabilityType { get; set; }
-        public IEnumerable<ImageUri> ImageUris { get; set; } = new List<ImageUri>();
-        public IEnumerable<Location> Locations { get; set; } = new List<Location>();
+        public IEnumerable<ImageUri> ImageUris { get; } = new List<ImageUri>();
+        public IEnumerable<Location> Locations { get; } = new List<Location>();
         public Restrictions? Restrictions { get; set; }
         public MerchandiseHeir? MerchandiseHeir { get; set; }
-        public IEnumerable<OnlineHeir> OnlineHeirs { get; set; } = new List<OnlineHeir>();
+        public IEnumerable<OnlineHeir> OnlineHeirs { get; } = new List<OnlineHeir>();
         public Pricing? Pricing { get; set; }
     }
 
-    public partial class SingleTile : SearchResult
+    public class SingleTile : SearchResult
     {
         public const string SingleTileType = "SINGLE_TILE";
 
@@ -155,23 +155,23 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public string? HeroImageAltText { get; set; }
 
         [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-        public IEnumerable<long> ProductIds { get; set; } = new List<long>();
+        public IEnumerable<long> ProductIds { get; } = new List<long>();
 
         public object? SecondaryBackgroundImage { get; set; }
         public object? SecondaryBackgroundImagePosition { get; set; }
         public object? SecondaryHeroImage { get; set; }
         public object? SecondaryHeroImageAltText { get; set; }
-        public IEnumerable<AdditionalField> AdditionalFields { get; set; } = new List<AdditionalField>();
+        public IEnumerable<AdditionalField> AdditionalFields { get; } = new List<AdditionalField>();
     }
 
-    public partial class ImageUri
+    public class ImageUri
     {
         public string? AltText { get; set; }
         public ImageUriType Type { get; set; }
         public Uri? Uri { get; set; }
     }
 
-    public partial class Location
+    public class Location
     {
         public string? AisleSide { get; set; }
         public string? Description { get; set; }
@@ -181,7 +181,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public object? Shelf { get; set; }
     }
 
-    public partial class MerchandiseHeir
+    public class MerchandiseHeir
     {
         public TradeProfitCentre TradeProfitCentre { get; set; }
         public string? CategoryGroup { get; set; }
@@ -190,14 +190,14 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public string? ClassName { get; set; }
     }
 
-    public partial class OnlineHeir
+    public class OnlineHeir
     {
         public string? Aisle { get; set; }
         public string? Category { get; set; }
         public string? SubCategory { get; set; }
     }
 
-    public partial class Pricing
+    public class Pricing
     {
         public decimal Now { get; set; }
         public decimal? Was { get; set; }
@@ -213,7 +213,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public MultiBuyPromotion? MultiBuyPromotion { get; set; }
     }
 
-    public partial class MultiBuyPromotion
+    public class MultiBuyPromotion
     {
         public MultiBuyPromotionType Type { get; set; }
         public string? Id { get; set; }
@@ -221,7 +221,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public decimal Reward { get; set; }
     }
 
-    public partial class Unit
+    public class Unit
     {
         public decimal Quantity { get; set; }
         public long OfMeasureQuantity { get; set; }
@@ -231,7 +231,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
         public bool IsWeighted { get; set; }
     }
 
-    public partial class Restrictions
+    public class Restrictions
     {
         public long RetailLimit { get; set; }
         public long PromotionalLimit { get; set; }
