@@ -63,12 +63,14 @@ namespace CatalogueScanner.ColesOnline.Functions
                     context.SetCustomStatus("Downloading");
                     log.LogDebug($"Downloading - {scanStateId.EntityKey}");
 
+                    var buildId = await context.CallActivityAsync<string>(ColesOnlineFunctionNames.GetColesOnlineBuildId, null).ConfigureAwait(true);
+
                     var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
 
                     var pageCount = await context.CallActivityWithRetryAsync<int>(
                            ColesOnlineFunctionNames.GetColesOnlineSpecialsPageCount,
                            retryOptions,
-                           null
+                           new GetColesOnlineSpecialsPageCountInput(buildId)
                     ).ConfigureAwait(true);
 
                     var downloadTasks = Enumerable.Range(0, pageCount)
@@ -76,10 +78,7 @@ namespace CatalogueScanner.ColesOnline.Functions
                             context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
                                 ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage,
                                 retryOptions,
-                                new DownloadColesOnlineSpecialsPageInput
-                                {
-                                    Page = pageIndex + 1,
-                                }
+                                new DownloadColesOnlineSpecialsPageInput(buildId, pageIndex + 1)
                             )
                         )
                         .ToList();

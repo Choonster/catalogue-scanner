@@ -36,7 +36,7 @@ namespace CatalogueScanner.ColesOnline.Functions
 
             var productUrlTemplate = ColesOnlineService.ProductUrlTemplate;
 
-            var response = await colesOnlineService.GetOnSpecialPageAsync(input.Page, cancellationToken).ConfigureAwait(false);
+            var response = await colesOnlineService.GetOnSpecialPageAsync(input.BuildId, input.Page, cancellationToken).ConfigureAwait(false);
 
             var items = response.PageProps
                 !.SearchResults

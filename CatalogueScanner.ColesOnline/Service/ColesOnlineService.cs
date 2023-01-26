@@ -1,12 +1,15 @@
 ﻿using CatalogueScanner.ColesOnline.Dto.ColesOnline;
 using CatalogueScanner.ColesOnline.Options;
+using CatalogueScanner.ConfigurationUI.Extensions;
 using CatalogueScanner.Core.Http;
 using CatalogueScanner.Core.Utility;
+using HtmlAgilityPack;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
 namespace CatalogueScanner.ColesOnline.Service
@@ -14,6 +17,7 @@ namespace CatalogueScanner.ColesOnline.Service
     public class ColesOnlineService
     {
         private const string ColesBaseUrl = "https://www.coles.com.au/";
+        private const string NextDataElementId = "__NEXT_DATA__";
 
         private readonly HttpClient httpClient;
         private readonly ColesOnlineOptions options;
@@ -51,9 +55,10 @@ namespace CatalogueScanner.ColesOnline.Service
 
         public static Uri ProductUrlTemplate => new($"{ColesBaseUrl}/product/[productId]");
 
-        public async Task<BrowseResponse> GetOnSpecialPageAsync(int page, CancellationToken cancellationToken = default)
+        public async Task<BrowseResponse> GetOnSpecialPageAsync(string buildId, int page, CancellationToken cancellationToken = default)
         {
             var response = await GetAsync(
+                buildId,
                 $"on-special.json?page={page}",
                 ColesOnlineSerializerContext.Default.BrowseResponse,
                 cancellationToken
@@ -74,18 +79,50 @@ namespace CatalogueScanner.ColesOnline.Service
             return response;
         }
 
-        public async Task<int> GetOnSpecialPageCountAsync(CancellationToken cancellationToken = default)
+        public async Task<int> GetOnSpecialPageCountAsync(string buildId, CancellationToken cancellationToken = default)
         {
-            var response = await GetOnSpecialPageAsync(1, cancellationToken).ConfigureAwait(false);
+            var response = await GetOnSpecialPageAsync(buildId, 1, cancellationToken).ConfigureAwait(false);
 
             var searchResults = response.PageProps!.SearchResults!;
 
             return (int)(searchResults.NoOfResults / searchResults.PageSize + 1);
         }
 
-        private async Task<TResponse?> GetAsync<TResponse>(string path, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken)
+        public async Task<string> GetBuildId(CancellationToken cancellationToken)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(httpClient.BaseAddress!, path));
+            using var response = await httpClient.GetAsync(new Uri("/", UriKind.Relative), cancellationToken).ConfigureAwait(false);
+
+            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
+
+            var responseText = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+            var htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(responseText);
+
+            var nextDataElement = htmlDocument.GetElementbyId(NextDataElementId);
+
+            if (nextDataElement is null)
+            {
+                throw new InvalidOperationException($"Unable to find \"{NextDataElementId}\" element");
+            }
+
+            var nextDataText = nextDataElement.InnerText;
+
+            var nextData = JsonSerializer.Deserialize(nextDataText, ColesOnlineSerializerContext.Default.NextData);
+
+            var buildId = nextData?.BuildId;
+
+            if (string.IsNullOrEmpty(buildId))
+            {
+                throw new InvalidOperationException($"Unable to get build ID from \"{NextDataElementId}\" JSON");
+            }
+
+            return buildId;
+        }
+
+        private async Task<TResponse?> GetAsync<TResponse>(string buildId, string path, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, httpClient.BaseAddress!.AppendPath($"/_next/data/{buildId}/en/").AppendPath(path));
             request.Headers.Add(HeaderNames.Cookie, cookieContainer.GetCookieHeader(request.RequestUri!));
 
             using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
