@@ -73,36 +73,43 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
                         null
                     ).ConfigureAwait(true);
 
-                    var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
-
-                    var itemPages = new List<IEnumerable<CatalogueItem>>();
-
-                    foreach (var category in categories)
+                    var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5)
                     {
-                        var pageCount = await context.CallActivityWithRetryAsync<int>(
-                            WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount,
-                            retryOptions,
-                            category.CategoryId
-                        ).ConfigureAwait(true);
+                        BackoffCoefficient = 1.1,
+                    };
 
-                        var downloadTasks = Enumerable.Range(0, pageCount)
-                            .Select(pageIndex =>
-                                context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
+                    var categoryPagesCounts = await Task.WhenAll(
+                        categories.Select(async (category) => (
+                            category.CategoryId,
+                            PageCount: await context.CallActivityWithRetryAsync<int>(
+                                WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount,
+                                retryOptions,
+                                category.CategoryId
+                            ).ConfigureAwait(true)
+                        ))
+                    ).ConfigureAwait(true);
+
+                    var inputs = categoryPagesCounts
+                        .Select(category =>
+                            Enumerable.Range(0, category.PageCount)
+                                      .Select(pageIndex => new DownloadWoolworthsOnlineSpecialsPageInput
+                                      {
+                                          CategoryId = category.CategoryId,
+                                          PageNumber = pageIndex + 1,
+                                      })
+                        )
+                        .SelectMany(category => category)
+                        .ToList();
+
+                    var itemPages = await Throttler.ExecuteInBatches(
+                        inputs,
+                        5,
+                        input => context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
                                     WoolworthsOnlineFunctionNames.DownloadWoolworthsOnlineSpecialsPage,
                                     retryOptions,
-                                    new DownloadWoolworthsOnlineSpecialsPageInput
-                                    {
-                                        CategoryId = category.CategoryId,
-                                        PageNumber = pageIndex + 1,
-                                    }
-                                )
-                            )
-                            .ToList();
-
-                        await Task.WhenAll(downloadTasks).ConfigureAwait(true);
-
-                        itemPages.AddRange(downloadTasks.Select(task => task.Result));
-                    }
+                                    input
+                                 )
+                    ).ConfigureAwait(true);
                     #endregion
 
                     #region Filter catalouge items
@@ -114,16 +121,16 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
                         .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
                         .ToList();
 
-                    await Task.WhenAll(itemTasks).ConfigureAwait(true);
+                    var filterResults = await Task.WhenAll(itemTasks).ConfigureAwait(true);
                     #endregion
 
                     #region Send digest email
                     context.SetCustomStatus("SendingDigestEmail");
                     log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
 
-                    var filteredItems = itemTasks
-                        .Where(task => task.Result != null)
-                        .Select(task => task.Result!)
+                    var filteredItems = filterResults
+                        .Where(item => item != null)
+                        .Select(item => item!)
                         .ToList();
 
                     log.LogDebug("{NumItems} items remain after filtering", filteredItems.Count);
