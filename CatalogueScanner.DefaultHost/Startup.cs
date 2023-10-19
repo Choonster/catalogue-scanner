@@ -31,7 +31,11 @@ namespace CatalogueScanner.DefaultHost
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
             // Replace the Console.Error stream to record error output from Playwright in Application Insights
-            var telemetryClient = new TelemetryClient(new TelemetryConfiguration(Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY")));
+            var telemetryClient = new TelemetryClient(new TelemetryConfiguration
+            {
+                ConnectionString = Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING")
+            });
+
             var errorStream = new ApplicationInsightsStream(10240, telemetryClient);
 
             Console.SetError(TextWriter.Synchronized(new StreamWriter(errorStream)
