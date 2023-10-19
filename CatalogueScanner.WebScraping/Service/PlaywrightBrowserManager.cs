@@ -13,7 +13,7 @@ namespace CatalogueScanner.WebScraping.Service
     /// </summary>
     public class PlaywrightBrowserManager : IAsyncDisposable
     {
-        private readonly AsyncLazy<IPlaywright> playwright = new(async () => await Playwright.CreateAsync());
+        private readonly AsyncLazy<IPlaywright> playwright = new(async (_) => await Playwright.CreateAsync());
         private readonly ConcurrentDictionary<string, AsyncLazy<IBrowser>> browsersByInstanceId = new();
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace CatalogueScanner.WebScraping.Service
 
             var browser = await browsersByInstanceId.GetOrAdd(
                 instanceId,
-                (instanceId) => new AsyncLazy<IBrowser>(async () => await (browserType ?? playwright.Chromium).LaunchAsync(browserTypeLaunchOptions).ConfigureAwait(false))
+                (instanceId) => new AsyncLazy<IBrowser>(async (_) => await (browserType ?? playwright.Chromium).LaunchAsync(browserTypeLaunchOptions).ConfigureAwait(false))
             )
                 .WithCancellation(cancellationToken)
                 .ConfigureAwait(false);
@@ -103,7 +103,7 @@ namespace CatalogueScanner.WebScraping.Service
 
             browsersByInstanceId.Clear();
 
-            var playwright = await this.playwright.ConfigureAwait(false);
+            var playwright = await this.playwright.WithCancellation(CancellationToken.None).ConfigureAwait(false);
             playwright.Dispose();
         }
     }
