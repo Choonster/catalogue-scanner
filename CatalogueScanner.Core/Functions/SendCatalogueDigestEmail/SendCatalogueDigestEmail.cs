@@ -21,25 +21,6 @@ namespace CatalogueScanner.Core.Functions
         private readonly EmailOptions options;
         private readonly IPluralStringLocalizer<SendCatalogueDigestEmail> S;
 
-        private string FromEmail
-        {
-            get
-            {
-                var hostName = Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME");
-
-                if (hostName is null)
-                {
-                    throw new InvalidOperationException(S["WEBSITE_HOSTNAME environment variable not set"]);
-                }
-
-                var hostUri = new UriBuilder(Uri.UriSchemeHttps + Uri.SchemeDelimiter + hostName).Uri;
-
-                return $"catalogue-scanner@{hostUri.Host}";
-            }
-        }
-
-        private static string FromName => "Catalogue Scanner";
-
         public SendCatalogueDigestEmail(IOptionsSnapshot<EmailOptions> optionsAccessor, IPluralStringLocalizer<SendCatalogueDigestEmail> pluralStringLocalizer)
         {
             #region null checks
@@ -66,9 +47,9 @@ namespace CatalogueScanner.Core.Functions
 
             var summary = S.Plural(filteredCatalogue.Items.Count, "Catalogue Scanner found 1 matching item at {1}", "Catalogue Scanner found {0} matching items at {1}", filteredCatalogue.Store);
 
-            var message = new SendGridMessage()
+            var message = new SendGridMessage
             {
-                From = new EmailAddress(FromEmail, FromName),
+                From = new EmailAddress(options.FromEmail, options.FromName),
                 Subject = summary,
             };
 
