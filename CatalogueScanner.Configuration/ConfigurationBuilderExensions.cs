@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -7,7 +6,7 @@ namespace CatalogueScanner.Configuration
 {
     public static class ConfigurationBuilderExensions
     {
-        public static IConfigurationBuilder AddCatalogueScannerAzureAppConfiguration(this IConfigurationBuilder configurationBuilder, string connectionString, out Func<IConfigurationRefresher> refresherSupplier)
+        public static IConfigurationBuilder AddCatalogueScannerAzureAppConfiguration(this IConfigurationBuilder configurationBuilder, string connectionString)
         {
             #region null checks
             if (configurationBuilder is null)
@@ -21,8 +20,6 @@ namespace CatalogueScanner.Configuration
             }
             #endregion
 
-            IConfigurationRefresher? refresher = null;
-
             configurationBuilder.AddAzureAppConfiguration(options =>
             {
                 options.Connect(connectionString)
@@ -32,18 +29,7 @@ namespace CatalogueScanner.Configuration
                        .ConfigureRefresh(refreshOptions =>
                             refreshOptions.Register(ConfigurationConstants.SentinelKey, refreshAll: true)
                         );
-
-                refresher = options.GetRefresher();
             });
-
-            refresherSupplier = () =>
-            {
-                if (refresher is null)
-                {
-                    throw new InvalidOperationException($"{nameof(IConfigurationRefresher)} hasn't been created yet");
-                }
-                return refresher;
-            };
 
             return configurationBuilder;
         }
@@ -52,25 +38,6 @@ namespace CatalogueScanner.Configuration
         {
             services.AddOptions<Options.AzureAppConfigurationOptions>()
                 .Configure(options => options.ConnectionString = connectionString);
-
-            return services;
-        }
-
-        public static IServiceCollection SetConfigurationRefresher(this IServiceCollection services, Func<IConfigurationRefresher> refresherSupplier)
-        {
-            #region null checks
-            if (services is null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            if (refresherSupplier is null)
-            {
-                throw new ArgumentNullException(nameof(refresherSupplier));
-            }
-            #endregion
-
-            services.AddSingleton(refresherSupplier.Invoke());
 
             return services;
         }
