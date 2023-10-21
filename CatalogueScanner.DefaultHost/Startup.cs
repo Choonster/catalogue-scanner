@@ -20,6 +20,26 @@ namespace CatalogueScanner.DefaultHost
 {
     public class Startup : FunctionsStartup
     {
+        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+        {
+            #region null checks
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            #endregion
+
+            var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("AzureAppConfigurationConnectionString app setting is required");
+            }
+
+            builder.ConfigurationBuilder
+                .AddCatalogueScannerAzureAppConfiguration(connectionString);
+        }
+
         public override void Configure(IFunctionsHostBuilder builder)
         {
             #region null checks
@@ -52,24 +72,9 @@ namespace CatalogueScanner.DefaultHost
             // Install the browser required by Playwright 
             Microsoft.Playwright.Program.Main(new[] { "install", "chromium" });
 
-            var connectionString = Environment.GetEnvironmentVariable("AzureAppConfigurationConnectionString");
+            ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(builder, builder.GetContext().Configuration);
 
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new InvalidOperationException("AzureAppConfigurationConnectionString app setting is required");
-            }
-
-            var configuration = new ConfigurationBuilder()
-                .AddCatalogueScannerAzureAppConfiguration(connectionString, out var refresherSupplier)
-                .Build();
-
-            var localConfiguration = new ConfigurationBuilder()
-                .AddEnvironmentVariables("CatalogueScanner:")
-                .Build();
-
-            ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(builder, configuration, localConfiguration);
-
-            catalogueScannerHostBuilder.Services.SetConfigurationRefresher(refresherSupplier);
+            catalogueScannerHostBuilder.Services.AddAzureAppConfiguration();
 
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()

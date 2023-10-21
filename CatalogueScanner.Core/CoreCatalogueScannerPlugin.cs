@@ -47,13 +47,18 @@ namespace CatalogueScanner.Core
 
         private static void AddFunctionsPathOptions(ICatalogueScannerHostBuilder builder)
         {
-            builder.Services.Configure<FunctionsPathOptions>(o =>
-            {
-                // https://github.com/Azure/azure-functions-dotnet-extensions/issues/17#issuecomment-499086297
-                var executionContextOptions = builder.Services.BuildServiceProvider().GetService<IOptionsSnapshot<ExecutionContextOptions>>()!.Value;
-                var appDirectory = executionContextOptions.AppDirectory;
-                o.RootDirectory = appDirectory;
-            });
+            builder.Services.AddOptions();
+
+            // Manually call AddSingleton for ConfigureNamedOptions to access the IServiceProvider
+            builder.Services.AddSingleton<IConfigureOptions<FunctionsPathOptions>, ConfigureNamedOptions<FunctionsPathOptions>>(
+                serviceProvider => new ConfigureNamedOptions<FunctionsPathOptions>(Microsoft.Extensions.Options.Options.DefaultName, options =>
+                {
+                    // https://github.com/Azure/azure-functions-dotnet-extensions/issues/17#issuecomment-499086297
+                    var executionContextOptions = serviceProvider.GetRequiredService<IOptionsSnapshot<ExecutionContextOptions>>().Value;
+                    var appDirectory = executionContextOptions.AppDirectory;
+                    options.RootDirectory = appDirectory;
+                })
+            );
         }
 
         private void AddConfigurationOptions(ICatalogueScannerHostBuilder builder)

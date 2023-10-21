@@ -7,7 +7,7 @@ namespace CatalogueScanner.Core.Host
 {
     public class CatalogueScannerHostBuilder : ICatalogueScannerHostBuilder
     {
-        public CatalogueScannerHostBuilder(IFunctionsHostBuilder functionsHostBuilder, IConfiguration configuration, IConfiguration localConfiguration)
+        public CatalogueScannerHostBuilder(IFunctionsHostBuilder functionsHostBuilder, IConfiguration configuration)
         {
             #region null checks
             if (configuration is null)
@@ -17,7 +17,6 @@ namespace CatalogueScanner.Core.Host
             #endregion
 
             FunctionsHostBuilder = functionsHostBuilder ?? throw new ArgumentNullException(nameof(functionsHostBuilder));
-            LocalConfiguration = localConfiguration ?? throw new ArgumentNullException(nameof(localConfiguration));
             Services = functionsHostBuilder.Services;
 
             Configuration = configuration.GetSection("CatalogueScanner");
@@ -28,7 +27,5 @@ namespace CatalogueScanner.Core.Host
         public IConfiguration Configuration { get; }
 
         public IServiceCollection Services { get; }
-
-        public IConfiguration LocalConfiguration { get; }
     }
 }

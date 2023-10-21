@@ -18,7 +18,6 @@ namespace CatalogueScanner.ConfigurationUI
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             const string connectionStringPropertyName = "AzureAppConfigurationConnectionString";
-            const string refresherSupplierPropertyName = "ConfigurationRefresher";
 
             var hostBuilder = Host.CreateDefaultBuilder(args);
 
@@ -26,7 +25,6 @@ namespace CatalogueScanner.ConfigurationUI
                   .ConfigureServices(services =>
                   {
                       services.SetAzureAppConfigurationConnectionString((string)hostBuilder.Properties[connectionStringPropertyName]);
-                      services.SetConfigurationRefresher((Func<IConfigurationRefresher>)hostBuilder.Properties[refresherSupplierPropertyName]);
                   })
                   .ConfigureAppConfiguration((hostingContext, config) =>
                   {
@@ -41,9 +39,7 @@ namespace CatalogueScanner.ConfigurationUI
 
                       hostBuilder.Properties[connectionStringPropertyName] = connectionString;
 
-                      config.AddCatalogueScannerAzureAppConfiguration(connectionString, out var refresherSupplier);
-
-                      hostBuilder.Properties[refresherSupplierPropertyName] = refresherSupplier;
+                      config.AddCatalogueScannerAzureAppConfiguration(connectionString);
 
                       if (hostingContext.HostingEnvironment.IsProduction())
                       {

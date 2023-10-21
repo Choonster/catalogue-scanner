@@ -66,9 +66,11 @@ namespace CatalogueScanner.ConfigurationUI
             services.AddScoped<TimeZoneService>();
             services.AddScoped<HttpExceptionHandlingService>();
 
+            services.AddAzureAppConfiguration();
+
             IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
 
-            ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(functionsHostBuilder, Configuration, Configuration);
+            ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(functionsHostBuilder, Configuration);
 
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
@@ -114,8 +116,6 @@ namespace CatalogueScanner.ConfigurationUI
 
             logger.LogWarning("AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled: {value}", AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled);
         }
-
-
 
         private class DummyFunctionsHostBuilder : IFunctionsHostBuilder
         {
