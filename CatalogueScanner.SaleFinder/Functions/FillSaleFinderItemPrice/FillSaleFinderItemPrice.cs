@@ -88,7 +88,7 @@ namespace CatalogueScanner.SaleFinder.Functions
                 price = decimal.Parse(priceDisplaySpan.InnerText, NumberStyles.Currency, input.CurrencyCulture);
             }
 
-            // The .sf-saleoptiondesc span is only present for multi-buy prices (e.g. 2 for $10) or other promotional text, e.g. "Any of these"
+            // The .sf-saleoptiondesc span is only present for multi-buy prices (e.g. 2 for $10) or other promotional text (e.g. "Any of these")
             var saleOptionDescSpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-saleoptiondesc");
 
             if (saleOptionDescSpan is not null)
