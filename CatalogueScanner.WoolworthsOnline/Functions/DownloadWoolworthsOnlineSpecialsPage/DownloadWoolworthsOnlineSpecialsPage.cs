@@ -51,16 +51,15 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
             var items = response.Bundles
                .SelectMany(bundle =>
                     bundle.Products.Select(product =>
-                        new CatalogueItem
-                        {
-                            Id = product.Stockcode.ToString(CultureInfo.InvariantCulture),
-                            Name = product.DisplayName,
-                            Sku = product.Stockcode.ToString(CultureInfo.InvariantCulture),
-                            Uri = new Uri(productUrlTemplate.AbsoluteUri.Replace("[stockCode]", product.Stockcode.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase)),
-                            Price = product.Price,
-                            MultiBuyQuantity = product.CentreTag?.MultibuyData?.Quantity,
-                            MultiBuyTotalPrice = product.CentreTag?.MultibuyData?.Price,
-                        }
+                        new CatalogueItem(
+                            product.Stockcode.ToString(CultureInfo.InvariantCulture),
+                            product.DisplayName,
+                            product.Stockcode.ToString(CultureInfo.InvariantCulture),
+                            new Uri(productUrlTemplate.AbsoluteUri.Replace("[stockCode]", product.Stockcode.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase)),
+                            product.Price,
+                            product.CentreTag?.MultibuyData?.Quantity,
+                            product.CentreTag?.MultibuyData?.Price
+                        )
                     )
                 )
                .ToList();

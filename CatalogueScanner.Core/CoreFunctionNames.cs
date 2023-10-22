@@ -3,6 +3,16 @@
     public static class CoreFunctionNames
     {
         /// <summary>
+        /// The name of the <see cref="Functions.CheckAndUpdateScanState"/> sub-orchestrator function.
+        /// </summary>
+        public const string CheckAndUpdateScanState = "CheckAndUpdateScanState";
+
+        /// <summary>
+        /// The name of the <see cref="Functions.FilterCatalogueAndSendDigestEmail"/> sub-orchestrator function.
+        /// </summary>
+        public const string FilterCatalogueAndSendDigestEmail = "FilterCatalogueAndSendDigestEmail";
+
+        /// <summary>
         /// The name of the <see cref="Functions.FilterCatalogueItem"/> activity function.
         /// </summary>
         public const string FilterCatalogueItem = "FilterCatalogueItem";

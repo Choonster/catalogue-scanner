@@ -42,15 +42,17 @@ namespace CatalogueScanner.ColesOnline.Functions
                 !.SearchResults
                 !.Results
                 .OfType<Product>()
-                .Select(product => new CatalogueItem
-                {
-                    Id = product.Id.ToString(CultureInfo.InvariantCulture),
-                    Name = product.Name,
-                    Uri = new Uri(productUrlTemplate.AbsoluteUri.Replace("[productId]", product.Id.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase)),
-                    Price = product.Pricing?.Now,
-                    MultiBuyQuantity = product.Pricing?.MultiBuyPromotion?.MinQuantity,
-                    MultiBuyTotalPrice = product.Pricing?.MultiBuyPromotion?.Reward,
-                })
+                .Select(product =>
+                    new CatalogueItem(
+                        product.Id.ToString(CultureInfo.InvariantCulture),
+                        product.Name,
+                        null,
+                        new Uri(productUrlTemplate.AbsoluteUri.Replace("[productId]", product.Id.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase)),
+                        product.Pricing?.Now,
+                        product.Pricing?.MultiBuyPromotion?.MinQuantity,
+                        product.Pricing?.MultiBuyPromotion?.Reward
+                    )
+                )
                .ToList();
 
             return items;
