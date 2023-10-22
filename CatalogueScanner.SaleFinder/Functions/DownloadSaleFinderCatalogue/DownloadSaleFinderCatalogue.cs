@@ -58,13 +58,17 @@ namespace CatalogueScanner.SaleFinder.Functions
             var items = catalogue.Pages
                 .SelectMany(page => page.Items)
                 .Where(item => item.ItemId.HasValue)
-                .Select(item => new CatalogueItem
-                {
-                    Id = item.ItemId!.Value.ToString(CultureInfo.InvariantCulture),
-                    Name = item.ItemName,
-                    Sku = item.Sku,
-                    Uri = item.ItemUrl != null ? new Uri(downloadInformation.BaseUri, item.ItemUrl) : null,
-                })
+                .Select(item =>
+                    new CatalogueItem(
+                        item.ItemId!.Value.ToString(CultureInfo.InvariantCulture),
+                        item.ItemName,
+                        item.Sku,
+                        item.ItemUrl != null ? new Uri(downloadInformation.BaseUri, item.ItemUrl) : null,
+                        null,
+                        null,
+                        null
+                    )
+                )
                 .ToList();
 
             return new Catalogue(downloadInformation.Store, catalogue.StartDate, catalogue.EndDate, downloadInformation.CurrencyCulture, items);

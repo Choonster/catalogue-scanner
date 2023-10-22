@@ -1,5 +1,6 @@
 ﻿using CatalogueScanner.Core;
 using CatalogueScanner.Core.Dto.EntityKey;
+using CatalogueScanner.Core.Dto.FunctionInput;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.Core.Utility;
@@ -45,111 +46,83 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
 
             try
             {
-                log.LogInformation("Entering lock for {ScanStateId}", scanStateId);
+                #region Check and update the catalogue's scan state
+                context.SetCustomStatus("CheckingState");
 
-                using (await context.LockAsync(scanStateId).ConfigureAwait(true))
+                var shouldContinue = await context.CallSubOrchestratorAsync<bool>(CoreFunctionNames.CheckAndUpdateScanState, scanStateId).ConfigureAwait(true);
+
+                if (!shouldContinue)
                 {
-                    #region Check and update the catalogue's scan state
-                    context.SetCustomStatus("CheckingState");
-                    log.LogDebug($"Checking state - {scanStateId.EntityKey}");
+                    context.SetCustomStatus("Skipped");
+                    return;
+                }
+                #endregion
 
-                    var state = await scanState.GetState().ConfigureAwait(true);
-                    if (state != ScanState.NotStarted)
-                    {
-                        log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
-                        context.SetCustomStatus("Skipped");
-                        return;
-                    }
+                #region Download catalogue
+                context.SetCustomStatus("Downloading");
+                log.LogDebug($"Downloading - {scanStateId.EntityKey}");
 
-                    await scanState.UpdateState(ScanState.InProgress).ConfigureAwait(true);
-                    #endregion
+                var categories = await context.CallActivityAsync<IEnumerable<WoolworthsOnlineCategory>>(
+                    WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories,
+                    null
+                ).ConfigureAwait(true);
 
-                    #region Download catalogue
-                    context.SetCustomStatus("Downloading");
-                    log.LogDebug($"Downloading - {scanStateId.EntityKey}");
+                var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
 
-                    var categories = await context.CallActivityAsync<IEnumerable<WoolworthsOnlineCategory>>(
-                        WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories,
-                        null
+                var itemPages = new List<IEnumerable<CatalogueItem>>();
+
+                foreach (var category in categories)
+                {
+                    var pageCount = await context.CallActivityWithRetryAsync<int>(
+                        WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount,
+                        retryOptions,
+                        category.CategoryId
                     ).ConfigureAwait(true);
 
-                    var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
-
-                    var itemPages = new List<IEnumerable<CatalogueItem>>();
-
-                    foreach (var category in categories)
-                    {
-                        var pageCount = await context.CallActivityWithRetryAsync<int>(
-                            WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount,
-                            retryOptions,
-                            category.CategoryId
-                        ).ConfigureAwait(true);
-
-                        var downloadTasks = Enumerable.Range(0, pageCount)
-                            .Select(pageIndex =>
-                                context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
-                                    WoolworthsOnlineFunctionNames.DownloadWoolworthsOnlineSpecialsPage,
-                                    retryOptions,
-                                    new DownloadWoolworthsOnlineSpecialsPageInput
-                                    {
-                                        CategoryId = category.CategoryId,
-                                        PageNumber = pageIndex + 1,
-                                    }
-                                )
+                    var downloadTasks = Enumerable.Range(0, pageCount)
+                        .Select(pageIndex =>
+                            context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
+                                WoolworthsOnlineFunctionNames.DownloadWoolworthsOnlineSpecialsPage,
+                                retryOptions,
+                                new DownloadWoolworthsOnlineSpecialsPageInput
+                                {
+                                    CategoryId = category.CategoryId,
+                                    PageNumber = pageIndex + 1,
+                                }
                             )
-                            .ToList();
-
-                        await Task.WhenAll(downloadTasks).ConfigureAwait(true);
-
-                        itemPages.AddRange(downloadTasks.Select(task => task.Result));
-                    }
-                    #endregion
-
-                    #region Filter catalouge items
-                    context.SetCustomStatus("Filtering");
-                    log.LogDebug($"Filtering - {scanStateId.EntityKey}");
-
-                    var itemTasks = itemPages
-                        .SelectMany(page => page)
-                        .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
+                        )
                         .ToList();
 
-                    await Task.WhenAll(itemTasks).ConfigureAwait(true);
-                    #endregion
+                    var pages = await Task.WhenAll(downloadTasks).ConfigureAwait(true);
 
-                    #region Send digest email
-                    context.SetCustomStatus("SendingDigestEmail");
-                    log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
-
-                    var filteredItems = itemTasks
-                        .Where(task => task.Result != null)
-                        .Select(task => task.Result!)
-                        .ToList();
-
-                    log.LogDebug("{NumItems} items remain after filtering", filteredItems.Count);
-
-                    if (filteredItems.Any())
-                    {
-                        var filteredCatalogue = new Catalogue("Woolworths Online", specialsDateRange.StartDate, specialsDateRange.EndDate, CurrencyCultures.AustralianDollar, filteredItems);
-
-                        await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
-                    }
-                    else
-                    {
-                        log.LogInformation($"Catalogue {scanStateId.EntityKey} had no matching items, skipping digest email.");
-                    }
-                    #endregion
-
-                    #region Update catalogue's scan state
-                    context.SetCustomStatus("UpdatingState");
-                    log.LogDebug($"Updating state - {scanStateId.EntityKey}");
-
-                    await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
-                    #endregion
-
-                    log.LogDebug($"Completed - {scanStateId.EntityKey}");
-                    context.SetCustomStatus("Completed");
+                    itemPages.AddRange(pages);
                 }
+
+                var items = itemPages
+                    .SelectMany(page => page)
+                    .ToList();
+
+                var catalogue = new Catalogue("Woolworths Online", specialsDateRange.StartDate, specialsDateRange.EndDate, CurrencyCultures.AustralianDollar, items);
+                #endregion
+
+                #region Filter catalouge items and send digest email
+                context.SetCustomStatus("FilteringAndSendingDigestEmail");
+
+                await context.CallSubOrchestratorAsync(
+                    CoreFunctionNames.FilterCatalogueAndSendDigestEmail,
+                    new FilterCatalogueAndSendDigestEmailInput(catalogue, scanStateId)
+                ).ConfigureAwait(true);
+                #endregion
+
+                #region Update catalogue's scan state
+                context.SetCustomStatus("UpdatingState");
+                log.LogDebug($"Updating state - {scanStateId.EntityKey}");
+
+                await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
+                #endregion
+
+                log.LogDebug($"Completed - {scanStateId.EntityKey}");
+                context.SetCustomStatus("Completed");
             }
             catch
             {

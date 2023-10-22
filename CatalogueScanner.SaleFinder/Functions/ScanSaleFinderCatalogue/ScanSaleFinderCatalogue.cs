@@ -1,5 +1,6 @@
 using CatalogueScanner.Core;
 using CatalogueScanner.Core.Dto.EntityKey;
+using CatalogueScanner.Core.Dto.FunctionInput;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.SaleFinder.Dto.FunctionInput;
@@ -45,86 +46,59 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             try
             {
-                using (await context.LockAsync(scanStateId).ConfigureAwait(true))
+                #region Check and update the catalogue's scan state
+                context.SetCustomStatus("CheckingState");
+
+                var shouldContinue = await context.CallSubOrchestratorAsync<bool>(CoreFunctionNames.CheckAndUpdateScanState, scanStateId).ConfigureAwait(true);
+
+                if (!shouldContinue)
                 {
-                    #region Check and update the catalogue's scan state
-                    context.SetCustomStatus("CheckingState");
-                    log.LogDebug($"Checking state - {scanStateId.EntityKey}");
-
-                    var state = await scanState.GetState().ConfigureAwait(true);
-                    if (state != ScanState.NotStarted)
-                    {
-                        log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
-                        context.SetCustomStatus("Skipped");
-                        return;
-                    }
-
-                    await scanState.UpdateState(ScanState.InProgress).ConfigureAwait(true);
-                    #endregion
-
-                    #region Download catalogue
-                    context.SetCustomStatus("Downloading");
-                    log.LogDebug($"Downloading - {scanStateId.EntityKey}");
-
-                    var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderFunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
-                    #endregion
-
-                    #region Fill prices
-                    context.SetCustomStatus("FillingPrices");
-                    log.LogDebug($"Filling Prices - {scanStateId.EntityKey}");
-
-                    var itemsWithPrices = await Task.WhenAll(
-                        downloadedCatalogue.Items.Select(item =>
-                            context.CallActivityAsync<CatalogueItem>(
-                                SaleFinderFunctionNames.FillSaleFinderItemPrice,
-                                new FillSaleFinderItemPriceInput(catalogueDownloadInfo.CurrencyCulture, item)
-                            )
-                        )
-                    ).ConfigureAwait(true);
-                    #endregion
-
-                    #region Filter catalouge items
-                    context.SetCustomStatus("Filtering");
-                    log.LogDebug($"Filtering - {scanStateId.EntityKey}");
-
-                    var itemTasks = itemsWithPrices
-                        .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
-                        .ToList();
-
-                    await Task.WhenAll(itemTasks).ConfigureAwait(true);
-                    #endregion
-
-                    #region Send digest email
-                    context.SetCustomStatus("SendingDigestEmail");
-                    log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
-
-                    var filteredItems = itemTasks
-                        .Where(task => task.Result != null)
-                        .Select(task => task.Result!)
-                        .ToList();
-
-                    if (filteredItems.Any())
-                    {
-                        var filteredCatalogue = new Catalogue(downloadedCatalogue.Store, downloadedCatalogue.StartDate, downloadedCatalogue.EndDate, downloadedCatalogue.CurrencyCulture, filteredItems);
-
-                        await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
-                    }
-                    else
-                    {
-                        log.LogInformation($"Catalogue {scanStateId.EntityKey} had no matching items, skipping digest email.");
-                    }
-                    #endregion
-
-                    #region Update catalogue's scan state
-                    context.SetCustomStatus("UpdatingState");
-                    log.LogDebug($"Updating state - {scanStateId.EntityKey}");
-
-                    await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
-                    #endregion
-
-                    log.LogDebug($"Completed - {scanStateId.EntityKey}");
-                    context.SetCustomStatus("Completed");
+                    context.SetCustomStatus("Skipped");
+                    return;
                 }
+                #endregion
+
+                #region Download catalogue
+                context.SetCustomStatus("Downloading");
+                log.LogDebug($"Downloading - {scanStateId.EntityKey}");
+
+                var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderFunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
+                #endregion
+
+                #region Fill prices
+                context.SetCustomStatus("FillingPrices");
+                log.LogDebug($"Filling Prices - {scanStateId.EntityKey}");
+
+                var itemsWithPrices = await Task.WhenAll(
+                    downloadedCatalogue.Items.Select(item =>
+                        context.CallActivityAsync<CatalogueItem>(
+                            SaleFinderFunctionNames.FillSaleFinderItemPrice,
+                            new FillSaleFinderItemPriceInput(catalogueDownloadInfo.CurrencyCulture, item)
+                        )
+                    )
+                ).ConfigureAwait(true);
+
+                var catalogueWithPrices = downloadedCatalogue with { Items = itemsWithPrices };
+                #endregion
+
+                #region Filter catalouge items and send digest email
+                context.SetCustomStatus("FilteringAndSendingDigestEmail");
+
+                await context.CallSubOrchestratorAsync(
+                    CoreFunctionNames.FilterCatalogueAndSendDigestEmail,
+                    new FilterCatalogueAndSendDigestEmailInput(catalogueWithPrices, scanStateId)
+                ).ConfigureAwait(true);
+                #endregion
+
+                #region Update catalogue's scan state
+                context.SetCustomStatus("UpdatingState");
+                log.LogDebug($"Updating state - {scanStateId.EntityKey}");
+
+                await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
+                #endregion
+
+                log.LogDebug($"Completed - {scanStateId.EntityKey}");
+                context.SetCustomStatus("Completed");
             }
             catch
             {

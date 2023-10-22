@@ -91,30 +91,30 @@ namespace CatalogueScanner.SaleFinder.Functions
             // The .sf-saleoptiondesc span is only present for multi-buy prices (e.g. 2 for $10) or other promotional text (e.g. "Any of these")
             var saleOptionDescSpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-saleoptiondesc");
 
-            if (saleOptionDescSpan is not null)
+            if (saleOptionDescSpan is null)
             {
-                var saleOptionDescText = saleOptionDescSpan.InnerText;
+                return item with { Price = price };
+            }
 
-                if (saleOptionDescText == AnyOfTheseText || saleOptionDescText == NowText)
+            var saleOptionDescText = saleOptionDescSpan.InnerText;
+
+            if (saleOptionDescText == AnyOfTheseText || saleOptionDescText == NowText)
+            {
+                return item with { Price = price };
+            }
+            else if (MultiBuyNForRegex.Match(saleOptionDescText) is { Success: true } match)
+            {
+                return item with
                 {
-                    item.Price = price;
-                }
-                else if (MultiBuyNForRegex.Match(saleOptionDescText) is { Success: true } match)
-                {
-                    item.MultiBuyQuantity = ParseLong(match.Groups[1].Value);
-                    item.MultiBuyTotalPrice = price;
-                }
-                else
-                {
-                    log.LogError(Error($"Unknown format for span.sf-saleoptiondesc: \"{saleOptionDescText}\"").Message);
-                }
+                    MultiBuyQuantity = ParseLong(match.Groups[1].Value),
+                    MultiBuyTotalPrice = price,
+                };
             }
             else
             {
-                item.Price = price;
+                log.LogError(Error($"Unknown format for span.sf-saleoptiondesc: \"{saleOptionDescText}\"").Message);
+                return item;
             }
-
-            return item;
 
             InvalidOperationException Error(string message) => new($"Item ID {item!.Id}: {message}");
         }

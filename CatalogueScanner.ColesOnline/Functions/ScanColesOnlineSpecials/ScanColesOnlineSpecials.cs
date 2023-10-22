@@ -1,6 +1,7 @@
 ﻿using CatalogueScanner.ColesOnline.Dto.FunctionInput;
 using CatalogueScanner.Core;
 using CatalogueScanner.Core.Dto.EntityKey;
+using CatalogueScanner.Core.Dto.FunctionInput;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.Core.Utility;
@@ -40,97 +41,69 @@ namespace CatalogueScanner.ColesOnline.Functions
 
             try
             {
-                log.LogInformation("Entering lock for {ScanStateId}", scanStateId);
+                #region Check and update the catalogue's scan state
+                context.SetCustomStatus("CheckingState");
 
-                using (await context.LockAsync(scanStateId).ConfigureAwait(true))
+                var shouldContinue = await context.CallSubOrchestratorAsync<bool>(CoreFunctionNames.CheckAndUpdateScanState, scanStateId).ConfigureAwait(true);
+
+                if (!shouldContinue)
                 {
-                    #region Check and update the catalogue's scan state
-                    context.SetCustomStatus("CheckingState");
-                    log.LogDebug($"Checking state - {scanStateId.EntityKey}");
-
-                    var state = await scanState.GetState().ConfigureAwait(true);
-                    if (state != ScanState.NotStarted)
-                    {
-                        log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
-                        context.SetCustomStatus("Skipped");
-                        return;
-                    }
-
-                    await scanState.UpdateState(ScanState.InProgress).ConfigureAwait(true);
-                    #endregion
-
-                    #region Download catalogue
-                    context.SetCustomStatus("Downloading");
-                    log.LogDebug($"Downloading - {scanStateId.EntityKey}");
-
-                    var buildId = await context.CallActivityAsync<string>(ColesOnlineFunctionNames.GetColesOnlineBuildId, null).ConfigureAwait(true);
-
-                    var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
-
-                    var pageCount = await context.CallActivityWithRetryAsync<int>(
-                           ColesOnlineFunctionNames.GetColesOnlineSpecialsPageCount,
-                           retryOptions,
-                           new GetColesOnlineSpecialsPageCountInput(buildId)
-                    ).ConfigureAwait(true);
-
-                    var downloadTasks = Enumerable.Range(0, pageCount)
-                        .Select(pageIndex =>
-                            context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
-                                ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage,
-                                retryOptions,
-                                new DownloadColesOnlineSpecialsPageInput(buildId, pageIndex + 1)
-                            )
-                        )
-                        .ToList();
-
-                    var itemPages = await Task.WhenAll(downloadTasks).ConfigureAwait(true);
-                    #endregion
-
-                    #region Filter catalouge items
-                    context.SetCustomStatus("Filtering");
-                    log.LogDebug($"Filtering - {scanStateId.EntityKey}");
-
-                    var itemTasks = itemPages
-                        .SelectMany(page => page)
-                        .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
-                        .ToList();
-
-                    var items = await Task.WhenAll(itemTasks).ConfigureAwait(true);
-                    #endregion
-
-                    #region Send digest email
-                    context.SetCustomStatus("SendingDigestEmail");
-                    log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
-
-                    var filteredItems = items
-                        .Where(item => item != null)
-                        .Cast<CatalogueItem>()
-                        .ToList();
-
-                    log.LogDebug("{NumItems} items remain after filtering", filteredItems.Count);
-
-                    if (filteredItems.Any())
-                    {
-                        var filteredCatalogue = new Catalogue(Store, specialsDateRange.StartDate, specialsDateRange.EndDate, CurrencyCultures.AustralianDollar, filteredItems);
-
-                        await context.CallActivityAsync(CoreFunctionNames.SendCatalogueDigestEmail, filteredCatalogue).ConfigureAwait(true);
-                    }
-                    else
-                    {
-                        log.LogInformation($"Catalogue {scanStateId.EntityKey} had no matching items, skipping digest email.");
-                    }
-                    #endregion
-
-                    #region Update catalogue's scan state
-                    context.SetCustomStatus("UpdatingState");
-                    log.LogDebug($"Updating state - {scanStateId.EntityKey}");
-
-                    await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
-                    #endregion
-
-                    log.LogDebug($"Completed - {scanStateId.EntityKey}");
-                    context.SetCustomStatus("Completed");
+                    context.SetCustomStatus("Skipped");
+                    return;
                 }
+                #endregion
+
+                #region Download catalogue
+                context.SetCustomStatus("Downloading");
+                log.LogDebug($"Downloading - {scanStateId.EntityKey}");
+
+                var buildId = await context.CallActivityAsync<string>(ColesOnlineFunctionNames.GetColesOnlineBuildId, null).ConfigureAwait(true);
+
+                var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
+
+                var pageCount = await context.CallActivityWithRetryAsync<int>(
+                       ColesOnlineFunctionNames.GetColesOnlineSpecialsPageCount,
+                       retryOptions,
+                       new GetColesOnlineSpecialsPageCountInput(buildId)
+                ).ConfigureAwait(true);
+
+                var downloadTasks = Enumerable.Range(0, pageCount)
+                    .Select(pageIndex =>
+                        context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
+                            ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage,
+                            retryOptions,
+                            new DownloadColesOnlineSpecialsPageInput(buildId, pageIndex + 1)
+                        )
+                    )
+                    .ToList();
+
+                var itemPages = await Task.WhenAll(downloadTasks).ConfigureAwait(true);
+
+                var items = itemPages
+                    .SelectMany(page => page)
+                    .ToList();
+
+                var catalogue = new Catalogue(Store, specialsDateRange.StartDate, specialsDateRange.EndDate, CurrencyCultures.AustralianDollar, items);
+                #endregion
+
+                #region Filter catalouge items and send digest email
+                context.SetCustomStatus("FilteringAndSendingDigestEmail");
+
+                await context.CallSubOrchestratorAsync(
+                    CoreFunctionNames.FilterCatalogueAndSendDigestEmail,
+                    new FilterCatalogueAndSendDigestEmailInput(catalogue, scanStateId)
+                ).ConfigureAwait(true);
+                #endregion
+
+                #region Update catalogue's scan state
+                context.SetCustomStatus("UpdatingState");
+                log.LogDebug($"Updating state - {scanStateId.EntityKey}");
+
+                await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
+                #endregion
+
+                log.LogDebug($"Completed - {scanStateId.EntityKey}");
+                context.SetCustomStatus("Completed");
             }
             catch
             {

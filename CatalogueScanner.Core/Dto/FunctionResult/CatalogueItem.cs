@@ -5,20 +5,5 @@ using System;
 namespace CatalogueScanner.Core.Dto.FunctionResult
 {
     [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
-    public class CatalogueItem
-    {
-        public string? Id { get; set; }
-
-        public string? Sku { get; set; }
-
-        public Uri? Uri { get; set; }
-
-        public string? Name { get; set; }
-
-        public decimal? Price { get; set; }
-
-        public long? MultiBuyQuantity { get; set; }
-
-        public decimal? MultiBuyTotalPrice { get; set; }
-    }
+    public record CatalogueItem(string? Id, string? Name, string? Sku, Uri? Uri, decimal? Price, long? MultiBuyQuantity, decimal? MultiBuyTotalPrice);
 }
