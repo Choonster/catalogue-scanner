@@ -6,6 +6,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,8 +19,12 @@ namespace CatalogueScanner.SaleFinder.Functions
     public class FillSaleFinderItemPrice
     {
         private static readonly Regex MultiBuyNForRegex = new(@"(?:Any\s*)?(\d+)\s+for", RegexOptions.IgnoreCase);
-        private const string AnyOfTheseText = "Any of these";
-        private const string NowText = "Now";
+
+        private static readonly ISet<string> SingleItemSaleOptionDescTexts = ImmutableHashSet.Create(
+            "Any of these",
+            "Now",
+            "From"
+        );
 
         private readonly SaleFinderService saleFinderService;
 
@@ -98,7 +104,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             var saleOptionDescText = saleOptionDescSpan.InnerText;
 
-            if (saleOptionDescText == AnyOfTheseText || saleOptionDescText == NowText)
+            if (SingleItemSaleOptionDescTexts.Contains(saleOptionDescText))
             {
                 return item with { Price = price };
             }
