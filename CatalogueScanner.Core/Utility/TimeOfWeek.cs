@@ -1,26 +1,14 @@
 ﻿using CatalogueScanner.Core.Extensions;
 using System;
-using System.Collections.Generic;
 
 namespace CatalogueScanner.Core.Utility
 {
     /// <summary>
     /// Represents a time of day on a specific day of the week, with time zone information.
     /// </summary>
-    public readonly struct TimeOfWeek : IEquatable<TimeOfWeek>
+    public readonly record struct TimeOfWeek(TimeSpan TimeOfDay, DayOfWeek DayOfWeek, TimeZoneInfo TimeZone)
     {
         private const int DaysPerWeek = 7;
-
-        public TimeSpan TimeOfDay { get; }
-        public DayOfWeek DayOfWeek { get; }
-        public TimeZoneInfo TimeZone { get; }
-
-        public TimeOfWeek(TimeSpan timeOfDay, DayOfWeek dayOfWeek, TimeZoneInfo timeZone)
-        {
-            TimeOfDay = timeOfDay;
-            DayOfWeek = dayOfWeek;
-            TimeZone = timeZone;
-        }
 
         public TimeOfWeek(TimeSpan timeOfDay, DayOfWeek dayOfWeek, string timeZoneId) : this(timeOfDay, dayOfWeek, TimeZoneInfo.FindSystemTimeZoneById(timeZoneId))
         { }
@@ -73,30 +61,6 @@ namespace CatalogueScanner.Core.Utility
             }
 
             return result;
-        }
-
-        public override bool Equals(object? obj) => obj is TimeOfWeek other && Equals(other);
-
-        public bool Equals(TimeOfWeek other)
-        {
-            return TimeOfDay.Equals(other.TimeOfDay) &&
-                   DayOfWeek == other.DayOfWeek &&
-                   EqualityComparer<TimeZoneInfo>.Default.Equals(TimeZone, other.TimeZone);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(TimeOfDay, DayOfWeek, TimeZone);
-        }
-
-        public static bool operator ==(TimeOfWeek left, TimeOfWeek right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(TimeOfWeek left, TimeOfWeek right)
-        {
-            return !(left == right);
         }
     }
 }

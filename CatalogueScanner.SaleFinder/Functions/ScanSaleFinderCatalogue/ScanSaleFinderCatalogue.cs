@@ -77,12 +77,12 @@ namespace CatalogueScanner.SaleFinder.Functions
                         )
                     )
                 ).ConfigureAwait(true);
+
+                var catalogueWithPrices = downloadedCatalogue with { Items = itemsWithPrices };
                 #endregion
 
                 #region Filter catalouge items and send digest email
                 context.SetCustomStatus("FilteringAndSendingDigestEmail");
-
-                var catalogueWithPrices = downloadedCatalogue with { Items =  itemsWithPrices };
 
                 await context.CallSubOrchestratorAsync(
                     CoreFunctionNames.FilterCatalogueAndSendDigestEmail,

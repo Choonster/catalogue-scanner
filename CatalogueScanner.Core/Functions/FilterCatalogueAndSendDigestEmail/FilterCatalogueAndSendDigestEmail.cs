@@ -49,16 +49,16 @@ namespace CatalogueScanner.Core.Functions
                 .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
                 .ToList();
 
-            await Task.WhenAll(itemTasks).ConfigureAwait(true);
+            var items = await Task.WhenAll(itemTasks).ConfigureAwait(true);
             #endregion
 
             #region Send digest email
             context.SetCustomStatus("SendingDigestEmail");
             log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
 
-            var filteredItems = itemTasks
-                .Where(task => task.Result != null)
-                .Select(task => task.Result!)
+            var filteredItems = items
+                .Where(item => item != null)
+                .Cast<CatalogueItem>()
                 .ToList();
 
             if (filteredItems.Any())
