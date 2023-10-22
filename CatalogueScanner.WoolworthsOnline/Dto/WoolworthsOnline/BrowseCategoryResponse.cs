@@ -268,6 +268,7 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline
     {
         Html,
         None,
+        Image,
     }
 
     [JsonConverter(typeof(JsonStringEnumMemberConverter))]

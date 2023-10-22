@@ -16,7 +16,9 @@ namespace CatalogueScanner.SaleFinder.Functions
 {
     public class FillSaleFinderItemPrice
     {
-        private static readonly Regex MultiBuyNForRegex = new(@"(?:Any\s*)?(\d+)\s+for");
+        private static readonly Regex MultiBuyNForRegex = new(@"(?:Any\s*)?(\d+)\s+for", RegexOptions.IgnoreCase);
+        private const string AnyOfTheseText = "Any of these";
+        private const string NowText = "Now";
 
         private readonly SaleFinderService saleFinderService;
 
@@ -86,17 +88,20 @@ namespace CatalogueScanner.SaleFinder.Functions
                 price = decimal.Parse(priceDisplaySpan.InnerText, NumberStyles.Currency, input.CurrencyCulture);
             }
 
-            // The .sf-saleoptiondesc span is only present for multi-buy prices (e.g. 2 for $10)
+            // The .sf-saleoptiondesc span is only present for multi-buy prices (e.g. 2 for $10) or other promotional text (e.g. "Any of these")
             var saleOptionDescSpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-saleoptiondesc");
 
             if (saleOptionDescSpan is not null)
             {
                 var saleOptionDescText = saleOptionDescSpan.InnerText;
-                var multiBuyNForMatch = MultiBuyNForRegex.Match(saleOptionDescText);
 
-                if (multiBuyNForMatch.Success)
+                if (saleOptionDescText == AnyOfTheseText || saleOptionDescText == NowText)
                 {
-                    item.MultiBuyQuantity = ParseLong(multiBuyNForMatch.Groups[1].Value);
+                    item.Price = price;
+                }
+                else if (MultiBuyNForRegex.Match(saleOptionDescText) is { Success: true } match)
+                {
+                    item.MultiBuyQuantity = ParseLong(match.Groups[1].Value);
                     item.MultiBuyTotalPrice = price;
                 }
                 else
