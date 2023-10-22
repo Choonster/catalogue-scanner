@@ -26,7 +26,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
 
     public class NextDataPageProps
     {
-        public long InitStoreId { get; set; }
+        public long? InitStoreId { get; set; }
         public Uri? AssetsUrl { get; set; }
         public NextDataPagePropsData? Data { get; set; }
         public object? Error { get; set; }
