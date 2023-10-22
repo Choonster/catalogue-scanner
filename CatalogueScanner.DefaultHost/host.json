@@ -11,7 +11,10 @@
   "extensions": {
     "durableTask": {
       "hubName": "%TaskHubName%",
-      "maxConcurrentActivityFunctions": 5
+      "maxConcurrentActivityFunctions": 5,
+      "storageProvider": {
+        "useTablePartitionManagement": true
+      }
     },
     "http": {
       "EnableChunkedRequestBinding": true
