@@ -44,7 +44,7 @@ namespace CatalogueScanner.SaleFinder.Functions
 
         [Function(SaleFinderFunctionNames.CheckWoolworthsCatalogue)]
         [QueueOutput(SaleFinderQueueNames.SaleFinderCataloguesToScan)]
-        public async Task<IEnumerable<SaleFinderCatalogueDownloadInformation>> RunAsync(
+        public async Task<SaleFinderCatalogueDownloadInformation[]> RunAsync(
             [TimerTrigger("%" + SaleFinderAppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
             CancellationToken cancellationToken
         )
@@ -67,7 +67,9 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             logger.LogInformation(S["Found sale IDs: {0}"], saleIds);
 
-            return saleIds.Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName, CurrencyCultures.AustralianDollar));
+            return saleIds
+                .Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName, CurrencyCultures.AustralianDollar))
+                .ToArray();
         }
 
         private IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
