@@ -26,6 +26,11 @@ namespace CatalogueScanner.Core.Functions.Api.Management
             {
                 throw new ArgumentNullException(nameof(durableTaskClient));
             }
+
+            if (instanceId is null)
+            {
+                throw new ArgumentNullException(nameof(instanceId));
+            }
             #endregion
 
             return durableTaskClient.CreateCheckStatusResponse(req, instanceId, cancellationToken);
