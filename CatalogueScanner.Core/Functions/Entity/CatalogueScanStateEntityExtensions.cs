@@ -41,7 +41,7 @@ namespace CatalogueScanner.Core.Functions.Entity
             }
             #endregion
 
-            await entities.SignalEntityAsync(scanStateId, nameof(CatalogueScanStateEntity.Update), cancellationToken).ConfigureAwait(false);
+            await entities.SignalEntityAsync(scanStateId, nameof(CatalogueScanStateEntity.Update), scanState, null, cancellationToken).ConfigureAwait(false);
         }
     }
 }
