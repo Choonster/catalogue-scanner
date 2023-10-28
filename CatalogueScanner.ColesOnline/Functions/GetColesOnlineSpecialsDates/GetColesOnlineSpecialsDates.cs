@@ -7,7 +7,11 @@ namespace CatalogueScanner.ColesOnline.Functions
     public static class GetColesOnlineSpecialsDates
     {
         [Function(ColesOnlineFunctionNames.GetColesOnlineSpecialsDates)]
-        public static DateRange Run([ActivityTrigger] object? _)
+        public static DateRange Run(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
+            [ActivityTrigger]
+            object? input
+        )
         {
             var specialsResetTime = ColesOnlineService.SpecialsResetTime;
 

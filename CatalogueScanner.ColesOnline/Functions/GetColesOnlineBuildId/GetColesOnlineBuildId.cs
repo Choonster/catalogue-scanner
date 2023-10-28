@@ -13,7 +13,12 @@ namespace CatalogueScanner.ColesOnline.Functions
         }
 
         [Function(ColesOnlineFunctionNames.GetColesOnlineBuildId)]
-        public async Task<string> Run([ActivityTrigger] object? _, CancellationToken cancellationToken)
+        public async Task<string> Run(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
+            [ActivityTrigger]
+            object? input,
+            CancellationToken cancellationToken
+        )
         {                       
             var response = await colesOnlineService.GetBuildId(cancellationToken).ConfigureAwait(false);
 

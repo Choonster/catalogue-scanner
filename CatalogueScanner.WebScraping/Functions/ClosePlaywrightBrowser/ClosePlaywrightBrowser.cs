@@ -16,7 +16,13 @@ namespace CatalogueScanner.WebScraping.Functions
         }
 
         [Function(WebScrapingFunctionNames.ClosePlaywrightBrowser)]
-        public async Task<bool> Run([ActivityTrigger] object? _, string instanceId, CancellationToken cancellationToken)
+        public async Task<bool> Run(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
+            [ActivityTrigger] 
+            object? input,
+            string instanceId,
+            CancellationToken cancellationToken
+        )
         {
             #region null checks
             if (string.IsNullOrEmpty(instanceId))

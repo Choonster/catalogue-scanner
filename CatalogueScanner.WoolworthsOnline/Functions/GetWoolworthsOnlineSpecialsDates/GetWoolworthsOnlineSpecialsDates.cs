@@ -8,7 +8,11 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
     public static class GetWoolworthsOnlineSpecialsDates
     {
         [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates)]
-        public static DateRange Run([ActivityTrigger] object? _)
+        public static DateRange Run(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
+            [ActivityTrigger]
+            object? input
+        )
         {
             var specialsResetTime = WoolworthsOnlineService.SpecialsResetTime;
 
