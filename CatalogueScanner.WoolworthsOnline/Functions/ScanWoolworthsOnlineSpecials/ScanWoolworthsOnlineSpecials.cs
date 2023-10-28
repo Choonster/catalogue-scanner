@@ -6,12 +6,14 @@ using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WoolworthsOnline.Dto.FunctionInput;
 using CatalogueScanner.WoolworthsOnline.Dto.FunctionResult;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
+using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions
@@ -21,28 +23,22 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
         private const string CatalogueType = "WoolworthsOnline";
         private const string Store = "Woolworths";
 
-        [FunctionName(WoolworthsOnlineFunctionNames.ScanWoolworthsOnlineSpecials)]
-        public static async Task RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
+        [Function(WoolworthsOnlineFunctionNames.ScanWoolworthsOnlineSpecials)]
+        public static async Task RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context)
         {
             #region null checks
             if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
-
-            if (log is null)
-            {
-                throw new ArgumentNullException(nameof(log));
-            }
             #endregion
 
-            log = context.CreateReplaySafeLogger(log);
+            var logger = context.CreateReplaySafeLogger(typeof(ScanWoolworthsOnlineSpecials));
 
-            var specialsDateRange = await context.CallActivityAsync<DateRange>(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates, null).ConfigureAwait(true);
+            var specialsDateRange = await context.CallActivityAsync<DateRange>(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates).ConfigureAwait(true);
             var dateKey = $"Start={specialsDateRange.StartDate:O};End={specialsDateRange.EndDate:O}";
 
-            var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, Store, dateKey));
-            var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
+            var scanStateId = CatalogueScanStateEntity.CreateId(new CatalogueScanStateKey(CatalogueType, Store, dateKey));
 
             try
             {
@@ -60,35 +56,35 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
 
                 #region Download catalogue
                 context.SetCustomStatus("Downloading");
-                log.LogDebug($"Downloading - {scanStateId.EntityKey}");
+                logger.LogDebug($"Downloading - {scanStateId.Key}");
 
                 var categories = await context.CallActivityAsync<IEnumerable<WoolworthsOnlineCategory>>(
-                    WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories,
-                    null
+                    WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories
                 ).ConfigureAwait(true);
 
-                var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
+                var retryOptions = new RetryPolicy(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
+                var taskOptions = new TaskOptions(retryOptions);
 
                 var itemPages = new List<IEnumerable<CatalogueItem>>();
 
                 foreach (var category in categories)
                 {
-                    var pageCount = await context.CallActivityWithRetryAsync<int>(
+                    var pageCount = await context.CallActivityAsync<int>(
                         WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount,
-                        retryOptions,
-                        category.CategoryId
+                        category.CategoryId,
+                        taskOptions
                     ).ConfigureAwait(true);
 
                     var downloadTasks = Enumerable.Range(0, pageCount)
                         .Select(pageIndex =>
-                            context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
+                            context.CallActivityAsync<IEnumerable<CatalogueItem>>(
                                 WoolworthsOnlineFunctionNames.DownloadWoolworthsOnlineSpecialsPage,
-                                retryOptions,
                                 new DownloadWoolworthsOnlineSpecialsPageInput
                                 {
                                     CategoryId = category.CategoryId,
                                     PageNumber = pageIndex + 1,
-                                }
+                                },
+                                taskOptions
                             )
                         )
                         .ToList();
@@ -116,17 +112,17 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
 
                 #region Update catalogue's scan state
                 context.SetCustomStatus("UpdatingState");
-                log.LogDebug($"Updating state - {scanStateId.EntityKey}");
+                logger.LogDebug($"Updating state - {scanStateId.Key}");
 
-                await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
+                await context.Entities.UpdateScanStateAsync(scanStateId, ScanState.Completed).ConfigureAwait(true);
                 #endregion
 
-                log.LogDebug($"Completed - {scanStateId.EntityKey}");
+                logger.LogDebug($"Completed - {scanStateId.Key}");
                 context.SetCustomStatus("Completed");
             }
             catch
             {
-                await scanState.UpdateState(ScanState.Failed).ConfigureAwait(true);
+                await context.Entities.UpdateScanStateAsync(scanStateId, ScanState.Failed).ConfigureAwait(true);
                 context.SetCustomStatus("Failed");
 
                 throw;
@@ -136,11 +132,12 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
         /// <summary>
         /// Function that triggers the <see cref="RunOrchestrator"/> orchestrator function on a timer.
         /// </summary>
-        [FunctionName(WoolworthsOnlineFunctionNames.ScanWoolworthsOnlineSpecialsTimerStart)]
+        [Function(WoolworthsOnlineFunctionNames.ScanWoolworthsOnlineSpecialsTimerStart)]
         public static async Task TimerStart(
             [TimerTrigger("%" + WoolworthsOnlineAppSettingNames.WoolworthsOnlineCronExpression + "%")] TimerInfo timer,
-            [DurableClient] IDurableClient starter,
-            ILogger log
+            [DurableClient] DurableTaskClient durableTaskClient,
+            FunctionContext context,
+            CancellationToken cancellationToken
         )
         {
             #region null checks
@@ -149,20 +146,25 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
                 throw new ArgumentNullException(nameof(timer));
             }
 
-            if (starter is null)
+            if (durableTaskClient is null)
             {
-                throw new ArgumentNullException(nameof(starter));
+                throw new ArgumentNullException(nameof(durableTaskClient));
             }
 
-            if (log is null)
+            if (context is null)
             {
-                throw new ArgumentNullException(nameof(log));
+                throw new ArgumentNullException(nameof(context));
             }
             #endregion
 
-            var instanceId = await starter.StartNewAsync(WoolworthsOnlineFunctionNames.ScanWoolworthsOnlineSpecials, null).ConfigureAwait(false);
+            var logger = context.GetLogger(typeof(ScanWoolworthsOnlineSpecials).FullName!);
 
-            log.LogInformation($"Started {WoolworthsOnlineFunctionNames.ScanWoolworthsOnlineSpecials} orchestration with ID = '{{instanceId}}'.", instanceId);
+            var instanceId = await durableTaskClient.ScheduleNewOrchestrationInstanceAsync(
+                WoolworthsOnlineFunctionNames.ScanWoolworthsOnlineSpecials,
+                cancellationToken
+            ).ConfigureAwait(false);
+
+            logger.LogInformation($"Started {WoolworthsOnlineFunctionNames.ScanWoolworthsOnlineSpecials} orchestration with ID = '{{instanceId}}'.", instanceId);
         }
     }
 }

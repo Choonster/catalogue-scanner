@@ -11,7 +11,6 @@ using MatBlazor;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -68,9 +67,7 @@ namespace CatalogueScanner.ConfigurationUI
 
             services.AddAzureAppConfiguration();
 
-            IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
-
-            ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(functionsHostBuilder, Configuration);
+            ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(Configuration, services);
 
             catalogueScannerHostBuilder
                 .AddPlugin<CoreCatalogueScannerPlugin>()
@@ -115,16 +112,6 @@ namespace CatalogueScanner.ConfigurationUI
             });
 
             logger.LogWarning("AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled: {value}", AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled);
-        }
-
-        private class DummyFunctionsHostBuilder : IFunctionsHostBuilder
-        {
-            public IServiceCollection Services { get; }
-
-            public DummyFunctionsHostBuilder(IServiceCollection services)
-            {
-                Services = services;
-            }
         }
     }
 }

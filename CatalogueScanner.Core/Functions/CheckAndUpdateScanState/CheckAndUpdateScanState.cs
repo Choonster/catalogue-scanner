@@ -1,6 +1,7 @@
 ﻿using CatalogueScanner.Core.Functions.Entity;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
+using Microsoft.DurableTask.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -23,36 +24,30 @@ namespace CatalogueScanner.Core.Functions
         /// </list>
         /// </summary>
         /// <returns><c>true</c> if the parent orchestration should continue running; otherwise, <c>false</c></returns>
-        [FunctionName(CoreFunctionNames.CheckAndUpdateScanState)]
-        public static async Task<bool> RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
+        [Function(CoreFunctionNames.CheckAndUpdateScanState)]
+        public static async Task<bool> RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context, EntityInstanceId scanStateId)
         {
             #region null checks
             if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
-
-            if (log is null)
-            {
-                throw new ArgumentNullException(nameof(log));
-            }
             #endregion
 
-            var scanStateId = context.GetInput<EntityId>();
-            var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
+            var logger = context.CreateReplaySafeLogger(typeof(CheckAndUpdateScanState));
 
-            using (await context.LockAsync(scanStateId).ConfigureAwait(true))
+            await using ((await context.Entities.LockEntitiesAsync(scanStateId).ConfigureAwait(true)).ConfigureAwait(true))
             {
-                log.LogDebug($"Checking state - {scanStateId.EntityKey}");
+                logger.LogDebug($"Checking state - {scanStateId.Key}");
 
-                var state = await scanState.GetState().ConfigureAwait(true);
+                var state = await context.Entities.GetScanStateAsync(scanStateId).ConfigureAwait(true);
                 if (state != ScanState.NotStarted)
                 {
-                    log.LogInformation($"Catalogue {scanStateId.EntityKey} already in state {state}, skipping scan.");
+                    logger.LogInformation($"Catalogue {scanStateId.Key} already in state {state}, skipping scan.");
                     return false;
                 }
 
-                await scanState.UpdateState(ScanState.InProgress).ConfigureAwait(true);
+                await context.Entities.UpdateScanStateAsync(scanStateId, ScanState.InProgress).ConfigureAwait(true);
 
                 return true;
             }

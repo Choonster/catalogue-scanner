@@ -3,7 +3,7 @@ using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using CatalogueScanner.SaleFinder.Dto.SaleFinder;
 using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,19 +26,20 @@ namespace CatalogueScanner.SaleFinder.Functions
         private static readonly Uri CatalaogueBaseUri = new("https://www.bigw.com.au/bigw-catalogues");
 
         private readonly SaleFinderService saleFinderService;
+        private readonly ILogger<CheckBigWCatalogue> logger;
         private readonly IStringLocalizer<CheckBigWCatalogue> S;
 
-        public CheckBigWCatalogue(SaleFinderService saleFinderService, IStringLocalizer<CheckBigWCatalogue> stringLocalizer)
+        public CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<CheckBigWCatalogue> logger, IStringLocalizer<CheckBigWCatalogue> stringLocalizer)
         {
             this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
         }
 
-        [FunctionName(SaleFinderFunctionNames.CheckBigWCatalogue)]
-        public async Task RunAsync(
+        [Function(SaleFinderFunctionNames.CheckBigWCatalogue)]
+        [QueueOutput(SaleFinderQueueNames.SaleFinderCataloguesToScan)]
+        public async Task<IEnumerable<SaleFinderCatalogueDownloadInformation>> RunAsync(
             [TimerTrigger("%" + SaleFinderAppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
-            ILogger log,
-            [Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)] IAsyncCollector<SaleFinderCatalogueDownloadInformation> collector,
             CancellationToken cancellationToken
         )
         {
@@ -46,16 +47,6 @@ namespace CatalogueScanner.SaleFinder.Functions
             if (timer is null)
             {
                 throw new ArgumentNullException(nameof(timer));
-            }
-
-            if (log is null)
-            {
-                throw new ArgumentNullException(nameof(log));
-            }
-
-            if (collector is null)
-            {
-                throw new ArgumentNullException(nameof(collector));
             }
             #endregion
 
@@ -68,12 +59,9 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             var saleIds = FindSaleIds(viewResponse).ToList();
 
-            log.LogInformation(S["Found sale IDs: {0}"], saleIds);
+            logger.LogInformation(S["Found sale IDs: {0}"], saleIds);
 
-            foreach (var saleId in saleIds)
-            {
-                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, BigWStoreName, CurrencyCultures.AustralianDollar), cancellationToken).ConfigureAwait(false);
-            }
+            return saleIds.Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, BigWStoreName, CurrencyCultures.AustralianDollar));
         }
 
         private IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)

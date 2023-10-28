@@ -1,36 +1,16 @@
-﻿using CatalogueScanner.Core.Functions.Entity;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using CatalogueScanner.Core.Dto.EntityKey;
+using CatalogueScanner.Core.Functions.Entity;
 using System;
+using System.Text.Json.Serialization;
 
 namespace CatalogueScanner.Core.Dto.Api
 {
-    public class CatalogueScanStateDto
-    {
-        /// <summary>
-        /// The type of catalogue, this should be unique for each catalogue app/system; e.g. SaleFinder.
-        /// </summary>
-        public string CatalogueType { get; set; } = null!;
-
-        /// <summary>
-        /// The store that the catalogue belongs to.
-        /// </summary>
-        public string Store { get; set; } = null!;
-
-        /// <summary>
-        /// The ID of the catalogue. Each catalogue within a type/store should have a unique ID.
-        /// </summary>
-        public string CatalogueId { get; set; } = null!;
-
-        /// <summary>
-        /// The scan state of the catalogue.
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ScanState ScanState { get; set; }
-
-        /// <summary>
-        /// The UTC time of the last change to this scan state record.
-        /// </summary>
-        public DateTime LastOperationTime { get; set; }
-    }
+    /// <param name="CatalogueScanStateKey">The unique identifer of the catalogue.</param>
+    /// <param name="ScanState"> The scan state of the catalogue.</param>
+    /// <param name="LastModifiedTime">The time of the last change to this scan state record.</param>
+    public record CatalogueScanStateDto(
+        CatalogueScanStateKey CatalogueScanStateKey, 
+        [property: JsonConverter(typeof(JsonStringEnumMemberConverter))] ScanState ScanState,
+        DateTimeOffset LastModifiedTime
+    );
 }

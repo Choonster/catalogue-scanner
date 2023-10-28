@@ -3,10 +3,15 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
 		<FunctionsInDependencies>true</FunctionsInDependencies>
+		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
+		<ProjectCapability Include="AzureFunctions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.15.1" />
 		<PackageReference Include="Microsoft.Playwright" Version="1.39.0" />
 	</ItemGroup>
 

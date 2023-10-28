@@ -3,8 +3,7 @@ using CatalogueScanner.Core.Functions.SendCatalogueDigestEmailTemplate;
 using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.Core.Options;
 using HtmlAgilityPack;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -34,8 +33,8 @@ namespace CatalogueScanner.Core.Functions
             S = pluralStringLocalizer ?? throw new ArgumentNullException(nameof(pluralStringLocalizer));
         }
 
-        [FunctionName(CoreFunctionNames.SendCatalogueDigestEmail)]
-        [return: SendGrid]
+        [Function(CoreFunctionNames.SendCatalogueDigestEmail)]
+        [SendGridOutput]
         public SendGridMessage Run([ActivityTrigger] Catalogue filteredCatalogue)
         {
             #region null checks

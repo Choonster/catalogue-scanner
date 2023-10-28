@@ -2,8 +2,7 @@ using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.SaleFinder.Dto.FunctionResult;
 using CatalogueScanner.SaleFinder.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
@@ -19,18 +18,23 @@ namespace CatalogueScanner.SaleFinder.Functions
     public class DownloadSaleFinderCatalogue
     {
         private readonly SaleFinderService saleFinderService;
+        private readonly ILogger<DownloadSaleFinderCatalogue> logger;
         private readonly IPluralStringLocalizer<DownloadSaleFinderCatalogue> S;
 
-        public DownloadSaleFinderCatalogue(SaleFinderService saleFinderService, IPluralStringLocalizer<DownloadSaleFinderCatalogue> pluralStringLocalizer)
+        public DownloadSaleFinderCatalogue(
+            SaleFinderService saleFinderService,
+            ILogger<DownloadSaleFinderCatalogue> logger,
+            IPluralStringLocalizer<DownloadSaleFinderCatalogue> pluralStringLocalizer
+        )
         {
-            this.saleFinderService = saleFinderService;
-            S = pluralStringLocalizer;
+            this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            S = pluralStringLocalizer ?? throw new ArgumentNullException(nameof(pluralStringLocalizer));
         }
 
-        [FunctionName(SaleFinderFunctionNames.DownloadSaleFinderCatalogue)]
+        [Function(SaleFinderFunctionNames.DownloadSaleFinderCatalogue)]
         public async Task<Catalogue> RunAsync(
             [ActivityTrigger] SaleFinderCatalogueDownloadInformation downloadInformation,
-            ILogger log,
             CancellationToken cancellationToken
         )
         {
@@ -38,11 +42,6 @@ namespace CatalogueScanner.SaleFinder.Functions
             if (downloadInformation is null)
             {
                 throw new ArgumentNullException(nameof(downloadInformation));
-            }
-
-            if (log is null)
-            {
-                throw new ArgumentNullException(nameof(log));
             }
             #endregion
 
@@ -53,7 +52,7 @@ namespace CatalogueScanner.SaleFinder.Functions
                 throw new InvalidOperationException("catalogue is null");
             }
 
-            log.LogInformation(S.Plural(catalogue.Pages.Count, "Successfully downloaded and parsed catalogue with 1 page", "Successfully downloaded and parsed catalogue with {0} pages", catalogue.Pages.Count));
+            logger.LogInformation(S.Plural(catalogue.Pages.Count, "Successfully downloaded and parsed catalogue with 1 page", "Successfully downloaded and parsed catalogue with {0} pages", catalogue.Pages.Count));
 
             var items = catalogue.Pages
                 .SelectMany(page => page.Items)

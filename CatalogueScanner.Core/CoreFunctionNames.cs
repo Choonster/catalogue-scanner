@@ -3,6 +3,11 @@
     public static class CoreFunctionNames
     {
         /// <summary>
+        /// The name of the <see cref="Functions.Entity.CatalogueScanStateEntity"/> entity.
+        /// </summary>
+        public const string CatalogueScanState = "CatalogueScanState";
+
+        /// <summary>
         /// The name of the <see cref="Functions.CheckAndUpdateScanState"/> sub-orchestrator function.
         /// </summary>
         public const string CheckAndUpdateScanState = "CheckAndUpdateScanState";

@@ -4,7 +4,7 @@ using CatalogueScanner.SaleFinder.Dto.SaleFinder;
 using CatalogueScanner.SaleFinder.Options;
 using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,9 +24,10 @@ namespace CatalogueScanner.SaleFinder.Functions
 
         private readonly SaleFinderService saleFinderService;
         private readonly WoolworthsOptions options;
+        private readonly ILogger<CheckWoolworthsCatalogue> logger;
         private readonly IStringLocalizer<CheckWoolworthsCatalogue> S;
 
-        public CheckWoolworthsCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<WoolworthsOptions> optionsAccessor, IStringLocalizer<CheckWoolworthsCatalogue> stringLocalizer)
+        public CheckWoolworthsCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<WoolworthsOptions> optionsAccessor, ILogger<CheckWoolworthsCatalogue> logger, IStringLocalizer<CheckWoolworthsCatalogue> stringLocalizer)
         {
             #region null checks
             if (optionsAccessor is null)
@@ -37,14 +38,14 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
             options = optionsAccessor.Value;
+            this.logger = logger;
             S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
         }
 
-        [FunctionName(SaleFinderFunctionNames.CheckWoolworthsCatalogue)]
-        public async Task RunAsync(
+        [Function(SaleFinderFunctionNames.CheckWoolworthsCatalogue)]
+        [QueueOutput(SaleFinderQueueNames.SaleFinderCataloguesToScan)]
+        public async Task<IEnumerable<SaleFinderCatalogueDownloadInformation>> RunAsync(
             [TimerTrigger("%" + SaleFinderAppSettingNames.CheckCatalogueFunctionCronExpression + "%")] TimerInfo timer,
-            ILogger log,
-            [Queue(SaleFinderQueueNames.SaleFinderCataloguesToScan)] IAsyncCollector<SaleFinderCatalogueDownloadInformation> collector,
             CancellationToken cancellationToken
         )
         {
@@ -52,16 +53,6 @@ namespace CatalogueScanner.SaleFinder.Functions
             if (timer is null)
             {
                 throw new ArgumentNullException(nameof(timer));
-            }
-
-            if (log is null)
-            {
-                throw new ArgumentNullException(nameof(log));
-            }
-
-            if (collector is null)
-            {
-                throw new ArgumentNullException(nameof(collector));
             }
             #endregion
 
@@ -74,12 +65,9 @@ namespace CatalogueScanner.SaleFinder.Functions
 
             var saleIds = FindSaleIds(viewResponse).ToList();
 
-            log.LogInformation(S["Found sale IDs: {0}"], saleIds);
+            logger.LogInformation(S["Found sale IDs: {0}"], saleIds);
 
-            foreach (var saleId in saleIds)
-            {
-                await collector.AddAsync(new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName, CurrencyCultures.AustralianDollar), cancellationToken).ConfigureAwait(false);
-            }
+            return saleIds.Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName, CurrencyCultures.AustralianDollar));
         }
 
         private IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)

@@ -21,7 +21,8 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
             try
             {
-                endpoints = await ManagementService.GetCheckStatusEndpointsAsync(instanceId).ConfigureAwait(false);
+                endpoints = await ManagementService.GetCheckStatusEndpointsAsync(instanceId).ConfigureAwait(false)
+                    ?? throw new InvalidOperationException("Load Check Status Endpoints request returned no response");
             }
             catch (HttpRequestException e)
             {

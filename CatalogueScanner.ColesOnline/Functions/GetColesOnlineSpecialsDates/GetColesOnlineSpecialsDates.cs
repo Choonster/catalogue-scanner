@@ -1,14 +1,15 @@
 ﻿using CatalogueScanner.ColesOnline.Service;
 using CatalogueScanner.Core.Utility;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 
 namespace CatalogueScanner.ColesOnline.Functions
 {
     public static class GetColesOnlineSpecialsDates
     {
-        [FunctionName(ColesOnlineFunctionNames.GetColesOnlineSpecialsDates)]
-        public static DateRange Run([ActivityTrigger] IDurableActivityContext context)
+        // TODO: Might not be able to use TaskActivityContext here
+        [Function(ColesOnlineFunctionNames.GetColesOnlineSpecialsDates)]
+        public static DateRange Run([ActivityTrigger] TaskActivityContext context)
         {
             #region null checks
             if (context is null)

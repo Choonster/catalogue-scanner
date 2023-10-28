@@ -12,7 +12,7 @@ namespace CatalogueScanner.ConfigurationUI.Service
         {
         }
 
-        public async Task<ListEntityResult<CatalogueScanStateDto>> ListCatalogueScanStatesAsync(ListEntityRequest listEntityRequest) =>
+        public async Task<ListEntityResult<CatalogueScanStateDto>?> ListCatalogueScanStatesAsync(ListEntityRequest listEntityRequest) =>
             await PostAsync<ListEntityRequest, ListEntityResult<CatalogueScanStateDto>>("List", listEntityRequest).ConfigureAwait(false);
 
         public async Task UpdateCatalogueScanStateAsync(CatalogueScanStateDto dto) =>

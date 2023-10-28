@@ -1,7 +1,7 @@
 ﻿using CatalogueScanner.Core.Dto.FunctionResult;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.DurableTask.Entities;
 
 namespace CatalogueScanner.Core.Dto.FunctionInput
 {
-    public record FilterCatalogueAndSendDigestEmailInput(Catalogue Catalogue, EntityId ScanStateId);
+    public record FilterCatalogueAndSendDigestEmailInput(Catalogue Catalogue, EntityInstanceId ScanStateId);
 }

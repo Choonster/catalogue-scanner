@@ -1,5 +1,4 @@
 ﻿using CatalogueScanner.ConfigurationUI.Extensions;
-using CatalogueScanner.ConfigurationUI.ViewModel;
 using CatalogueScanner.Core.Dto.Api;
 using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Functions.Entity;
@@ -19,12 +18,12 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
         private bool loading;
 
-        private List<CatalogueScanStateViewModel> tableData = new();
+        private List<CatalogueScanStateDto> tableData = new();
         private int tablePageIndex;
 
-        private readonly List<CatalogueScanStateViewModel> loadedScanStates = new();
+        private readonly List<CatalogueScanStateDto> loadedScanStates = new();
 
-        private readonly PageInfo pageInfo = new() { PageSize = 10 };
+        private PageInfo pageInfo = new(PageSize: 10);
         private bool isFinalPage;
         private bool hasNoData;
 
@@ -34,7 +33,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
         private int PageSize
         {
             get => pageInfo.PageSize;
-            set => pageInfo.PageSize = value;
+            set => pageInfo = pageInfo with { PageSize = value };
         }
 
         private int PaginatorLength
@@ -98,7 +97,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
         {
             isFinalPage = false;
             tablePageIndex = 0;
-            pageInfo.ContinuationToken = null;
+            pageInfo = pageInfo with { ContinuationToken = null };
 
             await LoadScanStates(resetData: true).ConfigureAwait(true);
 
@@ -134,43 +133,27 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
             try
             {
-                var request = new ListEntityRequest
-                {
-                    Page = pageInfo,
-                    LastOperationFrom = lastOperationFrom,
-                    LastOperationTo = lastOperationTo?.WithTime(23, 59, 59),
-                };
+                var request = new ListEntityRequest(
+                    pageInfo,
+                    lastOperationFrom,
+                    lastOperationTo?.WithTime(23, 59, 59)
+                );
 
-                var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true);
+                var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true)
+                    ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
 
                 if (resetData)
                 {
                     loadedScanStates.Clear();
                 }
 
-                foreach (var entity in result.Entities)
-                {
-                    var model = new CatalogueScanStateViewModel
-                    {
-                        CatalogueType = entity.CatalogueType,
-                        Store = entity.Store,
-                        CatalogueId = entity.CatalogueId,
-                        ScanState = entity.ScanState,
-                        LastOperationTime = entity.LastOperationTime,
-                    };
-
-                    var localTime = await TimeZoneService.GetTimezoneOffset(model.LastOperationTime).ConfigureAwait(true);
-
-                    model.LastOperationLocalTime = localTime.DateTime;
-
-                    loadedScanStates.Add(model);
-                }
+                loadedScanStates.AddRange(result.Entities);
 
                 hasNoData = !loadedScanStates.Any();
 
-                pageInfo.ContinuationToken = result.Page.ContinuationToken;
+                pageInfo = pageInfo with { ContinuationToken = result.Page.ContinuationToken };
 
-                isFinalPage = result.Page.ContinuationToken is null;
+                isFinalPage = pageInfo.ContinuationToken is null;
             }
             catch (HttpRequestException e)
             {
@@ -186,7 +169,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 
             try
             {
-                scanState.ScanState = ScanState.NotStarted;
+                scanState = scanState with { ScanState = ScanState.NotStarted };
                 await CatalogueScanStateService.UpdateCatalogueScanStateAsync(scanState).ConfigureAwait(true);
             }
             catch (HttpRequestException e)

@@ -2,8 +2,8 @@
 using CatalogueScanner.WoolworthsOnline.Dto.FunctionInput;
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 using CatalogueScanner.WoolworthsOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,22 +22,18 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
             this.woolworthsOnlineService = woolworthsOnlineService;
         }
 
-        [FunctionName(WoolworthsOnlineFunctionNames.DownloadWoolworthsOnlineSpecialsPage)]
-        public async Task<IEnumerable<CatalogueItem>> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
+        [Function(WoolworthsOnlineFunctionNames.DownloadWoolworthsOnlineSpecialsPage)]
+        public async Task<IEnumerable<CatalogueItem>> Run(
+            [ActivityTrigger] DownloadWoolworthsOnlineSpecialsPageInput input,
+            CancellationToken cancellationToken
+        )
         {
             #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
-
-            var input = context.GetInput<DownloadWoolworthsOnlineSpecialsPageInput>();
-
             if (input is null)
             {
-                throw new InvalidOperationException("Activity function input not present");
+                throw new ArgumentNullException(nameof(input));
             }
+            #endregion
 
             var productUrlTemplate = WoolworthsOnlineService.ProductUrlTemplate;
 

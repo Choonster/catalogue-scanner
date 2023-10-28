@@ -2,8 +2,7 @@
 using CatalogueScanner.ColesOnline.Dto.FunctionInput;
 using CatalogueScanner.ColesOnline.Service;
 using CatalogueScanner.Core.Dto.FunctionResult;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 using System.Globalization;
 
 namespace CatalogueScanner.ColesOnline.Functions
@@ -17,22 +16,18 @@ namespace CatalogueScanner.ColesOnline.Functions
             this.colesOnlineService = colesOnlineService;
         }
 
-        [FunctionName(ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage)]
-        public async Task<IEnumerable<CatalogueItem>> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
+        [Function(ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage)]
+        public async Task<IEnumerable<CatalogueItem>> Run(
+            [ActivityTrigger] DownloadColesOnlineSpecialsPageInput input,
+            CancellationToken cancellationToken
+        )
         {
             #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
-
-            var input = context.GetInput<DownloadColesOnlineSpecialsPageInput>();
-
             if (input is null)
             {
-                throw new InvalidOperationException("Activity function input not present");
+                throw new ArgumentNullException(nameof(input));
             }
+            #endregion
 
             var productUrlTemplate = ColesOnlineService.ProductUrlTemplate;
 

@@ -1,6 +1,6 @@
 ﻿using CatalogueScanner.ColesOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 
 namespace CatalogueScanner.ColesOnline.Functions
 {
@@ -13,8 +13,9 @@ namespace CatalogueScanner.ColesOnline.Functions
             this.colesOnlineService = colesOnlineService;
         }
 
-        [FunctionName(ColesOnlineFunctionNames.GetColesOnlineBuildId)]
-        public async Task<string> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
+        // TODO: Might not be able to use TaskActivityContext here
+        [Function(ColesOnlineFunctionNames.GetColesOnlineBuildId)]
+        public async Task<string> Run([ActivityTrigger] TaskActivityContext context, CancellationToken cancellationToken)
         {
             #region null checks
             if (context is null)

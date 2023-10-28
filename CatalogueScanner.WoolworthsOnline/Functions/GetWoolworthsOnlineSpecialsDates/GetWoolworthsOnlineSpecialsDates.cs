@@ -1,15 +1,16 @@
 ﻿using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WoolworthsOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 using System;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions
 {
     public static class GetWoolworthsOnlineSpecialsDates
     {
-        [FunctionName(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates)]
-        public static DateRange Run([ActivityTrigger] IDurableActivityContext context)
+        // TODO: Might not be able to use TaskActivityContext here
+        [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates)]
+        public static DateRange Run([ActivityTrigger] TaskActivityContext context)
         {
             #region null checks
             if (context is null)

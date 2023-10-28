@@ -1,8 +1,8 @@
 ﻿using CatalogueScanner.WoolworthsOnline.Dto.FunctionResult;
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 using CatalogueScanner.WoolworthsOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -19,8 +19,9 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
             this.woolworthsOnlineService = woolworthsOnlineService;
         }
 
-        [FunctionName(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories)]
-        public async Task<IEnumerable<WoolworthsOnlineCategory>> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
+        // TODO: Might not be able to use TaskActivityContext here
+        [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories)]
+        public async Task<IEnumerable<WoolworthsOnlineCategory>> Run([ActivityTrigger] TaskActivityContext context, CancellationToken cancellationToken)
         {
             #region null checks
             if (context is null)
@@ -32,7 +33,7 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
             var response = await woolworthsOnlineService.GetPiesCategoriesWithSpecialsAsync(cancellationToken).ConfigureAwait(false);
 
             var specialsCategories = new List<WoolworthsOnlineCategory>();
-            
+
             FilterSpecialsCategories(response.Categories, specialsCategories);
 
             return specialsCategories;

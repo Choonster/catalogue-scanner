@@ -2,8 +2,7 @@ using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.SaleFinder.Dto.FunctionInput;
 using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -27,16 +26,17 @@ namespace CatalogueScanner.SaleFinder.Functions
         );
 
         private readonly SaleFinderService saleFinderService;
+        private readonly ILogger<FillSaleFinderItemPrice> logger;
 
-        public FillSaleFinderItemPrice(SaleFinderService saleFinderService)
+        public FillSaleFinderItemPrice(SaleFinderService saleFinderService, ILogger<FillSaleFinderItemPrice> logger)
         {
             this.saleFinderService = saleFinderService;
+            this.logger = logger;
         }
 
-        [FunctionName(SaleFinderFunctionNames.FillSaleFinderItemPrice)]
+        [Function(SaleFinderFunctionNames.FillSaleFinderItemPrice)]
         public async Task<CatalogueItem> Run(
             [ActivityTrigger] FillSaleFinderItemPriceInput input,
-            ILogger log,
             CancellationToken cancellationToken
         )
         {
@@ -118,7 +118,7 @@ namespace CatalogueScanner.SaleFinder.Functions
             }
             else
             {
-                log.LogError(Error($"Unknown format for span.sf-saleoptiondesc: \"{saleOptionDescText}\"").Message);
+                logger.LogError(Error($"Unknown format for span.sf-saleoptiondesc: \"{saleOptionDescText}\"").Message);
                 return item;
             }
 

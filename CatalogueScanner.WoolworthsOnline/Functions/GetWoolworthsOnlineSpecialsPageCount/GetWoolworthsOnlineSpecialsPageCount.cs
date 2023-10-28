@@ -1,6 +1,6 @@
 using CatalogueScanner.WoolworthsOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,22 +16,15 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
             this.woolworthsOnlineService = woolworthsOnlineService;
         }
 
-        [FunctionName(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount)]
-        public async Task<int> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
+        [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount)]
+        public async Task<int> Run([ActivityTrigger] string categoryId, CancellationToken cancellationToken)
         {
             #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
-
-            var categoryId = context.GetInput<string>();
-
             if (string.IsNullOrEmpty(categoryId))
             {
-                throw new InvalidOperationException("Activity function input not present");
+                throw new ArgumentException($"'{nameof(categoryId)}' cannot be null or empty.", nameof(categoryId));
             }
+            #endregion
 
             return await woolworthsOnlineService.GetCategoryPageCountAsync(
                 categoryId,

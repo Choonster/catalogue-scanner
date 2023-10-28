@@ -5,12 +5,14 @@ using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.SaleFinder.Dto.FunctionInput;
 using CatalogueScanner.SaleFinder.Dto.FunctionResult;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
+using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Functions
@@ -22,8 +24,8 @@ namespace CatalogueScanner.SaleFinder.Functions
         /// <summary>
         /// Orchestrator function that downloads a SaleFinder catalogue, filters the items using the configured rules and sends an email digest.
         /// </summary>
-        [FunctionName(SaleFinderFunctionNames.ScanSaleFinderCatalogue)]
-        public static async Task RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
+        [Function(SaleFinderFunctionNames.ScanSaleFinderCatalogue)]
+        public static async Task RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context, SaleFinderCatalogueDownloadInformation catalogueDownloadInfo)
         {
             #region null checks
             if (context is null)
@@ -31,18 +33,19 @@ namespace CatalogueScanner.SaleFinder.Functions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (log is null)
+            if (catalogueDownloadInfo is null)
             {
-                throw new ArgumentNullException(nameof(log));
+                throw new ArgumentNullException(nameof(catalogueDownloadInfo));
             }
             #endregion
 
-            log = context.CreateReplaySafeLogger(log);
+            var log = context.CreateReplaySafeLogger(typeof(ScanSaleFinderCatalogue));
 
-            var catalogueDownloadInfo = context.GetInput<SaleFinderCatalogueDownloadInformation>();
-
-            var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, catalogueDownloadInfo.Store, catalogueDownloadInfo.SaleId.ToString(CultureInfo.InvariantCulture)));
-            var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
+            var scanStateId = CatalogueScanStateEntity.CreateId(new CatalogueScanStateKey(
+                CatalogueType, 
+                catalogueDownloadInfo.Store,
+                catalogueDownloadInfo.SaleId.ToString(CultureInfo.InvariantCulture)
+            ));
 
             try
             {
@@ -60,14 +63,14 @@ namespace CatalogueScanner.SaleFinder.Functions
 
                 #region Download catalogue
                 context.SetCustomStatus("Downloading");
-                log.LogDebug($"Downloading - {scanStateId.EntityKey}");
+                log.LogDebug($"Downloading - {scanStateId.Key}");
 
                 var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderFunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
                 #endregion
 
                 #region Fill prices
                 context.SetCustomStatus("FillingPrices");
-                log.LogDebug($"Filling Prices - {scanStateId.EntityKey}");
+                log.LogDebug($"Filling Prices - {scanStateId.Key}");
 
                 var itemsWithPrices = await Task.WhenAll(
                     downloadedCatalogue.Items.Select(item =>
@@ -92,17 +95,17 @@ namespace CatalogueScanner.SaleFinder.Functions
 
                 #region Update catalogue's scan state
                 context.SetCustomStatus("UpdatingState");
-                log.LogDebug($"Updating state - {scanStateId.EntityKey}");
+                log.LogDebug($"Updating state - {scanStateId.Key}");
 
-                await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
+                await context.Entities.UpdateScanStateAsync(scanStateId, ScanState.Completed).ConfigureAwait(true);
                 #endregion
 
-                log.LogDebug($"Completed - {scanStateId.EntityKey}");
+                log.LogDebug($"Completed - {scanStateId.Key}");
                 context.SetCustomStatus("Completed");
             }
             catch
             {
-                await scanState.UpdateState(ScanState.Failed).ConfigureAwait(true);
+                await context.Entities.UpdateScanStateAsync(scanStateId, ScanState.Failed).ConfigureAwait(true);
                 context.SetCustomStatus("Failed");
 
                 throw;
@@ -112,11 +115,12 @@ namespace CatalogueScanner.SaleFinder.Functions
         /// <summary>
         /// Function that triggers the <see cref="RunOrchestrator"/> orchestrator function when a SaleFinder catalogue is queued for scanning.
         /// </summary>
-        [FunctionName(SaleFinderFunctionNames.ScanSaleFinderCatalogue_QueueStart)]
+        [Function(SaleFinderFunctionNames.ScanSaleFinderCatalogue_QueueStart)]
         public static async Task QueueStart(
             [QueueTrigger(SaleFinderQueueNames.SaleFinderCataloguesToScan)] SaleFinderCatalogueDownloadInformation downloadInformation,
-            [DurableClient] IDurableClient starter,
-            ILogger log
+            [DurableClient] DurableTaskClient durableTaskClient,
+            FunctionContext context,
+            CancellationToken cancellationToken
         )
         {
             #region null checks
@@ -125,20 +129,26 @@ namespace CatalogueScanner.SaleFinder.Functions
                 throw new ArgumentNullException(nameof(downloadInformation));
             }
 
-            if (starter is null)
+            if (durableTaskClient is null)
             {
-                throw new ArgumentNullException(nameof(starter));
+                throw new ArgumentNullException(nameof(durableTaskClient));
             }
 
-            if (log is null)
+            if (context is null)
             {
-                throw new ArgumentNullException(nameof(log));
+                throw new ArgumentNullException(nameof(context));
             }
             #endregion
 
-            string instanceId = await starter.StartNewAsync(SaleFinderFunctionNames.ScanSaleFinderCatalogue, downloadInformation).ConfigureAwait(false);
+            var logger = context.GetLogger(typeof(ScanSaleFinderCatalogue).FullName!);
 
-            log.LogInformation($"Started {SaleFinderFunctionNames.ScanSaleFinderCatalogue} orchestration with ID = '{instanceId}'.");
+            var instanceId = await durableTaskClient.ScheduleNewOrchestrationInstanceAsync(
+                SaleFinderFunctionNames.ScanSaleFinderCatalogue,
+                downloadInformation,
+                cancellationToken
+            ).ConfigureAwait(false);
+
+            logger.LogInformation($"Started {SaleFinderFunctionNames.ScanSaleFinderCatalogue} orchestration with ID = '{instanceId}'.");
         }
     }
 }

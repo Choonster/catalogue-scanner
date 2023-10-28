@@ -1,6 +1,6 @@
 ﻿namespace CatalogueScanner.Core
 {
-    internal static class CoreAppSettingNames
+    public static class CoreAppSettingNames
     {
         /// <summary>
         /// The culture used for localisation.

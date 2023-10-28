@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.DurableTask.Client;
+using Microsoft.DurableTask.Client.Entities;
 using System;
-using System.Net.Http;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,27 +11,31 @@ namespace CatalogueScanner.Core.Functions.Api.Management
 {
     public static class CleanEntityStorage
     {
-        [FunctionName(CoreFunctionNames.CleanEntityStorage)]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Management/CleanEntityStorage")] HttpRequestMessage req,
-            [DurableClient] IDurableEntityClient durableEntityClient
+        [Function(CoreFunctionNames.CleanEntityStorage)]
+        public static async Task<HttpResponseData> Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Management/CleanEntityStorage")] HttpRequestData request,
+            [DurableClient] DurableTaskClient durableTaskClient,
+            CancellationToken cancellationToken
         )
         {
             #region null checks
-            if (req is null)
+            if (request is null)
             {
-                throw new ArgumentNullException(nameof(req));
+                throw new ArgumentNullException(nameof(request));
             }
 
-            if (durableEntityClient is null)
+            if (durableTaskClient is null)
             {
-                throw new ArgumentNullException(nameof(durableEntityClient));
+                throw new ArgumentNullException(nameof(durableTaskClient));
             }
             #endregion
 
-            await durableEntityClient.CleanEntityStorageAsync(true, true, CancellationToken.None).ConfigureAwait(false);
+            await durableTaskClient.Entities.CleanEntityStorageAsync(
+                new CleanEntityStorageRequest { RemoveEmptyEntities = true, ReleaseOrphanedLocks = true },
+                cancellation: cancellationToken
+            ).ConfigureAwait(false);
 
-            return new OkResult();
+            return request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

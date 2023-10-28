@@ -10,7 +10,7 @@ namespace CatalogueScanner.ConfigurationUI.Service
         {
         }
 
-        public async Task<IDictionary<string, string>> GetCheckStatusEndpointsAsync(string? instanceId) =>
+        public async Task<IDictionary<string, string>?> GetCheckStatusEndpointsAsync(string? instanceId) =>
             await GetAsync<IDictionary<string, string>>($"CheckStatusEndpoints/{instanceId}").ConfigureAwait(false);
 
         public async Task CleanEntityStorageAsync() =>

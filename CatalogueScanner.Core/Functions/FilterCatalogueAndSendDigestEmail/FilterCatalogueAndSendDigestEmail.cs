@@ -1,7 +1,8 @@
 ﻿using CatalogueScanner.Core.Dto.FunctionInput;
 using CatalogueScanner.Core.Dto.FunctionResult;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
+using Microsoft.DurableTask.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -12,12 +13,12 @@ namespace CatalogueScanner.Core.Functions
     public static class FilterCatalogueAndSendDigestEmail
     {
         /// <summary>
-        /// Sub-orchestrator function that accepts a <see cref="Catalogue"/> and <see cref="EntityId"/>,
+        /// Sub-orchestrator function that accepts a <see cref="Catalogue"/> and <see cref="EntityInstanceId"/>,
         /// calls <see cref="FilterCatalogueItem"/> for each item and then calls <see cref="SendCatalogueDigestEmail"/>
         /// with the filtered items (if any).
         /// </summary>
-        [FunctionName(CoreFunctionNames.FilterCatalogueAndSendDigestEmail)]
-        public static async Task RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
+        [Function(CoreFunctionNames.FilterCatalogueAndSendDigestEmail)]
+        public static async Task RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context, FilterCatalogueAndSendDigestEmailInput input)
         {
             #region null checks
             if (context is null)
@@ -25,14 +26,13 @@ namespace CatalogueScanner.Core.Functions
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (log is null)
+            if (input is null)
             {
-                throw new ArgumentNullException(nameof(log));
+                throw new ArgumentNullException(nameof(input));
             }
             #endregion
 
-            var input = context.GetInput<FilterCatalogueAndSendDigestEmailInput>()
-                ?? throw new InvalidOperationException("Orchestrator function input not present");
+            var logger = context.CreateReplaySafeLogger(typeof(FilterCatalogueAndSendDigestEmail));
 
             var (catalogue, scanStateId) = input;
 
@@ -43,7 +43,7 @@ namespace CatalogueScanner.Core.Functions
 
             #region Filter catalouge items
             context.SetCustomStatus("Filtering");
-            log.LogDebug($"Filtering - {scanStateId.EntityKey}");
+            logger.LogDebug($"Filtering - {scanStateId.Key}");
 
             var itemTasks = catalogue.Items
                 .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
@@ -54,7 +54,7 @@ namespace CatalogueScanner.Core.Functions
 
             #region Send digest email
             context.SetCustomStatus("SendingDigestEmail");
-            log.LogDebug($"Sending digest email - {scanStateId.EntityKey}");
+            logger.LogDebug($"Sending digest email - {scanStateId.Key}");
 
             var filteredItems = items
                 .Where(item => item != null)
@@ -69,7 +69,7 @@ namespace CatalogueScanner.Core.Functions
             }
             else
             {
-                log.LogInformation($"Catalogue {scanStateId.EntityKey} had no matching items, skipping digest email.");
+                logger.LogInformation($"Catalogue {scanStateId.Key} had no matching items, skipping digest email.");
             }
             #endregion
         }

@@ -1,18 +1,19 @@
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.DurableTask.Client;
 using System;
-using System.Net.Http;
+using System.Threading;
 
 namespace CatalogueScanner.Core.Functions.Api.Management
 {
     public static class GetCheckStatusEndpoints
     {
-        [FunctionName(CoreFunctionNames.GetCheckStatusEndpoints)]
-        public static HttpResponseMessage Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Management/CheckStatusEndpoints/{instanceId?}")] HttpRequestMessage req,
-            [DurableClient] IDurableClient durableClient,
-            string? instanceId = null
+        [Function(CoreFunctionNames.GetCheckStatusEndpoints)]
+        public static HttpResponseData Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Management/CheckStatusEndpoints/{instanceId?}")] HttpRequestData req,
+            [DurableClient] DurableTaskClient durableTaskClient,
+            string instanceId,
+            CancellationToken cancellationToken
         )
         {
             #region null checks
@@ -21,13 +22,13 @@ namespace CatalogueScanner.Core.Functions.Api.Management
                 throw new ArgumentNullException(nameof(req));
             }
 
-            if (durableClient is null)
+            if (durableTaskClient is null)
             {
-                throw new ArgumentNullException(nameof(durableClient));
+                throw new ArgumentNullException(nameof(durableTaskClient));
             }
             #endregion
 
-            return durableClient.CreateCheckStatusResponse(req, instanceId);
+            return durableTaskClient.CreateCheckStatusResponse(req, instanceId, cancellationToken);
         }
     }
 }

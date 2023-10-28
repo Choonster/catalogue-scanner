@@ -6,7 +6,6 @@ using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.Core.MatchRule;
 using CatalogueScanner.Core.Options;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
@@ -53,10 +52,12 @@ namespace CatalogueScanner.Core
             builder.Services.AddSingleton<IConfigureOptions<FunctionsPathOptions>, ConfigureNamedOptions<FunctionsPathOptions>>(
                 serviceProvider => new ConfigureNamedOptions<FunctionsPathOptions>(Microsoft.Extensions.Options.Options.DefaultName, options =>
                 {
-                    // https://github.com/Azure/azure-functions-dotnet-extensions/issues/17#issuecomment-499086297
-                    var executionContextOptions = serviceProvider.GetRequiredService<IOptionsSnapshot<ExecutionContextOptions>>().Value;
-                    var appDirectory = executionContextOptions.AppDirectory;
-                    options.RootDirectory = appDirectory;
+                    // https://stackoverflow.com/a/68092901
+                    var localRoot = Environment.GetEnvironmentVariable("AzureWebJobsScriptRoot");
+                    var azureRoot = $"{Environment.GetEnvironmentVariable("HOME")}/site/wwwroot";
+                    var actualRoot = localRoot ?? azureRoot;
+
+                    options.RootDirectory = actualRoot;
                 })
             );
         }

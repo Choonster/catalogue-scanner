@@ -1,9 +1,7 @@
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.MatchRule;
 using CatalogueScanner.Core.Options;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -30,21 +28,15 @@ namespace CatalogueScanner.Core.Functions
             rules = optionsAccessor.Value.Rules;
         }
 
-        [FunctionName(CoreFunctionNames.FilterCatalogueItem)]
+        [Function(CoreFunctionNames.FilterCatalogueItem)]
         public CatalogueItem? Run(
-            [ActivityTrigger] CatalogueItem catalogueItem,
-            ILogger log
+            [ActivityTrigger] CatalogueItem catalogueItem
         )
         {
             #region null checks
             if (catalogueItem is null)
             {
                 throw new ArgumentNullException(nameof(catalogueItem));
-            }
-
-            if (log is null)
-            {
-                throw new ArgumentNullException(nameof(log));
             }
             #endregion
 
