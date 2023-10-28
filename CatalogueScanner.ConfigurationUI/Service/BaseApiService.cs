@@ -39,9 +39,21 @@ namespace CatalogueScanner.ConfigurationUI.Service
 
         protected async Task<TResponse?> PostAsync<TRequest, TResponse>(string path, TRequest? request)
         {
-            var response = await HttpClient.PostAsJsonAsync(new Uri(path, UriKind.Relative), request).ConfigureAwait(false);
+            // Explicitly create the JsonContent and call LoadIntoBufferAsync to prevent the request being sent with Transfer-Encoding: chunked.
+            // Microsoft.Azure.Functions.Worker.Extensions.Http version 3.1.0 doesn't support deserialisation of chunked requests into POCO parameters;
+            // see https://github.com/Azure/azure-functions-host/issues/7930.
+
+            using var content =  JsonContent.Create(request);
+            await content.LoadIntoBufferAsync().ConfigureAwait(false);
+
+            var response = await HttpClient.PostAsync(new Uri(path, UriKind.Relative), content).ConfigureAwait(false);
 
             await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
+
+            if (response.Content.Headers.ContentLength == 0)
+            {
+                return default;
+            }
 
             return await response.Content.ReadFromJsonAsync<TResponse>().ConfigureAwait(false);
         }
