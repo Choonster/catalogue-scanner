@@ -1,6 +1,5 @@
 using CatalogueScanner.WebScraping.Service;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.DurableTask;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,18 +15,17 @@ namespace CatalogueScanner.WebScraping.Functions
             this.playwrightBrowserManager = playwrightBrowserManager;
         }
 
-        // TODO: Might not be able to use TaskActivityContext here
         [Function(WebScrapingFunctionNames.ClosePlaywrightBrowser)]
-        public async Task<bool> Run([ActivityTrigger] TaskActivityContext context, CancellationToken cancellationToken)
+        public async Task<bool> Run([ActivityTrigger] object? _, string instanceId, CancellationToken cancellationToken)
         {
             #region null checks
-            if (context is null)
+            if (string.IsNullOrEmpty(instanceId))
             {
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentException($"'{nameof(instanceId)}' cannot be null or empty.", nameof(instanceId));
             }
             #endregion
 
-            return await playwrightBrowserManager.CloseBrowserAsync(context.InstanceId, cancellationToken).ConfigureAwait(false);
+            return await playwrightBrowserManager.CloseBrowserAsync(instanceId, cancellationToken).ConfigureAwait(false);
         }
     }
 }

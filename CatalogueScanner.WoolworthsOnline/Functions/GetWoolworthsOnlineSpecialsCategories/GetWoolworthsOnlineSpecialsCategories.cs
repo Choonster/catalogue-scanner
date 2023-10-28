@@ -2,8 +2,6 @@
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.DurableTask;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,17 +17,9 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
             this.woolworthsOnlineService = woolworthsOnlineService;
         }
 
-        // TODO: Might not be able to use TaskActivityContext here
         [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories)]
-        public async Task<IEnumerable<WoolworthsOnlineCategory>> Run([ActivityTrigger] TaskActivityContext context, CancellationToken cancellationToken)
+        public async Task<IEnumerable<WoolworthsOnlineCategory>> Run([ActivityTrigger] object? _, CancellationToken cancellationToken)
         {
-            #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
-
             var response = await woolworthsOnlineService.GetPiesCategoriesWithSpecialsAsync(cancellationToken).ConfigureAwait(false);
 
             var specialsCategories = new List<WoolworthsOnlineCategory>();

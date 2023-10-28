@@ -1,6 +1,5 @@
 ﻿using CatalogueScanner.ColesOnline.Service;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.DurableTask;
 
 namespace CatalogueScanner.ColesOnline.Functions
 {
@@ -13,17 +12,9 @@ namespace CatalogueScanner.ColesOnline.Functions
             this.colesOnlineService = colesOnlineService;
         }
 
-        // TODO: Might not be able to use TaskActivityContext here
         [Function(ColesOnlineFunctionNames.GetColesOnlineBuildId)]
-        public async Task<string> Run([ActivityTrigger] TaskActivityContext context, CancellationToken cancellationToken)
-        {
-            #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
-                       
+        public async Task<string> Run([ActivityTrigger] object? _, CancellationToken cancellationToken)
+        {                       
             var response = await colesOnlineService.GetBuildId(cancellationToken).ConfigureAwait(false);
 
             return response;
