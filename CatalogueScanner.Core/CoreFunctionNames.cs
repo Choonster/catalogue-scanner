@@ -5,7 +5,7 @@
         /// <summary>
         /// The name of the <see cref="Functions.Entity.CatalogueScanStateEntity"/> entity.
         /// </summary>
-        public const string CatalogueScanState = "CatalogueScanState";
+        public const string CatalogueScanState = "CatalogueScanStateEntity";
 
         /// <summary>
         /// The name of the <see cref="Functions.CheckAndUpdateScanState"/> sub-orchestrator function.
