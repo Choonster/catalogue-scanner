@@ -147,7 +147,9 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
                     loadedScanStates.Clear();
                 }
 
-                loadedScanStates.AddRange(result.Entities);
+                loadedScanStates.AddRange(
+                    result.Entities.Select(scanState => scanState with { LastModifiedTime = scanState.LastModifiedTime.ToLocalTime() })
+                );
 
                 hasNoData = !loadedScanStates.Any();
 
