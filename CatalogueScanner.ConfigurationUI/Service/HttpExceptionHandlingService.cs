@@ -22,7 +22,7 @@ public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogServic
         }
         #endregion
 
-        logger.LogError(exception, friendlyErrorMessage);
+        logger.HttpError(exception, friendlyErrorMessage);
 
         var fullMessage = $"{friendlyErrorMessage}: {exception.Message}";
 

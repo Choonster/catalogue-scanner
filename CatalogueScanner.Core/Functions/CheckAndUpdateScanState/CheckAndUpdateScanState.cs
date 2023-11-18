@@ -35,12 +35,12 @@ public static class CheckAndUpdateScanState
 
         await using ((await context.Entities.LockEntitiesAsync(scanStateId).ConfigureAwait(true)).ConfigureAwait(true))
         {
-            logger.LogDebug($"Checking state - {scanStateId.Key}");
+            logger.CheckingState(scanStateId.Key);
 
             var state = await context.Entities.GetScanStateAsync(scanStateId).ConfigureAwait(true);
             if (state != ScanState.NotStarted)
             {
-                logger.LogInformation($"Catalogue {scanStateId.Key} already in state {state}, skipping scan.");
+                logger.SkippingScan(scanStateId.Key, state);
                 return false;
             }
 

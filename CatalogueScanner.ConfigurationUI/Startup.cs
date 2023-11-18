@@ -106,6 +106,6 @@ public class Startup(IConfiguration configuration)
             endpoints.MapFallbackToPage("/_Host");
         });
 
-        logger.LogWarning("AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled: {value}", AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled);
+        logger.IsAppServicesAadAuthenticationEnabled(AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled);
     }
 }

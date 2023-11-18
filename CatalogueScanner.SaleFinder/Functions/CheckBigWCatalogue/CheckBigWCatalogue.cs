@@ -4,7 +4,6 @@ using CatalogueScanner.SaleFinder.Dto.SaleFinder;
 using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -18,7 +17,7 @@ namespace CatalogueScanner.SaleFinder.Functions;
 /// <summary>
 /// Checks for new Big W catalogues and queues them for scanning.
 /// </summary>
-public class CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<CheckBigWCatalogue> logger, IStringLocalizer<CheckBigWCatalogue> stringLocalizer)
+public class CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<CheckBigWCatalogue> logger)
 {
     private const int BigWStoreId = 128;
     private const int BigWLocationId = -1; // Big W doesn't seem to use location IDs
@@ -27,7 +26,6 @@ public class CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<Che
 
     private readonly SaleFinderService saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
     private readonly ILogger<CheckBigWCatalogue> logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    private readonly IStringLocalizer<CheckBigWCatalogue> S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 
     [Function(SaleFinderFunctionNames.CheckBigWCatalogue)]
     [QueueOutput(SaleFinderQueueNames.SaleFinderCataloguesToScan)]
@@ -45,14 +43,14 @@ public class CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<Che
 
         var saleIds = FindSaleIds(viewResponse).ToList();
 
-        logger.LogInformation(S["Found sale IDs: {0}"], saleIds);
+        logger.FoundSaleIds( saleIds);
 
         return saleIds
             .Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, BigWStoreName, CurrencyCultures.AustralianDollar))
             .ToArray();
     }
 
-    private IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
+    private static IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
     {
         var doc = new HtmlDocument();
         doc.LoadHtml(viewResponse.Content);
@@ -65,7 +63,7 @@ public class CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<Che
 
         if (viewLinks.Count == 0)
         {
-            throw new UnableToFindSaleIdException($"{S["Didn't find .readbutton links in HTML content."]}\n\n{viewResponse.Content}");
+            throw new UnableToFindSaleIdException($"Didn't find .readbutton links in HTML content.\n\n{viewResponse.Content}");
         }
 
         foreach (var viewLink in viewLinks)

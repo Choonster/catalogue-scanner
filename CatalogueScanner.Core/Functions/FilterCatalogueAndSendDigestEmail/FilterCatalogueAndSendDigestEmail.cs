@@ -37,7 +37,7 @@ public static class FilterCatalogueAndSendDigestEmail
 
         #region Filter catalouge items
         context.SetCustomStatus("Filtering");
-        logger.LogDebug($"Filtering - {scanStateId.Key}");
+        logger.Filtering(scanStateId.Key);
 
         var itemTasks = catalogue.Items
             .Select(item => context.CallActivityAsync<CatalogueItem?>(CoreFunctionNames.FilterCatalogueItem, item))
@@ -48,7 +48,7 @@ public static class FilterCatalogueAndSendDigestEmail
 
         #region Send digest email
         context.SetCustomStatus("SendingDigestEmail");
-        logger.LogDebug($"Sending digest email - {scanStateId.Key}");
+        logger.SendingDigestEmail(scanStateId.Key);
 
         var filteredItems = items
             .Where(item => item != null)
@@ -63,7 +63,7 @@ public static class FilterCatalogueAndSendDigestEmail
         }
         else
         {
-            logger.LogInformation($"Catalogue {scanStateId.Key} had no matching items, skipping digest email.");
+            logger.NoMatchingItems(scanStateId.Key);
         }
         #endregion
     }

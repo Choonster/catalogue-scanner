@@ -47,7 +47,7 @@ public static class ScanColesOnlineSpecials
 
             #region Download catalogue
             context.SetCustomStatus("Downloading");
-            logger.LogDebug($"Downloading - {scanStateId.Key}");
+            logger.Downloading(scanStateId.Key);
 
             var buildId = await context.CallActivityAsync<string>(ColesOnlineFunctionNames.GetColesOnlineBuildId).ConfigureAwait(true);
 
@@ -89,12 +89,12 @@ public static class ScanColesOnlineSpecials
 
             #region Update catalogue's scan state
             context.SetCustomStatus("UpdatingState");
-            logger.LogDebug($"Updating state - {scanStateId.Key}");
+            logger.UpdatingState(scanStateId.Key);
 
             await context.Entities.UpdateScanStateAsync(scanStateId, ScanState.Completed).ConfigureAwait(true);
             #endregion
 
-            logger.LogDebug($"Completed - {scanStateId.Key}");
+            logger.Completed(scanStateId.Key);
             context.SetCustomStatus("Completed");
         }
         catch
@@ -132,6 +132,6 @@ public static class ScanColesOnlineSpecials
             cancellationToken
         ).ConfigureAwait(false);
 
-        logger.LogInformation($"Started {ColesOnlineFunctionNames.ScanColesOnlineSpecials} orchestration with ID = '{{instanceId}}'.", instanceId);
+        logger.StartedOrchestration(instanceId);
     }
 }

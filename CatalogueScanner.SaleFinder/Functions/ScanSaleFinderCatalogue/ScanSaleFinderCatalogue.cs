@@ -36,7 +36,7 @@ public static class ScanSaleFinderCatalogue
         var log = context.CreateReplaySafeLogger(typeof(ScanSaleFinderCatalogue));
 
         var scanStateId = CatalogueScanStateEntity.CreateId(new CatalogueScanStateKey(
-            CatalogueType, 
+            CatalogueType,
             catalogueDownloadInfo.Store,
             catalogueDownloadInfo.SaleId.ToString(CultureInfo.InvariantCulture)
         ));
@@ -57,14 +57,14 @@ public static class ScanSaleFinderCatalogue
 
             #region Download catalogue
             context.SetCustomStatus("Downloading");
-            log.LogDebug($"Downloading - {scanStateId.Key}");
+            log.Downloading(scanStateId.Key);
 
             var downloadedCatalogue = await context.CallActivityAsync<Catalogue>(SaleFinderFunctionNames.DownloadSaleFinderCatalogue, catalogueDownloadInfo).ConfigureAwait(true);
             #endregion
 
             #region Fill prices
             context.SetCustomStatus("FillingPrices");
-            log.LogDebug($"Filling Prices - {scanStateId.Key}");
+            log.FillingPrices(scanStateId.Key);
 
             var itemsWithPrices = await Task.WhenAll(
                 downloadedCatalogue.Items.Select(item =>
@@ -89,12 +89,12 @@ public static class ScanSaleFinderCatalogue
 
             #region Update catalogue's scan state
             context.SetCustomStatus("UpdatingState");
-            log.LogDebug($"Updating state - {scanStateId.Key}");
+            log.UpdatingState(scanStateId.Key);
 
             await context.Entities.UpdateScanStateAsync(scanStateId, ScanState.Completed).ConfigureAwait(true);
             #endregion
 
-            log.LogDebug($"Completed - {scanStateId.Key}");
+            log.Completed(scanStateId.Key);
             context.SetCustomStatus("Completed");
         }
         catch
@@ -133,6 +133,6 @@ public static class ScanSaleFinderCatalogue
             cancellationToken
         ).ConfigureAwait(false);
 
-        logger.LogInformation($"Started {SaleFinderFunctionNames.ScanSaleFinderCatalogue} orchestration with ID = '{instanceId}'.");
+        logger.StartedOrchestration(instanceId);
     }
 }

@@ -97,7 +97,7 @@ public partial class FillSaleFinderItemPrice(SaleFinderService saleFinderService
         }
         else
         {
-            logger.LogError(Error($"Unknown format for span.sf-saleoptiondesc: \"{saleOptionDescText}\"").Message);
+            logger.UnknownFormat(item!.Id, saleOptionDescText);
             return item;
         }
 

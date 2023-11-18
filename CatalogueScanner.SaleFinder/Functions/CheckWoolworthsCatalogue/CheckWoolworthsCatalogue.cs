@@ -5,7 +5,6 @@ using CatalogueScanner.SaleFinder.Options;
 using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -25,9 +24,8 @@ public class CheckWoolworthsCatalogue
     private readonly SaleFinderService saleFinderService;
     private readonly WoolworthsOptions options;
     private readonly ILogger<CheckWoolworthsCatalogue> logger;
-    private readonly IStringLocalizer<CheckWoolworthsCatalogue> S;
 
-    public CheckWoolworthsCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<WoolworthsOptions> optionsAccessor, ILogger<CheckWoolworthsCatalogue> logger, IStringLocalizer<CheckWoolworthsCatalogue> stringLocalizer)
+    public CheckWoolworthsCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<WoolworthsOptions> optionsAccessor, ILogger<CheckWoolworthsCatalogue> logger)
     {
         #region null checks
         ArgumentNullException.ThrowIfNull(optionsAccessor);
@@ -36,7 +34,6 @@ public class CheckWoolworthsCatalogue
         this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
         options = optionsAccessor.Value;
         this.logger = logger;
-        S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
     }
 
     [Function(SaleFinderFunctionNames.CheckWoolworthsCatalogue)]
@@ -55,14 +52,14 @@ public class CheckWoolworthsCatalogue
 
         var saleIds = FindSaleIds(viewResponse).ToList();
 
-        logger.LogInformation(S["Found sale IDs: {0}"], saleIds);
+        logger.FoundSaleIds(saleIds);
 
         return saleIds
             .Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName, CurrencyCultures.AustralianDollar))
             .ToArray();
     }
 
-    private IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
+    private static IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
     {
         var doc = new HtmlDocument();
         doc.LoadHtml(viewResponse.Content);
@@ -75,7 +72,7 @@ public class CheckWoolworthsCatalogue
 
         if (catalogueContainers.Count == 0)
         {
-            throw new UnableToFindSaleIdException($"{S["Didn't find .sale-container elements in HTML content."]}\n\n{viewResponse.Content}");
+            throw new UnableToFindSaleIdException($"Didn't find .sale-container elements in HTML content.\n\n{viewResponse.Content}");
         }
 
         foreach (var catalogueContainer in catalogueContainers)
@@ -84,7 +81,7 @@ public class CheckWoolworthsCatalogue
 
             if (!int.TryParse(saleIdValue, out var saleId))
             {
-                throw new UnableToFindSaleIdException($"{S["Found invalid \"{0}\" attribute value \"{1}\" in HTML content.", "data-saleid", saleIdValue]}\n\n{viewResponse.Content}");
+                throw new UnableToFindSaleIdException($"Found invalid \"data-saleid\" attribute value \"{saleIdValue}\" in HTML content.\n\n{viewResponse.Content}");
             }
 
             yield return saleId;

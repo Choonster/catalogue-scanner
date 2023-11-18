@@ -5,7 +5,6 @@ using CatalogueScanner.SaleFinder.Options;
 using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -29,9 +28,8 @@ public class CheckIgaCatalogue
     private readonly SaleFinderService saleFinderService;
     private readonly IgaOptions options;
     private readonly ILogger<CheckIgaCatalogue> logger;
-    private readonly IStringLocalizer<CheckIgaCatalogue> S;
 
-    public CheckIgaCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<IgaOptions> optionsAccessor, ILogger<CheckIgaCatalogue> logger, IStringLocalizer<CheckIgaCatalogue> stringLocalizer)
+    public CheckIgaCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<IgaOptions> optionsAccessor, ILogger<CheckIgaCatalogue> logger)
     {
         #region null checks
         ArgumentNullException.ThrowIfNull(optionsAccessor);
@@ -40,7 +38,6 @@ public class CheckIgaCatalogue
         this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
         options = optionsAccessor.Value;
         this.logger = logger;
-        S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
     }
 
     [Function(SaleFinderFunctionNames.CheckIgaCatalogue)]
@@ -59,14 +56,14 @@ public class CheckIgaCatalogue
 
         var saleIds = FindSaleIds(viewResponse).ToList();
 
-        logger.LogInformation(S["Found sale IDs: {0}"], saleIds);
+        logger.FoundSaleIds(saleIds);
 
         return saleIds
             .Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, IgaStoreName, CurrencyCultures.AustralianDollar))
             .ToArray();
     }
 
-    private IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
+    private static IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
     {
         var doc = new HtmlDocument();
         doc.LoadHtml(viewResponse.Content);
@@ -79,7 +76,7 @@ public class CheckIgaCatalogue
 
         if (viewLinks.Count == 0)
         {
-            throw new UnableToFindSaleIdException($"{S["Didn't find .sf-readcatalogue-btn links in HTML content."]}\n\n{viewResponse.Content}");
+            throw new UnableToFindSaleIdException($"Didn't find .sf-readcatalogue-btn links in HTML content.\n\n{viewResponse.Content}");
         }
 
         foreach (var viewLink in viewLinks)
