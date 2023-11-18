@@ -10,15 +10,8 @@ namespace CatalogueScanner.Localisation.OrchardCore
     /// An implementation of <see cref="IPluralStringLocalizer{T}"/> using a wrapped <see cref="IStringLocalizer{T}"/> and the <see cref="IStringLocalizer{T}.Plural"/> extension methods from Orchard Core.
     /// </summary>
     /// <typeparam name="T">The <see cref="Type"/> to provide strings for</typeparam>
-    public class PluralStringLocalizer<T> : IPluralStringLocalizer<T>
+    public class PluralStringLocalizer<T>(IStringLocalizer<T> stringLocalizer) : IPluralStringLocalizer<T>
     {
-        private readonly IStringLocalizer<T> stringLocalizer;
-
-        public PluralStringLocalizer(IStringLocalizer<T> stringLocalizer)
-        {
-            this.stringLocalizer = stringLocalizer;
-        }
-
         public LocalizedString this[string name] => stringLocalizer[name];
 
         public LocalizedString this[string name, params object[] arguments] => stringLocalizer[name, arguments];

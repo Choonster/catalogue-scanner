@@ -19,10 +19,7 @@ namespace CatalogueScanner.Core.Functions
         public FilterCatalogueItem(IOptionsSnapshot<MatchingOptions> optionsAccessor)
         {
             #region null checks
-            if (optionsAccessor is null)
-            {
-                throw new ArgumentNullException(nameof(optionsAccessor));
-            }
+            ArgumentNullException.ThrowIfNull(optionsAccessor);
             #endregion
 
             rules = optionsAccessor.Value.Rules;
@@ -34,10 +31,7 @@ namespace CatalogueScanner.Core.Functions
         )
         {
             #region null checks
-            if (catalogueItem is null)
-            {
-                throw new ArgumentNullException(nameof(catalogueItem));
-            }
+            ArgumentNullException.ThrowIfNull(catalogueItem);
             #endregion
 
             return rules.Any(rule => rule.ItemMatches(catalogueItem)) ? catalogueItem : null;

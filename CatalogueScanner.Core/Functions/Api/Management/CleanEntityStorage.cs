@@ -19,15 +19,9 @@ namespace CatalogueScanner.Core.Functions.Api.Management
         )
         {
             #region null checks
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
-            if (durableTaskClient is null)
-            {
-                throw new ArgumentNullException(nameof(durableTaskClient));
-            }
+            ArgumentNullException.ThrowIfNull(durableTaskClient);
             #endregion
 
             await durableTaskClient.Entities.CleanEntityStorageAsync(

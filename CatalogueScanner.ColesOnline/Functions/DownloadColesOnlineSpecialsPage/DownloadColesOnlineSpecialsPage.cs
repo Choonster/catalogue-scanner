@@ -7,15 +7,8 @@ using System.Globalization;
 
 namespace CatalogueScanner.ColesOnline.Functions
 {
-    public class DownloadColesOnlineSpecialsPage
+    public class DownloadColesOnlineSpecialsPage(ColesOnlineService colesOnlineService)
     {
-        private readonly ColesOnlineService colesOnlineService;
-
-        public DownloadColesOnlineSpecialsPage(ColesOnlineService colesOnlineService)
-        {
-            this.colesOnlineService = colesOnlineService;
-        }
-
         [Function(ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage)]
         public async Task<IEnumerable<CatalogueItem>> Run(
             [ActivityTrigger] DownloadColesOnlineSpecialsPageInput input,
@@ -23,10 +16,7 @@ namespace CatalogueScanner.ColesOnline.Functions
         )
         {
             #region null checks
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            ArgumentNullException.ThrowIfNull(input);
             #endregion
 
             var productUrlTemplate = ColesOnlineService.ProductUrlTemplate;

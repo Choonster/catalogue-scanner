@@ -34,13 +34,10 @@ namespace CatalogueScanner.Core.MatchRule
         /// </example>
         /// <param name="rulesConfig"></param>
         /// <returns></returns>
-        public IEnumerable<ICatalogueItemMatchRule> DeserialiseMatchRules(IConfigurationSection rulesConfig)
+        public static IEnumerable<ICatalogueItemMatchRule> DeserialiseMatchRules(IConfigurationSection rulesConfig)
         {
             #region null checks
-            if (rulesConfig is null)
-            {
-                throw new ArgumentNullException(nameof(rulesConfig));
-            }
+            ArgumentNullException.ThrowIfNull(rulesConfig);
             #endregion
 
             return rulesConfig

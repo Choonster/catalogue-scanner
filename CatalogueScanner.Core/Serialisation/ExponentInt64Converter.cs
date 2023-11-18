@@ -13,20 +13,14 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
         protected override IBaseConverter CreateBaseConverter(Type typeToConvert, JsonSerializerOptions options) =>
             new Converter();
 
-        private class Converter : IBaseConverter
+        private sealed class Converter : IBaseConverter
         {
             public long? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
                 #region null checks
-                if (typeToConvert is null)
-                {
-                    throw new ArgumentNullException(nameof(typeToConvert));
-                }
+                ArgumentNullException.ThrowIfNull(typeToConvert);
 
-                if (options is null)
-                {
-                    throw new ArgumentNullException(nameof(options));
-                }
+                ArgumentNullException.ThrowIfNull(options);
                 #endregion
 
                 switch (reader.TokenType)
@@ -61,15 +55,9 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
             public void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options)
             {
                 #region null checks
-                if (writer is null)
-                {
-                    throw new ArgumentNullException(nameof(writer));
-                }
+                ArgumentNullException.ThrowIfNull(writer);
 
-                if (options is null)
-                {
-                    throw new ArgumentNullException(nameof(options));
-                }
+                ArgumentNullException.ThrowIfNull(options);
                 #endregion
 
                 writer.WriteNumberValue(value);

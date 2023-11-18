@@ -24,15 +24,9 @@ namespace CatalogueScanner.Core.Serialisation
         public override TCollection? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             #region null checks
-            if (typeToConvert is null)
-            {
-                throw new ArgumentNullException(nameof(typeToConvert));
-            }
+            ArgumentNullException.ThrowIfNull(typeToConvert);
 
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
             #endregion
 
             if (reader.TokenType == JsonTokenType.Null)
@@ -72,15 +66,9 @@ namespace CatalogueScanner.Core.Serialisation
         public override void Write(Utf8JsonWriter writer, TCollection value, JsonSerializerOptions options)
         {
             #region null checks
-            if (writer is null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
+            ArgumentNullException.ThrowIfNull(writer);
 
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
             #endregion
 
             if (value == null)

@@ -30,10 +30,7 @@ namespace CatalogueScanner.SaleFinder.Functions
         public CheckWoolworthsCatalogue(SaleFinderService saleFinderService, IOptionsSnapshot<WoolworthsOptions> optionsAccessor, ILogger<CheckWoolworthsCatalogue> logger, IStringLocalizer<CheckWoolworthsCatalogue> stringLocalizer)
         {
             #region null checks
-            if (optionsAccessor is null)
-            {
-                throw new ArgumentNullException(nameof(optionsAccessor));
-            }
+            ArgumentNullException.ThrowIfNull(optionsAccessor);
             #endregion
 
             this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
@@ -50,18 +47,11 @@ namespace CatalogueScanner.SaleFinder.Functions
         )
         {
             #region null checks
-            if (timer is null)
-            {
-                throw new ArgumentNullException(nameof(timer));
-            }
+            ArgumentNullException.ThrowIfNull(timer);
             #endregion
 
-            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(WoolworthsStoreId, options.SaleFinderLocationId, cancellationToken).ConfigureAwait(false);
-
-            if (viewResponse is null)
-            {
-                throw new InvalidOperationException("viewResponse is null");
-            }
+            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(WoolworthsStoreId, options.SaleFinderLocationId, cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException("viewResponse is null");
 
             var saleIds = FindSaleIds(viewResponse).ToList();
 
@@ -83,7 +73,7 @@ namespace CatalogueScanner.SaleFinder.Functions
                 .Where(node => node.GetDataAttribute("saleid") != null)
                 .ToList();
 
-            if (!catalogueContainers.Any())
+            if (catalogueContainers.Count == 0)
             {
                 throw new UnableToFindSaleIdException($"{S["Didn't find .sale-container elements in HTML content."]}\n\n{viewResponse.Content}");
             }

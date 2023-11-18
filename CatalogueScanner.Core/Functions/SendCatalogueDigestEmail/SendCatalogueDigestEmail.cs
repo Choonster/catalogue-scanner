@@ -23,10 +23,7 @@ namespace CatalogueScanner.Core.Functions
         public SendCatalogueDigestEmail(IOptionsSnapshot<EmailOptions> optionsAccessor, IPluralStringLocalizer<SendCatalogueDigestEmail> pluralStringLocalizer)
         {
             #region null checks
-            if (optionsAccessor is null)
-            {
-                throw new ArgumentNullException(nameof(optionsAccessor));
-            }
+            ArgumentNullException.ThrowIfNull(optionsAccessor);
             #endregion
 
             options = optionsAccessor.Value;
@@ -38,10 +35,7 @@ namespace CatalogueScanner.Core.Functions
         public SendGridMessage Run([ActivityTrigger] Catalogue filteredCatalogue)
         {
             #region null checks
-            if (filteredCatalogue is null)
-            {
-                throw new ArgumentNullException(nameof(filteredCatalogue));
-            }
+            ArgumentNullException.ThrowIfNull(filteredCatalogue);
             #endregion
 
             var summary = S.Plural(filteredCatalogue.Items.Count, "Catalogue Scanner found 1 matching item at {1}", "Catalogue Scanner found {0} matching items at {1}", filteredCatalogue.Store);

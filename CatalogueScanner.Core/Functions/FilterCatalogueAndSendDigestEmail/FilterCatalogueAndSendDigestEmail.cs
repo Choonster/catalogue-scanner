@@ -21,15 +21,9 @@ namespace CatalogueScanner.Core.Functions
         public static async Task RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context, FilterCatalogueAndSendDigestEmailInput input)
         {
             #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            ArgumentNullException.ThrowIfNull(input);
             #endregion
 
             var logger = context.CreateReplaySafeLogger(typeof(FilterCatalogueAndSendDigestEmail));
@@ -61,7 +55,7 @@ namespace CatalogueScanner.Core.Functions
                 .Cast<CatalogueItem>()
                 .ToList();
 
-            if (filteredItems.Any())
+            if (filteredItems.Count > 0)
             {
                 var filteredCatalogue = catalogue with { Items = filteredItems };
 

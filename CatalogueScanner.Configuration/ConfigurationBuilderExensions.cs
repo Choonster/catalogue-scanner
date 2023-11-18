@@ -9,10 +9,7 @@ namespace CatalogueScanner.Configuration
         public static IConfigurationBuilder AddCatalogueScannerAzureAppConfiguration(this IConfigurationBuilder configurationBuilder, string connectionString)
         {
             #region null checks
-            if (configurationBuilder is null)
-            {
-                throw new ArgumentNullException(nameof(configurationBuilder));
-            }
+            ArgumentNullException.ThrowIfNull(configurationBuilder);
 
             if (string.IsNullOrEmpty(connectionString))
             {

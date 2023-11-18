@@ -28,15 +28,9 @@ namespace CatalogueScanner.SaleFinder.Functions
         public static async Task RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context, SaleFinderCatalogueDownloadInformation catalogueDownloadInfo)
         {
             #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
-            if (catalogueDownloadInfo is null)
-            {
-                throw new ArgumentNullException(nameof(catalogueDownloadInfo));
-            }
+            ArgumentNullException.ThrowIfNull(catalogueDownloadInfo);
             #endregion
 
             var log = context.CreateReplaySafeLogger(typeof(ScanSaleFinderCatalogue));
@@ -124,20 +118,11 @@ namespace CatalogueScanner.SaleFinder.Functions
         )
         {
             #region null checks
-            if (downloadInformation is null)
-            {
-                throw new ArgumentNullException(nameof(downloadInformation));
-            }
+            ArgumentNullException.ThrowIfNull(downloadInformation);
 
-            if (durableTaskClient is null)
-            {
-                throw new ArgumentNullException(nameof(durableTaskClient));
-            }
+            ArgumentNullException.ThrowIfNull(durableTaskClient);
 
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
             #endregion
 
             var logger = context.GetLogger(typeof(ScanSaleFinderCatalogue).FullName!);

@@ -18,23 +18,16 @@ namespace CatalogueScanner.SaleFinder.Functions
     /// <summary>
     /// Checks for new Big W catalogues and queues them for scanning.
     /// </summary>
-    public class CheckBigWCatalogue
+    public class CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<CheckBigWCatalogue> logger, IStringLocalizer<CheckBigWCatalogue> stringLocalizer)
     {
         private const int BigWStoreId = 128;
         private const int BigWLocationId = -1; // Big W doesn't seem to use location IDs
         private const string BigWStoreName = "Big W";
         private static readonly Uri CatalaogueBaseUri = new("https://www.bigw.com.au/bigw-catalogues");
 
-        private readonly SaleFinderService saleFinderService;
-        private readonly ILogger<CheckBigWCatalogue> logger;
-        private readonly IStringLocalizer<CheckBigWCatalogue> S;
-
-        public CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<CheckBigWCatalogue> logger, IStringLocalizer<CheckBigWCatalogue> stringLocalizer)
-        {
-            this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
-        }
+        private readonly SaleFinderService saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
+        private readonly ILogger<CheckBigWCatalogue> logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IStringLocalizer<CheckBigWCatalogue> S = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 
         [Function(SaleFinderFunctionNames.CheckBigWCatalogue)]
         [QueueOutput(SaleFinderQueueNames.SaleFinderCataloguesToScan)]
@@ -44,18 +37,11 @@ namespace CatalogueScanner.SaleFinder.Functions
         )
         {
             #region null checks
-            if (timer is null)
-            {
-                throw new ArgumentNullException(nameof(timer));
-            }
+            ArgumentNullException.ThrowIfNull(timer);
             #endregion
 
-            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(BigWStoreId, BigWLocationId, cancellationToken).ConfigureAwait(false);
-
-            if (viewResponse is null)
-            {
-                throw new InvalidOperationException("viewResponse is null");
-            }
+            var viewResponse = await saleFinderService.GetCatalogueViewDataAsync(BigWStoreId, BigWLocationId, cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException("viewResponse is null");
 
             var saleIds = FindSaleIds(viewResponse).ToList();
 
@@ -77,7 +63,7 @@ namespace CatalogueScanner.SaleFinder.Functions
                 .Where(node => node.HasClass("readbutton"))
                 .ToList();
 
-            if (!viewLinks.Any())
+            if (viewLinks.Count == 0)
             {
                 throw new UnableToFindSaleIdException($"{S["Didn't find .readbutton links in HTML content."]}\n\n{viewResponse.Content}");
             }

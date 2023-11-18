@@ -16,10 +16,7 @@ namespace CatalogueScanner.ConfigurationUI.Service
 
         public BaseApiService(HttpClient httpClient, TokenProvider tokenProvider)
         {
-            if (tokenProvider is null)
-            {
-                throw new ArgumentNullException(nameof(tokenProvider));
-            }
+            ArgumentNullException.ThrowIfNull(tokenProvider);
 
             HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 

@@ -29,11 +29,8 @@ namespace CatalogueScanner.Core.Host.ApplicationInsights
             var item1Property = GetProperty(sanitizedTupleType, "Item1");
             var item2Property = GetProperty(sanitizedTupleType, "Item2");
 
-            var exceptionDetailsInfoConstructor = typeof(ExceptionDetailsInfo).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, new[] { exceptionDetailsType });
-            if (exceptionDetailsInfoConstructor == null)
-            {
-                throw new InvalidOperationException($"Constructor {typeof(ExceptionDetailsInfo).FullName}({exceptionDetailsType.FullName}) not found");
-            }
+            var exceptionDetailsInfoConstructor = typeof(ExceptionDetailsInfo).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, [exceptionDetailsType])
+                ?? throw new InvalidOperationException($"Constructor {typeof(ExceptionDetailsInfo).FullName}({exceptionDetailsType.FullName}) not found");
 
             return new(
                 createWithoutStackInfoMethod,
@@ -60,11 +57,8 @@ namespace CatalogueScanner.Core.Host.ApplicationInsights
         {
             var methods = exceptionDetailsMethods.Value;
 
-            var exceptionDetails = methods.CreateWithoutStackInfo.Invoke(null, new[] { exception, null });
-            if (exceptionDetails == null)
-            {
-                throw new InvalidOperationException($"{methods.CreateWithoutStackInfo.Name} returned null");
-            }
+            var exceptionDetails = methods.CreateWithoutStackInfo.Invoke(null, new[] { exception, null })
+                ?? throw new InvalidOperationException($"{methods.CreateWithoutStackInfo.Name} returned null");
 
             var frames = stackTrace.GetFrames();
 
@@ -72,60 +66,31 @@ namespace CatalogueScanner.Core.Host.ApplicationInsights
                 frames,
                 methods.GetStackFrame.CreateDelegate(methods.ConverterDelegateType),
                 methods.GetStackFrameLength.CreateDelegate(methods.LengthGetterDelegateType)
-            });
-
-            if (sanitizedTuple == null)
-            {
-                throw new InvalidOperationException($"{methods.SanitizeStackFrame.Name} returned null");
-            }
+            })
+                ?? throw new InvalidOperationException($"{methods.SanitizeStackFrame.Name} returned null");
 
             methods.ParsedStack.SetValue(exceptionDetails, methods.SanitizedTupleItem1.GetValue(sanitizedTuple));
             methods.HasFullStack.SetValue(exceptionDetails, methods.SanitizedTupleItem2.GetValue(sanitizedTuple));
 
-            var exceptionDetailsInfo = (ExceptionDetailsInfo?)methods.ExceptionDetailsInfoConstructor.Invoke(new[] { exceptionDetails });
-
-            if (exceptionDetailsInfo == null)
-            {
-                throw new InvalidOperationException($"{typeof(ExceptionDetailsInfo).FullName} instance is null");
-            }
+            var exceptionDetailsInfo = (ExceptionDetailsInfo?)methods.ExceptionDetailsInfoConstructor.Invoke(new[] { exceptionDetails })
+                ?? throw new InvalidOperationException($"{typeof(ExceptionDetailsInfo).FullName} instance is null");
 
             return exceptionDetailsInfo;
         }
 
-        private static Type GetType(string typeName)
-        {
-            var type = Type.GetType(typeName);
-            if (type == null)
-            {
-                throw new InvalidOperationException($"Type {typeName} not found");
-            }
+        private static Type GetType(string typeName) =>
+            Type.GetType(typeName)
+                ?? throw new InvalidOperationException($"Type {typeName} not found");
 
-            return type;
-        }
+        private static MethodInfo GetMethod(Type type, string methodName, BindingFlags bindingAttr) =>
+            type.GetMethod(methodName, bindingAttr)
+                ?? throw new InvalidOperationException($"Method {type.FullName}.{methodName} not found");
 
-        private static MethodInfo GetMethod(Type type, string methodName, BindingFlags bindingAttr)
-        {
-            var method = type.GetMethod(methodName, bindingAttr);
-            if (method == null)
-            {
-                throw new InvalidOperationException($"Method {type.FullName}.{methodName} not found");
-            }
+        private static PropertyInfo GetProperty(Type type, string propertyName) =>
+            type.GetProperty(propertyName)
+                ?? throw new InvalidOperationException($"Property {type.FullName}.{propertyName} not found");
 
-            return method;
-        }
-
-        private static PropertyInfo GetProperty(Type type, string propertyName)
-        {
-            var property = type.GetProperty(propertyName);
-            if (property == null)
-            {
-                throw new InvalidOperationException($"Property {type.FullName}.{propertyName} not found");
-            }
-
-            return property;
-        }
-
-        internal record ExceptionDetailsMethods(
+        internal sealed record ExceptionDetailsMethods(
             MethodInfo CreateWithoutStackInfo,
             PropertyInfo ParsedStack,
             PropertyInfo HasFullStack,

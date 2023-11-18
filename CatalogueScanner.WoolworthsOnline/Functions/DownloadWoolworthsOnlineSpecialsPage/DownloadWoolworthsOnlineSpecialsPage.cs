@@ -3,7 +3,6 @@ using CatalogueScanner.WoolworthsOnline.Dto.FunctionInput;
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.DurableTask;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,15 +12,8 @@ using System.Threading.Tasks;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions
 {
-    public class DownloadWoolworthsOnlineSpecialsPage
+    public class DownloadWoolworthsOnlineSpecialsPage(WoolworthsOnlineService woolworthsOnlineService)
     {
-        private readonly WoolworthsOnlineService woolworthsOnlineService;
-
-        public DownloadWoolworthsOnlineSpecialsPage(WoolworthsOnlineService woolworthsOnlineService)
-        {
-            this.woolworthsOnlineService = woolworthsOnlineService;
-        }
-
         [Function(WoolworthsOnlineFunctionNames.DownloadWoolworthsOnlineSpecialsPage)]
         public async Task<IEnumerable<CatalogueItem>> Run(
             [ActivityTrigger] DownloadWoolworthsOnlineSpecialsPageInput input,
@@ -29,10 +21,7 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
         )
         {
             #region null checks
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            ArgumentNullException.ThrowIfNull(input);
             #endregion
 
             var productUrlTemplate = WoolworthsOnlineService.ProductUrlTemplate;

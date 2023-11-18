@@ -15,22 +15,15 @@ namespace CatalogueScanner.SaleFinder.Functions
     /// <summary>
     /// Downloads a SaleFinder catalogue and outputs the items.
     /// </summary>
-    public class DownloadSaleFinderCatalogue
-    {
-        private readonly SaleFinderService saleFinderService;
-        private readonly ILogger<DownloadSaleFinderCatalogue> logger;
-        private readonly IPluralStringLocalizer<DownloadSaleFinderCatalogue> S;
-
-        public DownloadSaleFinderCatalogue(
-            SaleFinderService saleFinderService,
-            ILogger<DownloadSaleFinderCatalogue> logger,
-            IPluralStringLocalizer<DownloadSaleFinderCatalogue> pluralStringLocalizer
+    public class DownloadSaleFinderCatalogue(
+        SaleFinderService saleFinderService,
+        ILogger<DownloadSaleFinderCatalogue> logger,
+        IPluralStringLocalizer<DownloadSaleFinderCatalogue> pluralStringLocalizer
         )
-        {
-            this.saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            S = pluralStringLocalizer ?? throw new ArgumentNullException(nameof(pluralStringLocalizer));
-        }
+    {
+        private readonly SaleFinderService saleFinderService = saleFinderService ?? throw new ArgumentNullException(nameof(saleFinderService));
+        private readonly ILogger<DownloadSaleFinderCatalogue> logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IPluralStringLocalizer<DownloadSaleFinderCatalogue> S = pluralStringLocalizer ?? throw new ArgumentNullException(nameof(pluralStringLocalizer));
 
         [Function(SaleFinderFunctionNames.DownloadSaleFinderCatalogue)]
         public async Task<Catalogue> RunAsync(
@@ -39,10 +32,7 @@ namespace CatalogueScanner.SaleFinder.Functions
         )
         {
             #region null checks
-            if (downloadInformation is null)
-            {
-                throw new ArgumentNullException(nameof(downloadInformation));
-            }
+            ArgumentNullException.ThrowIfNull(downloadInformation);
             #endregion
 
             var catalogue = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId, cancellationToken).ConfigureAwait(false);

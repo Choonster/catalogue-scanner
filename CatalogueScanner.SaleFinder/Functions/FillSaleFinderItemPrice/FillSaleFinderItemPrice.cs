@@ -5,7 +5,6 @@ using HtmlAgilityPack;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
@@ -15,24 +14,15 @@ using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Functions
 {
-    public class FillSaleFinderItemPrice
+    public partial class FillSaleFinderItemPrice(SaleFinderService saleFinderService, ILogger<FillSaleFinderItemPrice> logger)
     {
-        private static readonly Regex MultiBuyNForRegex = new(@"(?:Any\s*)?(\d+)\s+for", RegexOptions.IgnoreCase);
+        [GeneratedRegex(@"(?:Any\s*)?(\d+)\s+for", RegexOptions.IgnoreCase, "en-AU")]
+        private static partial Regex MultiBuyNForRegex();
 
-        private static readonly ISet<string> SingleItemSaleOptionDescTexts = ImmutableHashSet.Create(
-            "Any of these",
-            "Now",
-            "From"
-        );
+        private static readonly ImmutableHashSet<string> SingleItemSaleOptionDescTexts = ["Any of these", "Now", "From"];
 
-        private readonly SaleFinderService saleFinderService;
-        private readonly ILogger<FillSaleFinderItemPrice> logger;
-
-        public FillSaleFinderItemPrice(SaleFinderService saleFinderService, ILogger<FillSaleFinderItemPrice> logger)
-        {
-            this.saleFinderService = saleFinderService;
-            this.logger = logger;
-        }
+        private readonly SaleFinderService saleFinderService = saleFinderService;
+        private readonly ILogger<FillSaleFinderItemPrice> logger = logger;
 
         [Function(SaleFinderFunctionNames.FillSaleFinderItemPrice)]
         public async Task<CatalogueItem> Run(
@@ -41,10 +31,7 @@ namespace CatalogueScanner.SaleFinder.Functions
         )
         {
             #region null checks
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            ArgumentNullException.ThrowIfNull(input);
             #endregion
 
             var item = input.Item;
@@ -54,12 +41,8 @@ namespace CatalogueScanner.SaleFinder.Functions
                 return item;
             }
 
-            var tooltipHtml = await saleFinderService.GetItemTooltipAsync(ParseLong(item.Id), cancellationToken).ConfigureAwait(false);
-
-            if (tooltipHtml is null)
-            {
-                throw Error("tooltipHtml is null");
-            }
+            var tooltipHtml = await saleFinderService.GetItemTooltipAsync(ParseLong(item.Id), cancellationToken).ConfigureAwait(false)
+                ?? throw Error("tooltipHtml is null");
 
             var doc = new HtmlDocument();
             doc.LoadHtml(tooltipHtml);
@@ -72,12 +55,8 @@ namespace CatalogueScanner.SaleFinder.Functions
                 return item;
             }
 
-            var priceDisplaySpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-pricedisplay");
-
-            if (priceDisplaySpan is null)
-            {
-                throw Error("Unabe to find span.sf-pricedisplay");
-            }
+            var priceDisplaySpan = DescendantByNameAndClass(nowPriceSpan, "span", "sf-pricedisplay")
+                ?? throw Error("Unabe to find span.sf-pricedisplay");
 
             // Woolworths uses individual dollar and cents spans inside .sf-pricedisplay, other stores have the price with dollar sign as the inner text of .sf-pricedisplay
             decimal price;
@@ -108,7 +87,7 @@ namespace CatalogueScanner.SaleFinder.Functions
             {
                 return item with { Price = price };
             }
-            else if (MultiBuyNForRegex.Match(saleOptionDescText) is { Success: true } match)
+            else if (MultiBuyNForRegex().Match(saleOptionDescText) is { Success: true } match)
             {
                 return item with
                 {

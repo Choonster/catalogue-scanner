@@ -9,26 +9,12 @@ using System.Threading.Tasks;
 
 namespace CatalogueScanner.ConfigurationUI.Service
 {
-    public class HttpExceptionHandlingService
+    public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogService matDialogService, ILogger<HttpExceptionHandlingService> logger)
     {
-        private readonly IJSRuntime jsRuntime;
-        private readonly IMatDialogService matDialogService;
-        private readonly ILogger<HttpExceptionHandlingService> logger;
-
-        public HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogService matDialogService, ILogger<HttpExceptionHandlingService> logger)
-        {
-            this.jsRuntime = jsRuntime;
-            this.matDialogService = matDialogService;
-            this.logger = logger;
-        }
-
         public async Task HandleHttpExceptionAsync(HttpRequestException exception, string friendlyErrorMessage)
         {
             #region null checks
-            if (exception is null)
-            {
-                throw new ArgumentNullException(nameof(exception));
-            }
+            ArgumentNullException.ThrowIfNull(exception);
 
             if (string.IsNullOrEmpty(friendlyErrorMessage))
             {

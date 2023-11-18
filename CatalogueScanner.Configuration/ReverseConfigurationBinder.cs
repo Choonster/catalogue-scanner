@@ -15,7 +15,7 @@ namespace CatalogueScanner.Configuration
     /// 
     /// Code adapted from <see cref="ConfigurationBinder"/>.
     /// </summary>
-    class ReverseConfigurationBinder
+    internal static class ReverseConfigurationBinder
     {
         private const BindingFlags DeclaredOnlyLookup = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
@@ -260,7 +260,7 @@ namespace CatalogueScanner.Configuration
             return null;
         }
 
-        private static IEnumerable<PropertyInfo> GetAllProperties(Type type)
+        private static List<PropertyInfo> GetAllProperties(Type type)
         {
             var allProperties = new List<PropertyInfo>();
 
@@ -306,10 +306,7 @@ namespace CatalogueScanner.Configuration
 
         private static string GetPropertyName(MemberInfo property)
         {
-            if (property == null)
-            {
-                throw new ArgumentNullException(nameof(property));
-            }
+            ArgumentNullException.ThrowIfNull(property);
 
             // Check for a custom property name used for configuration key binding
             foreach (var attributeData in property.GetCustomAttributesData())

@@ -19,15 +19,9 @@ namespace CatalogueScanner.Core.Extensions
         public static void AddRange<T>(this ICollection<T> thisCollection, IEnumerable<T> collection)
         {
             #region null checks
-            if (thisCollection is null)
-            {
-                throw new ArgumentNullException(nameof(thisCollection));
-            }
+            ArgumentNullException.ThrowIfNull(thisCollection);
 
-            if (collection is null)
-            {
-                throw new ArgumentNullException(nameof(collection));
-            }
+            ArgumentNullException.ThrowIfNull(collection);
             #endregion
 
             if (thisCollection is List<T> list)

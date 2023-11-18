@@ -19,10 +19,7 @@ namespace CatalogueScanner.Core.Functions.Entity
         public static EntityInstanceId CreateId(CatalogueScanStateKey key)
         {
             #region null checks
-            if (key is null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
+            ArgumentNullException.ThrowIfNull(key);
             #endregion
 
             return new EntityInstanceId(CoreFunctionNames.CatalogueScanState, key.ToString());
@@ -41,10 +38,7 @@ namespace CatalogueScanner.Core.Functions.Entity
         public Task DispatchAsync([EntityTrigger] TaskEntityDispatcher dispatcher)
         {
             #region null checks
-            if (dispatcher is null)
-            {
-                throw new ArgumentNullException(nameof(dispatcher));
-            }
+            ArgumentNullException.ThrowIfNull(dispatcher);
             #endregion
 
             return dispatcher.DispatchAsync(this);

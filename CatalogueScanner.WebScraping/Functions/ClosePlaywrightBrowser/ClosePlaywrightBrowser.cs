@@ -6,14 +6,9 @@ using System.Threading.Tasks;
 
 namespace CatalogueScanner.WebScraping.Functions
 {
-    public class ClosePlaywrightBrowser
+    public class ClosePlaywrightBrowser(PlaywrightBrowserManager playwrightBrowserManager)
     {
-        private readonly PlaywrightBrowserManager playwrightBrowserManager;
-
-        public ClosePlaywrightBrowser(PlaywrightBrowserManager playwrightBrowserManager)
-        {
-            this.playwrightBrowserManager = playwrightBrowserManager;
-        }
+        private readonly PlaywrightBrowserManager playwrightBrowserManager = playwrightBrowserManager;
 
         [Function(WebScrapingFunctionNames.ClosePlaywrightBrowser)]
         public async Task<bool> Run(

@@ -13,26 +13,24 @@ namespace CatalogueScanner.Localisation.OrchardCore
     /// <summary>
     /// Provides localisation files from the root directory of the Functions app.
     /// </summary>
-    public class FunctionsRootPoFileLocationProvider : ILocalizationFileLocationProvider
+    public class FunctionsRootPoFileLocationProvider : ILocalizationFileLocationProvider, IDisposable
     {
-        private readonly IFileProvider fileProvider;
+        private readonly PhysicalFileProvider fileProvider;
         private readonly string resourcesContainer;
+        private bool disposedValue;
 
         public FunctionsRootPoFileLocationProvider(IOptions<FunctionsPathOptions> pathOptions, IOptions<LocalizationOptions> localisationOptions)
         {
             #region null checks
-            if (pathOptions is null)
-            {
-                throw new ArgumentNullException(nameof(pathOptions));
-            }
+            ArgumentNullException.ThrowIfNull(pathOptions);
 
-            if (localisationOptions is null)
-            {
-                throw new ArgumentNullException(nameof(localisationOptions));
-            }
+            ArgumentNullException.ThrowIfNull(localisationOptions);
             #endregion
 
-            fileProvider = new PhysicalFileProvider(pathOptions.Value.RootDirectory);
+            var rootDirectory = pathOptions.Value.RootDirectory
+                ?? throw new InvalidOperationException($"{nameof(FunctionsPathOptions)}.{nameof(FunctionsPathOptions.FunctionsPath)} must be configured");
+
+            fileProvider = new PhysicalFileProvider(rootDirectory);
             resourcesContainer = localisationOptions.Value.ResourcesPath;
         }
 
@@ -41,6 +39,26 @@ namespace CatalogueScanner.Localisation.OrchardCore
             return fileProvider.GetDirectoryContents(resourcesContainer) // Localisation/CatalogueScanner.Core, Localisation/CatalogueScanner.SaleFinder, ...
                 .Where(f => f.IsDirectory)
                 .Select(dir => fileProvider.GetFileInfo(Path.Combine(resourcesContainer, dir.Name, $"{cultureName}.po"))); // Localisation/CatalogueScanner.Core/en.po, Localisation/CatalogueScanner.SaleFinder/en.po, ...
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    fileProvider.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -23,15 +23,9 @@ namespace CatalogueScanner.SaleFinder.Service
         public static async Task<T?> ReadSaleFinderResponseAsAync<T>(this HttpContent content, JsonTypeInfo<T> jsonTypeInfo, string? callbackName, CancellationToken cancellationToken = default)
         {
             #region null checks
-            if (content is null)
-            {
-                throw new ArgumentNullException(nameof(content));
-            }
+            ArgumentNullException.ThrowIfNull(content);
 
-            if (jsonTypeInfo is null)
-            {
-                throw new ArgumentNullException(nameof(jsonTypeInfo));
-            }
+            ArgumentNullException.ThrowIfNull(jsonTypeInfo);
             #endregion
 
             var sourceEncoding = GetEncoding(content.Headers.ContentType?.CharSet);

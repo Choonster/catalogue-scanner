@@ -61,10 +61,10 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
         public string? PageDesc { get; set; }
     }
 
-    internal partial class PageWithExtensionData : Page
+    internal sealed partial class PageWithExtensionData : Page
     {
         [JsonExtensionData]
-        public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
+        public Dictionary<string, JsonElement> ExtensionData { get; set; } = [];
     }
 
     public partial class Item
@@ -120,44 +120,30 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Instantiated by System.Text.Json using reflection")]
-    internal class PageConverter : JsonConverter<Page>
+    internal sealed class PageConverter : JsonConverter<Page>
     {
         public override Page Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             #region null checks
-            if (typeToConvert is null)
-            {
-                throw new ArgumentNullException(nameof(typeToConvert));
-            }
+            ArgumentNullException.ThrowIfNull(typeToConvert);
 
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
             #endregion
 
             var context = new SaleFinderInternalSerializerContext(new JsonSerializerOptions(options));
 
             // Create a PageWithExtensionData instance, populate the standard (non-numeric) property names from the JSON
             // and store the overflow in the ExtensionData property
-            var page = JsonSerializer.Deserialize(ref reader, context.PageWithExtensionData);
-
-            if (page is null)
-            {
-                throw new JsonException("page instance is null");
-            }
+            var page = JsonSerializer.Deserialize(ref reader, context.PageWithExtensionData)
+                ?? throw new JsonException("page instance is null");
 
             // Add the numeric property names to the Items collection
             foreach (var keyValuePair in page.ExtensionData)
             {
                 if (int.TryParse(keyValuePair.Key, out var index))
                 {
-                    var item = keyValuePair.Value.Deserialize(context.Item);
-
-                    if (item is null)
-                    {
-                        throw new JsonException($"item instance at index {index} is null");
-                    }
+                    var item = keyValuePair.Value.Deserialize(context.Item)
+                        ?? throw new JsonException($"item instance at index {index} is null");
 
                     page.Items.Insert(index, item);
                 }
@@ -176,29 +162,16 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
         public override void Write(Utf8JsonWriter writer, Page value, JsonSerializerOptions options)
         {
             #region null checks
-            if (writer is null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
+            ArgumentNullException.ThrowIfNull(writer);
 
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            ArgumentNullException.ThrowIfNull(value);
 
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
             #endregion
 
             // Create a JsonNode and populate the standard (non-numeric) property names
-            var pageNode = JsonSerializer.SerializeToNode(value, options);
-
-            if (pageNode is null)
-            {
-                throw new JsonException($"null returned from {nameof(JsonSerializer.SerializeToNode)}");
-            }
+            var pageNode = JsonSerializer.SerializeToNode(value, options)
+                ?? throw new JsonException($"null returned from {nameof(JsonSerializer.SerializeToNode)}");
 
             // Add the values from the Items collection as numeric property names
             for (var i = 0; i < value.Items.Count; i++)
@@ -241,7 +214,7 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
         }
     }
 
-    internal class SaleFinderJsonCollectionItemConverter<TData, TCollection, TConverter> : BaseJsonCollectionItemConverter<TData, TCollection, TConverter>
+    internal sealed class SaleFinderJsonCollectionItemConverter<TData, TCollection, TConverter> : BaseJsonCollectionItemConverter<TData, TCollection, TConverter>
         where TCollection : IEnumerable<TData>
         where TConverter : JsonConverter, new()
     {

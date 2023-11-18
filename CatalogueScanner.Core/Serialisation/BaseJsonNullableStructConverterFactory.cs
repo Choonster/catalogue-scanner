@@ -9,10 +9,7 @@ namespace CatalogueScanner.Core.Serialisation
         public override bool CanConvert(Type typeToConvert)
         {
             #region null checks
-            if (typeToConvert is null)
-            {
-                throw new ArgumentNullException(nameof(typeToConvert));
-            }
+            ArgumentNullException.ThrowIfNull(typeToConvert);
             #endregion
 
             return typeToConvert == typeof(T)
@@ -22,15 +19,9 @@ namespace CatalogueScanner.Core.Serialisation
         public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
             #region null checks
-            if (typeToConvert is null)
-            {
-                throw new ArgumentNullException(nameof(typeToConvert));
-            }
+            ArgumentNullException.ThrowIfNull(typeToConvert);
 
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
             #endregion
 
             var baseConverter = CreateBaseConverter(typeToConvert, options);
@@ -62,12 +53,8 @@ namespace CatalogueScanner.Core.Serialisation
             void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options);
         }
 
-        private class StandardConverter : JsonConverter<T>
+        private sealed class StandardConverter(IBaseConverter baseConverter) : JsonConverter<T>
         {
-            private readonly IBaseConverter baseConverter;
-
-            public StandardConverter(IBaseConverter baseConverter) => this.baseConverter = baseConverter;
-
             public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
                 baseConverter.Read(ref reader, typeToConvert, options) ?? default;
 
@@ -75,12 +62,8 @@ namespace CatalogueScanner.Core.Serialisation
                 baseConverter.Write(writer, value, options);
         }
 
-        private class NullableConverter : JsonConverter<T?>
+        private sealed class NullableConverter(IBaseConverter baseConverter) : JsonConverter<T?>
         {
-            private readonly IBaseConverter baseConverter;
-
-            public NullableConverter(IBaseConverter baseConverter) => this.baseConverter = baseConverter;
-
             public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
                 baseConverter.Read(ref reader, typeToConvert, options);
 

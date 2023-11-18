@@ -29,20 +29,11 @@ namespace CatalogueScanner.Core.Functions.Api
         )
         {
             #region null checks
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
-            if (listEntityRequest is null)
-            {
-                throw new ArgumentNullException(nameof(listEntityRequest));
-            }
+            ArgumentNullException.ThrowIfNull(listEntityRequest);
 
-            if (durableTaskClient is null)
-            {
-                throw new ArgumentNullException(nameof(durableTaskClient));
-            }
+            ArgumentNullException.ThrowIfNull(durableTaskClient);
             #endregion
 
             var query = new EntityQuery

@@ -7,10 +7,7 @@ namespace CatalogueScanner.Core.Host
         public static ICatalogueScannerHostBuilder AddPlugin<T>(this ICatalogueScannerHostBuilder builder) where T : ICatalogueScannerPlugin, new()
         {
             #region null checks
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            ArgumentNullException.ThrowIfNull(builder);
             #endregion
 
             new T().Configure(builder);

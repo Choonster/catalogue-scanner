@@ -27,10 +27,7 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
         public static async Task RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context)
         {
             #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
             #endregion
 
             var logger = context.CreateReplaySafeLogger(typeof(ScanWoolworthsOnlineSpecials));
@@ -141,20 +138,11 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
         )
         {
             #region null checks
-            if (timer is null)
-            {
-                throw new ArgumentNullException(nameof(timer));
-            }
+            ArgumentNullException.ThrowIfNull(timer);
 
-            if (durableTaskClient is null)
-            {
-                throw new ArgumentNullException(nameof(durableTaskClient));
-            }
+            ArgumentNullException.ThrowIfNull(durableTaskClient);
 
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
             #endregion
 
             var logger = context.GetLogger(typeof(ScanWoolworthsOnlineSpecials).FullName!);

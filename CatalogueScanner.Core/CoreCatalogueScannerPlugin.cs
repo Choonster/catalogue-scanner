@@ -15,15 +15,10 @@ namespace CatalogueScanner.Core
 {
     public class CoreCatalogueScannerPlugin : ICatalogueScannerPlugin
     {
-        private readonly CatalogueItemMatchRuleSerialiser catalogueItemMatchRuleSerialiser = new();
-
         public void Configure(ICatalogueScannerHostBuilder builder)
         {
             #region null checks
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            ArgumentNullException.ThrowIfNull(builder);
             #endregion
 
             builder.Services.AddSingleton<ITelemetryInitializer, HttpDetailedRequestExceptionTelemetryInitializer>();
@@ -62,7 +57,7 @@ namespace CatalogueScanner.Core
             );
         }
 
-        private void AddConfigurationOptions(ICatalogueScannerHostBuilder builder)
+        private static void AddConfigurationOptions(ICatalogueScannerHostBuilder builder)
         {
             var coreSection = builder.Configuration.GetSection("Core");
 
@@ -73,7 +68,7 @@ namespace CatalogueScanner.Core
                 .Configure<MatchingOptions>((options) =>
                 {
                     options.Rules.Clear();
-                    options.Rules.AddRange(catalogueItemMatchRuleSerialiser.DeserialiseMatchRules(matchingConfig.GetSection("Rules")));
+                    options.Rules.AddRange(CatalogueItemMatchRuleSerialiser.DeserialiseMatchRules(matchingConfig.GetSection("Rules")));
                 })
                 .ConfigureOptions<EmailOptions>(coreSection.GetSection(EmailOptions.Email));
         }

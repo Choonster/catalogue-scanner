@@ -17,20 +17,11 @@ namespace CatalogueScanner.Core.Functions.Api.Management
         )
         {
             #region null checks
-            if (req is null)
-            {
-                throw new ArgumentNullException(nameof(req));
-            }
+            ArgumentNullException.ThrowIfNull(req);
 
-            if (durableTaskClient is null)
-            {
-                throw new ArgumentNullException(nameof(durableTaskClient));
-            }
+            ArgumentNullException.ThrowIfNull(durableTaskClient);
 
-            if (instanceId is null)
-            {
-                throw new ArgumentNullException(nameof(instanceId));
-            }
+            ArgumentNullException.ThrowIfNull(instanceId);
             #endregion
 
             return durableTaskClient.CreateCheckStatusResponse(req, instanceId, cancellationToken);

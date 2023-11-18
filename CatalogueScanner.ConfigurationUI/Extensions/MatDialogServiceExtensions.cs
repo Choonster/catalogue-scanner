@@ -8,15 +8,9 @@ namespace MatBlazor
         public static async Task<object> OpenFullPageAsync(this IMatDialogService matDialogService, Type componentType, MatDialogOptions options)
         {
             #region null checks
-            if (matDialogService is null)
-            {
-                throw new ArgumentNullException(nameof(matDialogService));
-            }
+            ArgumentNullException.ThrowIfNull(matDialogService);
 
-            if (componentType is null)
-            {
-                throw new ArgumentNullException(nameof(componentType));
-            }
+            ArgumentNullException.ThrowIfNull(componentType);
             #endregion
 
             options ??= new MatDialogOptions();

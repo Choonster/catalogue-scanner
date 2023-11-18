@@ -19,7 +19,7 @@ namespace CatalogueScanner.Core.MatchRule
                     throw new InvalidOperationException($"Couldn't find property with name \"{property}\" on type {typeof(CatalogueItem).FullName}")
             );
 
-        private static readonly IImmutableSet<CatalogueItemProperty> numericProperties = properties
+        private static readonly ImmutableHashSet<CatalogueItemProperty> numericProperties = properties
             .Where(pair => IsNumericType(GetUnderlyingType(pair.Value.PropertyType)))
             .Select(pair => pair.Key)
             .ToImmutableHashSet();

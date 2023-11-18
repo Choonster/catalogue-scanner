@@ -10,10 +10,7 @@ namespace CatalogueScanner.WebScraping
         public void Configure(ICatalogueScannerHostBuilder builder)
         {
             #region null checks
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            ArgumentNullException.ThrowIfNull(builder);
             #endregion
 
             builder.Services

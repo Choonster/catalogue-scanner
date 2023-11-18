@@ -151,7 +151,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
                     result.Entities.Select(scanState => scanState with { LastModifiedTime = scanState.LastModifiedTime.ToLocalTime() })
                 );
 
-                hasNoData = !loadedScanStates.Any();
+                hasNoData = loadedScanStates.Count == 0;
 
                 pageInfo = pageInfo with { ContinuationToken = result.Page.ContinuationToken };
 

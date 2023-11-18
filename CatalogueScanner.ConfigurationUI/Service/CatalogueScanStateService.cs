@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace CatalogueScanner.ConfigurationUI.Service
 {
-    public class CatalogueScanStateService : BaseApiService
+    public class CatalogueScanStateService(HttpClient httpClient, TokenProvider tokenProvider) : BaseApiService(httpClient, tokenProvider)
     {
-        public CatalogueScanStateService(HttpClient httpClient, TokenProvider tokenProvider) : base(httpClient, tokenProvider)
-        {
-        }
-
         public async Task<ListEntityResult<CatalogueScanStateDto>?> ListCatalogueScanStatesAsync(ListEntityRequest listEntityRequest) =>
             await PostAsync<ListEntityRequest, ListEntityResult<CatalogueScanStateDto>>("List", listEntityRequest).ConfigureAwait(false);
 

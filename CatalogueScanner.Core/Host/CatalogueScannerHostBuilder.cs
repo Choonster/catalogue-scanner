@@ -9,10 +9,7 @@ namespace CatalogueScanner.Core.Host
         public CatalogueScannerHostBuilder(IConfiguration configuration, IServiceCollection services)
         {
             #region null checks
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            ArgumentNullException.ThrowIfNull(configuration);
             #endregion
 
             Configuration = configuration.GetSection("CatalogueScanner");

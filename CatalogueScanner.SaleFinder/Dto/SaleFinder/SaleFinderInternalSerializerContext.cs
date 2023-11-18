@@ -9,7 +9,7 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
     [JsonSerializable(typeof(PageWithExtensionData))]
     [JsonSerializable(typeof(Item))]
     [JsonSerializable(typeof(Shape))] // TODO: Remove when https://github.com/dotnet/runtime/pull/62643 is merged/released
-    internal partial class SaleFinderInternalSerializerContext : JsonSerializerContext
+    internal sealed partial class SaleFinderInternalSerializerContext : JsonSerializerContext
     {
     }
 }

@@ -33,15 +33,9 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
         private void MatchRules_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             #region null checks
-            if (sender is null)
-            {
-                throw new ArgumentNullException(nameof(sender));
-            }
+            ArgumentNullException.ThrowIfNull(sender);
 
-            if (e is null)
-            {
-                throw new ArgumentNullException(nameof(e));
-            }
+            ArgumentNullException.ThrowIfNull(e);
             #endregion
 
             var matchRules = (ObservableCollection<BaseMatchRuleViewModel>)sender;
@@ -72,15 +66,9 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
         private void EditContext_OnFieldChanged(object? sender, FieldChangedEventArgs e)
         {
             #region null checks
-            if (sender is null)
-            {
-                throw new ArgumentNullException(nameof(sender));
-            }
+            ArgumentNullException.ThrowIfNull(sender);
 
-            if (e is null)
-            {
-                throw new ArgumentNullException(nameof(e));
-            }
+            ArgumentNullException.ThrowIfNull(e);
             #endregion
 
             var editContext = (EditContext)sender;

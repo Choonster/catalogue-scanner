@@ -8,14 +8,9 @@ using System.Threading.Tasks;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions
 {
-    public class GetWoolworthsOnlineSpecialsCategories
+    public class GetWoolworthsOnlineSpecialsCategories(WoolworthsOnlineService woolworthsOnlineService)
     {
-        private readonly WoolworthsOnlineService woolworthsOnlineService;
-
-        public GetWoolworthsOnlineSpecialsCategories(WoolworthsOnlineService woolworthsOnlineService)
-        {
-            this.woolworthsOnlineService = woolworthsOnlineService;
-        }
+        private readonly WoolworthsOnlineService woolworthsOnlineService = woolworthsOnlineService;
 
         [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories)]
         public async Task<IEnumerable<WoolworthsOnlineCategory>> Run(
@@ -34,7 +29,7 @@ namespace CatalogueScanner.WoolworthsOnline.Functions
             return specialsCategories;
         }
 
-        private void FilterSpecialsCategories(IEnumerable<Category> categories, List<WoolworthsOnlineCategory> specialsCategories)
+        private static void FilterSpecialsCategories(IEnumerable<Category> categories, List<WoolworthsOnlineCategory> specialsCategories)
         {
             foreach (var category in categories)
             {

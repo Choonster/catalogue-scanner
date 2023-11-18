@@ -19,15 +19,9 @@ namespace CatalogueScanner.Configuration
         public ConfigurationSaver(IOptionsSnapshot<Options.AzureAppConfigurationOptions> optionsAccessor, ITypedConfiguration<TOptions> typedConfiguration, IConfigurationRefresherProvider configurationRefresherProvider)
         {
             #region null checks
-            if (optionsAccessor is null)
-            {
-                throw new ArgumentNullException(nameof(optionsAccessor));
-            }
+            ArgumentNullException.ThrowIfNull(optionsAccessor);
 
-            if (configurationRefresherProvider is null)
-            {
-                throw new ArgumentNullException(nameof(configurationRefresherProvider));
-            }
+            ArgumentNullException.ThrowIfNull(configurationRefresherProvider);
             #endregion
 
             configurationClient = new ConfigurationClient(optionsAccessor.Value.ConnectionString);

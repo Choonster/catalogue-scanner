@@ -9,10 +9,7 @@ namespace CatalogueScanner.Core.Http
         public static async Task<HttpResponseMessage> EnsureSuccessStatusCodeDetailedAsync(this HttpResponseMessage response)
         {
             #region null checks
-            if (response is null)
-            {
-                throw new ArgumentNullException(nameof(response));
-            }
+            ArgumentNullException.ThrowIfNull(response);
             #endregion
 
             if (!response.IsSuccessStatusCode)

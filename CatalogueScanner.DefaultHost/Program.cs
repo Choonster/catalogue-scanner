@@ -40,7 +40,9 @@ var playwrightBrowsersPath = Environment.GetEnvironmentVariable("PLAYWRIGHT_BROW
 Directory.CreateDirectory(playwrightBrowsersPath);
 
 // Install the browser required by Playwright 
+#pragma warning disable CA1861 // Avoid constant arrays as arguments
 Microsoft.Playwright.Program.Main(new[] { "install", "chromium" });
+#pragma warning restore CA1861 // Avoid constant arrays as arguments
 #endregion
 
 var host = new HostBuilder()

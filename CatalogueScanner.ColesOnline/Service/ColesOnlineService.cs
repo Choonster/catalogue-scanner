@@ -26,10 +26,7 @@ namespace CatalogueScanner.ColesOnline.Service
         public ColesOnlineService(HttpClient httpClient, IOptionsSnapshot<ColesOnlineOptions> optionsAccessor)
         {
             #region null checks
-            if (optionsAccessor is null)
-            {
-                throw new ArgumentNullException(nameof(optionsAccessor));
-            }
+            ArgumentNullException.ThrowIfNull(optionsAccessor);
             #endregion
 
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));

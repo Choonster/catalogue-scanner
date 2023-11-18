@@ -1,20 +1,14 @@
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.DurableTask;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions
 {
-    public class GetWoolworthsOnlineSpecialsPageCount
+    public class GetWoolworthsOnlineSpecialsPageCount(WoolworthsOnlineService woolworthsOnlineService)
     {
-        private readonly WoolworthsOnlineService woolworthsOnlineService;
-
-        public GetWoolworthsOnlineSpecialsPageCount(WoolworthsOnlineService woolworthsOnlineService)
-        {
-            this.woolworthsOnlineService = woolworthsOnlineService;
-        }
+        private readonly WoolworthsOnlineService woolworthsOnlineService = woolworthsOnlineService;
 
         [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount)]
         public async Task<int> Run([ActivityTrigger] string categoryId, CancellationToken cancellationToken)

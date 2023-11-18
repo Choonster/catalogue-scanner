@@ -3,14 +3,9 @@ using Microsoft.Azure.Functions.Worker;
 
 namespace CatalogueScanner.ColesOnline.Functions
 {
-    public class GetColesOnlineBuildId
+    public class GetColesOnlineBuildId(ColesOnlineService colesOnlineService)
     {
-        private readonly ColesOnlineService colesOnlineService;
-
-        public GetColesOnlineBuildId(ColesOnlineService colesOnlineService)
-        {
-            this.colesOnlineService = colesOnlineService;
-        }
+        private readonly ColesOnlineService colesOnlineService = colesOnlineService;
 
         [Function(ColesOnlineFunctionNames.GetColesOnlineBuildId)]
         public async Task<string> Run(

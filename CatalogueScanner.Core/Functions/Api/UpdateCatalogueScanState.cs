@@ -24,15 +24,9 @@ namespace CatalogueScanner.Core.Functions.Api
         )
         {
             #region null checks
-            if (dto is null)
-            {
-                throw new ArgumentNullException(nameof(dto));
-            }
+            ArgumentNullException.ThrowIfNull(dto);
 
-            if (durableTaskClient is null)
-            {
-                throw new ArgumentNullException(nameof(durableTaskClient));
-            }
+            ArgumentNullException.ThrowIfNull(durableTaskClient);
             #endregion
 
             var entityId = CatalogueScanStateEntity.CreateId(dto.CatalogueScanStateKey);

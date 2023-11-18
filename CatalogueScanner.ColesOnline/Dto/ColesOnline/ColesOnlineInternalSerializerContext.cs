@@ -8,7 +8,7 @@ namespace CatalogueScanner.ColesOnline.Dto.ColesOnline
     )]
     [JsonSerializable(typeof(Product))]
     [JsonSerializable(typeof(SingleTile))]
-    internal partial class ColesOnlineInternalSerializerContext : JsonSerializerContext
+    internal sealed partial class ColesOnlineInternalSerializerContext : JsonSerializerContext
     {
     }
 }

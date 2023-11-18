@@ -28,10 +28,7 @@ namespace CatalogueScanner.Core.Functions
         public static async Task<bool> RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context, EntityInstanceId scanStateId)
         {
             #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
             #endregion
 
             var logger = context.CreateReplaySafeLogger(typeof(CheckAndUpdateScanState));

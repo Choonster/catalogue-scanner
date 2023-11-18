@@ -10,15 +10,9 @@ namespace CatalogueScanner.Core.Serialisation
         public override CultureInfo? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             #region null checks
-            if (typeToConvert is null)
-            {
-                throw new ArgumentNullException(nameof(typeToConvert));
-            }
+            ArgumentNullException.ThrowIfNull(typeToConvert);
 
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
             #endregion
 
             if (reader.TokenType != JsonTokenType.String)
@@ -46,20 +40,11 @@ namespace CatalogueScanner.Core.Serialisation
         public override void Write(Utf8JsonWriter writer, CultureInfo value, JsonSerializerOptions options)
         {
             #region null checks
-            if (writer is null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
+            ArgumentNullException.ThrowIfNull(writer);
 
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
+            ArgumentNullException.ThrowIfNull(value);
 
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
             #endregion
 
             writer.WriteStringValue(value.Name);

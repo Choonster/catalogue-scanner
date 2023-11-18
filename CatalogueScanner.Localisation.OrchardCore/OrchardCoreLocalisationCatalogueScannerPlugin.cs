@@ -11,10 +11,7 @@ namespace CatalogueScanner.Localisation.OrchardCore
         public void Configure(ICatalogueScannerHostBuilder builder)
         {
             #region null checks
-            if (builder is null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
+            ArgumentNullException.ThrowIfNull(builder);
             #endregion
 
             AddLocalisation(builder);

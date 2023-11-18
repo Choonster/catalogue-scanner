@@ -21,10 +21,7 @@ namespace CatalogueScanner.ColesOnline.Functions
         public static async Task RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context)
         {
             #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
             #endregion
 
             var logger = context.CreateReplaySafeLogger(typeof(ScanColesOnlineSpecials));
@@ -121,20 +118,11 @@ namespace CatalogueScanner.ColesOnline.Functions
         )
         {
             #region null checks
-            if (timer is null)
-            {
-                throw new ArgumentNullException(nameof(timer));
-            }
+            ArgumentNullException.ThrowIfNull(timer);
 
-            if (durableTaskClient is null)
-            {
-                throw new ArgumentNullException(nameof(durableTaskClient));
-            }
+            ArgumentNullException.ThrowIfNull(durableTaskClient);
 
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
             #endregion
 
             var logger = context.GetLogger(typeof(ScanColesOnlineSpecials).FullName!);

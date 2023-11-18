@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CatalogueScanner.WoolworthsOnline.Service
 {
-    public class WoolworthsOnlineService
+    public class WoolworthsOnlineService(HttpClient httpClient)
     {
         /// <summary>
         /// The maximum value for <see cref="BrowseCategoryRequest.PageSize"/>.
@@ -19,12 +19,7 @@ namespace CatalogueScanner.WoolworthsOnline.Service
 
         private const string WoolworthsBaseUrl = "https://www.woolworths.com.au/";
 
-        private readonly HttpClient httpClient;
-
-        public WoolworthsOnlineService(HttpClient httpClient)
-        {
-            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        }
+        private readonly HttpClient httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
         /// <summary>
         /// The time of week when Coles Online changes its specials.
@@ -40,23 +35,14 @@ namespace CatalogueScanner.WoolworthsOnline.Service
                 "PiesCategoriesWithSpecials",
                 WoolworthsOnlineSerializerContext.Default.GetPiesCategoriesResponse,
                 cancellationToken
-            ).ConfigureAwait(false);
-
-            if (response is null)
-            {
-                throw new InvalidOperationException("PiesCategoriesWithSpecials response is null");
-            }
-
+            ).ConfigureAwait(false) ?? throw new InvalidOperationException("PiesCategoriesWithSpecials response is null");
             return response;
         }
 
         public async Task<BrowseCategoryResponse> GetBrowseCategoryDataAsync(BrowseCategoryRequest request, CancellationToken cancellationToken = default)
         {
             #region null checks
-            if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
             #endregion
 
             var response = await PostAsync(
@@ -65,13 +51,7 @@ namespace CatalogueScanner.WoolworthsOnline.Service
                 WoolworthsOnlineSerializerContext.Default.BrowseCategoryRequest,
                 WoolworthsOnlineSerializerContext.Default.BrowseCategoryResponse,
                 cancellationToken
-            ).ConfigureAwait(false);
-
-            if (response is null)
-            {
-                throw new InvalidOperationException("Browse Category response is null");
-            }
-
+            ).ConfigureAwait(false) ?? throw new InvalidOperationException("Browse Category response is null");
             if (!response.Success)
             {
                 throw new InvalidOperationException("Browse Category response is unsuccussful");
