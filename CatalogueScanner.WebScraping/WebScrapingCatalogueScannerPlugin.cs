@@ -21,7 +21,7 @@ namespace CatalogueScanner.WebScraping
 
         private static void AddConfiguration(ICatalogueScannerHostBuilder builder)
         {
-            var webScrapingSection = builder.Configuration.GetSection("WebScraping");
+            _ = builder.Configuration.GetSection("WebScraping");
         }
     }
 }

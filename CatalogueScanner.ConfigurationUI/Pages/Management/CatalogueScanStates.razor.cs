@@ -14,14 +14,14 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 {
     public partial class CatalogueScanStates
     {
-        private Dictionary<ScanState, string?> scanStateLabels = new();
+        private Dictionary<ScanState, string?> scanStateLabels = [];
 
         private bool loading;
 
-        private List<CatalogueScanStateDto> tableData = new();
+        private List<CatalogueScanStateDto> tableData = [];
         private int tablePageIndex;
 
-        private readonly List<CatalogueScanStateDto> loadedScanStates = new();
+        private readonly List<CatalogueScanStateDto> loadedScanStates = [];
 
         private PageInfo pageInfo = new(PageSize: 10);
         private bool isFinalPage;

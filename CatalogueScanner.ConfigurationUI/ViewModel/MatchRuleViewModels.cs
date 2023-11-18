@@ -61,6 +61,6 @@ namespace CatalogueScanner.ConfigurationUI.ViewModel
 
         public CompoundMatchType MatchType { get; set; }
 
-        public ObservableCollection<BaseMatchRuleViewModel> ChildRules { get; } = new ObservableCollection<BaseMatchRuleViewModel>();
+        public ObservableCollection<BaseMatchRuleViewModel> ChildRules { get; } = [];
     }
 }

@@ -21,7 +21,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
         private static readonly CatalogueItemProperty[] properties = Enum.GetValues(typeof(CatalogueItemProperty)).Cast<CatalogueItemProperty>().ToArray();
 
         [Parameter]
-        public ObservableCollection<BaseMatchRuleViewModel> MatchRules { get; set; } = new ObservableCollection<BaseMatchRuleViewModel>();
+        public ObservableCollection<BaseMatchRuleViewModel> MatchRules { get; set; } = [];
 
         protected override void OnParametersSet()
         {

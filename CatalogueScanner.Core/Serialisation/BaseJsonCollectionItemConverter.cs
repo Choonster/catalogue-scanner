@@ -45,14 +45,11 @@ namespace CatalogueScanner.Core.Serialisation
             {
                 if (reader.TokenType != JsonTokenType.StartArray)
                 {
-                    var item = context != null
-                        ? (TData?) JsonSerializer.Deserialize(ref reader, typeof(TData), context)
-                        : JsonSerializer.Deserialize<TData>(ref reader, jsonSerializerOptions);
-
-                    if (item is null)
-                    {
-                        throw new JsonException("Encountered null item in JSON array");
-                    }
+                    var item = (
+                        context != null
+                            ? (TData?)JsonSerializer.Deserialize(ref reader, typeof(TData), context)
+                            : JsonSerializer.Deserialize<TData>(ref reader, jsonSerializerOptions)
+                    ) ?? throw new JsonException("Encountered null item in JSON array");
 
                     returnValue.Add(item);
                 }

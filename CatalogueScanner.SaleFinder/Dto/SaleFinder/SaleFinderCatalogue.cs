@@ -185,12 +185,12 @@ namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
     }
 
     // Adapted from JsonMicrosoftDateTimeOffsetConverter in Macross.Json.Extensions
-    internal class SaleFinderDateTimeOffsetConverter : BaseJsonNullableStructConverterFactory<DateTimeOffset>
+    internal sealed class SaleFinderDateTimeOffsetConverter : BaseJsonNullableStructConverterFactory<DateTimeOffset>
     {
         protected override IBaseConverter CreateBaseConverter(Type typeToConvert, JsonSerializerOptions options) =>
             new Converter();
 
-        private class Converter : IBaseConverter
+        private sealed class Converter : IBaseConverter
         {
             /// <summary>
             /// The date time format used by SaleFinder.

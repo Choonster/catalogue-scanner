@@ -14,7 +14,7 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Config
     {
         private MatchingOptions MatchingOptions => MatchingOptionsAccessor.Value;
 
-        private ObservableCollection<BaseMatchRuleViewModel> matchRuleViewModels = new();
+        private ObservableCollection<BaseMatchRuleViewModel> matchRuleViewModels = [];
 
         protected override void OnInitialized()
         {

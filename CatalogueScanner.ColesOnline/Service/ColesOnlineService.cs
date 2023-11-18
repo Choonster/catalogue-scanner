@@ -59,16 +59,9 @@ namespace CatalogueScanner.ColesOnline.Service
                 $"on-special.json?page={page}",
                 ColesOnlineSerializerContext.Default.BrowseResponse,
                 cancellationToken
-            ).ConfigureAwait(false);
+            ).ConfigureAwait(false) ?? throw new InvalidOperationException("Browse response is null");
 
-            if (response is null)
-            {
-                throw new InvalidOperationException("Browse response is null");
-            }
-
-            var searchResults = response.PageProps?.SearchResults;
-
-            if (searchResults is null)
+            if ((response.PageProps?.SearchResults) is null)
             {
                 throw new InvalidOperationException("No search results in browse response");
             }
@@ -96,12 +89,8 @@ namespace CatalogueScanner.ColesOnline.Service
             var htmlDocument = new HtmlDocument();
             htmlDocument.LoadHtml(responseText);
 
-            var nextDataElement = htmlDocument.GetElementbyId(NextDataElementId);
-
-            if (nextDataElement is null)
-            {
-                throw new InvalidOperationException($"Unable to find \"{NextDataElementId}\" element");
-            }
+            var nextDataElement = htmlDocument.GetElementbyId(NextDataElementId)
+                ?? throw new InvalidOperationException($"Unable to find \"{NextDataElementId}\" element");
 
             var nextDataText = nextDataElement.InnerText;
 

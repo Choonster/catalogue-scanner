@@ -9,7 +9,8 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
 {
     public partial class Orchestrations
     {
-        private static readonly Regex httpMethodRegex = new(@"(?<Method>\p{Lu}\p{Ll}+)Uri");
+        [GeneratedRegex(@"(?<Method>\p{Lu}\p{Ll}+)Uri")]
+        private static partial Regex HttpMethodRegex();
 
         private bool loading;
         private string? instanceId;
@@ -39,14 +40,9 @@ namespace CatalogueScanner.ConfigurationUI.Pages.Management
                 throw new InvalidOperationException("Endpoints haven't been loaded");
             }
 
-            var uri = endpoints[key];
+            var uri = endpoints[key] ?? throw new InvalidOperationException("uri is null");
 
-            if (uri is null)
-            {
-                throw new InvalidOperationException("uri is null");
-            }
-
-            var method = new HttpMethod(httpMethodRegex.Match(key).Groups["Method"].Value);
+            var method = new HttpMethod(HttpMethodRegex().Match(key).Groups["Method"].Value);
 
             var script = @$"
 $headers = @{{ Authorization = 'bearer {TokenProvider.AccessToken}' }}

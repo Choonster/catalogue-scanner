@@ -35,12 +35,8 @@ namespace CatalogueScanner.SaleFinder.Functions
             ArgumentNullException.ThrowIfNull(downloadInformation);
             #endregion
 
-            var catalogue = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId, cancellationToken).ConfigureAwait(false);
-
-            if (catalogue is null)
-            {
-                throw new InvalidOperationException("catalogue is null");
-            }
+            var catalogue = await saleFinderService.GetCatalogueAsync(downloadInformation.SaleId, cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException("catalogue is null");
 
             logger.LogInformation(S.Plural(catalogue.Pages.Count, "Successfully downloaded and parsed catalogue with 1 page", "Successfully downloaded and parsed catalogue with {0} pages", catalogue.Pages.Count));
 

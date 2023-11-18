@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace CatalogueScanner.Core.MatchRule
 {
-    public class CatalogueItemMatchRuleSerialiser
+    public static class CatalogueItemMatchRuleSerialiser
     {
         /// <summary>
         /// Parses a collection of <see cref="ICatalogueItemMatchRule"/> values from the supplied <see cref="IConfigurationSection"/>.

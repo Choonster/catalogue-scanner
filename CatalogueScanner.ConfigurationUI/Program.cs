@@ -29,12 +29,8 @@ namespace CatalogueScanner.ConfigurationUI
                   {
                       var appConfig = config.Build();
 
-                      var connectionString = appConfig["ConnectionStrings:AzureAppConfiguration"];
-
-                      if (connectionString is null)
-                      {
-                          throw new InvalidOperationException("ConnectionStrings:AzureAppConfiguration app setting not set");
-                      }
+                      var connectionString = appConfig["ConnectionStrings:AzureAppConfiguration"]
+                        ?? throw new InvalidOperationException("ConnectionStrings:AzureAppConfiguration app setting not set");
 
                       hostBuilder.Properties[connectionStringPropertyName] = connectionString;
 
@@ -42,12 +38,8 @@ namespace CatalogueScanner.ConfigurationUI
 
                       if (hostingContext.HostingEnvironment.IsProduction())
                       {
-                          var vaultUri = Environment.GetEnvironmentVariable("VaultUri");
-
-                          if (vaultUri is null)
-                          {
-                              throw new InvalidOperationException("VaultUri environment variable not set");
-                          }
+                          var vaultUri = Environment.GetEnvironmentVariable("VaultUri")
+                            ?? throw new InvalidOperationException("VaultUri environment variable not set");
 
                           config.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
                       }
