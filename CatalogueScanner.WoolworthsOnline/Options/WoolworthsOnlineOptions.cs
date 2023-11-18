@@ -1,9 +1,8 @@
-﻿namespace CatalogueScanner.WoolworthsOnline.Options
-{
-    public class WoolworthsOnlineOptions
-    {
-        public const string WoolworthsOnline = "WoolworthsOnline";
+﻿namespace CatalogueScanner.WoolworthsOnline.Options;
 
-        public string? RegionId { get; set; }
-    }
+public class WoolworthsOnlineOptions
+{
+    public const string WoolworthsOnline = "WoolworthsOnline";
+
+    public string? RegionId { get; set; }
 }

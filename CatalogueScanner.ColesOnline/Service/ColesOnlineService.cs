@@ -12,110 +12,109 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
-namespace CatalogueScanner.ColesOnline.Service
+namespace CatalogueScanner.ColesOnline.Service;
+
+public class ColesOnlineService
 {
-    public class ColesOnlineService
+    private const string ColesBaseUrl = "https://www.coles.com.au/";
+    private const string NextDataElementId = "__NEXT_DATA__";
+
+    private readonly HttpClient httpClient;
+    private readonly ColesOnlineOptions options;
+    private readonly CookieContainer cookieContainer = new();
+
+    public ColesOnlineService(HttpClient httpClient, IOptionsSnapshot<ColesOnlineOptions> optionsAccessor)
     {
-        private const string ColesBaseUrl = "https://www.coles.com.au/";
-        private const string NextDataElementId = "__NEXT_DATA__";
+        #region null checks
+        ArgumentNullException.ThrowIfNull(optionsAccessor);
+        #endregion
 
-        private readonly HttpClient httpClient;
-        private readonly ColesOnlineOptions options;
-        private readonly CookieContainer cookieContainer = new();
+        this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        options = optionsAccessor.Value;
 
-        public ColesOnlineService(HttpClient httpClient, IOptionsSnapshot<ColesOnlineOptions> optionsAccessor)
+        if (httpClient.BaseAddress is null)
         {
-            #region null checks
-            ArgumentNullException.ThrowIfNull(optionsAccessor);
-            #endregion
-
-            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            options = optionsAccessor.Value;
-
-            if (httpClient.BaseAddress is null)
-            {
-                throw new ArgumentException($"{nameof(HttpClient)}.{nameof(HttpClient.BaseAddress)} must be provided", nameof(httpClient));
-            }
-
-            cookieContainer.Add(new Cookie
-            {
-                Name = "fulfillmentStoreId",
-                Value = options.FulfillmentStoreId?.ToString(CultureInfo.InvariantCulture),
-                Domain = httpClient.BaseAddress!.Host,
-            });
+            throw new ArgumentException($"{nameof(HttpClient)}.{nameof(HttpClient.BaseAddress)} must be provided", nameof(httpClient));
         }
 
-        /// <summary>
-        /// The time of week when Coles Online changes its specials.
-        /// </summary>
-        public static TimeOfWeek SpecialsResetTime => new(TimeSpan.Zero, DayOfWeek.Wednesday, "AUS Eastern Standard Time");
-
-        public static Uri ProductUrlTemplate => new($"{ColesBaseUrl}/product/[productId]");
-
-        public async Task<BrowseResponse> GetOnSpecialPageAsync(string buildId, int page, CancellationToken cancellationToken = default)
+        cookieContainer.Add(new Cookie
         {
-            var response = await GetAsync(
-                buildId,
-                $"on-special.json?page={page}",
-                ColesOnlineSerializerContext.Default.BrowseResponse,
-                cancellationToken
-            ).ConfigureAwait(false) ?? throw new InvalidOperationException("Browse response is null");
+            Name = "fulfillmentStoreId",
+            Value = options.FulfillmentStoreId?.ToString(CultureInfo.InvariantCulture),
+            Domain = httpClient.BaseAddress!.Host,
+        });
+    }
 
-            if ((response.PageProps?.SearchResults) is null)
-            {
-                throw new InvalidOperationException("No search results in browse response");
-            }
+    /// <summary>
+    /// The time of week when Coles Online changes its specials.
+    /// </summary>
+    public static TimeOfWeek SpecialsResetTime => new(TimeSpan.Zero, DayOfWeek.Wednesday, "AUS Eastern Standard Time");
 
-            return response;
+    public static Uri ProductUrlTemplate => new($"{ColesBaseUrl}/product/[productId]");
+
+    public async Task<BrowseResponse> GetOnSpecialPageAsync(string buildId, int page, CancellationToken cancellationToken = default)
+    {
+        var response = await GetAsync(
+            buildId,
+            $"on-special.json?page={page}",
+            ColesOnlineSerializerContext.Default.BrowseResponse,
+            cancellationToken
+        ).ConfigureAwait(false) ?? throw new InvalidOperationException("Browse response is null");
+
+        if ((response.PageProps?.SearchResults) is null)
+        {
+            throw new InvalidOperationException("No search results in browse response");
         }
 
-        public async Task<int> GetOnSpecialPageCountAsync(string buildId, CancellationToken cancellationToken = default)
+        return response;
+    }
+
+    public async Task<int> GetOnSpecialPageCountAsync(string buildId, CancellationToken cancellationToken = default)
+    {
+        var response = await GetOnSpecialPageAsync(buildId, 1, cancellationToken).ConfigureAwait(false);
+
+        var searchResults = response.PageProps!.SearchResults!;
+
+        return (int)(searchResults.NoOfResults / searchResults.PageSize + 1);
+    }
+
+    public async Task<string> GetBuildId(CancellationToken cancellationToken)
+    {
+        using var response = await httpClient.GetAsync(new Uri("/", UriKind.Relative), cancellationToken).ConfigureAwait(false);
+
+        await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
+
+        var responseText = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.LoadHtml(responseText);
+
+        var nextDataElement = htmlDocument.GetElementbyId(NextDataElementId)
+            ?? throw new InvalidOperationException($"Unable to find \"{NextDataElementId}\" element");
+
+        var nextDataText = nextDataElement.InnerText;
+
+        var nextData = JsonSerializer.Deserialize(nextDataText, ColesOnlineSerializerContext.Default.NextData);
+
+        var buildId = nextData?.BuildId;
+
+        if (string.IsNullOrEmpty(buildId))
         {
-            var response = await GetOnSpecialPageAsync(buildId, 1, cancellationToken).ConfigureAwait(false);
-
-            var searchResults = response.PageProps!.SearchResults!;
-
-            return (int)(searchResults.NoOfResults / searchResults.PageSize + 1);
+            throw new InvalidOperationException($"Unable to get build ID from \"{NextDataElementId}\" JSON");
         }
 
-        public async Task<string> GetBuildId(CancellationToken cancellationToken)
-        {
-            using var response = await httpClient.GetAsync(new Uri("/", UriKind.Relative), cancellationToken).ConfigureAwait(false);
+        return buildId;
+    }
 
-            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
+    private async Task<TResponse?> GetAsync<TResponse>(string buildId, string path, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, httpClient.BaseAddress!.AppendPath($"/_next/data/{buildId}/en/").AppendPath(path));
+        request.Headers.Add(HeaderNames.Cookie, cookieContainer.GetCookieHeader(request.RequestUri!));
 
-            var responseText = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-            var htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(responseText);
+        await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
 
-            var nextDataElement = htmlDocument.GetElementbyId(NextDataElementId)
-                ?? throw new InvalidOperationException($"Unable to find \"{NextDataElementId}\" element");
-
-            var nextDataText = nextDataElement.InnerText;
-
-            var nextData = JsonSerializer.Deserialize(nextDataText, ColesOnlineSerializerContext.Default.NextData);
-
-            var buildId = nextData?.BuildId;
-
-            if (string.IsNullOrEmpty(buildId))
-            {
-                throw new InvalidOperationException($"Unable to get build ID from \"{NextDataElementId}\" JSON");
-            }
-
-            return buildId;
-        }
-
-        private async Task<TResponse?> GetAsync<TResponse>(string buildId, string path, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken)
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Get, httpClient.BaseAddress!.AppendPath($"/_next/data/{buildId}/en/").AppendPath(path));
-            request.Headers.Add(HeaderNames.Cookie, cookieContainer.GetCookieHeader(request.RequestUri!));
-
-            using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-
-            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
-
-            return await response.Content.ReadFromJsonAsync(responseTypeInfo, cancellationToken).ConfigureAwait(false);
-        }
+        return await response.Content.ReadFromJsonAsync(responseTypeInfo, cancellationToken).ConfigureAwait(false);
     }
 }

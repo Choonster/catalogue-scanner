@@ -1,9 +1,8 @@
-﻿namespace CatalogueScanner.SaleFinder.Options
-{
-    public class WoolworthsOptions
-    {
-        public const string Woolworths = "Woolworths";
+﻿namespace CatalogueScanner.SaleFinder.Options;
 
-        public int SaleFinderLocationId { get; set; }
-    }
+public class WoolworthsOptions
+{
+    public const string Woolworths = "Woolworths";
+
+    public int SaleFinderLocationId { get; set; }
 }

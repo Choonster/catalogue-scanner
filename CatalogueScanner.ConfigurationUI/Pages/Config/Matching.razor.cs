@@ -7,52 +7,51 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.ConfigurationUI.Pages.Config
-{
+namespace CatalogueScanner.ConfigurationUI.Pages.Config;
+
 #pragma warning disable CA1724
-    public partial class Matching
+public partial class Matching
+{
+    private MatchingOptions MatchingOptions => MatchingOptionsAccessor.Value;
+
+    private ObservableCollection<BaseMatchRuleViewModel> matchRuleViewModels = [];
+
+    protected override void OnInitialized()
     {
-        private MatchingOptions MatchingOptions => MatchingOptionsAccessor.Value;
+        matchRuleViewModels = new ObservableCollection<BaseMatchRuleViewModel>(MatchingOptions.Rules.ToViewModel());
 
-        private ObservableCollection<BaseMatchRuleViewModel> matchRuleViewModels = [];
+        base.OnInitialized();
+    }
 
-        protected override void OnInitialized()
+    private void AddSinglePropertyRule()
+    {
+        matchRuleViewModels.Add(new SinglePropertyMatchRuleViewModel
         {
-            matchRuleViewModels = new ObservableCollection<BaseMatchRuleViewModel>(MatchingOptions.Rules.ToViewModel());
+            InEditMode = true,
+        });
+    }
 
-            base.OnInitialized();
-        }
-
-        private void AddSinglePropertyRule()
+    private void AddCompoundRule()
+    {
+        var compoundRule = new CompoundMatchRuleViewModel();
+        compoundRule.ChildRules.Add(new SinglePropertyMatchRuleViewModel
         {
-            matchRuleViewModels.Add(new SinglePropertyMatchRuleViewModel
-            {
-                InEditMode = true,
-            });
-        }
+            InEditMode = true,
+        });
 
-        private void AddCompoundRule()
-        {
-            var compoundRule = new CompoundMatchRuleViewModel();
-            compoundRule.ChildRules.Add(new SinglePropertyMatchRuleViewModel
-            {
-                InEditMode = true,
-            });
+        matchRuleViewModels.Add(compoundRule);
+    }
 
-            matchRuleViewModels.Add(compoundRule);
-        }
+    private async Task Save(MouseEventArgs _)
+    {
+        var options = MatchingOptions;
+        var rules = options.Rules;
 
-        private async Task Save(MouseEventArgs _)
-        {
-            var options = MatchingOptions;
-            var rules = options.Rules;
+        rules.Clear();
+        rules.AddRange(matchRuleViewModels.ToOptions());
 
-            rules.Clear();
-            rules.AddRange(matchRuleViewModels.ToOptions());
+        await MatchingOptionsSaver.SaveAsync(options).ConfigureAwait(true);
 
-            await MatchingOptionsSaver.SaveAsync(options).ConfigureAwait(true);
-
-            NavigationManager.NavigateTo(NavigationManager.Uri, true);
-        }
+        NavigationManager.NavigateTo(NavigationManager.Uri, true);
     }
 }

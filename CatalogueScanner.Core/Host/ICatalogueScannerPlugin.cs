@@ -1,7 +1,6 @@
-﻿namespace CatalogueScanner.Core.Host
+﻿namespace CatalogueScanner.Core.Host;
+
+public interface ICatalogueScannerPlugin
 {
-    public interface ICatalogueScannerPlugin
-    {
-        void Configure(ICatalogueScannerHostBuilder builder);
-    }
+    void Configure(ICatalogueScannerHostBuilder builder);
 }

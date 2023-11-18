@@ -1,9 +1,8 @@
-﻿namespace CatalogueScanner.Core.Localisation
-{
-    public class FunctionsPathOptions
-    {
-        public const string FunctionsPath = "FunctionsPath";
+﻿namespace CatalogueScanner.Core.Localisation;
 
-        public string? RootDirectory { get; set; }
-    }
+public class FunctionsPathOptions
+{
+    public const string FunctionsPath = "FunctionsPath";
+
+    public string? RootDirectory { get; set; }
 }

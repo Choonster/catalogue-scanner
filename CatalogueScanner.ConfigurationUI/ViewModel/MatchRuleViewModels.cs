@@ -6,61 +6,60 @@ using System.ComponentModel.DataAnnotations;
 using static CatalogueScanner.Core.MatchRule.CompoundCatalogueItemMatchRule;
 using static CatalogueScanner.Core.MatchRule.SinglePropertyCatalogueItemMatchRule;
 
-namespace CatalogueScanner.ConfigurationUI.ViewModel
+namespace CatalogueScanner.ConfigurationUI.ViewModel;
+
+public abstract class BaseMatchRuleViewModel
 {
-    public abstract class BaseMatchRuleViewModel
+    public abstract MatchRuleType MatchRuleType { get; }
+
+    public EditContext EditContext { get; }
+
+    protected BaseMatchRuleViewModel()
     {
-        public abstract MatchRuleType MatchRuleType { get; }
+        EditContext = new EditContext(this);
+    }
+}
 
-        public EditContext EditContext { get; }
+public class SinglePropertyMatchRuleViewModel : BaseMatchRuleViewModel
+{
+    private CatalogueItemProperty property;
 
-        protected BaseMatchRuleViewModel()
+    public IReadOnlyList<PropertyMatchType>? MatchTypes { get; set; }
+
+    public override MatchRuleType MatchRuleType => MatchRuleType.SingleProperty;
+
+    public bool InEditMode { get; set; }
+
+    public CatalogueItemProperty Property
+    {
+        get => property;
+        set
         {
-            EditContext = new EditContext(this);
+            property = value;
+
+            OnPropertyChanged();
         }
     }
 
-    public class SinglePropertyMatchRuleViewModel : BaseMatchRuleViewModel
+    public PropertyMatchType MatchType { get; set; }
+
+    [Required]
+    public string Value { get; set; } = string.Empty;
+
+    private void OnPropertyChanged()
     {
-        private CatalogueItemProperty property;
-
-        public IReadOnlyList<PropertyMatchType>? MatchTypes { get; set; }
-
-        public override MatchRuleType MatchRuleType => MatchRuleType.SingleProperty;
-
-        public bool InEditMode { get; set; }
-
-        public CatalogueItemProperty Property
+        if (MatchType.IsNumericMatchType() && !property.IsNumericProperty())
         {
-            get => property;
-            set
-            {
-                property = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public PropertyMatchType MatchType { get; set; }
-
-        [Required]
-        public string Value { get; set; } = string.Empty;
-
-        private void OnPropertyChanged()
-        {
-            if (MatchType.IsNumericMatchType() && !property.IsNumericProperty())
-            {
-                MatchType = PropertyMatchType.Exact;
-            }
+            MatchType = PropertyMatchType.Exact;
         }
     }
+}
 
-    public class CompoundMatchRuleViewModel : BaseMatchRuleViewModel
-    {
-        public override MatchRuleType MatchRuleType => MatchRuleType.Compound;
+public class CompoundMatchRuleViewModel : BaseMatchRuleViewModel
+{
+    public override MatchRuleType MatchRuleType => MatchRuleType.Compound;
 
-        public CompoundMatchType MatchType { get; set; }
+    public CompoundMatchType MatchType { get; set; }
 
-        public ObservableCollection<BaseMatchRuleViewModel> ChildRules { get; } = [];
-    }
+    public ObservableCollection<BaseMatchRuleViewModel> ChildRules { get; } = [];
 }

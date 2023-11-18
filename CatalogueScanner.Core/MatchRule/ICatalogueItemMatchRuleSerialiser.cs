@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 
-namespace CatalogueScanner.Core.MatchRule
+namespace CatalogueScanner.Core.MatchRule;
+
+public interface ICatalogueItemMatchRuleSerialiser
 {
-    public interface ICatalogueItemMatchRuleSerialiser
-    {
-        IEnumerable<ICatalogueItemMatchRule> DeserialiseMatchRules(IConfigurationSection rulesConfig);
-    }
+    IEnumerable<ICatalogueItemMatchRule> DeserialiseMatchRules(IConfigurationSection rulesConfig);
 }

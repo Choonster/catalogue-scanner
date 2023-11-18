@@ -1,7 +1,6 @@
-﻿namespace CatalogueScanner.ConfigurationUI
+﻿namespace CatalogueScanner.ConfigurationUI;
+
+public class InitialApplicationState
 {
-    public class InitialApplicationState
-    {
-        public string? AccessToken { get; set; }
-    }
+    public string? AccessToken { get; set; }
 }

@@ -8,36 +8,35 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.Core.Functions.Api
+namespace CatalogueScanner.Core.Functions.Api;
+
+/// <summary>
+/// Web API function that updates the scan state for a catalogue.
+/// </summary>
+public static class UpdateCatalogueScanState
 {
-    /// <summary>
-    /// Web API function that updates the scan state for a catalogue.
-    /// </summary>
-    public static class UpdateCatalogueScanState
+    [Function(CoreFunctionNames.UpdateCatalogueScanState)]
+    public static async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CatalogueScanState/Update")] HttpRequestData request,
+        [FromBody] CatalogueScanStateDto dto,
+        [DurableClient] DurableTaskClient durableTaskClient,
+        CancellationToken cancellationToken
+    )
     {
-        [Function(CoreFunctionNames.UpdateCatalogueScanState)]
-        public static async Task<HttpResponseData> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CatalogueScanState/Update")] HttpRequestData request,
-            [FromBody] CatalogueScanStateDto dto,
-            [DurableClient] DurableTaskClient durableTaskClient,
-            CancellationToken cancellationToken
-        )
-        {
-            #region null checks
-            ArgumentNullException.ThrowIfNull(dto);
+        #region null checks
+        ArgumentNullException.ThrowIfNull(dto);
 
-            ArgumentNullException.ThrowIfNull(durableTaskClient);
-            #endregion
+        ArgumentNullException.ThrowIfNull(durableTaskClient);
+        #endregion
 
-            var entityId = CatalogueScanStateEntity.CreateId(dto.CatalogueScanStateKey);
+        var entityId = CatalogueScanStateEntity.CreateId(dto.CatalogueScanStateKey);
 
-            await durableTaskClient.Entities.SignalUpdateScanStateAsync(
-                entityId,
-                dto.ScanState,
-                cancellationToken
-            ).ConfigureAwait(false);
+        await durableTaskClient.Entities.SignalUpdateScanStateAsync(
+            entityId,
+            dto.ScanState,
+            cancellationToken
+        ).ConfigureAwait(false);
 
-            return request.CreateResponse(HttpStatusCode.Accepted);
-        }
+        return request.CreateResponse(HttpStatusCode.Accepted);
     }
 }

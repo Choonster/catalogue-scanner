@@ -8,87 +8,86 @@ using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.WoolworthsOnline.Service
+namespace CatalogueScanner.WoolworthsOnline.Service;
+
+public class WoolworthsOnlineService(HttpClient httpClient)
 {
-    public class WoolworthsOnlineService(HttpClient httpClient)
+    /// <summary>
+    /// The maximum value for <see cref="BrowseCategoryRequest.PageSize"/>.
+    /// </summary>
+    public const int MaxBrowseCategoryDataPageSize = 36;
+
+    private const string WoolworthsBaseUrl = "https://www.woolworths.com.au/";
+
+    private readonly HttpClient httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+
+    /// <summary>
+    /// The time of week when Coles Online changes its specials.
+    /// </summary>
+    public static TimeOfWeek SpecialsResetTime => new(TimeSpan.Zero, DayOfWeek.Wednesday, "AUS Eastern Standard Time");
+
+    public static Uri ProductUrlTemplate => new($"{WoolworthsBaseUrl}/shop/productdetails/[stockCode]");
+
+
+    public async Task<GetPiesCategoriesResponse> GetPiesCategoriesWithSpecialsAsync(CancellationToken cancellationToken = default)
     {
-        /// <summary>
-        /// The maximum value for <see cref="BrowseCategoryRequest.PageSize"/>.
-        /// </summary>
-        public const int MaxBrowseCategoryDataPageSize = 36;
+        var response = await GetAsync(
+            "PiesCategoriesWithSpecials",
+            WoolworthsOnlineSerializerContext.Default.GetPiesCategoriesResponse,
+            cancellationToken
+        ).ConfigureAwait(false) ?? throw new InvalidOperationException("PiesCategoriesWithSpecials response is null");
+        return response;
+    }
 
-        private const string WoolworthsBaseUrl = "https://www.woolworths.com.au/";
+    public async Task<BrowseCategoryResponse> GetBrowseCategoryDataAsync(BrowseCategoryRequest request, CancellationToken cancellationToken = default)
+    {
+        #region null checks
+        ArgumentNullException.ThrowIfNull(request);
+        #endregion
 
-        private readonly HttpClient httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-
-        /// <summary>
-        /// The time of week when Coles Online changes its specials.
-        /// </summary>
-        public static TimeOfWeek SpecialsResetTime => new(TimeSpan.Zero, DayOfWeek.Wednesday, "AUS Eastern Standard Time");
-
-        public static Uri ProductUrlTemplate => new($"{WoolworthsBaseUrl}/shop/productdetails/[stockCode]");
-
-
-        public async Task<GetPiesCategoriesResponse> GetPiesCategoriesWithSpecialsAsync(CancellationToken cancellationToken = default)
+        var response = await PostAsync(
+            "browse/category",
+            request,
+            WoolworthsOnlineSerializerContext.Default.BrowseCategoryRequest,
+            WoolworthsOnlineSerializerContext.Default.BrowseCategoryResponse,
+            cancellationToken
+        ).ConfigureAwait(false) ?? throw new InvalidOperationException("Browse Category response is null");
+        if (!response.Success)
         {
-            var response = await GetAsync(
-                "PiesCategoriesWithSpecials",
-                WoolworthsOnlineSerializerContext.Default.GetPiesCategoriesResponse,
-                cancellationToken
-            ).ConfigureAwait(false) ?? throw new InvalidOperationException("PiesCategoriesWithSpecials response is null");
-            return response;
+            throw new InvalidOperationException("Browse Category response is unsuccussful");
         }
 
-        public async Task<BrowseCategoryResponse> GetBrowseCategoryDataAsync(BrowseCategoryRequest request, CancellationToken cancellationToken = default)
+        return response;
+    }
+
+    public async Task<int> GetCategoryPageCountAsync(string categoryId, int pageSize, CancellationToken cancellationToken = default)
+    {
+        // Ignore pageSize for this request as we don't actually want any data
+        var response = await GetBrowseCategoryDataAsync(new BrowseCategoryRequest
         {
-            #region null checks
-            ArgumentNullException.ThrowIfNull(request);
-            #endregion
+            CategoryId = categoryId,
+            PageNumber = 1,
+            PageSize = 0,
+        }, cancellationToken).ConfigureAwait(false);
 
-            var response = await PostAsync(
-                "browse/category",
-                request,
-                WoolworthsOnlineSerializerContext.Default.BrowseCategoryRequest,
-                WoolworthsOnlineSerializerContext.Default.BrowseCategoryResponse,
-                cancellationToken
-            ).ConfigureAwait(false) ?? throw new InvalidOperationException("Browse Category response is null");
-            if (!response.Success)
-            {
-                throw new InvalidOperationException("Browse Category response is unsuccussful");
-            }
+        return (int)(response.TotalRecordCount / pageSize + 1);
+    }
 
-            return response;
-        }
+    private async Task<TResponse?> GetAsync<TResponse>(string path, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken)
+    {
+        var response = await httpClient.GetAsync(new Uri(path, UriKind.Relative), cancellationToken).ConfigureAwait(false);
 
-        public async Task<int> GetCategoryPageCountAsync(string categoryId, int pageSize, CancellationToken cancellationToken = default)
-        {
-            // Ignore pageSize for this request as we don't actually want any data
-            var response = await GetBrowseCategoryDataAsync(new BrowseCategoryRequest
-            {
-                CategoryId = categoryId,
-                PageNumber = 1,
-                PageSize = 0,
-            }, cancellationToken).ConfigureAwait(false);
+        await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
 
-            return (int)(response.TotalRecordCount / pageSize + 1);
-        }
+        return await response.Content.ReadFromJsonAsync(responseTypeInfo, cancellationToken).ConfigureAwait(false);
+    }
 
-        private async Task<TResponse?> GetAsync<TResponse>(string path, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken)
-        {
-            var response = await httpClient.GetAsync(new Uri(path, UriKind.Relative), cancellationToken).ConfigureAwait(false);
+    private async Task<TResponse?> PostAsync<TRequest, TResponse>(string path, TRequest request, JsonTypeInfo<TRequest> requestTypeInfo, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken)
+    {
+        var response = await httpClient.PostAsJsonAsync(new Uri(path, UriKind.Relative), request, requestTypeInfo, cancellationToken).ConfigureAwait(false);
 
-            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
+        await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
 
-            return await response.Content.ReadFromJsonAsync(responseTypeInfo, cancellationToken).ConfigureAwait(false);
-        }
-
-        private async Task<TResponse?> PostAsync<TRequest, TResponse>(string path, TRequest request, JsonTypeInfo<TRequest> requestTypeInfo, JsonTypeInfo<TResponse> responseTypeInfo, CancellationToken cancellationToken)
-        {
-            var response = await httpClient.PostAsJsonAsync(new Uri(path, UriKind.Relative), request, requestTypeInfo, cancellationToken).ConfigureAwait(false);
-
-            await response.EnsureSuccessStatusCodeDetailedAsync().ConfigureAwait(false);
-
-            return await response.Content.ReadFromJsonAsync(responseTypeInfo, cancellationToken).ConfigureAwait(false);
-        }
+        return await response.Content.ReadFromJsonAsync(responseTypeInfo, cancellationToken).ConfigureAwait(false);
     }
 }

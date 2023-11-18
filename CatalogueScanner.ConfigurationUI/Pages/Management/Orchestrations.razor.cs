@@ -5,69 +5,68 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.ConfigurationUI.Pages.Management
+namespace CatalogueScanner.ConfigurationUI.Pages.Management;
+
+public partial class Orchestrations
 {
-    public partial class Orchestrations
+    [GeneratedRegex(@"(?<Method>\p{Lu}\p{Ll}+)Uri")]
+    private static partial Regex HttpMethodRegex();
+
+    private bool loading;
+    private string? instanceId;
+    private IDictionary<string, string>? endpoints;
+
+    public async Task LoadCheckStatusEndpoints()
     {
-        [GeneratedRegex(@"(?<Method>\p{Lu}\p{Ll}+)Uri")]
-        private static partial Regex HttpMethodRegex();
+        loading = true;
 
-        private bool loading;
-        private string? instanceId;
-        private IDictionary<string, string>? endpoints;
-
-        public async Task LoadCheckStatusEndpoints()
+        try
         {
-            loading = true;
-
-            try
-            {
-                endpoints = await ManagementService.GetCheckStatusEndpointsAsync(instanceId).ConfigureAwait(false)
-                    ?? throw new InvalidOperationException("Load Check Status Endpoints request returned no response");
-            }
-            catch (HttpRequestException e)
-            {
-                await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Load Check Status Endpoints request failed").ConfigureAwait(false);
-            }
-
-            loading = false;
+            endpoints = await ManagementService.GetCheckStatusEndpointsAsync(instanceId).ConfigureAwait(false)
+                ?? throw new InvalidOperationException("Load Check Status Endpoints request returned no response");
+        }
+        catch (HttpRequestException e)
+        {
+            await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Load Check Status Endpoints request failed").ConfigureAwait(false);
         }
 
-        public async Task CopyPowerShellRequest(string key)
+        loading = false;
+    }
+
+    public async Task CopyPowerShellRequest(string key)
+    {
+        if (endpoints is null)
         {
-            if (endpoints is null)
-            {
-                throw new InvalidOperationException("Endpoints haven't been loaded");
-            }
+            throw new InvalidOperationException("Endpoints haven't been loaded");
+        }
 
-            var uri = endpoints[key] ?? throw new InvalidOperationException("uri is null");
+        var uri = endpoints[key] ?? throw new InvalidOperationException("uri is null");
 
-            var method = new HttpMethod(HttpMethodRegex().Match(key).Groups["Method"].Value);
+        var method = new HttpMethod(HttpMethodRegex().Match(key).Groups["Method"].Value);
 
-            var script = @$"
+        var script = @$"
 $headers = @{{ Authorization = 'bearer {TokenProvider.AccessToken}' }}
 Invoke-RestMethod -Method {method.Method} -Headers $headers -Uri '{uri}'
             ".Trim();
 
-            await Clipboard.WriteTextAsync(script).ConfigureAwait(false);
+        await Clipboard.WriteTextAsync(script).ConfigureAwait(false);
 
-            Toaster.Add("Script copied to clipboard", MatToastType.Info);
-        }
+        Toaster.Add("Script copied to clipboard", MatToastType.Info);
+    }
 
-        public async Task CleanEntityStorage()
+    public async Task CleanEntityStorage()
+    {
+        loading = true;
+
+        try
         {
-            loading = true;
-
-            try
-            {
-                await ManagementService.CleanEntityStorageAsync().ConfigureAwait(false);
-            }
-            catch (HttpRequestException e)
-            {
-                await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Clean Entity Storage request failed").ConfigureAwait(false);
-            }
-
-            loading = false;
+            await ManagementService.CleanEntityStorageAsync().ConfigureAwait(false);
         }
+        catch (HttpRequestException e)
+        {
+            await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Clean Entity Storage request failed").ConfigureAwait(false);
+        }
+
+        loading = false;
     }
 }

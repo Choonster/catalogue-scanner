@@ -13,68 +13,67 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.Core.Functions.Api
+namespace CatalogueScanner.Core.Functions.Api;
+
+/// <summary>
+/// Web API function that lists catalogue scan states.
+/// </summary>
+public static class ListCatalogueScanStates
 {
-    /// <summary>
-    /// Web API function that lists catalogue scan states.
-    /// </summary>
-    public static class ListCatalogueScanStates
+    [Function(CoreFunctionNames.ListCatalogueScanStates)]
+    public static async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CatalogueScanState/List")] HttpRequestData request,
+        [FromBody] ListEntityRequest listEntityRequest,
+        [DurableClient] DurableTaskClient durableTaskClient,
+        CancellationToken cancellationToken
+    )
     {
-        [Function(CoreFunctionNames.ListCatalogueScanStates)]
-        public static async Task<HttpResponseData> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CatalogueScanState/List")] HttpRequestData request,
-            [FromBody] ListEntityRequest listEntityRequest,
-            [DurableClient] DurableTaskClient durableTaskClient,
-            CancellationToken cancellationToken
-        )
+        #region null checks
+        ArgumentNullException.ThrowIfNull(request);
+
+        ArgumentNullException.ThrowIfNull(listEntityRequest);
+
+        ArgumentNullException.ThrowIfNull(durableTaskClient);
+        #endregion
+
+        var query = new EntityQuery
         {
-            #region null checks
-            ArgumentNullException.ThrowIfNull(request);
+            InstanceIdStartsWith = CoreFunctionNames.CatalogueScanState,
+            LastModifiedFrom = listEntityRequest.LastModifiedFrom,
+            LastModifiedTo = listEntityRequest.LastModifiedTo,
+            PageSize = listEntityRequest.Page.PageSize,
+            ContinuationToken = listEntityRequest.Page.ContinuationToken,
+            IncludeState = true,
+        };
 
-            ArgumentNullException.ThrowIfNull(listEntityRequest);
+        var result = durableTaskClient.Entities.GetAllEntitiesAsync(query);
 
-            ArgumentNullException.ThrowIfNull(durableTaskClient);
-            #endregion
+        var page = await result.AsPages().FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
-            var query = new EntityQuery
-            {
-                InstanceIdStartsWith = CoreFunctionNames.CatalogueScanState,
-                LastModifiedFrom = listEntityRequest.LastModifiedFrom,
-                LastModifiedTo = listEntityRequest.LastModifiedTo,
-                PageSize = listEntityRequest.Page.PageSize,
-                ContinuationToken = listEntityRequest.Page.ContinuationToken,
-                IncludeState = true,
-            };
+        if (page is null)
+        {
+            return await Response(Enumerable.Empty<CatalogueScanStateDto>(), null).ConfigureAwait(false);
+        }
 
-            var result = durableTaskClient.Entities.GetAllEntitiesAsync(query);
+        var entities = page.Values.Select(metatada =>
+        {
+            var key = CatalogueScanStateKey.FromString(metatada.Id.Key);
+            var state = metatada.State.ReadAs<ScanState>();
 
-            var page = await result.AsPages().FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+            return new CatalogueScanStateDto(key, state, metatada.LastModifiedTime);
+        });
 
-            if (page is null)
-            {
-                return await Response(Enumerable.Empty<CatalogueScanStateDto>(), null).ConfigureAwait(false);
-            }
+        return await Response(entities, page.ContinuationToken).ConfigureAwait(false);
 
-            var entities = page.Values.Select(metatada =>
-            {
-                var key = CatalogueScanStateKey.FromString(metatada.Id.Key);
-                var state = metatada.State.ReadAs<ScanState>();
+        async Task<HttpResponseData> Response(IEnumerable<CatalogueScanStateDto> entities, string? continuationToken)
+        {
+            var result = new ListEntityResult<CatalogueScanStateDto>(entities, listEntityRequest.Page with { ContinuationToken = continuationToken });
 
-                return new CatalogueScanStateDto(key, state, metatada.LastModifiedTime);
-            });
+            var response = request.CreateResponse();
 
-            return await Response(entities, page.ContinuationToken).ConfigureAwait(false);
+            await response.WriteAsJsonAsync(result, cancellationToken).ConfigureAwait(false);
 
-            async Task<HttpResponseData> Response(IEnumerable<CatalogueScanStateDto> entities, string? continuationToken)
-            {
-                var result = new ListEntityResult<CatalogueScanStateDto>(entities, listEntityRequest.Page with { ContinuationToken = continuationToken });
-
-                var response = request.CreateResponse();
-
-                await response.WriteAsJsonAsync(result, cancellationToken).ConfigureAwait(false);
-
-                return response;
-            }
+            return response;
         }
     }
 }

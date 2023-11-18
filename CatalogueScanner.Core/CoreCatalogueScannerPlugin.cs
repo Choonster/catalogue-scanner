@@ -11,66 +11,65 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Globalization;
 
-namespace CatalogueScanner.Core
+namespace CatalogueScanner.Core;
+
+public class CoreCatalogueScannerPlugin : ICatalogueScannerPlugin
 {
-    public class CoreCatalogueScannerPlugin : ICatalogueScannerPlugin
+    public void Configure(ICatalogueScannerHostBuilder builder)
     {
-        public void Configure(ICatalogueScannerHostBuilder builder)
+        #region null checks
+        ArgumentNullException.ThrowIfNull(builder);
+        #endregion
+
+        builder.Services.AddSingleton<ITelemetryInitializer, HttpDetailedRequestExceptionTelemetryInitializer>();
+
+        SetLocalisationCulture();
+        AddFunctionsPathOptions(builder);
+        AddConfigurationOptions(builder);
+    }
+
+    private static void SetLocalisationCulture()
+    {
+        var localisationCulture = Environment.GetEnvironmentVariable(CoreAppSettingNames.LocalisationCulture);
+        if (localisationCulture != null)
         {
-            #region null checks
-            ArgumentNullException.ThrowIfNull(builder);
-            #endregion
-
-            builder.Services.AddSingleton<ITelemetryInitializer, HttpDetailedRequestExceptionTelemetryInitializer>();
-
-            SetLocalisationCulture();
-            AddFunctionsPathOptions(builder);
-            AddConfigurationOptions(builder);
+            var localisationCultureInfo = CultureInfo.GetCultureInfo(localisationCulture);
+            CultureInfo.DefaultThreadCurrentCulture = localisationCultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = localisationCultureInfo;
         }
+    }
 
-        private static void SetLocalisationCulture()
-        {
-            var localisationCulture = Environment.GetEnvironmentVariable(CoreAppSettingNames.LocalisationCulture);
-            if (localisationCulture != null)
+    private static void AddFunctionsPathOptions(ICatalogueScannerHostBuilder builder)
+    {
+        builder.Services.AddOptions();
+
+        // Manually call AddSingleton for ConfigureNamedOptions to access the IServiceProvider
+        builder.Services.AddSingleton<IConfigureOptions<FunctionsPathOptions>, ConfigureNamedOptions<FunctionsPathOptions>>(
+            serviceProvider => new ConfigureNamedOptions<FunctionsPathOptions>(Microsoft.Extensions.Options.Options.DefaultName, options =>
             {
-                var localisationCultureInfo = CultureInfo.GetCultureInfo(localisationCulture);
-                CultureInfo.DefaultThreadCurrentCulture = localisationCultureInfo;
-                CultureInfo.DefaultThreadCurrentUICulture = localisationCultureInfo;
-            }
-        }
+                // https://stackoverflow.com/a/68092901
+                var localRoot = Environment.GetEnvironmentVariable("AzureWebJobsScriptRoot");
+                var azureRoot = $"{Environment.GetEnvironmentVariable("HOME")}/site/wwwroot";
+                var actualRoot = localRoot ?? azureRoot;
 
-        private static void AddFunctionsPathOptions(ICatalogueScannerHostBuilder builder)
-        {
-            builder.Services.AddOptions();
+                options.RootDirectory = actualRoot;
+            })
+        );
+    }
 
-            // Manually call AddSingleton for ConfigureNamedOptions to access the IServiceProvider
-            builder.Services.AddSingleton<IConfigureOptions<FunctionsPathOptions>, ConfigureNamedOptions<FunctionsPathOptions>>(
-                serviceProvider => new ConfigureNamedOptions<FunctionsPathOptions>(Microsoft.Extensions.Options.Options.DefaultName, options =>
-                {
-                    // https://stackoverflow.com/a/68092901
-                    var localRoot = Environment.GetEnvironmentVariable("AzureWebJobsScriptRoot");
-                    var azureRoot = $"{Environment.GetEnvironmentVariable("HOME")}/site/wwwroot";
-                    var actualRoot = localRoot ?? azureRoot;
+    private static void AddConfigurationOptions(ICatalogueScannerHostBuilder builder)
+    {
+        var coreSection = builder.Configuration.GetSection("Core");
 
-                    options.RootDirectory = actualRoot;
-                })
-            );
-        }
+        var matchingConfig = coreSection.GetSection(MatchingOptions.Matching);
 
-        private static void AddConfigurationOptions(ICatalogueScannerHostBuilder builder)
-        {
-            var coreSection = builder.Configuration.GetSection("Core");
-
-            var matchingConfig = coreSection.GetSection(MatchingOptions.Matching);
-
-            builder.Services
-                .ConfigureOptions<MatchingOptions>(matchingConfig)
-                .Configure<MatchingOptions>((options) =>
-                {
-                    options.Rules.Clear();
-                    options.Rules.AddRange(CatalogueItemMatchRuleSerialiser.DeserialiseMatchRules(matchingConfig.GetSection("Rules")));
-                })
-                .ConfigureOptions<EmailOptions>(coreSection.GetSection(EmailOptions.Email));
-        }
+        builder.Services
+            .ConfigureOptions<MatchingOptions>(matchingConfig)
+            .Configure<MatchingOptions>((options) =>
+            {
+                options.Rules.Clear();
+                options.Rules.AddRange(CatalogueItemMatchRuleSerialiser.DeserialiseMatchRules(matchingConfig.GetSection("Rules")));
+            })
+            .ConfigureOptions<EmailOptions>(coreSection.GetSection(EmailOptions.Email));
     }
 }

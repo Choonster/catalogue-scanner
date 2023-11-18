@@ -1,9 +1,8 @@
-﻿namespace CatalogueScanner.ColesOnline.Options
-{
-    public class ColesOnlineOptions
-    {
-        public const string ColesOnline = "ColesOnline";
+﻿namespace CatalogueScanner.ColesOnline.Options;
 
-        public long? FulfillmentStoreId { get; set; }
-    }
+public class ColesOnlineOptions
+{
+    public const string ColesOnline = "ColesOnline";
+
+    public long? FulfillmentStoreId { get; set; }
 }

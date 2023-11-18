@@ -5,31 +5,30 @@ using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace CatalogueScanner.WoolworthsOnline
+namespace CatalogueScanner.WoolworthsOnline;
+
+public class WoolworthsOnlineCatalogueScannerPlugin : ICatalogueScannerPlugin
 {
-    public class WoolworthsOnlineCatalogueScannerPlugin : ICatalogueScannerPlugin
+    public void Configure(ICatalogueScannerHostBuilder builder)
     {
-        public void Configure(ICatalogueScannerHostBuilder builder)
-        {
-            #region null checks
-            ArgumentNullException.ThrowIfNull(builder);
-            #endregion
+        #region null checks
+        ArgumentNullException.ThrowIfNull(builder);
+        #endregion
 
-            builder.Services
-                .AddHttpClient<WoolworthsOnlineService>(client =>
-                {
-                    client.BaseAddress = new Uri("https://www.woolworths.com.au/apis/ui/");
-                });
+        builder.Services
+            .AddHttpClient<WoolworthsOnlineService>(client =>
+            {
+                client.BaseAddress = new Uri("https://www.woolworths.com.au/apis/ui/");
+            });
 
-            AddConfiguration(builder);
-        }
+        AddConfiguration(builder);
+    }
 
-        private static void AddConfiguration(ICatalogueScannerHostBuilder builder)
-        {
-            var woolworthsOnlineSection = builder.Configuration.GetSection("WoolworthsOnline");
+    private static void AddConfiguration(ICatalogueScannerHostBuilder builder)
+    {
+        var woolworthsOnlineSection = builder.Configuration.GetSection("WoolworthsOnline");
 
-            builder.Services
-                .ConfigureOptions<WoolworthsOnlineOptions>(woolworthsOnlineSection.GetSection(WoolworthsOnlineOptions.WoolworthsOnline));
-        }
+        builder.Services
+            .ConfigureOptions<WoolworthsOnlineOptions>(woolworthsOnlineSection.GetSection(WoolworthsOnlineOptions.WoolworthsOnline));
     }
 }

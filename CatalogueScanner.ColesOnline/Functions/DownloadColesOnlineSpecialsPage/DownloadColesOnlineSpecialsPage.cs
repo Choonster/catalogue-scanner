@@ -5,42 +5,41 @@ using CatalogueScanner.Core.Dto.FunctionResult;
 using Microsoft.Azure.Functions.Worker;
 using System.Globalization;
 
-namespace CatalogueScanner.ColesOnline.Functions
+namespace CatalogueScanner.ColesOnline.Functions;
+
+public class DownloadColesOnlineSpecialsPage(ColesOnlineService colesOnlineService)
 {
-    public class DownloadColesOnlineSpecialsPage(ColesOnlineService colesOnlineService)
+    [Function(ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage)]
+    public async Task<IEnumerable<CatalogueItem>> Run(
+        [ActivityTrigger] DownloadColesOnlineSpecialsPageInput input,
+        CancellationToken cancellationToken
+    )
     {
-        [Function(ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage)]
-        public async Task<IEnumerable<CatalogueItem>> Run(
-            [ActivityTrigger] DownloadColesOnlineSpecialsPageInput input,
-            CancellationToken cancellationToken
-        )
-        {
-            #region null checks
-            ArgumentNullException.ThrowIfNull(input);
-            #endregion
+        #region null checks
+        ArgumentNullException.ThrowIfNull(input);
+        #endregion
 
-            var productUrlTemplate = ColesOnlineService.ProductUrlTemplate;
+        var productUrlTemplate = ColesOnlineService.ProductUrlTemplate;
 
-            var response = await colesOnlineService.GetOnSpecialPageAsync(input.BuildId, input.Page, cancellationToken).ConfigureAwait(false);
+        var response = await colesOnlineService.GetOnSpecialPageAsync(input.BuildId, input.Page, cancellationToken).ConfigureAwait(false);
 
-            var items = response.PageProps
-                !.SearchResults
-                !.Results
-                .OfType<Product>()
-                .Select(product =>
-                    new CatalogueItem(
-                        product.Id.ToString(CultureInfo.InvariantCulture),
-                        product.Name,
-                        null,
-                        new Uri(productUrlTemplate.AbsoluteUri.Replace("[productId]", product.Id.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase)),
-                        product.Pricing?.Now,
-                        product.Pricing?.MultiBuyPromotion?.MinQuantity,
-                        product.Pricing?.MultiBuyPromotion?.Reward
-                    )
+        var items = response.PageProps
+            !.SearchResults
+            !.Results
+            .OfType<Product>()
+            .Select(product =>
+                new CatalogueItem(
+                    product.Id.ToString(CultureInfo.InvariantCulture),
+                    product.Name,
+                    null,
+                    new Uri(productUrlTemplate.AbsoluteUri.Replace("[productId]", product.Id.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase)),
+                    product.Pricing?.Now,
+                    product.Pricing?.MultiBuyPromotion?.MinQuantity,
+                    product.Pricing?.MultiBuyPromotion?.Reward
                 )
-               .ToList();
+            )
+           .ToList();
 
-            return items;
-        }
+        return items;
     }
 }

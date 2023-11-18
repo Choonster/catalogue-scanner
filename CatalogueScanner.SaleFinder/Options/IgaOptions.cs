@@ -1,9 +1,8 @@
-﻿namespace CatalogueScanner.SaleFinder.Options
-{
-    public class IgaOptions
-    {
-        public const string Iga = "Iga";
+﻿namespace CatalogueScanner.SaleFinder.Options;
 
-        public int SaleFinderLocationId { get; set; }
-    }
+public class IgaOptions
+{
+    public const string Iga = "Iga";
+
+    public int SaleFinderLocationId { get; set; }
 }

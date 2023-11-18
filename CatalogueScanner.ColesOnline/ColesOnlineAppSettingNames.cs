@@ -1,7 +1,6 @@
-﻿namespace CatalogueScanner.ColesOnline
+﻿namespace CatalogueScanner.ColesOnline;
+
+public static class ColesOnlineAppSettingNames
 {
-    public static class ColesOnlineAppSettingNames
-    {
-        public const string ColesOnlineCronExpression = "ColesOnlineCronExpression";
-    }
+    public const string ColesOnlineCronExpression = "ColesOnlineCronExpression";
 }

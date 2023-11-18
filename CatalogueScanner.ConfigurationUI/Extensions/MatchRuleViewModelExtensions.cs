@@ -5,82 +5,81 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CatalogueScanner.ConfigurationUI.Extensions
+namespace CatalogueScanner.ConfigurationUI.Extensions;
+
+public static class MatchRuleViewModelExtensions
 {
-    public static class MatchRuleViewModelExtensions
-    {
-        public static IEnumerable<BaseMatchRuleViewModel> ToViewModel(this IEnumerable<ICatalogueItemMatchRule> matchRules) =>
-            matchRules
-                .Select<ICatalogueItemMatchRule, BaseMatchRuleViewModel>(rule =>
+    public static IEnumerable<BaseMatchRuleViewModel> ToViewModel(this IEnumerable<ICatalogueItemMatchRule> matchRules) =>
+        matchRules
+            .Select<ICatalogueItemMatchRule, BaseMatchRuleViewModel>(rule =>
+            {
+                switch (rule.MatchRuleType)
                 {
-                    switch (rule.MatchRuleType)
-                    {
-                        case MatchRuleType.SingleProperty:
+                    case MatchRuleType.SingleProperty:
+                        {
+                            var singlePropertyMatchRule = (SinglePropertyCatalogueItemMatchRule)rule;
+
+                            return new SinglePropertyMatchRuleViewModel
                             {
-                                var singlePropertyMatchRule = (SinglePropertyCatalogueItemMatchRule)rule;
+                                MatchType = singlePropertyMatchRule.MatchType,
+                                Property = singlePropertyMatchRule.Property,
+                                Value = singlePropertyMatchRule.Value,
+                            };
+                        }
 
-                                return new SinglePropertyMatchRuleViewModel
-                                {
-                                    MatchType = singlePropertyMatchRule.MatchType,
-                                    Property = singlePropertyMatchRule.Property,
-                                    Value = singlePropertyMatchRule.Value,
-                                };
-                            }
+                    case MatchRuleType.Compound:
+                        {
+                            var compoundMatchRule = (CompoundCatalogueItemMatchRule)rule;
 
-                        case MatchRuleType.Compound:
+                            var result = new CompoundMatchRuleViewModel
                             {
-                                var compoundMatchRule = (CompoundCatalogueItemMatchRule)rule;
+                                MatchType = compoundMatchRule.MatchType,
+                            };
 
-                                var result = new CompoundMatchRuleViewModel
-                                {
-                                    MatchType = compoundMatchRule.MatchType,
-                                };
+                            result.ChildRules.AddRange(compoundMatchRule.ChildRules.ToViewModel());
 
-                                result.ChildRules.AddRange(compoundMatchRule.ChildRules.ToViewModel());
+                            return result;
+                        }
 
-                                return result;
-                            }
+                    default:
+                        throw new InvalidOperationException($"Unkown MatchRuleType {rule.MatchRuleType}");
+                }
+            });
 
-                        default:
-                            throw new InvalidOperationException($"Unkown MatchRuleType {rule.MatchRuleType}");
-                    }
-                });
-
-        public static IEnumerable<ICatalogueItemMatchRule> ToOptions(this IEnumerable<BaseMatchRuleViewModel> matchRules) =>
-            matchRules
-                .Select<BaseMatchRuleViewModel, ICatalogueItemMatchRule>(rule =>
+    public static IEnumerable<ICatalogueItemMatchRule> ToOptions(this IEnumerable<BaseMatchRuleViewModel> matchRules) =>
+        matchRules
+            .Select<BaseMatchRuleViewModel, ICatalogueItemMatchRule>(rule =>
+            {
+                switch (rule.MatchRuleType)
                 {
-                    switch (rule.MatchRuleType)
-                    {
-                        case MatchRuleType.SingleProperty:
+                    case MatchRuleType.SingleProperty:
+                        {
+                            var singlePropertyMatchRule = (SinglePropertyMatchRuleViewModel)rule;
+
+                            return new SinglePropertyCatalogueItemMatchRule
                             {
-                                var singlePropertyMatchRule = (SinglePropertyMatchRuleViewModel)rule;
+                                MatchType = singlePropertyMatchRule.MatchType,
+                                Property = singlePropertyMatchRule.Property,
+                                Value = singlePropertyMatchRule.Value,
+                            };
+                        }
 
-                                return new SinglePropertyCatalogueItemMatchRule
-                                {
-                                    MatchType = singlePropertyMatchRule.MatchType,
-                                    Property = singlePropertyMatchRule.Property,
-                                    Value = singlePropertyMatchRule.Value,
-                                };
-                            }
+                    case MatchRuleType.Compound:
+                        {
+                            var compoundMatchRule = (CompoundMatchRuleViewModel)rule;
 
-                        case MatchRuleType.Compound:
+                            var result = new CompoundCatalogueItemMatchRule
                             {
-                                var compoundMatchRule = (CompoundMatchRuleViewModel)rule;
+                                MatchType = compoundMatchRule.MatchType,
+                            };
 
-                                var result = new CompoundCatalogueItemMatchRule
-                                {
-                                    MatchType = compoundMatchRule.MatchType,
-                                };
+                            result.ChildRules.AddRange(compoundMatchRule.ChildRules.ToOptions());
 
-                                result.ChildRules.AddRange(compoundMatchRule.ChildRules.ToOptions());
+                            return result;
+                        }
 
-                                return result;
-                            }
-
-                        default:
-                            throw new InvalidOperationException($"Unkown MatchRuleType {rule.MatchRuleType}");
-                    }
-                });
-    }
+                    default:
+                        throw new InvalidOperationException($"Unkown MatchRuleType {rule.MatchRuleType}");
+                }
+            });
 }

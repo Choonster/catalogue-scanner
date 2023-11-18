@@ -1,11 +1,20 @@
 ﻿@page
 @model CatalogueScanner.ConfigurationUI.Pages.DebuggingModel
 @{
-    string[] importantEnvironmentVariables = new string[] {
-    "WEBSITE_AUTH_ENABLED", "WEBSITE_AUTH_OPENID_ISSUER", "WEBSITE_AUTH_CLIENT_ID",
-    "WEBSITE_AUTH_CLIENT_SECRET", "WEBSITE_AUTH_LOGOUT_PATH", "WEBSITE_AUTH_DEFAULT_PROVIDER"};
+    string[] importantEnvironmentVariables = [
+        "WEBSITE_AUTH_ENABLED",
+        "WEBSITE_AUTH_OPENID_ISSUER",
+        "WEBSITE_AUTH_CLIENT_ID",
+        "WEBSITE_AUTH_CLIENT_SECRET",
+        "WEBSITE_AUTH_LOGOUT_PATH",
+        "WEBSITE_AUTH_DEFAULT_PROVIDER"
+    ];
 
-    string[] importantHeaders = new string[] { "X-MS-TOKEN-AAD-ID-TOKEN", "X-MS-CLIENT-PRINCIPAL-IDP", "X-MS-TOKEN-AAD-ACCESS-TOKEN" };
+    string[] importantHeaders = [
+        "X-MS-TOKEN-AAD-ID-TOKEN",
+        "X-MS-CLIENT-PRINCIPAL-IDP",
+        "X-MS-TOKEN-AAD-ACCESS-TOKEN"
+    ];
 }
 
 

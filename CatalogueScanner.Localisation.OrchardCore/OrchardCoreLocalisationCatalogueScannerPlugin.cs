@@ -4,27 +4,26 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using OrchardCore.Localization;
 using System;
 
-namespace CatalogueScanner.Localisation.OrchardCore
+namespace CatalogueScanner.Localisation.OrchardCore;
+
+public class OrchardCoreLocalisationCatalogueScannerPlugin : ICatalogueScannerPlugin
 {
-    public class OrchardCoreLocalisationCatalogueScannerPlugin : ICatalogueScannerPlugin
+    public void Configure(ICatalogueScannerHostBuilder builder)
     {
-        public void Configure(ICatalogueScannerHostBuilder builder)
-        {
-            #region null checks
-            ArgumentNullException.ThrowIfNull(builder);
-            #endregion
+        #region null checks
+        ArgumentNullException.ThrowIfNull(builder);
+        #endregion
 
-            AddLocalisation(builder);
-        }
+        AddLocalisation(builder);
+    }
 
-        private static void AddLocalisation(ICatalogueScannerHostBuilder builder)
-        {
-            builder.Services
-                .AddMemoryCache()
-                .AddPortableObjectLocalization(o => o.ResourcesPath = "Localisation");
+    private static void AddLocalisation(ICatalogueScannerHostBuilder builder)
+    {
+        builder.Services
+            .AddMemoryCache()
+            .AddPortableObjectLocalization(o => o.ResourcesPath = "Localisation");
 
-            builder.Services.TryAddSingleton<ILocalizationFileLocationProvider, FunctionsRootPoFileLocationProvider>();
-            builder.Services.TryAddTransient(typeof(Core.Localisation.IPluralStringLocalizer<>), typeof(PluralStringLocalizer<>));
-        }
+        builder.Services.TryAddSingleton<ILocalizationFileLocationProvider, FunctionsRootPoFileLocationProvider>();
+        builder.Services.TryAddTransient(typeof(Core.Localisation.IPluralStringLocalizer<>), typeof(PluralStringLocalizer<>));
     }
 }

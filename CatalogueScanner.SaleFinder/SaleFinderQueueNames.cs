@@ -1,7 +1,6 @@
-﻿namespace CatalogueScanner.SaleFinder
+﻿namespace CatalogueScanner.SaleFinder;
+
+internal static class SaleFinderQueueNames
 {
-    internal static class SaleFinderQueueNames
-    {
-        public const string SaleFinderCataloguesToScan = "catalogue-scanner-sale-finder-catalogues-to-scan";
-    }
+    public const string SaleFinderCataloguesToScan = "catalogue-scanner-sale-finder-catalogues-to-scan";
 }

@@ -1,10 +1,9 @@
-﻿namespace CatalogueScanner.Configuration
+﻿namespace CatalogueScanner.Configuration;
+
+internal static class ConfigurationConstants
 {
-    internal static class ConfigurationConstants
-    {
-        /// <summary>
-        /// The sentinel configuration key that triggers configuration relaoding.
-        /// </summary>
-        public const string SentinelKey = "CatalogueScanner:Sentinel";
-    }
+    /// <summary>
+    /// The sentinel configuration key that triggers configuration relaoding.
+    /// </summary>
+    public const string SentinelKey = "CatalogueScanner:Sentinel";
 }

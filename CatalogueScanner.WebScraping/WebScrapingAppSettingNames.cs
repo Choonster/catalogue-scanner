@@ -1,6 +1,5 @@
-﻿namespace CatalogueScanner.WebScraping
+﻿namespace CatalogueScanner.WebScraping;
+
+public static class WebScrapingAppSettingNames
 {
-    public static class WebScrapingAppSettingNames
-    {
-    }
 }
