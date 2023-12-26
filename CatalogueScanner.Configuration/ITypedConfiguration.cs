@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace CatalogueScanner.Configuration
+namespace CatalogueScanner.Configuration;
+
+public interface ITypedConfiguration<TOptions>
 {
-    public interface ITypedConfiguration<TOptions>
-    {
-        IConfigurationSection Configuration { get; }
-    }
+    IConfigurationSection Configuration { get; }
 }

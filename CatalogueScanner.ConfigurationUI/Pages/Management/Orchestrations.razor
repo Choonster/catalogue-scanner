@@ -15,7 +15,7 @@
 
     <section>
         <EditForm class="inline-form-row" Model="this" OnValidSubmit="LoadCheckStatusEndpoints">
-            <MatInputTextComponent @bind-Value="instanceId" Label="Instance ID" />
+            <MatInputTextComponent @bind-Value="instanceId" Label="Instance ID" Required />
 
             <MatButton Type="submit">Load Check Status Endpoints</MatButton>
         </EditForm>

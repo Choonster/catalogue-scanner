@@ -11,7 +11,6 @@ using MatBlazor;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,111 +19,93 @@ using Microsoft.Identity.Web;
 using OrchardCore.Localization;
 using OrchardCore.Localization.PortableObject;
 
-namespace CatalogueScanner.ConfigurationUI
+namespace CatalogueScanner.ConfigurationUI;
+
+public class Startup(IConfiguration configuration)
 {
-    public class Startup
+    public IConfiguration Configuration { get; } = configuration;
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+    public void ConfigureServices(IServiceCollection services)
     {
-        public Startup(IConfiguration configuration)
+        services.AddRazorPages();
+        services.AddServerSideBlazor();
+        services.AddHttpContextAccessor();
+        services.AddMatBlazor();
+        services.AddClipboard();
+
+        services.AddMatToaster(config =>
         {
-            Configuration = configuration;
-        }
+            config.Position = MatToastPosition.BottomCenter;
+            config.PreventDuplicates = true;
+            config.NewestOnTop = true;
+            config.ShowCloseButton = false;
+        });
 
-        public IConfiguration Configuration { get; }
+        services.AddScoped<TokenProvider>();
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"))
+            .EnableTokenAcquisitionToCallDownstreamApi()
+            .AddInMemoryTokenCaches();
+
+        services.Configure<CatalogueScannerApiOptions>(Configuration.GetSection(CatalogueScannerApiOptions.CatalogueScannerApi));
+
+        services.AddCatalogueScannerApiHttpClient<CatalogueScanStateService>("CatalogueScanState");
+        services.AddCatalogueScannerApiHttpClient<ManagementService>("Management");
+
+        services.AddSingleton<ILocalizationFileLocationProvider, ContentRootPoFileLocationProvider>();
+
+        services.AddScoped<TimeZoneService>();
+        services.AddScoped<HttpExceptionHandlingService>();
+
+        services.AddAzureAppConfiguration();
+
+        ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(Configuration, services);
+
+        catalogueScannerHostBuilder
+            .AddPlugin<CoreCatalogueScannerPlugin>()
+            .AddPlugin<OrchardCoreLocalisationCatalogueScannerPlugin>()
+            .AddPlugin<SaleFinderCatalogueScannerPlugin>()
+            .AddPlugin<ColesOnlineCatalogueScannerPlugin>();
+
+
+        var applicationInsightsConnectionString = Configuration["APPINSIGHTS_CONNECTIONSTRING"];
+        if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
         {
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-            services.AddHttpContextAccessor();
-            services.AddMatBlazor();
-            services.AddClipboard();
-
-            services.AddMatToaster(config =>
+            services.AddApplicationInsightsTelemetry(options =>
             {
-                config.Position = MatToastPosition.BottomCenter;
-                config.PreventDuplicates = true;
-                config.NewestOnTop = true;
-                config.ShowCloseButton = false;
+                options.ConnectionString = applicationInsightsConnectionString;
             });
-
-            services.AddScoped<TokenProvider>();
-
-            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApp(Configuration.GetSection("AzureAd"))
-                .EnableTokenAcquisitionToCallDownstreamApi()
-                .AddInMemoryTokenCaches();
-
-            services.Configure<CatalogueScannerApiOptions>(Configuration.GetSection(CatalogueScannerApiOptions.CatalogueScannerApi));
-
-            services.AddCatalogueScannerApiHttpClient<CatalogueScanStateService>("CatalogueScanState");
-            services.AddCatalogueScannerApiHttpClient<ManagementService>("Management");
-
-            services.AddSingleton<ILocalizationFileLocationProvider, ContentRootPoFileLocationProvider>();
-
-            services.AddScoped<TimeZoneService>();
-            services.AddScoped<HttpExceptionHandlingService>();
-
-            services.AddAzureAppConfiguration();
-
-            IFunctionsHostBuilder functionsHostBuilder = new DummyFunctionsHostBuilder(services);
-
-            ICatalogueScannerHostBuilder catalogueScannerHostBuilder = new CatalogueScannerHostBuilder(functionsHostBuilder, Configuration);
-
-            catalogueScannerHostBuilder
-                .AddPlugin<CoreCatalogueScannerPlugin>()
-                .AddPlugin<OrchardCoreLocalisationCatalogueScannerPlugin>()
-                .AddPlugin<SaleFinderCatalogueScannerPlugin>()
-                .AddPlugin<ColesOnlineCatalogueScannerPlugin>();
-
-
-            var applicationInsightsConnectionString = Configuration["APPINSIGHTS_CONNECTIONSTRING"];
-            if (!string.IsNullOrEmpty(applicationInsightsConnectionString))
-            {
-                services.AddApplicationInsightsTelemetry(options =>
-                {
-                    options.ConnectionString = applicationInsightsConnectionString;
-                });
-            }
         }
+    }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+    {
+        if (env.IsDevelopment())
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
-            });
-
-            logger.LogWarning("AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled: {value}", AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled);
+            app.UseDeveloperExceptionPage();
         }
-
-        private class DummyFunctionsHostBuilder : IFunctionsHostBuilder
+        else
         {
-            public IServiceCollection Services { get; }
-
-            public DummyFunctionsHostBuilder(IServiceCollection services)
-            {
-                Services = services;
-            }
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
         }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapBlazorHub();
+            endpoints.MapFallbackToPage("/_Host");
+        });
+
+        logger.IsAppServicesAadAuthenticationEnabled(AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled);
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace CatalogueScanner.WoolworthsOnline.Dto.FunctionInput
+﻿namespace CatalogueScanner.WoolworthsOnline.Dto.FunctionInput;
+
+public class DownloadWoolworthsOnlineSpecialsPageInput
 {
-    public class DownloadWoolworthsOnlineSpecialsPageInput
-    {
-        public string? CategoryId { get; set; }
-        public int PageNumber { get; set; }
-    }
+    public string? CategoryId { get; set; }
+    public int PageNumber { get; set; }
 }

@@ -4,34 +4,30 @@ using CatalogueScanner.Configuration;
 using CatalogueScanner.Core.Host;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CatalogueScanner.ColesOnline
+namespace CatalogueScanner.ColesOnline;
+
+public class ColesOnlineCatalogueScannerPlugin : ICatalogueScannerPlugin
 {
-    public class ColesOnlineCatalogueScannerPlugin : ICatalogueScannerPlugin
+    public void Configure(ICatalogueScannerHostBuilder builder)
     {
-        public void Configure(ICatalogueScannerHostBuilder builder)
-        {
-            #region null checks
-            if (builder is null)
+        #region null checks
+        ArgumentNullException.ThrowIfNull(builder);
+        #endregion
+
+        builder.Services
+            .AddHttpClient<ColesOnlineService>(client =>
             {
-                throw new ArgumentNullException(nameof(builder));
-            }
-            #endregion
+                client.BaseAddress = new Uri("https://www.coles.com.au/");
+            });
 
-            builder.Services
-                .AddHttpClient<ColesOnlineService>(client =>
-                {
-                    client.BaseAddress = new Uri("https://www.coles.com.au/");
-                });
+        AddConfiguration(builder);
+    }
 
-            AddConfiguration(builder);
-        }
+    private static void AddConfiguration(ICatalogueScannerHostBuilder builder)
+    {
+        var colesOnlineSection = builder.Configuration.GetSection("ColesOnline");
 
-        private static void AddConfiguration(ICatalogueScannerHostBuilder builder)
-        {
-            var colesOnlineSection = builder.Configuration.GetSection("ColesOnline");
-
-            builder.Services
-                .ConfigureOptions<ColesOnlineOptions>(colesOnlineSection.GetSection(ColesOnlineOptions.ColesOnline));
-        }
+        builder.Services
+            .ConfigureOptions<ColesOnlineOptions>(colesOnlineSection.GetSection(ColesOnlineOptions.ColesOnline));
     }
 }

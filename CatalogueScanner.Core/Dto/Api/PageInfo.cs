@@ -1,8 +1,3 @@
-﻿namespace CatalogueScanner.Core.Dto.Api
-{
-    public class PageInfo
-    {
-        public string? ContinuationToken { get; set; }
-        public int PageSize { get; set; } = 20;
-    }
-}
+﻿namespace CatalogueScanner.Core.Dto.Api;
+
+public record PageInfo(string? ContinuationToken = null, int PageSize = 20);

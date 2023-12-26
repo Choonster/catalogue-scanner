@@ -5,145 +5,133 @@ using CatalogueScanner.Core.Dto.FunctionInput;
 using CatalogueScanner.Core.Dto.FunctionResult;
 using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.Core.Utility;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask;
+using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
 
-namespace CatalogueScanner.ColesOnline.Functions
+namespace CatalogueScanner.ColesOnline.Functions;
+
+public static class ScanColesOnlineSpecials
 {
-    public static class ScanColesOnlineSpecials
+    private const string CatalogueType = "ColesOnline";
+    private const string Store = "Coles Online";
+
+    [Function(ColesOnlineFunctionNames.ScanColesOnlineSpecials)]
+    public static async Task RunOrchestrator([OrchestrationTrigger] TaskOrchestrationContext context)
     {
-        private const string CatalogueType = "ColesOnline";
-        private const string Store = "Coles Online";
+        #region null checks
+        ArgumentNullException.ThrowIfNull(context);
+        #endregion
 
-        [FunctionName(ColesOnlineFunctionNames.ScanColesOnlineSpecials)]
-        public static async Task RunOrchestrator([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
+        var logger = context.CreateReplaySafeLogger(typeof(ScanColesOnlineSpecials));
+
+        var specialsDateRange = await context.CallActivityAsync<DateRange>(ColesOnlineFunctionNames.GetColesOnlineSpecialsDates, context.CurrentUtcDateTime).ConfigureAwait(true);
+        var dateKey = $"Start={specialsDateRange.StartDate:O};End={specialsDateRange.EndDate:O}";
+
+        var scanStateId = CatalogueScanStateEntity.CreateId(new CatalogueScanStateKey(CatalogueType, Store, dateKey));
+
+        try
         {
-            #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            #region Check and update the catalogue's scan state
+            context.SetCustomStatus("CheckingState");
 
-            if (log is null)
+            var shouldContinue = await context.CallSubOrchestratorAsync<bool>(CoreFunctionNames.CheckAndUpdateScanState, scanStateId).ConfigureAwait(true);
+
+            if (!shouldContinue)
             {
-                throw new ArgumentNullException(nameof(log));
+                context.SetCustomStatus("Skipped");
+                return;
             }
             #endregion
 
-            log = context.CreateReplaySafeLogger(log);
+            #region Download catalogue
+            context.SetCustomStatus("Downloading");
+            logger.Downloading(scanStateId.Key);
 
-            var specialsDateRange = await context.CallActivityAsync<DateRange>(ColesOnlineFunctionNames.GetColesOnlineSpecialsDates, null).ConfigureAwait(true);
-            var dateKey = $"Start={specialsDateRange.StartDate:O};End={specialsDateRange.EndDate:O}";
+            var buildId = await context.CallActivityAsync<string>(ColesOnlineFunctionNames.GetColesOnlineBuildId).ConfigureAwait(true);
 
-            var scanStateId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(CatalogueType, Store, dateKey));
-            var scanState = context.CreateEntityProxy<ICatalogueScanState>(scanStateId);
+            var taskOptions = new TaskOptions(new RetryPolicy(maxNumberOfAttempts: 5, firstRetryInterval: TimeSpan.FromSeconds(30)));
 
-            try
-            {
-                #region Check and update the catalogue's scan state
-                context.SetCustomStatus("CheckingState");
+            var pageCount = await context.CallActivityAsync<int>(
+                   ColesOnlineFunctionNames.GetColesOnlineSpecialsPageCount,
+                   new GetColesOnlineSpecialsPageCountInput(buildId),
+                   taskOptions
+            ).ConfigureAwait(true);
 
-                var shouldContinue = await context.CallSubOrchestratorAsync<bool>(CoreFunctionNames.CheckAndUpdateScanState, scanStateId).ConfigureAwait(true);
-
-                if (!shouldContinue)
-                {
-                    context.SetCustomStatus("Skipped");
-                    return;
-                }
-                #endregion
-
-                #region Download catalogue
-                context.SetCustomStatus("Downloading");
-                log.LogDebug($"Downloading - {scanStateId.EntityKey}");
-
-                var buildId = await context.CallActivityAsync<string>(ColesOnlineFunctionNames.GetColesOnlineBuildId, null).ConfigureAwait(true);
-
-                var retryOptions = new RetryOptions(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
-
-                var pageCount = await context.CallActivityWithRetryAsync<int>(
-                       ColesOnlineFunctionNames.GetColesOnlineSpecialsPageCount,
-                       retryOptions,
-                       new GetColesOnlineSpecialsPageCountInput(buildId)
-                ).ConfigureAwait(true);
-
-                var downloadTasks = Enumerable.Range(0, pageCount)
-                    .Select(pageIndex =>
-                        context.CallActivityWithRetryAsync<IEnumerable<CatalogueItem>>(
-                            ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage,
-                            retryOptions,
-                            new DownloadColesOnlineSpecialsPageInput(buildId, pageIndex + 1)
-                        )
+            var downloadTasks = Enumerable.Range(0, pageCount)
+                .Select(pageIndex =>
+                    context.CallActivityAsync<IEnumerable<CatalogueItem>>(
+                        ColesOnlineFunctionNames.DownloadColesOnlineSpecialsPage,
+                        new DownloadColesOnlineSpecialsPageInput(buildId, pageIndex + 1),
+                        taskOptions
                     )
-                    .ToList();
+                )
+                .ToList();
 
-                var itemPages = await Task.WhenAll(downloadTasks).ConfigureAwait(true);
+            var itemPages = await Task.WhenAll(downloadTasks).ConfigureAwait(true);
 
-                var items = itemPages
-                    .SelectMany(page => page)
-                    .ToList();
+            var items = itemPages
+                .SelectMany(page => page)
+                .ToList();
 
-                var catalogue = new Catalogue(Store, specialsDateRange.StartDate, specialsDateRange.EndDate, CurrencyCultures.AustralianDollar, items);
-                #endregion
-
-                #region Filter catalouge items and send digest email
-                context.SetCustomStatus("FilteringAndSendingDigestEmail");
-
-                await context.CallSubOrchestratorAsync(
-                    CoreFunctionNames.FilterCatalogueAndSendDigestEmail,
-                    new FilterCatalogueAndSendDigestEmailInput(catalogue, scanStateId)
-                ).ConfigureAwait(true);
-                #endregion
-
-                #region Update catalogue's scan state
-                context.SetCustomStatus("UpdatingState");
-                log.LogDebug($"Updating state - {scanStateId.EntityKey}");
-
-                await scanState.UpdateState(ScanState.Completed).ConfigureAwait(true);
-                #endregion
-
-                log.LogDebug($"Completed - {scanStateId.EntityKey}");
-                context.SetCustomStatus("Completed");
-            }
-            catch
-            {
-                await scanState.UpdateState(ScanState.Failed).ConfigureAwait(true);
-                context.SetCustomStatus("Failed");
-
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Function that triggers the <see cref="RunOrchestrator"/> orchestrator function on a timer.
-        /// </summary>
-        [FunctionName(ColesOnlineFunctionNames.ScanColesOnlineSpecialsTimerStart)]
-        public static async Task TimerStart(
-            [TimerTrigger("%" + ColesOnlineAppSettingNames.ColesOnlineCronExpression + "%")] TimerInfo timer,
-            [DurableClient] IDurableClient starter,
-            ILogger log
-        )
-        {
-            #region null checks
-            if (timer is null)
-            {
-                throw new ArgumentNullException(nameof(timer));
-            }
-
-            if (starter is null)
-            {
-                throw new ArgumentNullException(nameof(starter));
-            }
-
-            if (log is null)
-            {
-                throw new ArgumentNullException(nameof(log));
-            }
+            var catalogue = new Catalogue(Store, specialsDateRange.StartDate, specialsDateRange.EndDate, CurrencyCultures.AustralianDollar, items);
             #endregion
 
-            var instanceId = await starter.StartNewAsync(ColesOnlineFunctionNames.ScanColesOnlineSpecials, null).ConfigureAwait(false);
+            #region Filter catalouge items and send digest email
+            context.SetCustomStatus("FilteringAndSendingDigestEmail");
 
-            log.LogInformation($"Started {ColesOnlineFunctionNames.ScanColesOnlineSpecials} orchestration with ID = '{{instanceId}}'.", instanceId);
+            await context.CallSubOrchestratorAsync(
+                CoreFunctionNames.FilterCatalogueAndSendDigestEmail,
+                new FilterCatalogueAndSendDigestEmailInput(catalogue, scanStateId)
+            ).ConfigureAwait(true);
+            #endregion
+
+            #region Update catalogue's scan state
+            context.SetCustomStatus("UpdatingState");
+            logger.UpdatingState(scanStateId.Key);
+
+            await context.Entities.UpdateScanStateAsync(scanStateId, ScanState.Completed).ConfigureAwait(true);
+            #endregion
+
+            logger.Completed(scanStateId.Key);
+            context.SetCustomStatus("Completed");
         }
+        catch
+        {
+            await context.Entities.UpdateScanStateAsync(scanStateId, ScanState.Failed).ConfigureAwait(true);
+            context.SetCustomStatus("Failed");
+
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Function that triggers the <see cref="RunOrchestrator"/> orchestrator function on a timer.
+    /// </summary>
+    [Function(ColesOnlineFunctionNames.ScanColesOnlineSpecialsTimerStart)]
+    public static async Task TimerStart(
+        [TimerTrigger("%" + ColesOnlineAppSettingNames.ColesOnlineCronExpression + "%")] TimerInfo timer,
+        [DurableClient] DurableTaskClient durableTaskClient,
+        FunctionContext context,
+        CancellationToken cancellationToken
+    )
+    {
+        #region null checks
+        ArgumentNullException.ThrowIfNull(timer);
+
+        ArgumentNullException.ThrowIfNull(durableTaskClient);
+
+        ArgumentNullException.ThrowIfNull(context);
+        #endregion
+
+        var logger = context.GetLogger(typeof(ScanColesOnlineSpecials).FullName!);
+
+        var instanceId = await durableTaskClient.ScheduleNewOrchestrationInstanceAsync(
+            ColesOnlineFunctionNames.ScanColesOnlineSpecials,
+            cancellationToken
+        ).ConfigureAwait(false);
+
+        logger.StartedOrchestration(instanceId);
     }
 }

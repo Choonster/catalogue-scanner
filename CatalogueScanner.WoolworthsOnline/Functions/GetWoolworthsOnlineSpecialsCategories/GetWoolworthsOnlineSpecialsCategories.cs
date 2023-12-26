@@ -1,59 +1,49 @@
 ﻿using CatalogueScanner.WoolworthsOnline.Dto.FunctionResult;
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 using CatalogueScanner.WoolworthsOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using System;
+using Microsoft.Azure.Functions.Worker;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.WoolworthsOnline.Functions
+namespace CatalogueScanner.WoolworthsOnline.Functions;
+
+public class GetWoolworthsOnlineSpecialsCategories(WoolworthsOnlineService woolworthsOnlineService)
 {
-    public class GetWoolworthsOnlineSpecialsCategories
+    private readonly WoolworthsOnlineService woolworthsOnlineService = woolworthsOnlineService;
+
+    [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories)]
+    public async Task<IEnumerable<WoolworthsOnlineCategory>> Run(
+        CancellationToken cancellationToken,
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
+        [ActivityTrigger]
+        object? input = null
+    )
     {
-        private readonly WoolworthsOnlineService woolworthsOnlineService;
+        var response = await woolworthsOnlineService.GetPiesCategoriesWithSpecialsAsync(cancellationToken).ConfigureAwait(false);
 
-        public GetWoolworthsOnlineSpecialsCategories(WoolworthsOnlineService woolworthsOnlineService)
-        {
-            this.woolworthsOnlineService = woolworthsOnlineService;
-        }
+        var specialsCategories = new List<WoolworthsOnlineCategory>();
 
-        [FunctionName(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories)]
-        public async Task<IEnumerable<WoolworthsOnlineCategory>> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
+        FilterSpecialsCategories(response.Categories, specialsCategories);
+
+        return specialsCategories;
+    }
+
+    private static void FilterSpecialsCategories(IEnumerable<Category> categories, List<WoolworthsOnlineCategory> specialsCategories)
+    {
+        foreach (var category in categories)
         {
-            #region null checks
-            if (context is null)
+            if (category.IsSpecial && category.ProductCount > 0)
             {
-                throw new ArgumentNullException(nameof(context));
+                specialsCategories.Add(new WoolworthsOnlineCategory
+                {
+                    CategoryId = category.NodeId,
+                    Description = category.Description,
+                });
             }
-            #endregion
-
-            var response = await woolworthsOnlineService.GetPiesCategoriesWithSpecialsAsync(cancellationToken).ConfigureAwait(false);
-
-            var specialsCategories = new List<WoolworthsOnlineCategory>();
-            
-            FilterSpecialsCategories(response.Categories, specialsCategories);
-
-            return specialsCategories;
-        }
-
-        private void FilterSpecialsCategories(IEnumerable<Category> categories, List<WoolworthsOnlineCategory> specialsCategories)
-        {
-            foreach (var category in categories)
+            else
             {
-                if (category.IsSpecial && category.ProductCount > 0)
-                {
-                    specialsCategories.Add(new WoolworthsOnlineCategory
-                    {
-                        CategoryId = category.NodeId,
-                        Description = category.Description,
-                    });
-                }
-                else
-                {
-                    FilterSpecialsCategories(category.Children, specialsCategories);
-                }
+                FilterSpecialsCategories(category.Children, specialsCategories);
             }
         }
     }

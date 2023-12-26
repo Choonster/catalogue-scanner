@@ -7,244 +7,216 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace CatalogueScanner.SaleFinder.Dto.SaleFinder
+namespace CatalogueScanner.SaleFinder.Dto.SaleFinder;
+
+/// <summary>
+/// Returned from the SaleFinder Catalogue SVG Data request:
+/// https://embed.salefinder.com.au/catalogue/svgData/{saleId}/?format=json
+/// </summary>
+public partial class SaleFinderCatalogue
 {
-    /// <summary>
-    /// Returned from the SaleFinder Catalogue SVG Data request:
-    /// https://embed.salefinder.com.au/catalogue/svgData/{saleId}/?format=json
-    /// </summary>
-    public partial class SaleFinderCatalogue
+    public string? Content { get; set; }
+    public string? Breadcrumb { get; set; }
+    public string? AreaName { get; set; }
+    public string? SaleDescription { get; set; }
+    public string? SaleName { get; set; }
+    public string? YoutubeId { get; set; }
+
+    [JsonConverter(typeof(SaleFinderDateTimeOffsetConverter))]
+    public DateTimeOffset PublishDate { get; set; }
+
+    [JsonConverter(typeof(SaleFinderDateTimeOffsetConverter))]
+    public DateTimeOffset StartDate { get; set; }
+
+    [JsonConverter(typeof(SaleFinderDateTimeOffsetConverter))]
+    public DateTimeOffset EndDate { get; set; }
+
+    [JsonInclude]
+    [JsonPropertyName("catalogue")]
+    public ICollection<Page> Pages { get; internal set; } = new List<Page>();
+}
+
+[JsonConverter(typeof(PageConverter))]
+public partial class Page
+{
+    [JsonIgnore]
+    public IList<Item> Items { get; internal set; } = new List<Item>();
+
+    [JsonPropertyName("imagefile")]
+    public string? ImageFile { get; set; }
+
+    [JsonPropertyName("image_width")]
+    public double? ImageWidth { get; set; }
+
+    [JsonPropertyName("image_height")]
+    public double? ImageHeight { get; set; }
+
+    [JsonPropertyName("animatedimagefile")]
+    public string? AnimatedImageFile { get; set; }
+
+    [JsonPropertyName("pagetab")]
+    public string? PageTab { get; set; }
+
+    [JsonPropertyName("pagedesc")]
+    public string? PageDesc { get; set; }
+}
+
+internal sealed partial class PageWithExtensionData : Page
+{
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement> ExtensionData { get; set; } = [];
+}
+
+public partial class Item
+{
+    [JsonConverter(typeof(ExponentInt64Converter))]
+    public long? VideoId { get; set; }
+
+    public Shape Shape { get; set; }
+
+    [JsonInclude]
+    [JsonConverter(typeof(SaleFinderJsonCollectionItemConverter<long, ICollection<long>, ExponentInt64Converter>))]
+    public ICollection<long> Coords { get; internal set; } = new List<long>();
+
+    public long? ItemId { get; set; }
+    public string? Href { get; set; }
+
+    [JsonPropertyName("SKU")]
+    public string? Sku { get; set; }
+
+    [JsonConverter(typeof(ExponentInt64Converter))]
+    public long? SystemId { get; set; }
+
+    public object? ExtraId { get; set; }
+    public object? Extra2Id { get; set; }
+
+    [JsonPropertyName("extraURL")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder may not output valid URIs for this property")]
+    public string? ExtraUrl { get; set; }
+
+    [JsonPropertyName("extraURLText")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "This property probably isn't a URI")]
+    public string? ExtraUrlText { get; set; }
+
+    [JsonPropertyName("itemURL")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder does not output full URIs for this property")]
+    public string? ItemUrl { get; set; }
+
+    public string? ItemName { get; set; }
+
+    [JsonConverter(typeof(ExponentInt64Converter))]
+    public long? SkuCount { get; set; }
+
+    public double X { get; set; }
+    public double Y { get; set; }
+    public double Width { get; set; }
+    public double Height { get; set; }
+}
+
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
+public enum Shape
+{
+    Rectangle
+}
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Instantiated by System.Text.Json using reflection")]
+internal sealed class PageConverter : JsonConverter<Page>
+{
+    public override Page Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        public string? Content { get; set; }
-        public string? Breadcrumb { get; set; }
-        public string? AreaName { get; set; }
-        public string? SaleDescription { get; set; }
-        public string? SaleName { get; set; }
-        public string? YoutubeId { get; set; }
+        #region null checks
+        ArgumentNullException.ThrowIfNull(typeToConvert);
 
-        [JsonConverter(typeof(SaleFinderDateTimeOffsetConverter))]
-        public DateTimeOffset PublishDate { get; set; }
+        ArgumentNullException.ThrowIfNull(options);
+        #endregion
 
-        [JsonConverter(typeof(SaleFinderDateTimeOffsetConverter))]
-        public DateTimeOffset StartDate { get; set; }
+        var context = new SaleFinderInternalSerializerContext(new JsonSerializerOptions(options));
 
-        [JsonConverter(typeof(SaleFinderDateTimeOffsetConverter))]
-        public DateTimeOffset EndDate { get; set; }
+        // Create a PageWithExtensionData instance, populate the standard (non-numeric) property names from the JSON
+        // and store the overflow in the ExtensionData property
+        var page = JsonSerializer.Deserialize(ref reader, context.PageWithExtensionData)
+            ?? throw new JsonException("page instance is null");
 
-        [JsonInclude]
-        [JsonPropertyName("catalogue")]
-        public ICollection<Page> Pages { get; internal set; } = new List<Page>();
-    }
-
-    [JsonConverter(typeof(PageConverter))]
-    public partial class Page
-    {
-        [JsonIgnore]
-        public IList<Item> Items { get; internal set; } = new List<Item>();
-
-        [JsonPropertyName("imagefile")]
-        public string? ImageFile { get; set; }
-
-        [JsonPropertyName("image_width")]
-        public double? ImageWidth { get; set; }
-
-        [JsonPropertyName("image_height")]
-        public double? ImageHeight { get; set; }
-
-        [JsonPropertyName("animatedimagefile")]
-        public string? AnimatedImageFile { get; set; }
-
-        [JsonPropertyName("pagetab")]
-        public string? PageTab { get; set; }
-
-        [JsonPropertyName("pagedesc")]
-        public string? PageDesc { get; set; }
-    }
-
-    internal partial class PageWithExtensionData : Page
-    {
-        [JsonExtensionData]
-        public Dictionary<string, JsonElement> ExtensionData { get; set; } = new();
-    }
-
-    public partial class Item
-    {
-        [JsonConverter(typeof(ExponentInt64Converter))]
-        public long? VideoId { get; set; }
-
-        public Shape Shape { get; set; }
-
-        [JsonInclude]
-        [JsonConverter(typeof(SaleFinderJsonCollectionItemConverter<long, ICollection<long>, ExponentInt64Converter>))]
-        public ICollection<long> Coords { get; internal set; } = new List<long>();
-
-        public long? ItemId { get; set; }
-        public string? Href { get; set; }
-
-        [JsonPropertyName("SKU")]
-        public string? Sku { get; set; }
-
-        [JsonConverter(typeof(ExponentInt64Converter))]
-        public long? SystemId { get; set; }
-
-        public object? ExtraId { get; set; }
-        public object? Extra2Id { get; set; }
-
-        [JsonPropertyName("extraURL")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder may not output valid URIs for this property")]
-        public string? ExtraUrl { get; set; }
-
-        [JsonPropertyName("extraURLText")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "This property probably isn't a URI")]
-        public string? ExtraUrlText { get; set; }
-
-        [JsonPropertyName("itemURL")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "SaleFinder does not output full URIs for this property")]
-        public string? ItemUrl { get; set; }
-
-        public string? ItemName { get; set; }
-
-        [JsonConverter(typeof(ExponentInt64Converter))]
-        public long? SkuCount { get; set; }
-
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
-    }
-
-    [JsonConverter(typeof(JsonStringEnumMemberConverter))]
-    public enum Shape
-    {
-        Rectangle
-    }
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Instantiated by System.Text.Json using reflection")]
-    internal class PageConverter : JsonConverter<Page>
-    {
-        public override Page Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        // Add the numeric property names to the Items collection
+        foreach (var keyValuePair in page.ExtensionData)
         {
-            #region null checks
-            if (typeToConvert is null)
+            if (int.TryParse(keyValuePair.Key, out var index))
             {
-                throw new ArgumentNullException(nameof(typeToConvert));
+                var item = keyValuePair.Value.Deserialize(context.Item)
+                    ?? throw new JsonException($"item instance at index {index} is null");
+
+                page.Items.Insert(index, item);
             }
-
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            #endregion
-
-            var context = new SaleFinderInternalSerializerContext(new JsonSerializerOptions(options));
-
-            // Create a PageWithExtensionData instance, populate the standard (non-numeric) property names from the JSON
-            // and store the overflow in the ExtensionData property
-            var page = JsonSerializer.Deserialize(ref reader, context.PageWithExtensionData);
-
-            if (page is null)
-            {
-                throw new JsonException("page instance is null");
-            }
-
-            // Add the numeric property names to the Items collection
-            foreach (var keyValuePair in page.ExtensionData)
-            {
-                if (int.TryParse(keyValuePair.Key, out var index))
-                {
-                    var item = keyValuePair.Value.Deserialize(context.Item);
-
-                    if (item is null)
-                    {
-                        throw new JsonException($"item instance at index {index} is null");
-                    }
-
-                    page.Items.Insert(index, item);
-                }
-            }
-
-            // Create a normal Page instance from the deserialised data
-            return new Page
-            {
-                ImageFile = page.ImageFile,
-                ImageHeight = page.ImageHeight,
-                ImageWidth = page.ImageWidth,
-                Items = page.Items,
-            };
         }
 
-        public override void Write(Utf8JsonWriter writer, Page value, JsonSerializerOptions options)
+        // Create a normal Page instance from the deserialised data
+        return new Page
         {
-            #region null checks
-            if (writer is null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
-
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            if (options is null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            #endregion
-
-            // Create a JsonNode and populate the standard (non-numeric) property names
-            var pageNode = JsonSerializer.SerializeToNode(value, options);
-
-            if (pageNode is null)
-            {
-                throw new JsonException($"null returned from {nameof(JsonSerializer.SerializeToNode)}");
-            }
-
-            // Add the values from the Items collection as numeric property names
-            for (var i = 0; i < value.Items.Count; i++)
-            {
-                pageNode[i.ToString("d", NumberFormatInfo.InvariantInfo)] = JsonSerializer.SerializeToNode(value.Items[i], options);
-            }
-
-            // Serialise the JsonNode to JSON
-            pageNode.WriteTo(writer);
-        }
+            ImageFile = page.ImageFile,
+            ImageHeight = page.ImageHeight,
+            ImageWidth = page.ImageWidth,
+            Items = page.Items,
+        };
     }
 
-    // Adapted from JsonMicrosoftDateTimeOffsetConverter in Macross.Json.Extensions
-    internal class SaleFinderDateTimeOffsetConverter : BaseJsonNullableStructConverterFactory<DateTimeOffset>
+    public override void Write(Utf8JsonWriter writer, Page value, JsonSerializerOptions options)
     {
-        protected override IBaseConverter CreateBaseConverter(Type typeToConvert, JsonSerializerOptions options) =>
-            new Converter();
+        #region null checks
+        ArgumentNullException.ThrowIfNull(writer);
 
-        private class Converter : IBaseConverter
+        ArgumentNullException.ThrowIfNull(value);
+
+        ArgumentNullException.ThrowIfNull(options);
+        #endregion
+
+        // Create a JsonNode and populate the standard (non-numeric) property names
+        var pageNode = JsonSerializer.SerializeToNode(value, options)
+            ?? throw new JsonException($"null returned from {nameof(JsonSerializer.SerializeToNode)}");
+
+        // Add the values from the Items collection as numeric property names
+        for (var i = 0; i < value.Items.Count; i++)
         {
-            /// <summary>
-            /// The date time format used by SaleFinder.
-            /// </summary>
-            private const string DateTimeFormat = "yyyy/MM/dd HH:mm:ss";
+            pageNode[i.ToString("d", NumberFormatInfo.InvariantInfo)] = JsonSerializer.SerializeToNode(value.Items[i], options);
+        }
 
-            public DateTimeOffset? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        // Serialise the JsonNode to JSON
+        pageNode.WriteTo(writer);
+    }
+}
+
+// Adapted from JsonMicrosoftDateTimeOffsetConverter in Macross.Json.Extensions
+internal sealed class SaleFinderDateTimeOffsetConverter : BaseJsonNullableStructConverterFactory<DateTimeOffset>
+{
+    protected override IBaseConverter CreateBaseConverter(Type typeToConvert, JsonSerializerOptions options) =>
+        new Converter();
+
+    private sealed class Converter : IBaseConverter
+    {
+        /// <summary>
+        /// The date time format used by SaleFinder.
+        /// </summary>
+        private const string DateTimeFormat = "yyyy/MM/dd HH:mm:ss";
+
+        public DateTimeOffset? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType != JsonTokenType.String)
             {
-                if (reader.TokenType != JsonTokenType.String)
-                {
-                    throw new JsonException($"Error reading {typeof(DateTimeOffset)} from {typeof(Utf8JsonReader)}. Current item is not a string: {reader.TokenType}");
-                }
-
-                var formatted = reader.GetString()!;
-
-                return DateTimeOffset.ParseExact(formatted, DateTimeFormat, CultureInfo.InvariantCulture);
+                throw new JsonException($"Error reading {typeof(DateTimeOffset)} from {typeof(Utf8JsonReader)}. Current item is not a string: {reader.TokenType}");
             }
 
-            public void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) =>
-                writer.WriteStringValue(value.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
-        }
-    }
+            var formatted = reader.GetString()!;
 
-    internal class SaleFinderJsonCollectionItemConverter<TData, TCollection, TConverter> : BaseJsonCollectionItemConverter<TData, TCollection, TConverter>
-        where TCollection : IEnumerable<TData>
-        where TConverter : JsonConverter, new()
-    {
-        protected override JsonSerializerContext? GetJsonSerializerContext(JsonSerializerOptions options) => new SaleFinderSerializerContext(options);
+            return DateTimeOffset.ParseExact(formatted, DateTimeFormat, CultureInfo.InvariantCulture);
+        }
+
+        public void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) =>
+            writer.WriteStringValue(value.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
     }
+}
+
+internal sealed class SaleFinderJsonCollectionItemConverter<TData, TCollection, TConverter> : BaseJsonCollectionItemConverter<TData, TCollection, TConverter>
+    where TCollection : IEnumerable<TData>
+    where TConverter : JsonConverter, new()
+{
+    protected override JsonSerializerContext? GetJsonSerializerContext(JsonSerializerOptions options) => new SaleFinderInternalSerializerContext(options);
 }

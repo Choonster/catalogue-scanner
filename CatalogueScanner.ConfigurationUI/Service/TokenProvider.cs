@@ -1,7 +1,6 @@
-﻿namespace CatalogueScanner.ConfigurationUI.Service
+﻿namespace CatalogueScanner.ConfigurationUI.Service;
+
+public class TokenProvider
 {
-    public class TokenProvider
-    {
-        public string? AccessToken { get; set; }
-    }
+    public string? AccessToken { get; set; }
 }

@@ -20,7 +20,7 @@
         </MatTooltip>
     </div>
 
-    <MatTable Items="tableData" @bind-PageSize="pageInfo.PageSize" ShowPaging="false">
+    <MatTable Items="tableData" @bind-PageSize="PageSize" ShowPaging="false">
         <MatTableHeader>
             <th></th>
             <th>Catalogue Type</th>
@@ -44,15 +44,15 @@
                 </td>
 
                 <td class="catalogue-type">
-                    @scanState.CatalogueType
+                    @scanState.CatalogueScanStateKey.CatalogueType
                 </td>
 
                 <td class="store">
-                    @scanState.Store
+                    @scanState.CatalogueScanStateKey.Store
                 </td>
 
                 <td class="catalogue-id">
-                    @scanState.CatalogueId
+                    @scanState.CatalogueScanStateKey.CatalogueId
                 </td>
 
                 <td class="scan-state">
@@ -60,7 +60,7 @@
                 </td>
 
                 <td class="last-operation-time">
-                    @scanState.LastOperationLocalTime.ToString("G")
+                    @scanState.LastModifiedTime.ToString("G")
                 </td>
             }
         </MatTableRow>

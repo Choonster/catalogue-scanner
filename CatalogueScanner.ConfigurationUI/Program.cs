@@ -2,61 +2,51 @@ using Azure.Identity;
 using CatalogueScanner.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Hosting;
 using System;
 
-namespace CatalogueScanner.ConfigurationUI
+namespace CatalogueScanner.ConfigurationUI;
+
+public static class Program
 {
-    public static class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+        CreateHostBuilder(args).Build().Run();
+    }
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            const string connectionStringPropertyName = "AzureAppConfigurationConnectionString";
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        const string connectionStringPropertyName = "AzureAppConfigurationConnectionString";
 
-            var hostBuilder = Host.CreateDefaultBuilder(args);
+        var hostBuilder = Host.CreateDefaultBuilder(args);
 
-            return hostBuilder
-                  .ConfigureServices(services =>
+        return hostBuilder
+              .ConfigureServices(services =>
+              {
+                  services.SetAzureAppConfigurationConnectionString((string)hostBuilder.Properties[connectionStringPropertyName]);
+              })
+              .ConfigureAppConfiguration((hostingContext, config) =>
+              {
+                  var appConfig = config.Build();
+
+                  var connectionString = appConfig["ConnectionStrings:AzureAppConfiguration"]
+                    ?? throw new InvalidOperationException("ConnectionStrings:AzureAppConfiguration app setting not set");
+
+                  hostBuilder.Properties[connectionStringPropertyName] = connectionString;
+
+                  config.AddCatalogueScannerAzureAppConfiguration(connectionString);
+
+                  if (hostingContext.HostingEnvironment.IsProduction())
                   {
-                      services.SetAzureAppConfigurationConnectionString((string)hostBuilder.Properties[connectionStringPropertyName]);
-                  })
-                  .ConfigureAppConfiguration((hostingContext, config) =>
-                  {
-                      var appConfig = config.Build();
+                      var vaultUri = Environment.GetEnvironmentVariable("VaultUri")
+                        ?? throw new InvalidOperationException("VaultUri environment variable not set");
 
-                      var connectionString = appConfig["ConnectionStrings:AzureAppConfiguration"];
-
-                      if (connectionString is null)
-                      {
-                          throw new InvalidOperationException("ConnectionStrings:AzureAppConfiguration app setting not set");
-                      }
-
-                      hostBuilder.Properties[connectionStringPropertyName] = connectionString;
-
-                      config.AddCatalogueScannerAzureAppConfiguration(connectionString);
-
-                      if (hostingContext.HostingEnvironment.IsProduction())
-                      {
-                          var vaultUri = Environment.GetEnvironmentVariable("VaultUri");
-
-                          if (vaultUri is null)
-                          {
-                              throw new InvalidOperationException("VaultUri environment variable not set");
-                          }
-
-                          config.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
-                      }
-                  })
-                  .ConfigureWebHostDefaults(webBuilder =>
-                  {
-                      webBuilder.UseStartup<Startup>();
-                  });
-        }
+                      config.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
+                  }
+              })
+              .ConfigureWebHostDefaults(webBuilder =>
+              {
+                  webBuilder.UseStartup<Startup>();
+              });
     }
 }

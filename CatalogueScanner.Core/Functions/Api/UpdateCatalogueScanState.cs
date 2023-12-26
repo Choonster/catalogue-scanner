@@ -1,46 +1,42 @@
 ﻿using CatalogueScanner.Core.Dto.Api;
-using CatalogueScanner.Core.Dto.EntityKey;
 using CatalogueScanner.Core.Functions.Entity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.DurableTask.Client;
 using System;
+using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.Core.Functions.Api
+namespace CatalogueScanner.Core.Functions.Api;
+
+/// <summary>
+/// Web API function that updates the scan state for a catalogue.
+/// </summary>
+public static class UpdateCatalogueScanState
 {
-    /// <summary>
-    /// Web API function that updates the scan state for a catalogue.
-    /// </summary>
-    public static class UpdateCatalogueScanState
+    [Function(CoreFunctionNames.UpdateCatalogueScanState)]
+    public static async Task<HttpResponseData> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CatalogueScanState/Update")] HttpRequestData request,
+        [FromBody] CatalogueScanStateDto dto,
+        [DurableClient] DurableTaskClient durableTaskClient,
+        CancellationToken cancellationToken
+    )
     {
-        [FunctionName(CoreFunctionNames.UpdateCatalogueScanState)]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "CatalogueScanState/Update")] CatalogueScanStateDto dto,
-            [DurableClient] IDurableEntityClient durableEntityClient
-        )
-        {
-            #region null checks
-            if (dto is null)
-            {
-                throw new ArgumentNullException(nameof(dto));
-            }
+        #region null checks
+        ArgumentNullException.ThrowIfNull(dto);
 
-            if (durableEntityClient is null)
-            {
-                throw new ArgumentNullException(nameof(durableEntityClient));
-            }
-            #endregion
+        ArgumentNullException.ThrowIfNull(durableTaskClient);
+        #endregion
 
-            var entityId = ICatalogueScanState.CreateId(new CatalogueScanStateKey(dto.CatalogueType, dto.Store, dto.CatalogueId));
+        var entityId = CatalogueScanStateEntity.CreateId(dto.CatalogueScanStateKey);
 
-            await durableEntityClient.SignalEntityAsync<ICatalogueScanState>(
-                entityId,
-                (scanState) => scanState.UpdateState(dto.ScanState)
-            ).ConfigureAwait(false);
+        await durableTaskClient.Entities.SignalUpdateScanStateAsync(
+            entityId,
+            dto.ScanState,
+            cancellationToken
+        ).ConfigureAwait(false);
 
-            return new OkResult();
-        }
+        return request.CreateResponse(HttpStatusCode.Accepted);
     }
 }

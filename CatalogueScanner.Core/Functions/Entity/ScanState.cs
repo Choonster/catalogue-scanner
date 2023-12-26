@@ -1,10 +1,9 @@
-﻿namespace CatalogueScanner.Core.Functions.Entity
+﻿namespace CatalogueScanner.Core.Functions.Entity;
+
+public enum ScanState
 {
-    public enum ScanState
-    {
-        NotStarted,
-        InProgress,
-        Completed,
-        Failed,
-    }
+    NotStarted,
+    InProgress,
+    Completed,
+    Failed,
 }

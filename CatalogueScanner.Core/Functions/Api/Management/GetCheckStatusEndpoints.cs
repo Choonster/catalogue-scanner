@@ -1,33 +1,29 @@
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.DurableTask.Client;
 using System;
-using System.Net.Http;
+using System.Threading;
 
-namespace CatalogueScanner.Core.Functions.Api.Management
+namespace CatalogueScanner.Core.Functions.Api.Management;
+
+public static class GetCheckStatusEndpoints
 {
-    public static class GetCheckStatusEndpoints
+    [Function(CoreFunctionNames.GetCheckStatusEndpoints)]
+    public static HttpResponseData Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Management/CheckStatusEndpoints/{instanceId?}")] HttpRequestData req,
+        [DurableClient] DurableTaskClient durableTaskClient,
+        string instanceId,
+        CancellationToken cancellationToken
+    )
     {
-        [FunctionName(CoreFunctionNames.GetCheckStatusEndpoints)]
-        public static HttpResponseMessage Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Management/CheckStatusEndpoints/{instanceId?}")] HttpRequestMessage req,
-            [DurableClient] IDurableClient durableClient,
-            string? instanceId = null
-        )
-        {
-            #region null checks
-            if (req is null)
-            {
-                throw new ArgumentNullException(nameof(req));
-            }
+        #region null checks
+        ArgumentNullException.ThrowIfNull(req);
 
-            if (durableClient is null)
-            {
-                throw new ArgumentNullException(nameof(durableClient));
-            }
-            #endregion
+        ArgumentNullException.ThrowIfNull(durableTaskClient);
 
-            return durableClient.CreateCheckStatusResponse(req, instanceId);
-        }
+        ArgumentNullException.ThrowIfNull(instanceId);
+        #endregion
+
+        return durableTaskClient.CreateCheckStatusResponse(req, instanceId, cancellationToken);
     }
 }

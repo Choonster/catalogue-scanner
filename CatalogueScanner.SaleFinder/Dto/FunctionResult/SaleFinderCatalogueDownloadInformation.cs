@@ -1,42 +1,20 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using CatalogueScanner.Core.Serialisation;
 using System;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
-namespace CatalogueScanner.SaleFinder.Dto.FunctionResult
-{
-    /// <summary>
-    /// Represents a SaleFinder catalogue to be scanned.
-    /// </summary>
-    [JsonObject(NamingStrategyType = typeof(CamelCaseNamingStrategy))]
-    public class SaleFinderCatalogueDownloadInformation
-    {
-        /// <summary>
-        /// The ID of the SaleFinder catalogue.
-        /// </summary>
-        public int SaleId { get; set; }
+namespace CatalogueScanner.SaleFinder.Dto.FunctionResult;
 
-        /// <summary>
-        /// The base URI of the SaleFinder catalogue page.
-        /// </summary>
-        public Uri BaseUri { get; set; }
-
-        /// <summary>
-        /// The store that the SaleFinder catalogue belongs to.
-        /// </summary>
-        public string Store { get; set; }
-
-        /// <summary>
-        /// The culture used to display prices in the digest email.
-        /// </summary>
-        public CultureInfo CurrencyCulture { get; set; }
-
-        public SaleFinderCatalogueDownloadInformation(int saleId, Uri baseUri, string store, CultureInfo currencyCulture)
-        {
-            SaleId = saleId;
-            BaseUri = baseUri;
-            Store = store;
-            CurrencyCulture = currencyCulture;
-        }
-    }
-}
+/// <summary>
+/// Represents a SaleFinder catalogue to be scanned.
+/// </summary>
+/// <param name="SaleId"> The ID of the SaleFinder catalogue. </param>
+/// <param name="BaseUri"> The base URI of the SaleFinder catalogue page. </param>
+/// <param name="Store"> The store that the SaleFinder catalogue belongs to. </param>
+/// <param name="CurrencyCulture"> The culture used to display prices in the digest email. </param>
+public record SaleFinderCatalogueDownloadInformation(
+    int SaleId,
+    Uri BaseUri,
+    string Store,
+    [property: JsonConverter(typeof(CultureInfoConverter))] CultureInfo CurrencyCulture
+);

@@ -1,31 +1,21 @@
-﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace CatalogueScanner.Core.Host
+namespace CatalogueScanner.Core.Host;
+
+public class CatalogueScannerHostBuilder : ICatalogueScannerHostBuilder
 {
-    public class CatalogueScannerHostBuilder : ICatalogueScannerHostBuilder
+    public CatalogueScannerHostBuilder(IConfiguration configuration, IServiceCollection services)
     {
-        public CatalogueScannerHostBuilder(IFunctionsHostBuilder functionsHostBuilder, IConfiguration configuration)
-        {
-            #region null checks
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            } 
-            #endregion
+        #region null checks
+        ArgumentNullException.ThrowIfNull(configuration);
+        #endregion
 
-            FunctionsHostBuilder = functionsHostBuilder ?? throw new ArgumentNullException(nameof(functionsHostBuilder));
-            Services = functionsHostBuilder.Services;
-
-            Configuration = configuration.GetSection("CatalogueScanner");
-        }
-
-        public IFunctionsHostBuilder FunctionsHostBuilder { get; }
-
-        public IConfiguration Configuration { get; }
-
-        public IServiceCollection Services { get; }
+        Configuration = configuration.GetSection("CatalogueScanner");
+        Services = services ?? throw new ArgumentNullException(nameof(services));
     }
+
+    public IConfiguration Configuration { get; }
+    public IServiceCollection Services { get; }
 }

@@ -1,30 +1,23 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace MatBlazor
+namespace MatBlazor;
+
+public static class MatDialogServiceExtensions
 {
-    public static class MatDialogServiceExtensions
+    public static async Task<object> OpenFullPageAsync(this IMatDialogService matDialogService, Type componentType, MatDialogOptions options)
     {
-        public static async Task<object> OpenFullPageAsync(this IMatDialogService matDialogService, Type componentType, MatDialogOptions options)
-        {
-            #region null checks
-            if (matDialogService is null)
-            {
-                throw new ArgumentNullException(nameof(matDialogService));
-            }
+        #region null checks
+        ArgumentNullException.ThrowIfNull(matDialogService);
 
-            if (componentType is null)
-            {
-                throw new ArgumentNullException(nameof(componentType));
-            }
-            #endregion
+        ArgumentNullException.ThrowIfNull(componentType);
+        #endregion
 
-            options ??= new MatDialogOptions();
+        options ??= new MatDialogOptions();
 
-            options.SurfaceClass = (options.SurfaceClass ?? string.Empty) + " full-page-dialog";
-            options.SurfaceClass = options.SurfaceClass.Trim();
+        options.SurfaceClass = (options.SurfaceClass ?? string.Empty) + " full-page-dialog";
+        options.SurfaceClass = options.SurfaceClass.Trim();
 
-            return await matDialogService.OpenAsync(componentType, options).ConfigureAwait(true);
-        }
+        return await matDialogService.OpenAsync(componentType, options).ConfigureAwait(true);
     }
 }

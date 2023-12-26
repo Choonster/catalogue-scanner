@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace CatalogueScanner.ConfigurationUI.Options
-{
-    public class CatalogueScannerApiOptions
-    {
-        public const string CatalogueScannerApi = "CatalogueScannerApi";
+namespace CatalogueScanner.ConfigurationUI.Options;
 
-        public Uri? BaseAddress { get; set; }
-    }
+public class CatalogueScannerApiOptions
+{
+    public const string CatalogueScannerApi = "CatalogueScannerApi";
+
+    public Uri? BaseAddress { get; set; }
 }

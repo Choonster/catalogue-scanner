@@ -1,17 +1,16 @@
 ﻿using CatalogueScanner.Core.Dto.FunctionResult;
 
-namespace CatalogueScanner.Core.MatchRule
+namespace CatalogueScanner.Core.MatchRule;
+
+public interface ICatalogueItemMatchRule
 {
-    public interface ICatalogueItemMatchRule
-    {
-        MatchRuleType MatchRuleType { get; }
+    MatchRuleType MatchRuleType { get; }
 
-        bool ItemMatches(CatalogueItem item);
-    }
+    bool ItemMatches(CatalogueItem item);
+}
 
-    public enum MatchRuleType
-    {
-        SingleProperty,
-        Compound,
-    }
+public enum MatchRuleType
+{
+    SingleProperty,
+    Compound,
 }

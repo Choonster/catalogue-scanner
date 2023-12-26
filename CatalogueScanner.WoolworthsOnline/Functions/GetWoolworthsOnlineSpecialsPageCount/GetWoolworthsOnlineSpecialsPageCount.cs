@@ -1,43 +1,29 @@
 using CatalogueScanner.WoolworthsOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.WoolworthsOnline.Functions
+namespace CatalogueScanner.WoolworthsOnline.Functions;
+
+public class GetWoolworthsOnlineSpecialsPageCount(WoolworthsOnlineService woolworthsOnlineService)
 {
-    public class GetWoolworthsOnlineSpecialsPageCount
+    private readonly WoolworthsOnlineService woolworthsOnlineService = woolworthsOnlineService;
+
+    [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount)]
+    public async Task<int> Run([ActivityTrigger] string categoryId, CancellationToken cancellationToken)
     {
-        private readonly WoolworthsOnlineService woolworthsOnlineService;
-
-        public GetWoolworthsOnlineSpecialsPageCount(WoolworthsOnlineService woolworthsOnlineService)
+        #region null checks
+        if (string.IsNullOrEmpty(categoryId))
         {
-            this.woolworthsOnlineService = woolworthsOnlineService;
+            throw new ArgumentException($"'{nameof(categoryId)}' cannot be null or empty.", nameof(categoryId));
         }
+        #endregion
 
-        [FunctionName(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount)]
-        public async Task<int> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
-        {
-            #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
-
-            var categoryId = context.GetInput<string>();
-
-            if (string.IsNullOrEmpty(categoryId))
-            {
-                throw new InvalidOperationException("Activity function input not present");
-            }
-
-            return await woolworthsOnlineService.GetCategoryPageCountAsync(
-                categoryId,
-                WoolworthsOnlineService.MaxBrowseCategoryDataPageSize,
-                cancellationToken
-            ).ConfigureAwait(false);
-        }
+        return await woolworthsOnlineService.GetCategoryPageCountAsync(
+            categoryId,
+            WoolworthsOnlineService.MaxBrowseCategoryDataPageSize,
+            cancellationToken
+        ).ConfigureAwait(false);
     }
 }

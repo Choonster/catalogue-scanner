@@ -7,54 +7,39 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.ConfigurationUI.Service
+namespace CatalogueScanner.ConfigurationUI.Service;
+
+public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogService matDialogService, ILogger<HttpExceptionHandlingService> logger)
 {
-    public class HttpExceptionHandlingService
+    public async Task HandleHttpExceptionAsync(HttpRequestException exception, string friendlyErrorMessage)
     {
-        private readonly IJSRuntime jsRuntime;
-        private readonly IMatDialogService matDialogService;
-        private readonly ILogger<HttpExceptionHandlingService> logger;
+        #region null checks
+        ArgumentNullException.ThrowIfNull(exception);
 
-        public HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogService matDialogService, ILogger<HttpExceptionHandlingService> logger)
+        if (string.IsNullOrEmpty(friendlyErrorMessage))
         {
-            this.jsRuntime = jsRuntime;
-            this.matDialogService = matDialogService;
-            this.logger = logger;
+            throw new ArgumentException($"'{nameof(friendlyErrorMessage)}' cannot be null or empty.", nameof(friendlyErrorMessage));
         }
+        #endregion
 
-        public async Task HandleHttpExceptionAsync(HttpRequestException exception, string friendlyErrorMessage)
+        logger.HttpError(exception, friendlyErrorMessage);
+
+        var fullMessage = $"{friendlyErrorMessage}: {exception.Message}";
+
+        if (true || exception.StatusCode == HttpStatusCode.Unauthorized && AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled)
         {
-            #region null checks
-            if (exception is null)
+            fullMessage += "\n\nThis may have happened because your session has expired. Do you want to clear your session and refresh the page?";
+
+            var shouldRefresh = await matDialogService.ConfirmAsync(fullMessage).ConfigureAwait(false);
+
+            if (shouldRefresh)
             {
-                throw new ArgumentNullException(nameof(exception));
+                await jsRuntime.InvokeVoidAsync("blazorClearAppServicesAuthenticationSession").ConfigureAwait(false);                    
             }
-
-            if (string.IsNullOrEmpty(friendlyErrorMessage))
-            {
-                throw new ArgumentException($"'{nameof(friendlyErrorMessage)}' cannot be null or empty.", nameof(friendlyErrorMessage));
-            }
-            #endregion
-
-            logger.LogError(exception, friendlyErrorMessage);
-
-            var fullMessage = $"{friendlyErrorMessage}: {exception.Message}";
-
-            if (true || exception.StatusCode == HttpStatusCode.Unauthorized && AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled)
-            {
-                fullMessage += "\n\nThis may have happened because your session has expired. Do you want to clear your session and refresh the page?";
-
-                var shouldRefresh = await matDialogService.ConfirmAsync(fullMessage).ConfigureAwait(false);
-
-                if (shouldRefresh)
-                {
-                    await jsRuntime.InvokeVoidAsync("blazorClearAppServicesAuthenticationSession").ConfigureAwait(false);                    
-                }
-            }
-            else
-            {
-                await matDialogService.AlertAsync(fullMessage).ConfigureAwait(false);
-            }
+        }
+        else
+        {
+            await matDialogService.AlertAsync(fullMessage).ConfigureAwait(false);
         }
     }
 }

@@ -1,30 +1,20 @@
 ﻿using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WoolworthsOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 using System;
 
-namespace CatalogueScanner.WoolworthsOnline.Functions
+namespace CatalogueScanner.WoolworthsOnline.Functions;
+
+public static class GetWoolworthsOnlineSpecialsDates
 {
-    public static class GetWoolworthsOnlineSpecialsDates
+    [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates)]
+    public static DateRange Run([ActivityTrigger] DateTime currentUtcDateTime)
     {
-        [FunctionName(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates)]
-        public static DateRange Run([ActivityTrigger] IDurableActivityContext context)
-        {
-            #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
+        var specialsResetTime = WoolworthsOnlineService.SpecialsResetTime;
 
-            var specialsResetTime = WoolworthsOnlineService.SpecialsResetTime;
+        var specialsStartDate = specialsResetTime.GetPreviousDate(currentUtcDateTime);
+        var specialsEndDate = specialsResetTime.GetNextDate(currentUtcDateTime);
 
-            var now = DateTimeOffset.UtcNow;
-            var specialsStartDate = specialsResetTime.GetPreviousDate(now);
-            var specialsEndDate = specialsResetTime.GetNextDate(now);
-
-            return new DateRange(specialsStartDate, specialsEndDate);
-        }
+        return new DateRange(specialsStartDate, specialsEndDate);
     }
 }

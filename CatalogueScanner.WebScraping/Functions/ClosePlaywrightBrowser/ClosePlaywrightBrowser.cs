@@ -1,32 +1,31 @@
 using CatalogueScanner.WebScraping.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CatalogueScanner.WebScraping.Functions
+namespace CatalogueScanner.WebScraping.Functions;
+
+public class ClosePlaywrightBrowser(PlaywrightBrowserManager playwrightBrowserManager)
 {
-    public class ClosePlaywrightBrowser
+    private readonly PlaywrightBrowserManager playwrightBrowserManager = playwrightBrowserManager;
+
+    [Function(WebScrapingFunctionNames.ClosePlaywrightBrowser)]
+    public async Task<bool> Run(
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
+        [ActivityTrigger] 
+        object? input,
+        string instanceId,
+        CancellationToken cancellationToken
+    )
     {
-        private readonly PlaywrightBrowserManager playwrightBrowserManager;
-
-        public ClosePlaywrightBrowser(PlaywrightBrowserManager playwrightBrowserManager)
+        #region null checks
+        if (string.IsNullOrEmpty(instanceId))
         {
-            this.playwrightBrowserManager = playwrightBrowserManager;
+            throw new ArgumentException($"'{nameof(instanceId)}' cannot be null or empty.", nameof(instanceId));
         }
+        #endregion
 
-        [FunctionName(WebScrapingFunctionNames.ClosePlaywrightBrowser)]
-        public async Task<bool> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
-        {
-            #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
-
-            return await playwrightBrowserManager.CloseBrowserAsync(context.InstanceId, cancellationToken).ConfigureAwait(false);
-        }
+        return await playwrightBrowserManager.CloseBrowserAsync(instanceId, cancellationToken).ConfigureAwait(false);
     }
 }

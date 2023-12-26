@@ -27,15 +27,7 @@
     /// The selected DateTime.
     /// </summary>
     [Parameter]
-    public DateTime? Value
-    {
-        get => value;
-        set
-        {
-            this.value = value;
-            MatDatePickerValue = value;
-        }
-    }
+    public DateTime? Value { get; set; }
 
     [Parameter]
     public EventCallback<DateTime?> ValueChanged { get; set; }
@@ -57,6 +49,11 @@
     /// The DateTime bound to the MatDatePicker.
     /// </summary>
     private DateTime? MatDatePickerValue { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        MatDatePickerValue = Value;
+    }
 
     private async Task MatDatePickerValueChanged(DateTime? value)
     {

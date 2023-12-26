@@ -1,37 +1,18 @@
 using CatalogueScanner.ColesOnline.Dto.FunctionInput;
 using CatalogueScanner.ColesOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 
-namespace CatalogueScanner.ColesOnline.Functions
+namespace CatalogueScanner.ColesOnline.Functions;
+
+public class GetColesOnlineSpecialsPageCount(ColesOnlineService colesOnlineService)
 {
-    public class GetColesOnlineSpecialsPageCount
+    [Function(ColesOnlineFunctionNames.GetColesOnlineSpecialsPageCount)]
+    public async Task<int> Run([ActivityTrigger] GetColesOnlineSpecialsPageCountInput input, CancellationToken cancellationToken)
     {
-        private readonly ColesOnlineService colesOnlineService;
+        #region null checks
+        ArgumentNullException.ThrowIfNull(input);
+        #endregion
 
-        public GetColesOnlineSpecialsPageCount(ColesOnlineService colesOnlineService)
-        {
-            this.colesOnlineService = colesOnlineService;
-        }
-
-        [FunctionName(ColesOnlineFunctionNames.GetColesOnlineSpecialsPageCount)]
-        public async Task<int> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
-        {
-            #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
-
-            var input = context.GetInput<GetColesOnlineSpecialsPageCountInput>();
-
-            if (input is null)
-            {
-                throw new InvalidOperationException("Activity function input not present");
-            }
-
-            return await colesOnlineService.GetOnSpecialPageCountAsync(input.BuildId, cancellationToken).ConfigureAwait(false);
-        }
+        return await colesOnlineService.GetOnSpecialPageCountAsync(input.BuildId, cancellationToken).ConfigureAwait(false);
     }
 }

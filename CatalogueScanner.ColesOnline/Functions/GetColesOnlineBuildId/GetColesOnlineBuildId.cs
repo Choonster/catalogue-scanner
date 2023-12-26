@@ -1,31 +1,22 @@
 ﻿using CatalogueScanner.ColesOnline.Service;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.Functions.Worker;
 
-namespace CatalogueScanner.ColesOnline.Functions
+namespace CatalogueScanner.ColesOnline.Functions;
+
+public class GetColesOnlineBuildId(ColesOnlineService colesOnlineService)
 {
-    public class GetColesOnlineBuildId
-    {
-        private readonly ColesOnlineService colesOnlineService;
+    private readonly ColesOnlineService colesOnlineService = colesOnlineService;
 
-        public GetColesOnlineBuildId(ColesOnlineService colesOnlineService)
-        {
-            this.colesOnlineService = colesOnlineService;
-        }
+    [Function(ColesOnlineFunctionNames.GetColesOnlineBuildId)]
+    public async Task<string> Run(
+        CancellationToken cancellationToken,
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
+        [ActivityTrigger]
+        object? input = null
+    )
+    {                       
+        var response = await colesOnlineService.GetBuildId(cancellationToken).ConfigureAwait(false);
 
-        [FunctionName(ColesOnlineFunctionNames.GetColesOnlineBuildId)]
-        public async Task<string> Run([ActivityTrigger] IDurableActivityContext context, CancellationToken cancellationToken)
-        {
-            #region null checks
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            #endregion
-                       
-            var response = await colesOnlineService.GetBuildId(cancellationToken).ConfigureAwait(false);
-
-            return response;
-        }
+        return response;
     }
 }

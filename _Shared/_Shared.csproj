@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<NoWarn>NU1603; CA1707</NoWarn>
 	</PropertyGroup>
 
@@ -11,7 +11,6 @@
 
 	<ItemGroup>
 		<Content Include="..\Design.txt" Link="Design.txt" />
-		<Content Include="..\TODO.txt" Link="TODO.txt" />
 	</ItemGroup>
 
 	<ItemGroup>

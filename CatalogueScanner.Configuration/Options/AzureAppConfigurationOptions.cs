@@ -1,7 +1,6 @@
-﻿namespace CatalogueScanner.Configuration.Options
+﻿namespace CatalogueScanner.Configuration.Options;
+
+public class AzureAppConfigurationOptions
 {
-    public class AzureAppConfigurationOptions
-    {
-        public string ConnectionString { get; set; } = null!;
-    }
+    public string ConnectionString { get; set; } = null!;
 }
