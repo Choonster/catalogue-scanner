@@ -218,5 +218,5 @@ internal sealed class SaleFinderJsonCollectionItemConverter<TData, TCollection, 
     where TCollection : IEnumerable<TData>
     where TConverter : JsonConverter, new()
 {
-    protected override JsonSerializerContext? GetJsonSerializerContext(JsonSerializerOptions options) => new SaleFinderSerializerContext(options);
+    protected override JsonSerializerContext? GetJsonSerializerContext(JsonSerializerOptions options) => new SaleFinderInternalSerializerContext(options);
 }
