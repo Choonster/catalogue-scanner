@@ -32,7 +32,7 @@ public static class ScanWoolworthsOnlineSpecials
 
         var logger = context.CreateReplaySafeLogger(typeof(ScanWoolworthsOnlineSpecials));
 
-        var specialsDateRange = await context.CallActivityAsync<DateRange>(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates).ConfigureAwait(true);
+        var specialsDateRange = await context.CallActivityAsync<DateRange>(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates, context.CurrentUtcDateTime).ConfigureAwait(true);
         var dateKey = $"Start={specialsDateRange.StartDate:O};End={specialsDateRange.EndDate:O}";
 
         var scanStateId = CatalogueScanStateEntity.CreateId(new CatalogueScanStateKey(CatalogueType, Store, dateKey));

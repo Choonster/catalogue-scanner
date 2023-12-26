@@ -14,10 +14,10 @@ public class GetWoolworthsOnlineSpecialsCategories(WoolworthsOnlineService woolw
 
     [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories)]
     public async Task<IEnumerable<WoolworthsOnlineCategory>> Run(
+        CancellationToken cancellationToken,
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
         [ActivityTrigger]
-        object? input,
-        CancellationToken cancellationToken
+        object? input = null
     )
     {
         var response = await woolworthsOnlineService.GetPiesCategoriesWithSpecialsAsync(cancellationToken).ConfigureAwait(false);

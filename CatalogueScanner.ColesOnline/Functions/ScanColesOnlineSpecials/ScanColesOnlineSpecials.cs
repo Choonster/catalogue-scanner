@@ -26,7 +26,7 @@ public static class ScanColesOnlineSpecials
 
         var logger = context.CreateReplaySafeLogger(typeof(ScanColesOnlineSpecials));
 
-        var specialsDateRange = await context.CallActivityAsync<DateRange>(ColesOnlineFunctionNames.GetColesOnlineSpecialsDates, null, null).ConfigureAwait(true);
+        var specialsDateRange = await context.CallActivityAsync<DateRange>(ColesOnlineFunctionNames.GetColesOnlineSpecialsDates, context.CurrentUtcDateTime).ConfigureAwait(true);
         var dateKey = $"Start={specialsDateRange.StartDate:O};End={specialsDateRange.EndDate:O}";
 
         var scanStateId = CatalogueScanStateEntity.CreateId(new CatalogueScanStateKey(CatalogueType, Store, dateKey));

@@ -8,17 +8,12 @@ namespace CatalogueScanner.WoolworthsOnline.Functions;
 public static class GetWoolworthsOnlineSpecialsDates
 {
     [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsDates)]
-    public static DateRange Run(
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
-        [ActivityTrigger]
-        object? input
-    )
+    public static DateRange Run([ActivityTrigger] DateTime currentUtcDateTime)
     {
         var specialsResetTime = WoolworthsOnlineService.SpecialsResetTime;
 
-        var now = DateTimeOffset.UtcNow;
-        var specialsStartDate = specialsResetTime.GetPreviousDate(now);
-        var specialsEndDate = specialsResetTime.GetNextDate(now);
+        var specialsStartDate = specialsResetTime.GetPreviousDate(currentUtcDateTime);
+        var specialsEndDate = specialsResetTime.GetNextDate(currentUtcDateTime);
 
         return new DateRange(specialsStartDate, specialsEndDate);
     }
