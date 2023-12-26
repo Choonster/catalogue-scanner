@@ -5,11 +5,13 @@ using CatalogueScanner.Core.Host.ApplicationInsights;
 using CatalogueScanner.Core.Localisation;
 using CatalogueScanner.Core.MatchRule;
 using CatalogueScanner.Core.Options;
+using CatalogueScanner.Core.Serialisation;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
 using System.Globalization;
+using System.Text.Json;
 
 namespace CatalogueScanner.Core;
 
@@ -22,6 +24,13 @@ public class CoreCatalogueScannerPlugin : ICatalogueScannerPlugin
         #endregion
 
         builder.Services.AddSingleton<ITelemetryInitializer, HttpDetailedRequestExceptionTelemetryInitializer>();
+
+        builder.Services.Configure<JsonSerializerOptions>(options =>
+        {
+            options.Converters.Add(new SendGridMessageConverter());
+            options.Converters.Add(new PersonalizationConverter());
+            options.Converters.Add(new AttachmentConverter());
+        });
 
         SetLocalisationCulture();
         AddFunctionsPathOptions(builder);
