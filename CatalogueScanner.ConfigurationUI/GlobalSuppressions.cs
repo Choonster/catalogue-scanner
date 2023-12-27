@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Component parameters must have public setters", Scope = "member", Target = "~P:CatalogueScanner.ConfigurationUI.Pages.Config.MatchRuleTable.MatchRules")]
+[assembly: SuppressMessage("Usage", "CA2227:Collection properties should be read only", Justification = "Component parameters must have public setters", Scope = "member", Target = "~P:CatalogueScanner.ConfigurationUI.Components.Pages.Config.MatchRuleTable.MatchRules")]

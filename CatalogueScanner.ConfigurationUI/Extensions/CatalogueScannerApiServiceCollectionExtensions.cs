@@ -1,7 +1,5 @@
 ﻿using CatalogueScanner.ConfigurationUI.Options;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System;
 
 namespace CatalogueScanner.ConfigurationUI.Extensions;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CatalogueScanner.ConfigurationUI.Extensions;
+﻿namespace CatalogueScanner.ConfigurationUI.Extensions;
 
 public static class DateTimeExtensions
 {

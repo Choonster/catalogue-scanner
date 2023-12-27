@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
 
 namespace CatalogueScanner.ConfigurationUI.Pages;
 

@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace CatalogueScanner.ConfigurationUI.Service;
+﻿namespace CatalogueScanner.ConfigurationUI.Service;
 
 public class ManagementService(HttpClient httpClient, TokenProvider tokenProvider) : BaseApiService(httpClient, tokenProvider)
 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace MatBlazor;
+﻿namespace MatBlazor;
 
 public static class MatDialogServiceExtensions
 {

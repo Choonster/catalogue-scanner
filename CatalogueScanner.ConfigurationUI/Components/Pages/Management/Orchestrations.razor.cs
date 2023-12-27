@@ -1,11 +1,7 @@
 ﻿using MatBlazor;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace CatalogueScanner.ConfigurationUI.Pages.Management;
+namespace CatalogueScanner.ConfigurationUI.Components.Pages.Management;
 
 public partial class Orchestrations
 {

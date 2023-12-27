@@ -5,9 +5,8 @@ using CatalogueScanner.Core.Options;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
-namespace CatalogueScanner.ConfigurationUI.Pages.Config;
+namespace CatalogueScanner.ConfigurationUI.Components.Pages.Config;
 
 #pragma warning disable CA1724
 public partial class Matching
