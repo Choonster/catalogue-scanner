@@ -3,9 +3,6 @@ using CatalogueScanner.Core.MatchRule;
 using CatalogueScanner.Core.Options;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CatalogueScanner.Core.Functions;
 

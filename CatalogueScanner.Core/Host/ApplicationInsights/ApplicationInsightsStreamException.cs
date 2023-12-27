@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CatalogueScanner.Core.Host.ApplicationInsights;
+﻿namespace CatalogueScanner.Core.Host.ApplicationInsights;
 
 [Serializable]
 public class ApplicationInsightsStreamException : Exception

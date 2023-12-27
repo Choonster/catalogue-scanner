@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CatalogueScanner.Core.Extensions;
+﻿namespace CatalogueScanner.Core.Extensions;
 
 public static class CollectionExtensions
 {

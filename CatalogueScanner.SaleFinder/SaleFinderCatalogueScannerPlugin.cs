@@ -3,9 +3,7 @@ using CatalogueScanner.Core.Host;
 using CatalogueScanner.SaleFinder.Options;
 using CatalogueScanner.SaleFinder.Service;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Net;
-using System.Net.Http;
 
 namespace CatalogueScanner.SaleFinder;
 

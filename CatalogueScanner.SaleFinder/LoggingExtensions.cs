@@ -1,5 +1,4 @@
 ﻿using CatalogueScanner.SaleFinder;
-using System.Collections.Generic;
 
 namespace Microsoft.Extensions.Logging;
 

@@ -1,10 +1,6 @@
 ﻿using CatalogueScanner.Core.Http;
 using CatalogueScanner.SaleFinder.Dto.SaleFinder;
-using System;
-using System.Net.Http;
 using System.Text.Json.Serialization.Metadata;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Service;
 

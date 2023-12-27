@@ -1,5 +1,4 @@
 ﻿using CatalogueScanner.Core.Extensions;
-using System;
 
 namespace CatalogueScanner.Core.Utility;
 

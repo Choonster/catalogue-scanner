@@ -34,7 +34,7 @@ public class BaseApiService
         // Microsoft.Azure.Functions.Worker.Extensions.Http version 3.1.0 doesn't support deserialisation of chunked requests into POCO parameters;
         // see https://github.com/Azure/azure-functions-host/issues/7930.
 
-        using var content =  JsonContent.Create(request);
+        using var content = JsonContent.Create(request);
         await content.LoadIntoBufferAsync().ConfigureAwait(false);
 
         var response = await HttpClient.PostAsync(new Uri(path, UriKind.Relative), content).ConfigureAwait(false);

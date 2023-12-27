@@ -1,8 +1,6 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.DurableTask.Client;
-using System;
-using System.Threading;
 
 namespace CatalogueScanner.Core.Functions.Api.Management;
 

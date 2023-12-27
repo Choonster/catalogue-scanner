@@ -1,7 +1,4 @@
 ﻿using CatalogueScanner.Core.Dto.FunctionResult;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CatalogueScanner.Core.MatchRule;
 

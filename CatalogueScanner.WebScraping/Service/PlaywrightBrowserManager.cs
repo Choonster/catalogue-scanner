@@ -1,9 +1,6 @@
 ﻿using DotNext.Threading;
 using Microsoft.Playwright;
-using System;
 using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.WebScraping.Service;
 

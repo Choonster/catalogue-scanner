@@ -1,7 +1,6 @@
 ﻿using CatalogueScanner.Core.Host;
 using CatalogueScanner.WebScraping.Service;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace CatalogueScanner.WebScraping;
 

@@ -1,5 +1,4 @@
 ﻿using CatalogueScanner.Core.Dto.FunctionResult;
-using System;
 using System.Text.RegularExpressions;
 
 namespace CatalogueScanner.Core.MatchRule;

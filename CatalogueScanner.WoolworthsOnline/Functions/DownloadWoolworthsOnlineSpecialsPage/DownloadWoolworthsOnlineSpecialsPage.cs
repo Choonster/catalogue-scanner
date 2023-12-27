@@ -3,12 +3,7 @@ using CatalogueScanner.WoolworthsOnline.Dto.FunctionInput;
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Azure.Functions.Worker;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions;
 

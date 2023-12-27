@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OrchardCore.Localization;
-using System;
 
 namespace CatalogueScanner.Localisation.OrchardCore;
 

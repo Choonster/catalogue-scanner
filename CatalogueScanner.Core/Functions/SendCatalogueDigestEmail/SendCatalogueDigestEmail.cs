@@ -7,10 +7,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace CatalogueScanner.Core.Functions;

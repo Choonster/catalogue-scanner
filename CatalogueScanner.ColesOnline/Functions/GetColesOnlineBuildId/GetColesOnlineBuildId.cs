@@ -14,7 +14,7 @@ public class GetColesOnlineBuildId(ColesOnlineService colesOnlineService)
         [ActivityTrigger]
         object? input = null
     )
-    {                       
+    {
         var response = await colesOnlineService.GetBuildId(cancellationToken).ConfigureAwait(false);
 
         return response;

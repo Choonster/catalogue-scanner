@@ -3,10 +3,7 @@ using CatalogueScanner.Core.Functions.Entity;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.DurableTask.Client;
-using System;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.Core.Functions.Api;
 

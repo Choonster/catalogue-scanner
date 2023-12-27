@@ -5,12 +5,7 @@ using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Functions;
 
@@ -43,7 +38,7 @@ public class CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<Che
 
         var saleIds = FindSaleIds(viewResponse).ToList();
 
-        logger.FoundSaleIds( saleIds);
+        logger.FoundSaleIds(saleIds);
 
         return saleIds
             .Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, BigWStoreName, CurrencyCultures.AustralianDollar))

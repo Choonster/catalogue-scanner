@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CatalogueScanner.Core.Dto.EntityKey;
+﻿namespace CatalogueScanner.Core.Dto.EntityKey;
 
 /// <summary>
 /// The unique identifier of a catalogue.

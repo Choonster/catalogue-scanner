@@ -4,13 +4,9 @@ using CatalogueScanner.SaleFinder.Service;
 using HtmlAgilityPack;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Immutable;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Functions;
 

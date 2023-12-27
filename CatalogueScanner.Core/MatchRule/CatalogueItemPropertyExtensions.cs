@@ -1,7 +1,5 @@
 ﻿using CatalogueScanner.Core.Dto.FunctionResult;
-using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
 using static CatalogueScanner.Core.MatchRule.SinglePropertyCatalogueItemMatchRule;
 

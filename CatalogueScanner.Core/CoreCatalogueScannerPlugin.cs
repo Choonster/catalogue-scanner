@@ -9,7 +9,6 @@ using CatalogueScanner.Core.Serialisation;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System;
 using System.Globalization;
 using System.Text.Json;
 

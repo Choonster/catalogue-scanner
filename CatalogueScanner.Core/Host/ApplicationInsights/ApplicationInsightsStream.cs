@@ -1,11 +1,5 @@
 ﻿using Microsoft.ApplicationInsights;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using ExceptionTelemetry = Microsoft.ApplicationInsights.DataContracts.ExceptionTelemetry;
 using SeverityLevel = Microsoft.ApplicationInsights.DataContracts.SeverityLevel;
 
