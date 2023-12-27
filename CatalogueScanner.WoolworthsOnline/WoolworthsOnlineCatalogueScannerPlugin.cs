@@ -3,7 +3,6 @@ using CatalogueScanner.Core.Host;
 using CatalogueScanner.WoolworthsOnline.Options;
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace CatalogueScanner.WoolworthsOnline;
 

@@ -2,9 +2,6 @@
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Azure.Functions.Worker;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions;
 

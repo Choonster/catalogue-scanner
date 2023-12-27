@@ -30,7 +30,7 @@ public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogServic
 
             if (shouldRefresh)
             {
-                await jsRuntime.InvokeVoidAsync("blazorClearAppServicesAuthenticationSession").ConfigureAwait(false);                    
+                await jsRuntime.InvokeVoidAsync("blazorClearAppServicesAuthenticationSession").ConfigureAwait(false);
             }
         }
         else

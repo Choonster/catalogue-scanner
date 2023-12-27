@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CatalogueScanner.Core.Extensions;
+﻿namespace CatalogueScanner.Core.Extensions;
 
 public static class DateExtensions
 {

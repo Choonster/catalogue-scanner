@@ -1,5 +1,3 @@
-﻿using System;
-
-namespace CatalogueScanner.Core.Dto.FunctionResult;
+﻿namespace CatalogueScanner.Core.Dto.FunctionResult;
 
 public record CatalogueItem(string? Id, string? Name, string? Sku, Uri? Uri, decimal? Price, long? MultiBuyQuantity, decimal? MultiBuyTotalPrice);

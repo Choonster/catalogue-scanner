@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CatalogueScanner.Core.Host;
+﻿namespace CatalogueScanner.Core.Host;
 
 public static class HostBuilderExtensions
 {

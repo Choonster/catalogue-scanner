@@ -1,8 +1,5 @@
 ﻿using CatalogueScanner.Core.Localisation;
 using Microsoft.Extensions.Localization;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace CatalogueScanner.Localisation.OrchardCore;
 

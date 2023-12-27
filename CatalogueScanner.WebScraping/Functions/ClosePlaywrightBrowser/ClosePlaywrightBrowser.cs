@@ -1,8 +1,5 @@
 using CatalogueScanner.WebScraping.Service;
 using Microsoft.Azure.Functions.Worker;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.WebScraping.Functions;
 
@@ -13,7 +10,7 @@ public class ClosePlaywrightBrowser(PlaywrightBrowserManager playwrightBrowserMa
     [Function(WebScrapingFunctionNames.ClosePlaywrightBrowser)]
     public async Task<bool> Run(
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
-        [ActivityTrigger] 
+        [ActivityTrigger]
         object? input,
         string instanceId,
         CancellationToken cancellationToken

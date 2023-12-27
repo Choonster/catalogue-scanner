@@ -1,11 +1,12 @@
 <Project>
-  <PropertyGroup>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-    <RestoreLockedMode>false</RestoreLockedMode>
-    <NoWarn>NU1603</NoWarn>
-    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
-    <Nullable>enable</Nullable>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-  </PropertyGroup>
+	<PropertyGroup>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<RestoreLockedMode>false</RestoreLockedMode>
+		<NoWarn>NU1603</NoWarn>
+		<DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+	</PropertyGroup>
 </Project>

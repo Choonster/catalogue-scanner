@@ -1,7 +1,6 @@
 ﻿using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Azure.Functions.Worker;
-using System;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions;
 

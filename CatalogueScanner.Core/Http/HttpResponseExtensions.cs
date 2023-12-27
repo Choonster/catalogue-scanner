@@ -1,8 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace CatalogueScanner.Core.Http;
+﻿namespace CatalogueScanner.Core.Http;
 
 public static class HttpResponseMessageExtensions
 {

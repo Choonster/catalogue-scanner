@@ -1,5 +1,4 @@
 ﻿using CatalogueScanner.Core.Serialisation;
-using System;
 using System.Text.Json;
 
 namespace CatalogueScanner.SaleFinder.Dto.SaleFinder;

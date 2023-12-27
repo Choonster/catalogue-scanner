@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CatalogueScanner.Core.Serialisation;
+﻿namespace CatalogueScanner.Core.Serialisation;
 
 public class WrappedReadStream : Stream
 {
@@ -48,7 +43,7 @@ public class WrappedReadStream : Stream
             return 0;
         }
 
-        return (int) Math.Min(count, Length - Position);
+        return (int)Math.Min(count, Length - Position);
     }
 
     public override int Read(byte[] buffer, int offset, int count)

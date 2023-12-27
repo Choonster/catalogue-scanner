@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CatalogueScanner.SaleFinder.Service;
+﻿namespace CatalogueScanner.SaleFinder.Service;
 
 [Serializable]
 public class UnableToFindSaleIdException : Exception

@@ -1,5 +1,4 @@
 ﻿using CatalogueScanner.Core.MatchRule;
-using System.Collections.Generic;
 
 namespace CatalogueScanner.Core.Options;
 

@@ -1,8 +1,5 @@
 ﻿using Microsoft.DurableTask.Client.Entities;
 using Microsoft.DurableTask.Entities;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.Core.Functions.Entity;
 

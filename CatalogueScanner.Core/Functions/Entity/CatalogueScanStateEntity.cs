@@ -1,8 +1,6 @@
 ﻿using CatalogueScanner.Core.Dto.EntityKey;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask.Entities;
-using System;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.Core.Functions.Entity;
 

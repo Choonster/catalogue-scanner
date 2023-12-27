@@ -1,13 +1,8 @@
 ﻿using CatalogueScanner.Core.Serialisation;
-using System;
 using System.Collections.Concurrent;
-using System.IO;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.SaleFinder.Service;
 
@@ -95,7 +90,7 @@ public static class SaleFinderHttpContentExtensions
         var originalPosition = readStream.Position;
 
         // Check if the stream starts with the callback name and an opening parenthesis
-        var streamBytes = (Memory<byte>) new byte[callbackByteArray.Length];
+        var streamBytes = (Memory<byte>)new byte[callbackByteArray.Length];
         var bytesRead = await readStream.ReadAsync(streamBytes, cancellationToken).ConfigureAwait(false);
 
         // Reset the stream to the original position 

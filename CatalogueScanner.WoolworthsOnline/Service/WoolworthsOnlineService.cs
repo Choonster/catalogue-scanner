@@ -1,12 +1,8 @@
 ﻿using CatalogueScanner.Core.Http;
 using CatalogueScanner.Core.Utility;
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
-using System;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization.Metadata;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.WoolworthsOnline.Service;
 

@@ -30,5 +30,5 @@ public static class WoolworthsOnlineFunctionNames
     /// <summary>
     /// The name of the <see cref="Functions.DownloadWoolworthsOnlineSpecialsPage"/> activity function.
     /// </summary>
-    public const string DownloadWoolworthsOnlineSpecialsPage = "DownloadWoolworthsOnlineSpecialsPage";        
+    public const string DownloadWoolworthsOnlineSpecialsPage = "DownloadWoolworthsOnlineSpecialsPage";
 }

@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace CatalogueScanner.Configuration;
+﻿namespace CatalogueScanner.Configuration;
 
 public interface IConfigurationSaver<TOptions>
 {

@@ -1,7 +1,7 @@
 ﻿using CatalogueScanner.ColesOnline;
 using CatalogueScanner.Configuration;
-using CatalogueScanner.Core.Host;
 using CatalogueScanner.Core;
+using CatalogueScanner.Core.Host;
 using CatalogueScanner.Core.Host.ApplicationInsights;
 using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
@@ -9,12 +9,10 @@ using CatalogueScanner.WoolworthsOnline;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.DurableTask.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.IO;
-using Microsoft.Extensions.Configuration;
-using Microsoft.DurableTask.Worker;
 
 #region Replace Console.Error
 #pragma warning disable CA2000 // Dispose objects before losing scope
