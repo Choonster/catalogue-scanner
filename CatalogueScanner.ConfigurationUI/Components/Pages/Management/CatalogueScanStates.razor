@@ -10,66 +10,63 @@
 @inject TimeZoneService TimeZoneService
 
 <div class="loading-spinner-container">
-    <MatH3 Class="table-page-header">Catalogue Scan States</MatH3>
+    <MudText Typo="Typo.h3" Class="table-page-header">Catalogue Scan States</MudText>
 
     <div class="date-range-row">
-        <DatePicker Value="lastOperationFrom" ValueChanged="@((DateTime? minDate) => OnFromDateChanged(minDate))" Maximum="lastOperationTo" Label="Last Operation From (Local)"></DatePicker>
-        <DatePicker Value="lastOperationTo" ValueChanged="@((DateTime? maxDate) => OnToDateChanged(maxDate))" Minimum="lastOperationFrom" Label="Last Operation To (Local)"></DatePicker>
-        <MatTooltip Tooltip="Refresh" Context="tooltip">
-            <MatIconButton RefBack="tooltip" Icon="refresh" OnClick="@(args => OnDateRangeChanged())"></MatIconButton>
-        </MatTooltip>
+        <MudDatePicker Date="lastOperationFrom" DateChanged="@((DateTime? minDate) => OnFromDateChanged(minDate))" MaxDate="lastOperationTo" Label="Last Operation From (Local)" />
+        <MudDatePicker Date="lastOperationTo" DateChanged="@((DateTime? maxDate) => OnToDateChanged(maxDate))" MinDate="lastOperationFrom" Label="Last Operation To (Local)" />
+        <MudTooltip Text="Refresh">
+            <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="@(args => OnDateRangeChanged())"></MudIconButton>
+        </MudTooltip>
     </div>
 
-    <MatTable Items="tableData" @bind-PageSize="PageSize" ShowPaging="false">
-        <MatTableHeader>
-            <th></th>
-            <th>Catalogue Type</th>
-            <th>Store</th>
-            <th>Catalogue ID</th>
-            <th>Scan State</th>
-            <th>Last operation time (local)</th>
-        </MatTableHeader>
+    <MudTable ServerData="LoadServerData" Loading="loading" @bind-RowsPerPage="PageSize" @ref="table">
+        <HeaderContent>
+            <MudTh></MudTh>
+            <MudTh>Catalogue Type</MudTh>
+            <MudTh>Store</MudTh>
+            <MudTh>Catalogue ID</MudTh>
+            <MudTh>Scan State</MudTh>
+            <MudTh>Last operation time (local)</MudTh>
+        </HeaderContent>
 
-        <MatTableRow Context="scanState">
+        <RowTemplate Context="scanState">
             @if (hasNoData)
             {
-                <td colspan="6">No data available.</td>
+                <MudTd colspan="6">No data available.</MudTd>
             }
             else
             {
-                <td class="actions">
-                    <MatTooltip Tooltip="Reset" Context="tooltip">
-                        <MatIconButton RefBack="tooltip" Icon="delete" OnClick="@(args => ResetScanState(scanState))"></MatIconButton>
-                    </MatTooltip>
-                </td>
+                <MudTd class="actions">
+                    <MudTooltip Text="Reset">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(args => ResetScanState(scanState))" />
+                    </MudTooltip>
+                </MudTd>
 
-                <td class="catalogue-type">
+                <MudTd class="catalogue-type">
                     @scanState.CatalogueScanStateKey.CatalogueType
-                </td>
+                </MudTd>
 
-                <td class="store">
+                <MudTd class="store">
                     @scanState.CatalogueScanStateKey.Store
-                </td>
+                </MudTd>
 
-                <td class="catalogue-id">
+                <MudTd class="catalogue-id">
                     @scanState.CatalogueScanStateKey.CatalogueId
-                </td>
+                </MudTd>
 
-                <td class="scan-state">
+                <MudTd class="scan-state">
                     @scanStateLabels[scanState.ScanState]
-                </td>
+                </MudTd>
 
-                <td class="last-operation-time">
+                <MudTd class="last-operation-time">
                     @scanState.LastModifiedTime.ToString("G")
-                </td>
+                </MudTd>
             }
-        </MatTableRow>
-    </MatTable>
+        </RowTemplate>
 
-    <MatPaginator Length="PaginatorLength" PageSize="PageSize" Page="OnPage"></MatPaginator>
-
-    @if (loading)
-    {
-        <LoadingSpinner></LoadingSpinner>
-    }
+        <PagerContent>
+            <MudTablePager AllItemsText="" />
+        </PagerContent>
+    </MudTable>
 </div>

@@ -8,13 +8,13 @@
 @inject IOptionsSnapshot<ColesOnlineOptions> ColesOnlineOptionsAccessor;
 
 <section>
-    <MatH3>Coles Online</MatH3>
+    <MudText Typo="Typo.h3">Coles Online</MudText>
 
     <EditForm Model="ColesOnlineOptions" OnValidSubmit="SaveColesOnlineOptions">
-        <MatNumericUpDownField Label="Fulfillment Store ID" @bind-Value="ColesOnlineOptions.FulfillmentStoreId">
-        </MatNumericUpDownField>
+        <MudNumericField Label="Fulfillment Store ID" @bind-Value="ColesOnlineOptions.FulfillmentStoreId">
+        </MudNumericField>
 
-        <MatButton Type="submit">Save</MatButton>
+        <MudButton ButtonType="ButtonType.Submit">Save</MudButton>
     </EditForm>
 </section>
 

@@ -13,6 +13,7 @@ using CurrieTechnologies.Razor.Clipboard;
 using MatBlazor;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
+using MudBlazor.Services;
 using OrchardCore.Localization;
 using OrchardCore.Localization.PortableObject;
 
@@ -48,6 +49,7 @@ services.AddRazorPages();
 services.AddHttpContextAccessor();
 
 services.AddMatBlazor();
+services.AddMudServices();
 services.AddClipboard();
 
 services.AddMatToaster(config =>

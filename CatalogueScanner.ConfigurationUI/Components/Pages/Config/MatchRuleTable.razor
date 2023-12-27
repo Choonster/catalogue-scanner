@@ -3,18 +3,18 @@
 
 @using static CatalogueScanner.Core.MatchRule.SinglePropertyCatalogueItemMatchRule;
 
-@inject IMatDialogService DialogService;
+@inject IDialogService DialogService;
 
 <div>
-    <MatTable Items="MatchRules" Class="match-rules-table">
-        <MatTableHeader>
-            <th></th>
-            <th>Match Type</th>
-            <th>Property</th>
-            <th>Value</th>
-        </MatTableHeader>
+    <MudTable Items="MatchRules" Class="match-rules-table">
+        <HeaderContent>
+            <MudTh></MudTh>
+            <MudTh>Match Type</MudTh>
+            <MudTh>Property</MudTh>
+            <MudTh>Value</MudTh>
+        </HeaderContent>
 
-        <MatTableRow Context="matchRule">
+        <RowTemplate Context="matchRule">
             <CascadingValue Value="matchRule.EditContext" IsFixed="true">
                 <DataAnnotationsValidator />
 
@@ -24,51 +24,54 @@
                         {
                             var singlePropertyMatchRule = (SinglePropertyMatchRuleViewModel)matchRule;
 
-                            <td class="actions">
-                                <MatTooltip Tooltip="@(singlePropertyMatchRule.InEditMode ? "Close" : "Edit")" Context="tooltip">
-                                    <MatIconButton RefBack="tooltip" Icon="edit" ToggleIcon="close" @bind-Toggled="singlePropertyMatchRule.InEditMode"></MatIconButton>
-                                </MatTooltip>
+                            <MudTd class="actions">
+                                <MudTooltip Text="@(singlePropertyMatchRule.InEditMode ? "Close" : "Edit")">
+                                    <MudToggleIconButton Icon="@Icons.Material.Filled.Edit"
+                                                         ToggledIcon="@Icons.Material.Filled.Close"
+                                                         @bind-Toggled="singlePropertyMatchRule.InEditMode">
+                                    </MudToggleIconButton>
+                                </MudTooltip>
 
-                                <MatTooltip Tooltip="Remove" Context="tooltip">
-                                    <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => RemoveRule(singlePropertyMatchRule))"></MatIconButton>
-                                </MatTooltip>
-                            </td>
+                                <MudTooltip Text="Remove">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" @onclick="@(args => RemoveRule(singlePropertyMatchRule))"></MudIconButton>
+                                </MudTooltip>
+                            </MudTd>
 
-                            <td class="match-type">
+                            <MudTd class="match-type">
                                 @if (singlePropertyMatchRule.InEditMode)
                                 {
-                                    <MatSelectItem Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="singlePropertyMatchRule.MatchTypes">
-                                    </MatSelectItem>
+                                    <MudItemSelectList Label="Match Type" Variant="Variant.Filled" @bind-Value="singlePropertyMatchRule.MatchType" Items="singlePropertyMatchRule.MatchTypes">
+                                    </MudItemSelectList>
                                 }
                                 else
                                 {
                                     @singlePropertyMatchRule.MatchType
                                 }
-                            </td>
+                            </MudTd>
 
-                            <td class="property">
+                            <MudTd class="property">
                                 @if (singlePropertyMatchRule.InEditMode)
                                 {
-                                    <MatSelectItem Label="Property" @bind-Value="singlePropertyMatchRule.Property" Items="properties">
-                                    </MatSelectItem>
+                                    <MudItemSelectList Label="Property" Variant="Variant.Filled" @bind-Value="singlePropertyMatchRule.Property" Items="properties">
+                                    </MudItemSelectList>
                                 }
                                 else
                                 {
                                     @singlePropertyMatchRule.Property
                                 }
-                            </td>
+                            </MudTd>
 
-                            <td class="value">
+                            <MudTd class="value">
                                 @if (singlePropertyMatchRule.InEditMode)
                                 {
-                                    <MatStringField Label="Value" @bind-Value="singlePropertyMatchRule.Value"></MatStringField>
+                                    <MudTextField Label="Value" Variant="Variant.Filled" @bind-Value="singlePropertyMatchRule.Value"></MudTextField>
                                     <ValidationMessage For="@(() => singlePropertyMatchRule.Value)"></ValidationMessage>
                                 }
                                 else
                                 {
                                     @singlePropertyMatchRule.Value
                                 }
-                            </td>
+                            </MudTd>
                         }
 
                         break;
@@ -77,19 +80,19 @@
                         {
                             var compoundMatchRule = (CompoundMatchRuleViewModel)matchRule;
 
-                            <td class="actions">
-                                <MatTooltip Tooltip="Edit" Context="tooltip">
-                                    <MatIconButton RefBack="tooltip" Icon="edit" @onclick="@(args => OpenCompoundEditDialog(compoundMatchRule))"></MatIconButton>
-                                </MatTooltip>
+                            <MudTd class="actions">
+                                <MudTooltip Text="Edit">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Edit" @onclick="@(args => OpenCompoundEditDialog(compoundMatchRule))"></MudIconButton>
+                                </MudTooltip>
 
-                                <MatTooltip Tooltip="Remove" Context="tooltip">
-                                    <MatIconButton RefBack="tooltip" Icon="delete" @onclick="@(args => RemoveRule(compoundMatchRule))"></MatIconButton>
-                                </MatTooltip>
-                            </td>
+                                <MudTooltip Text="Remove">
+                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" @onclick="@(args => RemoveRule(compoundMatchRule))"></MudIconButton>
+                                </MudTooltip>
+                            </MudTd>
 
-                            <td class="compound-children" colspan="3">
+                            <MudTd class="compound-children" colspan="3">
                                 <MatchRuleDescription MatchRule="compoundMatchRule"></MatchRuleDescription>
-                            </td>
+                            </MudTd>
                         }
 
                         break;
@@ -100,6 +103,6 @@
 
 
             </CascadingValue>
-        </MatTableRow>
-    </MatTable>
+        </RowTemplate>
+    </MudTable>
 </div>

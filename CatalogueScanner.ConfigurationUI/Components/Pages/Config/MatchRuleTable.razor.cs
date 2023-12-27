@@ -1,8 +1,8 @@
 ﻿using CatalogueScanner.ConfigurationUI.ViewModel;
 using CatalogueScanner.Core.MatchRule;
-using MatBlazor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using MudBlazor;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -88,12 +88,16 @@ public partial class MatchRuleTable : ComponentBase
 
     private async Task OpenCompoundEditDialog(CompoundMatchRuleViewModel matchRule)
     {
-        await DialogService.OpenFullPageAsync(typeof(CompoundMatchRuleEditDialog), new MatDialogOptions
+        var parameters = new DialogParameters<CompoundMatchRuleEditDialog>
         {
-            Attributes = new Dictionary<string, object>
-            {
-                [nameof(CompoundMatchRuleEditDialog.CompoundRule)] = matchRule,
-            },
-        }).ConfigureAwait(true);
+            { x => x.CompoundRule, matchRule },
+        };
+
+        var options = new DialogOptions
+        {
+            FullScreen = true,
+        };
+
+        await DialogService.ShowAsync<CompoundMatchRuleEditDialog>(string.Empty, parameters, options).ConfigureAwait(true);
     }
 }

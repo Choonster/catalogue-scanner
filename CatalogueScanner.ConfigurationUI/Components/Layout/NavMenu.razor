@@ -1,55 +1,8 @@
-﻿<div>
-    <MatAppBarContainer Class="outer-container">
-        <MatAppBar>
-            <MatAppBarRow>
-                <MatAppBarSection>
-                    <MatAppBarTitle>Catalogue Scanner</MatAppBarTitle>
-                </MatAppBarSection>
-            </MatAppBarRow>
-        </MatAppBar>
-
-        <MatAppBarContent Class="content-container">
-            <MatNavMenu Class="nav-menu">
-                <MatNavItem Title="Home" Href="">
-                    <MatIcon Icon="home"></MatIcon>
-                    &nbsp;
-                    Home
-                </MatNavItem>
-                <MatNavItem Title="Matching Config" Href="config/matching">
-                    <MatIcon Icon="filter_list"></MatIcon>
-                    &nbsp;
-                    Matching Config
-                </MatNavItem>
-                <MatNavItem Title="SaleFinder Config" Href="config/salefinder">
-                    <MatIcon Icon="shopping_cart"></MatIcon>
-                    &nbsp;
-                    SaleFinder Config
-                </MatNavItem>
-                <MatNavItem Title="Coles Online Config" Href="config/colesonline">
-                    <MatIcon Icon="shopping_cart"></MatIcon>
-                    &nbsp;
-                    Coles Online Config
-                </MatNavItem>
-                <MatNavItem Title="Manage Scan States" Href="management/cataloguescanstates">
-                    <MatIcon Icon="shopping_cart"></MatIcon>
-                    &nbsp;
-                    Manage Scan States
-                </MatNavItem>
-                <MatNavItem Title="Manage Orchestrations" Href="management/orchestrations">
-                    <MatIcon Icon="settings"></MatIcon>
-                    &nbsp;
-                    Manage Orchestrations
-                </MatNavItem>
-            </MatNavMenu>
-
-            <div class="content">
-                @ChildContent
-            </div>
-        </MatAppBarContent>
-    </MatAppBarContainer>
-</div>
-
-@code {
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
-}
+﻿<MudNavMenu Class="nav-menu">
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    <MudNavLink Href="config/matching" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.FilterList">Matching Config</MudNavLink>
+    <MudNavLink Href="config/salefinder" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ShoppingCart">SaleFinder Config</MudNavLink>
+    <MudNavLink Href="config/colesonline" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ShoppingCart">Coles Online Config</MudNavLink>
+    <MudNavLink Href="management/cataloguescanstates" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ShoppingCart">Manage Scan States</MudNavLink>
+    <MudNavLink Href="management/orchestrations" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings">Manage Orchestrations</MudNavLink>
+</MudNavMenu>

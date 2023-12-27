@@ -1,14 +1,24 @@
 ﻿@inherits LayoutComponentBase
 
-<app>
-    <div class="page">
-        <NavMenu>
-            <ChildContent>
-                @Body
-            </ChildContent>
-        </NavMenu>
-    </div>
-</app>
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudText Typo="Typo.h6">Catalogue Scanner</MudText>        
+    </MudAppBar>
+
+    <MudDrawer Open="true" Variant="DrawerVariant.Persistent" ClipMode="DrawerClipMode.Always" Elevation="1">
+        <NavMenu />
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.False" >
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
