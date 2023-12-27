@@ -1,11 +1,7 @@
 ﻿using MatBlazor;
-using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using Microsoft.JSInterop;
-using System;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.ConfigurationUI.Service;
 

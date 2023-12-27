@@ -3,16 +3,12 @@ using CatalogueScanner.Core.MatchRule;
 using MatBlazor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
 using static CatalogueScanner.Core.MatchRule.SinglePropertyCatalogueItemMatchRule;
 
-namespace CatalogueScanner.ConfigurationUI.Pages.Config;
+namespace CatalogueScanner.ConfigurationUI.Components.Pages.Config;
 
 public partial class MatchRuleTable : ComponentBase
 {

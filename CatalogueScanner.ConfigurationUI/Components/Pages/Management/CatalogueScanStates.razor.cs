@@ -4,13 +4,8 @@ using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.Core.Utility;
 using MatBlazor;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
-namespace CatalogueScanner.ConfigurationUI.Pages.Management;
+namespace CatalogueScanner.ConfigurationUI.Components.Pages.Management;
 
 public partial class CatalogueScanStates
 {
@@ -118,7 +113,7 @@ public partial class CatalogueScanStates
         UpdateTableData();
     }
 
-    private int GetMaxDataIndexForPage(int pageIndex) => ((pageIndex + 1) * PageSize) - 1;
+    private int GetMaxDataIndexForPage(int pageIndex) => (pageIndex + 1) * PageSize - 1;
 
     private void UpdateTableData()
     {

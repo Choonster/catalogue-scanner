@@ -1,11 +1,9 @@
 ﻿using CatalogueScanner.ConfigurationUI.ViewModel;
 using MatBlazor;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Linq;
 using static CatalogueScanner.Core.MatchRule.CompoundCatalogueItemMatchRule;
 
-namespace CatalogueScanner.ConfigurationUI.Pages.Config;
+namespace CatalogueScanner.ConfigurationUI.Components.Pages.Config;
 
 public partial class CompoundMatchRuleEditDialog
 {

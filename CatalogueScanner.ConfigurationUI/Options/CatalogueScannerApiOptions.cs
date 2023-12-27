@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CatalogueScanner.ConfigurationUI.Options;
+﻿namespace CatalogueScanner.ConfigurationUI.Options;
 
 public class CatalogueScannerApiOptions
 {

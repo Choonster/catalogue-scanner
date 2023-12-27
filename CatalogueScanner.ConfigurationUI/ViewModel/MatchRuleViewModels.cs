@@ -1,6 +1,5 @@
 ﻿using CatalogueScanner.Core.MatchRule;
 using Microsoft.AspNetCore.Components.Forms;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using static CatalogueScanner.Core.MatchRule.CompoundCatalogueItemMatchRule;

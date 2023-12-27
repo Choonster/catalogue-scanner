@@ -1,8 +1,6 @@
 ﻿using CatalogueScanner.Core.Dto.Api;
 using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Dto.Api.Result;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace CatalogueScanner.ConfigurationUI.Service;
 
