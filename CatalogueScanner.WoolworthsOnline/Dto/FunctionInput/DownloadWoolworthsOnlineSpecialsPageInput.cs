@@ -1,7 +1,5 @@
-﻿namespace CatalogueScanner.WoolworthsOnline.Dto.FunctionInput;
+﻿using System.Net;
 
-public class DownloadWoolworthsOnlineSpecialsPageInput
-{
-    public string? CategoryId { get; set; }
-    public int PageNumber { get; set; }
-}
+namespace CatalogueScanner.WoolworthsOnline.Dto.FunctionInput;
+
+public record DownloadWoolworthsOnlineSpecialsPageInput(string? CategoryId, int PageNumber, CookieCollection Cookies);

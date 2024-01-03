@@ -2,6 +2,7 @@
 using CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Azure.Functions.Worker;
+using System.Net;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions;
 
@@ -11,13 +12,12 @@ public class GetWoolworthsOnlineSpecialsCategories(WoolworthsOnlineService woolw
 
     [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories)]
     public async Task<IEnumerable<WoolworthsOnlineCategory>> Run(
-        CancellationToken cancellationToken,
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Required by Azure Functions")]
         [ActivityTrigger]
-        object? input = null
+        CookieCollection cookies,
+        CancellationToken cancellationToken
     )
     {
-        var response = await woolworthsOnlineService.GetPiesCategoriesWithSpecialsAsync(cancellationToken).ConfigureAwait(false);
+        var response = await woolworthsOnlineService.GetPiesCategoriesWithSpecialsAsync(cookies, cancellationToken).ConfigureAwait(false);
 
         var specialsCategories = new List<WoolworthsOnlineCategory>();
 
