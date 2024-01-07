@@ -5,7 +5,7 @@ using System.Net;
 
 namespace CatalogueScanner.ConfigurationUI.Service;
 
-public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogService matDialogService, ILogger<HttpExceptionHandlingService> logger)
+public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogService matDialogService, ILogger<HttpExceptionHandlingService> logger, TokenProvider tokenProvider)
 {
     public async Task HandleHttpExceptionAsync(HttpRequestException exception, string friendlyErrorMessage)
     {
@@ -25,6 +25,8 @@ public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogServic
         if (exception.StatusCode == HttpStatusCode.Unauthorized && AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled)
         {
             fullMessage += "\n\nThis may have happened because your session has expired. Do you want to clear your session and refresh the page?";
+
+            fullMessage += $"\n\nToken: {tokenProvider.AccessToken}";
 
             var shouldRefresh = await matDialogService.ConfirmAsync(fullMessage).ConfigureAwait(false);
 
