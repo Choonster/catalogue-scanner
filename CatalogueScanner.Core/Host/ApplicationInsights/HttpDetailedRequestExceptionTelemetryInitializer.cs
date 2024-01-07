@@ -7,7 +7,8 @@ namespace CatalogueScanner.Core.Host.ApplicationInsights;
 
 public class HttpDetailedRequestExceptionTelemetryInitializer : ITelemetryInitializer
 {
-    private const string PropertyName = $"{nameof(HttpDetailedRequestException)}.{nameof(HttpDetailedRequestException.ResponseContent)}";
+    private const string RequestContentPropertyName = $"{nameof(HttpDetailedRequestException)}.{nameof(HttpDetailedRequestException.RequestContent)}";
+    private const string ResponseContentPropertyName = $"{nameof(HttpDetailedRequestException)}.{nameof(HttpDetailedRequestException.ResponseContent)}";
 
     public void Initialize(ITelemetry telemetry)
     {
@@ -15,11 +16,13 @@ public class HttpDetailedRequestExceptionTelemetryInitializer : ITelemetryInitia
         {
             if (exceptionTelemetry.Exception is HttpDetailedRequestException exception)
             {
-                exceptionTelemetry.Properties[PropertyName] = exception.ResponseContent;
+                exceptionTelemetry.Properties[RequestContentPropertyName] = exception.RequestContent;
+                exceptionTelemetry.Properties[ResponseContentPropertyName] = exception.ResponseContent;
             }
             else if (exceptionTelemetry.Exception.InnerException is HttpDetailedRequestException innerException)
             {
-                exceptionTelemetry.Properties[PropertyName] = innerException.ResponseContent;
+                exceptionTelemetry.Properties[RequestContentPropertyName] = innerException.RequestContent;
+                exceptionTelemetry.Properties[ResponseContentPropertyName] = innerException.ResponseContent;
             }
         }
     }
