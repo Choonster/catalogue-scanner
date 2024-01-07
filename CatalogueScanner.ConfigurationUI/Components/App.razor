@@ -2,7 +2,9 @@
 @using Microsoft.Identity.Web
 @using Service
 
+@inject ITokenAcquisition TokenAcquisition
 @inject TokenProvider TokenProvider
+@inject ILogger<App> Logger
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,10 +42,22 @@
             throw new InvalidOperationException($"{nameof(HttpContext)} parameter is null");
         }
 
-        var accessToken = await HttpContext.RequestServices
-            .GetRequiredService<ITokenAcquisition>()
-            .GetAccessTokenForUserAsync(new string[] { ".default" })
+        var accessToken = await TokenAcquisition
+            .GetAccessTokenForUserAsync([ ".default" ])
             .ConfigureAwait(true);
+
+        Logger.LogWarning("Access Token: {Token}", accessToken);
+
+        string[] importantHeaders = [
+            "X-MS-TOKEN-AAD-ID-TOKEN",
+            "X-MS-CLIENT-PRINCIPAL-IDP",
+            "X-MS-TOKEN-AAD-ACCESS-TOKEN"
+        ];
+
+        foreach (var header in importantHeaders)
+        {
+            Logger.LogWarning("Header: {Header} = {Value}", header, HttpContext.Request.Headers[header]);
+        }
 
         TokenProvider.AccessToken = accessToken;
 
