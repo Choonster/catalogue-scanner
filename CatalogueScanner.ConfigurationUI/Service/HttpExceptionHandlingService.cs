@@ -22,7 +22,7 @@ public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogServic
 
         var fullMessage = $"{friendlyErrorMessage}: {exception.Message}";
 
-        if (true || exception.StatusCode == HttpStatusCode.Unauthorized && AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled)
+        if (exception.StatusCode == HttpStatusCode.Unauthorized && AppServicesAuthenticationInformation.IsAppServicesAadAuthenticationEnabled)
         {
             fullMessage += "\n\nThis may have happened because your session has expired. Do you want to clear your session and refresh the page?";
 
