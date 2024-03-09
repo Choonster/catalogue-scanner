@@ -2,7 +2,8 @@
 @using Microsoft.Identity.Web
 @using Service
 
-@inject TokenProvider TokenProvider
+@inject ITokenAcquisition TokenAcquisition
+@inject ILogger<App> Logger
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +19,11 @@
     <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 <body class="mat">
-    <Routes @rendermode="InteractiveServer" />
+    @*
+    Pass access token to the Routes component to allow it to populate the TokenProvider in the proper scope
+    https://github.com/dotnet/AspNetCore.Docs/issues/31691#issuecomment-1937358269
+    *@
+    <Routes AccessToken="@AccessToken" @rendermode="InteractiveServer" />
 
     <script src="BlazorInterop.js"></script>
     <script src="_framework/blazor.web.js"></script>
@@ -30,22 +35,19 @@
 </html>
 
 @code {
-    [CascadingParameter]
-    public HttpContext? HttpContext { get; set; }
+    private string? AccessToken { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (HttpContext is null)
-        {
-            throw new InvalidOperationException($"{nameof(HttpContext)} parameter is null");
-        }
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 
-        var accessToken = await HttpContext.RequestServices
-            .GetRequiredService<ITokenAcquisition>()
-            .GetAccessTokenForUserAsync(new string[] { ".default" })
+        cts.Token.Register(() => Logger.LogError("Token cancelled"));
+
+        var accessToken = await TokenAcquisition
+            .GetAccessTokenForUserAsync([".default"], tokenAcquisitionOptions: new() { CancellationToken = cts.Token })
             .ConfigureAwait(true);
 
-        TokenProvider.AccessToken = accessToken;
+        AccessToken = accessToken;
 
         await base.OnInitializedAsync();
     }
