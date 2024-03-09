@@ -26,7 +26,7 @@ public class DownloadWoolworthsOnlineSpecialsPage(WoolworthsOnlineService woolwo
             CategoryId = input.CategoryId,
             PageNumber = input.PageNumber,
             PageSize = WoolworthsOnlineService.MaxBrowseCategoryDataPageSize,
-        }, cancellationToken).ConfigureAwait(false);
+        }, input.Cookies, cancellationToken).ConfigureAwait(false);
 
         var items = response.Bundles
            .SelectMany(bundle =>

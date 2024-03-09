@@ -1,3 +1,4 @@
+using CatalogueScanner.WoolworthsOnline.Dto.FunctionInput;
 using CatalogueScanner.WoolworthsOnline.Service;
 using Microsoft.Azure.Functions.Worker;
 
@@ -8,18 +9,21 @@ public class GetWoolworthsOnlineSpecialsPageCount(WoolworthsOnlineService woolwo
     private readonly WoolworthsOnlineService woolworthsOnlineService = woolworthsOnlineService;
 
     [Function(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount)]
-    public async Task<int> Run([ActivityTrigger] string categoryId, CancellationToken cancellationToken)
+    public async Task<int> Run([ActivityTrigger] GetWoolworthsOnlineSpecialsPageCountInput input, CancellationToken cancellationToken)
     {
         #region null checks
-        if (string.IsNullOrEmpty(categoryId))
+        ArgumentNullException.ThrowIfNull(input);
+
+        if (string.IsNullOrEmpty(input.CategoryId))
         {
-            throw new ArgumentException($"'{nameof(categoryId)}' cannot be null or empty.", nameof(categoryId));
+            throw new ArgumentException($"'{nameof(input)}.{nameof(input.CategoryId)}' cannot be null or empty.", nameof(input));
         }
         #endregion
 
         return await woolworthsOnlineService.GetCategoryPageCountAsync(
-            categoryId,
+            input.CategoryId,
             WoolworthsOnlineService.MaxBrowseCategoryDataPageSize,
+            input.Cookies,
             cancellationToken
         ).ConfigureAwait(false);
     }
