@@ -3,7 +3,6 @@
 @using Service
 
 @inject ITokenAcquisition TokenAcquisition
-@inject TokenProvider TokenProvider
 @inject ILogger<App> Logger
 
 <!DOCTYPE html>
@@ -20,7 +19,11 @@
     <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 <body class="mat">
-    <Routes @rendermode="InteractiveServer" />
+    @*
+    Pass access token to the Routes component to allow it to populate the TokenProvider in the proper scope
+    https://github.com/dotnet/AspNetCore.Docs/issues/31691#issuecomment-1937358269
+    *@
+    <Routes AccessToken="@AccessToken" @rendermode="InteractiveServer" />
 
     <script src="BlazorInterop.js"></script>
     <script src="_framework/blazor.web.js"></script>
@@ -32,16 +35,10 @@
 </html>
 
 @code {
-    [CascadingParameter]
-    public HttpContext? HttpContext { get; set; }
+    private string? AccessToken { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (HttpContext is null)
-        {
-            throw new InvalidOperationException($"{nameof(HttpContext)} parameter is null");
-        }
-
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 
         cts.Token.Register(() => Logger.LogError("Token cancelled"));
@@ -50,20 +47,7 @@
             .GetAccessTokenForUserAsync([".default"], tokenAcquisitionOptions: new() { CancellationToken = cts.Token })
             .ConfigureAwait(true);
 
-        Logger.LogWarning("Access Token: {Token}", accessToken);
-
-        string[] importantHeaders = [
-            "X-MS-TOKEN-AAD-ID-TOKEN",
-            "X-MS-CLIENT-PRINCIPAL-IDP",
-            "X-MS-TOKEN-AAD-ACCESS-TOKEN"
-        ];
-
-        foreach (var header in importantHeaders)
-        {
-            Logger.LogWarning("Header: {Header} = {Value}", header, HttpContext.Request.Headers[header]);
-        }
-
-        TokenProvider.AccessToken = accessToken;
+        AccessToken = accessToken;
 
         await base.OnInitializedAsync();
     }

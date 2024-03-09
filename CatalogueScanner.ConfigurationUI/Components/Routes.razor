@@ -1,4 +1,9 @@
-﻿<Router AppAssembly="@typeof(Program).Assembly">
+﻿@using CatalogueScanner.ConfigurationUI.Service
+
+@inject TokenProvider TokenProvider
+@inject ILogger<Routes> Logger
+
+<Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -10,3 +15,15 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    [Parameter]
+    public string? AccessToken { get; set; }
+
+    protected override void OnInitialized()
+    {
+        TokenProvider.AccessToken = AccessToken;
+
+        base.OnInitialized();
+    }
+}
