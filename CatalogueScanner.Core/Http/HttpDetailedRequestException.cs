@@ -4,6 +4,7 @@ namespace CatalogueScanner.Core.Http;
 
 public class HttpDetailedRequestException : HttpRequestException
 {
+    public string? RequestContent { get; set; }
     public string? ResponseContent { get; set; }
 
     public HttpDetailedRequestException()
@@ -18,8 +19,9 @@ public class HttpDetailedRequestException : HttpRequestException
     {
     }
 
-    public HttpDetailedRequestException(string? message, Exception? inner, HttpStatusCode? statusCode, string? responseContent) : base(message, inner, statusCode)
+    public HttpDetailedRequestException(string? message, Exception? inner, HttpStatusCode? statusCode, string? requestContent, string? responseContent) : base(message, inner, statusCode)
     {
+        RequestContent = requestContent;
         ResponseContent = responseContent;
     }
 }
