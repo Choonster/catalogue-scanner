@@ -10,9 +10,9 @@ using CatalogueScanner.Core.Host;
 using CatalogueScanner.Localisation.OrchardCore;
 using CatalogueScanner.SaleFinder;
 using CurrieTechnologies.Razor.Clipboard;
-using MatBlazor;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
+using MudBlazor;
 using MudBlazor.Services;
 using OrchardCore.Localization;
 using OrchardCore.Localization.PortableObject;
@@ -48,16 +48,15 @@ services
 services.AddRazorPages();
 services.AddHttpContextAccessor();
 
-services.AddMatBlazor();
-services.AddMudServices();
 services.AddClipboard();
 
-services.AddMatToaster(config =>
+services.AddMudServices(config =>
 {
-    config.Position = MatToastPosition.BottomCenter;
-    config.PreventDuplicates = true;
-    config.NewestOnTop = true;
-    config.ShowCloseButton = false;
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
+
+    config.SnackbarConfiguration.PreventDuplicates = true;
+    config.SnackbarConfiguration.NewestOnTop = true;
+    config.SnackbarConfiguration.ShowCloseIcon = false;
 });
 #endregion
 

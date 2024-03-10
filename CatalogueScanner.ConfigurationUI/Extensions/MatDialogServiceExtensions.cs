@@ -1,20 +1,21 @@
-﻿namespace MatBlazor;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
+
+namespace MatBlazor;
 
 public static class MatDialogServiceExtensions
 {
-    public static async Task<object> OpenFullPageAsync(this IMatDialogService matDialogService, Type componentType, MatDialogOptions options)
+    public static async Task<object> OpenFullPageAsync<TComponent>(this IDialogService dialogService, string title, DialogOptions? options) where TComponent : IComponent
     {
         #region null checks
-        ArgumentNullException.ThrowIfNull(matDialogService);
-
-        ArgumentNullException.ThrowIfNull(componentType);
+        ArgumentNullException.ThrowIfNull(dialogService);
         #endregion
 
-        options ??= new MatDialogOptions();
+        options ??= new DialogOptions();
 
-        options.SurfaceClass = (options.SurfaceClass ?? string.Empty) + " full-page-dialog";
-        options.SurfaceClass = options.SurfaceClass.Trim();
+        options.ClassBackground = (options.ClassBackground ?? string.Empty) + " full-page-dialog";
+        options.ClassBackground = options.ClassBackground.Trim();
 
-        return await matDialogService.OpenAsync(componentType, options).ConfigureAwait(true);
+        return await dialogService.ShowAsync<TComponent>(title, options).ConfigureAwait(true);
     }
 }

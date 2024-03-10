@@ -22,8 +22,7 @@ public partial class CatalogueScanStates
     private bool isFinalPage;
     private bool hasNoData;
 
-    private DateTime? lastOperationFrom;
-    private DateTime? lastOperationTo;
+    private MudBlazor.DateRange? lastOperation;
 
     private int PageSize
     {
@@ -46,39 +45,38 @@ public partial class CatalogueScanStates
         var startOfWeek = new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Monday, TimeZoneInfo.Local);
         var now = DateTimeOffset.Now;
 
-        lastOperationFrom = startOfWeek
-            .GetPreviousDate(now)
-            .LocalDateTime;
+        var lastOperationFrom = startOfWeek
+              .GetPreviousDate(now)
+              .LocalDateTime;
 
-        lastOperationTo = startOfWeek
+        var lastOperationTo = startOfWeek
             .GetNextDate(now)
             .LocalDateTime
             .AddDays(-1);
+
+        lastOperation = new(lastOperationFrom, lastOperationTo);
     }
 
-    private async Task OnFromDateChanged(DateTime? lastOperationFrom)
+    private async Task OnDateRangeChanged(MudBlazor.DateRange? lastOperationDateRange)
     {
-        this.lastOperationFrom = lastOperationFrom;
+        try
+        {
+            loading = true;
 
-        await OnDateRangeChanged().ConfigureAwait(true);
-    }
+            lastOperation = lastOperationDateRange;
 
-    private async Task OnToDateChanged(DateTime? lastOperationTo)
-    {
-        this.lastOperationTo = lastOperationTo;
+            isFinalPage = false;
+            tablePageIndex = 0;
+            pageInfo = pageInfo with { ContinuationToken = null };
 
-        await OnDateRangeChanged().ConfigureAwait(true);
-    }
+            loadedScanStates.Clear();
 
-    private async Task OnDateRangeChanged()
-    {
-        isFinalPage = false;
-        tablePageIndex = 0;
-        pageInfo = pageInfo with { ContinuationToken = null };
-
-        loadedScanStates.Clear();
-
-        await table.ReloadServerData().ConfigureAwait(true);
+            await table.ReloadServerData().ConfigureAwait(true);
+        }
+        finally
+        {
+            loading = false;
+        }
     }
 
     private int GetMaxDataIndexForPage(int pageIndex) => (pageIndex + 1) * PageSize - 1;
@@ -108,8 +106,8 @@ public partial class CatalogueScanStates
             {
                 var request = new ListEntityRequest(
                     pageInfo,
-                    lastOperationFrom,
-                    lastOperationTo?.WithTime(23, 59, 59)
+                    lastOperation?.Start,
+                    lastOperation?.End?.WithTime(23, 59, 59)
                 );
 
                 var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true)
@@ -142,10 +140,10 @@ public partial class CatalogueScanStates
 
     private async Task ResetScanState(CatalogueScanStateDto scanState)
     {
-        loading = true;
-
         try
         {
+            loading = true;
+
             scanState = scanState with { ScanState = ScanState.NotStarted };
             await CatalogueScanStateService.UpdateCatalogueScanStateAsync(scanState).ConfigureAwait(true);
         }
@@ -153,7 +151,9 @@ public partial class CatalogueScanStates
         {
             await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Reset Scan State request failed").ConfigureAwait(false);
         }
-
-        loading = false;
+        finally
+        {
+            loading = false;
+        }
     }
 }

@@ -13,10 +13,9 @@
     <MudText Typo="Typo.h3" Class="table-page-header">Catalogue Scan States</MudText>
 
     <div class="date-range-row">
-        <MudDatePicker Date="lastOperationFrom" DateChanged="@((DateTime? minDate) => OnFromDateChanged(minDate))" MaxDate="lastOperationTo" Label="Last Operation From (Local)" />
-        <MudDatePicker Date="lastOperationTo" DateChanged="@((DateTime? maxDate) => OnToDateChanged(maxDate))" MinDate="lastOperationFrom" Label="Last Operation To (Local)" />
-        <MudTooltip Text="Refresh">
-            <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="@(args => OnDateRangeChanged())"></MudIconButton>
+        <MudDateRangePicker Class="date-range-picker" DateRange="lastOperation" DateRangeChanged="OnDateRangeChanged" Label="Last Operation (Local)" />
+        <MudTooltip Class="date-range-refresh" Text="Refresh">
+            <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="@(args => OnDateRangeChanged(lastOperation))"></MudIconButton>
         </MudTooltip>
     </div>
 
