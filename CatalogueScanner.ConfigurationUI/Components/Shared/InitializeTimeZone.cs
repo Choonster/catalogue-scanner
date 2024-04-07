@@ -9,6 +9,7 @@ public sealed class InitializeTimeZone : ComponentBase
 {
     [Inject] public BrowserTimeProvider TimeProvider { get; set; } = default!;
     [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
+    [Inject] public ILogger<InitializeTimeZone> Logger { get; set; } = default!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -19,11 +20,17 @@ public sealed class InitializeTimeZone : ComponentBase
                 var module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./timezone.js").ConfigureAwait(true);
                 await using var _ = module.ConfigureAwait(true);
 
+                Logger.LogInformation("timezone module: {Module}", module);
+
                 var timeZone = await module.InvokeAsync<string>("getBrowserTimeZone").ConfigureAwait(true);
+
+                Logger.LogInformation("getBrowserTimeZone result: {Result}", timeZone);
+
                 TimeProvider.SetBrowserTimeZone(timeZone);
             }
-            catch (JSDisconnectedException)
+            catch (JSDisconnectedException ex)
             {
+                Logger.LogError(ex, "JSDisconnectedException");
             }
         }
     }

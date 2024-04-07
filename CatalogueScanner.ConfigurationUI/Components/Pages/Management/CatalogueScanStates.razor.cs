@@ -42,6 +42,8 @@ public sealed partial class CatalogueScanStates : IDisposable
             [ScanState.Failed] = S["Failed"],
         };
 
+        Logger.LogInformation("Has local time zone: {Value}", TimeProvider.IsLocalTimeZoneSet);
+
         if (TimeProvider.IsLocalTimeZoneSet)
         {
             LocalTimeZoneChanged(null, new EventArgs());
