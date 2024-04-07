@@ -23,11 +23,10 @@ public sealed class BrowserTimeProvider : TimeProvider
     {
         logger.LogInformation("SetBrowserTimeZone: {TimeZone}", timeZone);
 
-        if (
-            !TimeZoneInfo.TryFindSystemTimeZoneById(timeZone, out var timeZoneInfo)
-            && !(TimeZoneInfo.TryConvertIanaIdToWindowsId(timeZone, out var windowsId) && TimeZoneInfo.TryFindSystemTimeZoneById(windowsId, out timeZoneInfo))
-        )
+        if (!TimeZoneInfo.TryFindSystemTimeZoneById(timeZone, out var timeZoneInfo))
         {
+            TimeZoneInfo.TryConvertIanaIdToWindowsId(timeZone, out var windowsId);
+
             logger.CouldntFindTimeZone(timeZone, windowsId, base.LocalTimeZone.Id, TimeZoneInfo.GetSystemTimeZones().Select(tz => tz.Id));
 
             timeZoneInfo = null;
