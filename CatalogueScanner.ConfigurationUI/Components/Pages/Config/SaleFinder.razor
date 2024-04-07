@@ -14,8 +14,8 @@
 <section>
     <MudText Typo="Typo.h3">Coles</MudText>
 
-    <EditForm Model="ColesOptions" OnValidSubmit="SaveColesOptions">
-        <MudNumericField Label="Sale Finder Location ID" @bind-Value="ColesOptions.SaleFinderLocationId">
+    <EditForm Model="ColesOptions" OnValidSubmit="SaveColesOptions" class="inline-form-row">
+        <MudNumericField Variant="Variant.Outlined" Label="Sale Finder Location ID" @bind-Value="ColesOptions.SaleFinderLocationId">
         </MudNumericField>
 
         <MudButton ButtonType="ButtonType.Submit">Save</MudButton>
@@ -25,8 +25,8 @@
 <section>
     <MudText Typo="Typo.h3">Woolworths</MudText>
 
-    <EditForm Model="WoolworthsOptions" OnValidSubmit="SaveWoolworthsOptions">
-        <MudNumericField Label="Sale Finder Location ID" @bind-Value="WoolworthsOptions.SaleFinderLocationId">
+    <EditForm Model="WoolworthsOptions" OnValidSubmit="SaveWoolworthsOptions" class="inline-form-row">
+        <MudNumericField Variant="Variant.Outlined" Label="Sale Finder Location ID" @bind-Value="WoolworthsOptions.SaleFinderLocationId">
         </MudNumericField>
 
         <MudButton ButtonType="ButtonType.Submit">Save</MudButton>
@@ -36,8 +36,8 @@
 <section>
     <MudText Typo="Typo.h3">IGA</MudText>
 
-    <EditForm Model="IgaOptions" OnValidSubmit="SaveIgaOptions">
-        <MudNumericField Label="Sale Finder Location ID" @bind-Value="IgaOptions.SaleFinderLocationId">
+    <EditForm Model="IgaOptions" OnValidSubmit="SaveIgaOptions" class="inline-form-row">
+        <MudNumericField Variant="Variant.Outlined" Label="Sale Finder Location ID" @bind-Value="IgaOptions.SaleFinderLocationId">
         </MudNumericField>
 
         <MudButton ButtonType="ButtonType.Submit">Save</MudButton>

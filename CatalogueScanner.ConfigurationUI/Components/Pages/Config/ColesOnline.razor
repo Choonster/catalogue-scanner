@@ -10,8 +10,8 @@
 <section>
     <MudText Typo="Typo.h3">Coles Online</MudText>
 
-    <EditForm Model="ColesOnlineOptions" OnValidSubmit="SaveColesOnlineOptions">
-        <MudNumericField Label="Fulfillment Store ID" @bind-Value="ColesOnlineOptions.FulfillmentStoreId">
+    <EditForm Model="ColesOnlineOptions" OnValidSubmit="SaveColesOnlineOptions" class="inline-form-row">
+        <MudNumericField Variant="Variant.Outlined" Label="Fulfillment Store ID" @bind-Value="ColesOnlineOptions.FulfillmentStoreId" HideSpinButtons="true">
         </MudNumericField>
 
         <MudButton ButtonType="ButtonType.Submit">Save</MudButton>

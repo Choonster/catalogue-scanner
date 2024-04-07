@@ -2,7 +2,7 @@
     <TitleContent>Edit Compound Rule</TitleContent>
     <DialogContent>
         <div class="matching-header-row">
-            <MudItemSelectList Label="Match Type" Class="match-type" @bind-Value="CompoundRule.MatchType" Items="compoundMatchTypes" />
+            <MudItemSelectList Variant="Variant.Outlined" Label="Match Type" Class="match-type" @bind-Value="CompoundRule.MatchType" Items="compoundMatchTypes" />
 
             <div class="matching-header-buttons">
                 <MudButton OnClick="AddSinglePropertyRule" Class="matching-add-single-button">Add Single Property Rule</MudButton>

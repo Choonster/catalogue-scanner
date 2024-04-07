@@ -14,8 +14,8 @@
     <MudText Typo="Typo.h3" Class="table-page-header">Orchestration Management</MudText>
 
     <section>
-        <EditForm class="inline-form-row" Model="this" OnValidSubmit="LoadCheckStatusEndpoints">
-            <MudTextField @bind-Value="instanceId" Label="Instance ID" Required />
+        <EditForm Model="this" OnValidSubmit="LoadCheckStatusEndpoints" class="inline-form-row">
+            <MudTextField Variant="Variant.Outlined" @bind-Value="instanceId" Label="Instance ID" Required />
 
             <MudButton ButtonType="ButtonType.Submit">Load Check Status Endpoints</MudButton>
         </EditForm>

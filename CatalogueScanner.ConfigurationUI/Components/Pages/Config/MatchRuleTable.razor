@@ -40,7 +40,7 @@
                             <MudTd class="match-type">
                                 @if (singlePropertyMatchRule.InEditMode)
                                 {
-                                    <MudItemSelectList Label="Match Type" Variant="Variant.Filled" @bind-Value="singlePropertyMatchRule.MatchType" Items="singlePropertyMatchRule.MatchTypes">
+                                    <MudItemSelectList Variant="Variant.Outlined" Label="Match Type" @bind-Value="singlePropertyMatchRule.MatchType" Items="singlePropertyMatchRule.MatchTypes">
                                     </MudItemSelectList>
                                 }
                                 else
@@ -52,7 +52,7 @@
                             <MudTd class="property">
                                 @if (singlePropertyMatchRule.InEditMode)
                                 {
-                                    <MudItemSelectList Label="Property" Variant="Variant.Filled" @bind-Value="singlePropertyMatchRule.Property" Items="properties">
+                                    <MudItemSelectList Variant="Variant.Outlined" Label="Property" @bind-Value="singlePropertyMatchRule.Property" Items="properties">
                                     </MudItemSelectList>
                                 }
                                 else
@@ -64,7 +64,7 @@
                             <MudTd class="value">
                                 @if (singlePropertyMatchRule.InEditMode)
                                 {
-                                    <MudTextField Label="Value" Variant="Variant.Filled" @bind-Value="singlePropertyMatchRule.Value"></MudTextField>
+                                    <MudTextField Variant="Variant.Outlined" Label="Value" @bind-Value="singlePropertyMatchRule.Value"></MudTextField>
                                     <ValidationMessage For="@(() => singlePropertyMatchRule.Value)"></ValidationMessage>
                                 }
                                 else

@@ -9,11 +9,11 @@
 @inject HttpExceptionHandlingService HttpExceptionHandlingService
 @inject TimeZoneService TimeZoneService
 
-<div class="loading-spinner-container">
+<div>
     <MudText Typo="Typo.h3" Class="table-page-header">Catalogue Scan States</MudText>
 
     <div class="date-range-row">
-        <MudDateRangePicker Class="date-range-picker" DateRange="lastOperation" DateRangeChanged="OnDateRangeChanged" Label="Last Operation (Local)" />
+        <MudDateRangePicker Variant="Variant.Outlined" Class="date-range-picker" DateRange="lastOperation" DateRangeChanged="OnDateRangeChanged" Label="Last operation time (Local)" />
         <MudTooltip Class="date-range-refresh" Text="Refresh">
             <MudIconButton Icon="@Icons.Material.Filled.Refresh" OnClick="@(args => OnDateRangeChanged(lastOperation))"></MudIconButton>
         </MudTooltip>
