@@ -7,7 +7,7 @@ using MudBlazor;
 
 namespace CatalogueScanner.ConfigurationUI.Components.Pages.Management;
 
-public partial class CatalogueScanStates
+public sealed partial class CatalogueScanStates : IDisposable
 {
     private MudTable<CatalogueScanStateDto> table = null!;
     private Dictionary<ScanState, string?> scanStateLabels = [];
@@ -42,6 +42,26 @@ public partial class CatalogueScanStates
             [ScanState.Failed] = S["Failed"],
         };
 
+        if (TimeProvider.IsLocalTimeZoneSet)
+        {
+            LocalTimeZoneChanged(null, new EventArgs());
+        }
+
+        TimeProvider.LocalTimeZoneChanged += LocalTimeZoneChanged;
+    }
+
+    public void Dispose()
+    {
+        TimeProvider.LocalTimeZoneChanged -= LocalTimeZoneChanged;
+    }
+
+    private void LocalTimeZoneChanged(object? sender, EventArgs e)
+    {
+        if (lastOperation is not null)
+        {
+            return;
+        }
+
         var startOfWeek = new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Monday, TimeZoneInfo.Local);
         var now = TimeProvider.GetLocalNow();
 
@@ -50,6 +70,8 @@ public partial class CatalogueScanStates
         var lastOperationTo = TimeProvider.ToLocalDateTime(startOfWeek.GetNextDate(now).AddDays(-1));
 
         lastOperation = new(lastOperationFrom, lastOperationTo);
+
+        _ = InvokeAsync(StateHasChanged);
     }
 
     private async Task OnDateRangeChanged(MudBlazor.DateRange? lastOperationDateRange)
