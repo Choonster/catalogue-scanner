@@ -78,7 +78,10 @@ services.AddCatalogueScannerApiHttpClient<ManagementService>("Management");
 services.AddSingleton<ILocalizationFileLocationProvider, ContentRootPoFileLocationProvider>();
 
 services.AddScoped<HttpExceptionHandlingService>();
-services.AddScoped<TimeZoneService>();
+
+// Can't register as scoped TimeProvider due to singleton IPostConfigureOptions for
+// CookieAuthenticationOptions/AppServicesAuthenticationOptions (from AuthenticationBuilder.AddScheme) injecting TimeProvider
+services.AddScoped<BrowserTimeProvider>();
 #endregion
 
 #region Add Catalogue Scanner Plugins

@@ -43,16 +43,11 @@ public partial class CatalogueScanStates
         };
 
         var startOfWeek = new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Monday, TimeZoneInfo.Local);
-        var now = DateTimeOffset.Now;
+        var now = TimeProvider.GetLocalNow();
 
-        var lastOperationFrom = startOfWeek
-              .GetPreviousDate(now)
-              .LocalDateTime;
+        var lastOperationFrom = TimeProvider.ToLocalDateTime(startOfWeek.GetPreviousDate(now));
 
-        var lastOperationTo = startOfWeek
-            .GetNextDate(now)
-            .LocalDateTime
-            .AddDays(-1);
+        var lastOperationTo = TimeProvider.ToLocalDateTime(startOfWeek.GetNextDate(now).AddDays(-1));
 
         lastOperation = new(lastOperationFrom, lastOperationTo);
     }
@@ -113,9 +108,7 @@ public partial class CatalogueScanStates
                 var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true)
                     ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
 
-                loadedScanStates.AddRange(
-                    result.Entities.Select(scanState => scanState with { LastModifiedTime = scanState.LastModifiedTime.ToLocalTime() })
-                );
+                loadedScanStates.AddRange(result.Entities);
 
                 hasNoData = loadedScanStates.Count == 0;
 

@@ -7,7 +7,7 @@
 @inject IStringLocalizer<CatalogueScanStates> S
 @inject CatalogueScanStateService CatalogueScanStateService
 @inject HttpExceptionHandlingService HttpExceptionHandlingService
-@inject TimeZoneService TimeZoneService
+@inject BrowserTimeProvider TimeProvider
 
 <div>
     <MudText Typo="Typo.h3" Class="table-page-header">Catalogue Scan States</MudText>
@@ -59,7 +59,7 @@
                 </MudTd>
 
                 <MudTd class="last-operation-time">
-                    @scanState.LastModifiedTime.ToString("G")
+                    <LocalTime DateTime="scanState.LastModifiedTime" />
                 </MudTd>
             }
         </RowTemplate>
