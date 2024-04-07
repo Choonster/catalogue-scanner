@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<UserSecretsId>ce557102-d517-4c59-b52a-74dbc2b46748</UserSecretsId>
+		<IcuVersion>72.1.0.3</IcuVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -11,6 +12,7 @@
 		<PackageReference Include="CurrieTechnologies.Razor.Clipboard" Version="1.6.0" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
 		<PackageReference Include="Microsoft.Azure.SignalR" Version="1.25.1" />
+		<PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="$(IcuVersion)" />
 		<PackageReference Include="Microsoft.Identity.Web" Version="2.17.4" />
 		<PackageReference Include="MudBlazor" Version="6.19.1" />
 	</ItemGroup>
@@ -21,6 +23,10 @@
 		<ProjectReference Include="..\CatalogueScanner.Core\CatalogueScanner.Core.csproj" />
 		<ProjectReference Include="..\CatalogueScanner.Localisation.OrchardCore\CatalogueScanner.Localisation.OrchardCore.csproj" />
 		<ProjectReference Include="..\CatalogueScanner.SaleFinder\CatalogueScanner.SaleFinder.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="$(IcuVersion)" />
 	</ItemGroup>
 
 	<Target Name="RemovePlaywrightFilesFromOutput" AfterTargets="CopyPlaywrightFilesToOutput">
