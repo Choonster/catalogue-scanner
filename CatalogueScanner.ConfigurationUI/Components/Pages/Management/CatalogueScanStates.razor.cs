@@ -57,6 +57,8 @@ public sealed partial class CatalogueScanStates : IDisposable
 
     private void LocalTimeZoneChanged(object? sender, EventArgs e)
     {
+        Logger.LogInformation("Local time zone: {TimeZone}", TimeProvider.LocalTimeZone.DisplayName);
+
         if (lastOperation is not null)
         {
             return;

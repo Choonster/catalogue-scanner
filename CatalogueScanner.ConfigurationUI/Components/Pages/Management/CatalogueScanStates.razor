@@ -4,6 +4,7 @@
 @using Microsoft.Extensions.Logging
 @using CatalogueScanner.ConfigurationUI.Service
 
+@inject ILogger<CatalogueScanStates> Logger
 @inject IStringLocalizer<CatalogueScanStates> S
 @inject CatalogueScanStateService CatalogueScanStateService
 @inject HttpExceptionHandlingService HttpExceptionHandlingService
