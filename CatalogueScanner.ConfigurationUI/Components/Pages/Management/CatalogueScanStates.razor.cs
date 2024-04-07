@@ -66,7 +66,7 @@ public sealed partial class CatalogueScanStates : IDisposable
             return;
         }
 
-        var startOfWeek = new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Monday, TimeZoneInfo.Local);
+        var startOfWeek = new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Monday, TimeProvider.LocalTimeZone);
         var now = TimeProvider.GetLocalNow();
 
         var lastOperationFrom = TimeProvider.ToLocalDateTime(startOfWeek.GetPreviousDate(now));
