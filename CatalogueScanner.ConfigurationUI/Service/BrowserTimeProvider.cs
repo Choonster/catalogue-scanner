@@ -28,7 +28,7 @@ public sealed class BrowserTimeProvider : TimeProvider
             && !(TimeZoneInfo.TryConvertIanaIdToWindowsId(timeZone, out var windowsId) && TimeZoneInfo.TryFindSystemTimeZoneById(windowsId, out timeZoneInfo))
         )
         {
-            logger.CouldntFindTimeZone(timeZone, windowsId, base.LocalTimeZone.Id);
+            logger.CouldntFindTimeZone(timeZone, windowsId, base.LocalTimeZone.Id, TimeZoneInfo.GetSystemTimeZones().Select(tz => tz.Id));
 
             timeZoneInfo = null;
         }
