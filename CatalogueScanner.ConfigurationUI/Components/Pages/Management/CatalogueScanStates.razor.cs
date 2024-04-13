@@ -178,7 +178,7 @@ public sealed partial class CatalogueScanStates : IDisposable
                     pageInfo,
                     lastOperationFrom,
                     lastOperationTo
-                );                
+                );
 
                 var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request, cancellationToken).ConfigureAwait(true)
                     ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
@@ -202,6 +202,12 @@ public sealed partial class CatalogueScanStates : IDisposable
             catch (HttpRequestException e)
             {
                 await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "List Catalogue Scan States request failed").ConfigureAwait(true);
+            }
+            catch (OperationCanceledException e)
+            {
+                Logger.LogInformation(e, "LoadServerData - Cancellation requested in exception");
+
+                throw;
             }
         }
 
