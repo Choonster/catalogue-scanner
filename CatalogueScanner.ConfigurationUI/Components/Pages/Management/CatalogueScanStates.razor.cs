@@ -108,11 +108,12 @@ public sealed partial class CatalogueScanStates : IDisposable
 
             await table.ReloadServerData().ConfigureAwait(true);
         }
+#pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception e)
         {
-            Logger.LogError(e, "Exception in OnDateRangeChanged");
-            throw;
+            await DispatchExceptionAsync(e).ConfigureAwait(true);
         }
+#pragma warning restore CA1031 // Do not catch general exception types
         finally
         {
             loading = false;
