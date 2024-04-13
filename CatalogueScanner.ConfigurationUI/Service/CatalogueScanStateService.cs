@@ -4,7 +4,7 @@ using CatalogueScanner.Core.Dto.Api.Result;
 
 namespace CatalogueScanner.ConfigurationUI.Service;
 
-public class CatalogueScanStateService(HttpClient httpClient, TokenProvider tokenProvider, ILogger<CatalogueScanStateService> logger) : BaseApiService(httpClient, tokenProvider, logger)
+public class CatalogueScanStateService(HttpClient httpClient, TokenProvider tokenProvider) : BaseApiService(httpClient, tokenProvider)
 {
     public async Task<ListEntityResult<CatalogueScanStateDto>?> ListCatalogueScanStatesAsync(ListEntityRequest listEntityRequest, CancellationToken cancellationToken = default) =>
         await PostAsync<ListEntityRequest, ListEntityResult<CatalogueScanStateDto>>("List", listEntityRequest, cancellationToken).ConfigureAwait(false);

@@ -6,16 +6,13 @@ namespace CatalogueScanner.ConfigurationUI.Service;
 
 public class BaseApiService
 {
-    private readonly ILogger<BaseApiService> logger;
-
     protected HttpClient HttpClient { get; }
 
-    public BaseApiService(HttpClient httpClient, TokenProvider tokenProvider, ILogger<BaseApiService> logger)
+    public BaseApiService(HttpClient httpClient, TokenProvider tokenProvider)
     {
         ArgumentNullException.ThrowIfNull(tokenProvider);
 
         HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        this.logger = logger;
         HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.Bearer, tokenProvider.AccessToken);
     }
 
@@ -41,10 +38,6 @@ public class BaseApiService
         // see https://github.com/Azure/azure-functions-host/issues/7930.
 
         using var content = JsonContent.Create(request);
-
-        var contentString = await content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-
-        logger.LogInformation("PostAsync: {Path} - {Request}", path, contentString);
 
         await content.LoadIntoBufferAsync().ConfigureAwait(false);
 

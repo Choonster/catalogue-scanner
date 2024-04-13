@@ -21,8 +21,6 @@ public sealed class BrowserTimeProvider : TimeProvider
 
     public void SetBrowserTimeZone(string timeZone)
     {
-        logger.LogInformation("SetBrowserTimeZone: {TimeZone}", timeZone);
-
         if (!TimeZoneInfo.TryFindSystemTimeZoneById(timeZone, out var timeZoneInfo))
         {
             TimeZoneInfo.TryConvertIanaIdToWindowsId(timeZone, out var windowsId);
@@ -31,8 +29,6 @@ public sealed class BrowserTimeProvider : TimeProvider
 
             timeZoneInfo = null;
         }
-
-        logger.LogInformation("Setting time zone to {TimeZone}", timeZoneInfo);
 
         if (timeZoneInfo != LocalTimeZone)
         {

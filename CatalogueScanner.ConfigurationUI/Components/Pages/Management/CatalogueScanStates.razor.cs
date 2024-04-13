@@ -4,8 +4,6 @@ using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.Core.Utility;
 using MudBlazor;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace CatalogueScanner.ConfigurationUI.Components.Pages.Management;
 
@@ -46,8 +44,6 @@ public sealed partial class CatalogueScanStates : IDisposable
             [ScanState.Failed] = S["Failed"],
         };
 
-        Logger.LogInformation("OnInitializedAsync - Has local time zone: {Value}", TimeProvider.IsLocalTimeZoneSet);
-
         if (TimeProvider.IsLocalTimeZoneSet)
         {
             LocalTimeZoneChanged(null, new EventArgs());
@@ -59,13 +55,13 @@ public sealed partial class CatalogueScanStates : IDisposable
     public void Dispose()
     {
         TimeProvider.LocalTimeZoneChanged -= LocalTimeZoneChanged;
+        
+        cancellationTokenSource.Cancel();
         cancellationTokenSource.Dispose();
     }
 
     private void LocalTimeZoneChanged(object? sender, EventArgs e)
     {
-        Logger.LogInformation("LocalTimeZoneChanged - Local time zone: {TimeZone}", TimeProvider.LocalTimeZone.DisplayName);
-
         if (lastOperation is not null)
         {
             return;
@@ -80,8 +76,6 @@ public sealed partial class CatalogueScanStates : IDisposable
 
         lastOperation = new MudBlazor.DateRange(lastOperationFrom, lastOperationTo);
 
-        Logger.LogInformation("LocalTimeZoneChanged - Last operation: {From} ({FromKind}) - {To} ({ToKind})", lastOperationFrom, lastOperationFrom.Kind, lastOperationTo, lastOperationTo.Kind);
-
         _ = InvokeAsync(StateHasChanged);
     }
 
@@ -89,16 +83,15 @@ public sealed partial class CatalogueScanStates : IDisposable
     {
         try
         {
+            loading = true;
+            
+            // Cancel any pending requests for the previous date range and create a new source for this date range
             await cancellationTokenSource.CancelAsync().ConfigureAwait(true);
             cancellationTokenSource.Dispose();
 
             cancellationTokenSource = new();
 
-            loading = true;
-
             lastOperation = lastOperationDateRange;
-
-            Logger.LogInformation("OnDateRangeChanged - Last operation: {From} ({FromKind}) - {To} ({ToKind})", lastOperation?.Start, lastOperation?.Start?.Kind, lastOperation?.End, lastOperation?.End?.Kind);
 
             isFinalPage = false;
             tablePageIndex = 0;
@@ -141,44 +134,21 @@ public sealed partial class CatalogueScanStates : IDisposable
 
         if (cancellationToken.IsCancellationRequested)
         {
-            Logger.LogInformation("LoadServerData - Cancellation requested at method start");
+            Logger.LoadServerDataCancellationRequested();
             return new();
         }
-
-        //Logger.LogInformation(
-        //    "LoadServerData - Before update - isFinalPage: {IsFinalPage}, tablePageIndex: {TablePageIndex}, PageSize: {PageSize}, loadedScanStates.Count: {LoadedScanStatesCount}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, lastOperation: {LastOperation}, tableState.Page: {TableStatePage}, tableState.PageSize: {TableStatePageSize}",
-        //    isFinalPage,
-        //    tablePageIndex,
-        //    PageSize,
-        //    loadedScanStates.Count,
-        //    GetMaxDataIndexForPage(tableState.Page),
-        //    lastOperation?.ToIsoDateString(),
-        //    tableState.Page,
-        //    tableState.PageSize
-        //);
 
         tablePageIndex = tableState.Page;
         PageSize = tableState.PageSize;
 
-        var shouldLoadData = !isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count;
-        Logger.LogInformation(
-            "LoadServerData - After update - isFinalPage: {isFinalPage}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, loadedScanStates.Count: {loadedScanStatesCount}, Final condition: {FinalCondition}",
-            isFinalPage,
-            GetMaxDataIndexForPage(tablePageIndex),
-            loadedScanStates.Count,
-            shouldLoadData
-        );
-
         // If we haven't loaded the final page of data and the new page would include data that hasn't been loaded yet, load the new page.
-        if (shouldLoadData)
+        if (!isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count)
         {
             try
             {
                 // Convert to UTC before serialising to preserve the local time zone
                 var lastOperationFrom = TimeProvider.ToUniversalDateTime(lastOperation?.Start);
                 var lastOperationTo = TimeProvider.ToUniversalDateTime(lastOperation?.End?.WithTime(23, 59, 59));
-
-                Logger.LogInformation("LoadServerData - Before request - lastOperationFrom: {LastOperationFrom}, lastOperationTo: {LastOperationTo}", lastOperationFrom, lastOperationTo);
 
                 var request = new ListEntityRequest(
                     pageInfo,
@@ -188,14 +158,6 @@ public sealed partial class CatalogueScanStates : IDisposable
 
                 var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request, cancellationToken).ConfigureAwait(true)
                     ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
-
-                Logger.LogInformation("LoadServerData - After request - lastOperationFrom: {LastOperationFrom}, lastOperationTo: {LastOperationTo}, result.Entities.Count: {ResultCount}, result.Page: {ResultPage}", lastOperationFrom, lastOperationTo, result.Entities.Count(), result.Page);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    Logger.LogInformation("LoadServerData - Cancellation requested after request");
-                    return new();
-                }
 
                 loadedScanStates.AddRange(result.Entities);
 
@@ -211,8 +173,7 @@ public sealed partial class CatalogueScanStates : IDisposable
             }
             catch (OperationCanceledException e)
             {
-                Logger.LogInformation(e, "LoadServerData - Cancellation requested in exception");
-
+                Logger.LoadServerDataOperationCanceledException(e);
                 return new();
             }
         }
