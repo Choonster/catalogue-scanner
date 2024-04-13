@@ -6,14 +6,16 @@ namespace CatalogueScanner.ConfigurationUI.Service;
 
 public class BaseApiService
 {
+    private readonly ILogger<BaseApiService> logger;
+
     protected HttpClient HttpClient { get; }
 
-    public BaseApiService(HttpClient httpClient, TokenProvider tokenProvider)
+    public BaseApiService(HttpClient httpClient, TokenProvider tokenProvider, ILogger<BaseApiService> logger)
     {
         ArgumentNullException.ThrowIfNull(tokenProvider);
 
         HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-
+        this.logger = logger;
         HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.Bearer, tokenProvider.AccessToken);
     }
 
@@ -36,6 +38,10 @@ public class BaseApiService
 
         using var content = JsonContent.Create(request);
         await content.LoadIntoBufferAsync().ConfigureAwait(false);
+
+        var contentString = content.ReadAsStringAsync().ConfigureAwait(false);
+
+        logger.LogInformation("PostAsync: {Path} - {Request}", path, contentString);
 
         var response = await HttpClient.PostAsync(new Uri(path, UriKind.Relative), content).ConfigureAwait(false);
 

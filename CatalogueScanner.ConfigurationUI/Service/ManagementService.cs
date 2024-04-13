@@ -1,6 +1,6 @@
 ﻿namespace CatalogueScanner.ConfigurationUI.Service;
 
-public class ManagementService(HttpClient httpClient, TokenProvider tokenProvider) : BaseApiService(httpClient, tokenProvider)
+public class ManagementService(HttpClient httpClient, TokenProvider tokenProvider, ILogger<ManagementService> logger) : BaseApiService(httpClient, tokenProvider, logger)
 {
     public async Task<IDictionary<string, string>?> GetCheckStatusEndpointsAsync(string? instanceId) =>
         await GetAsync<IDictionary<string, string>>($"CheckStatusEndpoints/{instanceId}").ConfigureAwait(false);
