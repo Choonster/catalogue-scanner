@@ -34,6 +34,22 @@ public static class TimeProviderExtensions
         ArgumentNullException.ThrowIfNull(timeProvider);
         #endregion
 
+        var requiredKind = DateTimeKind.Unspecified;
+
+        if (ReferenceEquals(timeProvider.LocalTimeZone, TimeZoneInfo.Local))
+        {
+            requiredKind = DateTimeKind.Local;
+        }
+        else if (ReferenceEquals(timeProvider.LocalTimeZone, TimeZoneInfo.Utc))
+        {
+            requiredKind = DateTimeKind.Utc;
+        }
+
+        if (dateTime.Kind != requiredKind)
+        {
+            dateTime = DateTime.SpecifyKind(dateTime, requiredKind);
+        }
+
         return TimeZoneInfo.ConvertTimeToUtc(dateTime, timeProvider.LocalTimeZone);
     }
 
