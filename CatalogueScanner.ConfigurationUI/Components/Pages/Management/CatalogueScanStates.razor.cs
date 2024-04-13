@@ -78,11 +78,11 @@ public sealed partial class CatalogueScanStates : IDisposable
 
         var lastOperationTo = TimeProvider.ToLocalDateTime(startOfWeek.GetNextDate(now).AddDays(-1));
 
-        var lastOperationLocal = new MudBlazor.DateRange(lastOperationFrom, lastOperationTo);
+        lastOperation = new MudBlazor.DateRange(lastOperationFrom, lastOperationTo);
 
         Logger.LogInformation("LocalTimeZoneChanged - Last operation: {From} ({FromKind}) - {To} ({ToKind})", lastOperationFrom, lastOperationFrom.Kind, lastOperationTo, lastOperationTo.Kind);
 
-        _ = InvokeAsync(() => OnDateRangeChanged(lastOperationLocal));
+        _ = InvokeAsync(StateHasChanged);
     }
 
     private async Task OnDateRangeChanged(MudBlazor.DateRange? lastOperationDateRange)
