@@ -27,4 +27,22 @@ public static class TimeProviderExtensions
         local = DateTime.SpecifyKind(local, DateTimeKind.Local);
         return local;
     }
+
+    public static DateTime ToUniversalDateTime(this TimeProvider timeProvider, DateTime dateTime)
+    {
+        #region null checks
+        ArgumentNullException.ThrowIfNull(timeProvider);
+        #endregion
+
+        return TimeZoneInfo.ConvertTimeToUtc(dateTime, timeProvider.LocalTimeZone);
+    }
+
+    public static DateTime? ToUniversalDateTime(this TimeProvider timeProvider, DateTime? dateTime)
+    {
+        #region null checks
+        ArgumentNullException.ThrowIfNull(timeProvider);
+        #endregion
+
+        return dateTime.HasValue ? timeProvider.ToUniversalDateTime(dateTime.Value) : null;
+    }
 }
