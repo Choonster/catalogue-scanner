@@ -138,6 +138,11 @@ public sealed partial class CatalogueScanStates : IDisposable
             return new();
         }
 
+        if (lastOperation is null)
+        {
+            return new();
+        }
+
         tablePageIndex = tableState.Page;
         PageSize = tableState.PageSize;
 
@@ -147,8 +152,8 @@ public sealed partial class CatalogueScanStates : IDisposable
             try
             {
                 // Convert to UTC before serialising to preserve the local time zone
-                var lastOperationFrom = TimeProvider.ToUniversalDateTime(lastOperation?.Start);
-                var lastOperationTo = TimeProvider.ToUniversalDateTime(lastOperation?.End?.WithTime(23, 59, 59));
+                var lastOperationFrom = TimeProvider.ToUniversalDateTime(lastOperation.Start);
+                var lastOperationTo = TimeProvider.ToUniversalDateTime(lastOperation.End?.WithTime(23, 59, 59));
 
                 var request = new ListEntityRequest(
                     pageInfo,
