@@ -55,7 +55,7 @@ public sealed partial class CatalogueScanStates : IDisposable
     public void Dispose()
     {
         TimeProvider.LocalTimeZoneChanged -= LocalTimeZoneChanged;
-        
+
         cancellationTokenSource.Cancel();
         cancellationTokenSource.Dispose();
     }
@@ -84,7 +84,7 @@ public sealed partial class CatalogueScanStates : IDisposable
         try
         {
             loading = true;
-            
+
             // Cancel any pending requests for the previous date range and create a new source for this date range
             await cancellationTokenSource.CancelAsync().ConfigureAwait(true);
             cancellationTokenSource.Dispose();
@@ -135,12 +135,12 @@ public sealed partial class CatalogueScanStates : IDisposable
         if (cancellationToken.IsCancellationRequested)
         {
             Logger.LoadServerDataCancellationRequested();
-            return new();
+            return Empty();
         }
 
         if (lastOperation is null)
         {
-            return new();
+            return Empty();
         }
 
         tablePageIndex = tableState.Page;
@@ -179,7 +179,7 @@ public sealed partial class CatalogueScanStates : IDisposable
             catch (OperationCanceledException e)
             {
                 Logger.LoadServerDataOperationCanceledException(e);
-                return new();
+                return Empty();
             }
         }
 
@@ -189,6 +189,12 @@ public sealed partial class CatalogueScanStates : IDisposable
                                     .Take(PageSize)
                                     .ToList(),
             TotalItems = GetTotalItems(),
+        };
+
+        static TableData<CatalogueScanStateDto> Empty() => new()
+        {
+            Items = [],
+            TotalItems = 0,
         };
     }
 
