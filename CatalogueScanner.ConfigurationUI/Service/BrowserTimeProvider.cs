@@ -1,14 +1,9 @@
 ﻿namespace CatalogueScanner.ConfigurationUI.Service;
 
 // https://www.meziantou.net/convert-datetime-to-user-s-time-zone-with-server-side-blazor-time-provider.htm
-public sealed class BrowserTimeProvider : TimeProvider
+public sealed class BrowserTimeProvider(ILogger<BrowserTimeProvider> logger) : TimeProvider
 {
-    private readonly ILogger<BrowserTimeProvider> logger;
-
-    public BrowserTimeProvider(ILogger<BrowserTimeProvider> logger)
-    {
-        this.logger = logger;
-    }
+    private readonly ILogger<BrowserTimeProvider> logger = logger;
 
     private TimeZoneInfo? browserLocalTimeZone;
 
