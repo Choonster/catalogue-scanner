@@ -7,14 +7,13 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.DurableTask.Client;
 using Microsoft.DurableTask.Client.Entities;
-using Microsoft.Extensions.Logging;
 
 namespace CatalogueScanner.Core.Functions.Api;
 
 /// <summary>
 /// Web API function that lists catalogue scan states.
 /// </summary>
-public class ListCatalogueScanStates
+public static class ListCatalogueScanStates
 {
     [Function(CoreFunctionNames.ListCatalogueScanStates)]
     public static async Task<HttpResponseData> Run(
@@ -32,10 +31,6 @@ public class ListCatalogueScanStates
         ArgumentNullException.ThrowIfNull(durableTaskClient);
         #endregion
 
-        var logger = request.FunctionContext.GetLogger<ListCatalogueScanStates>();
-
-        logger.LogWarning("Executing ListCatalogueScanStates. From: {LastModifiedFrom:o}, To: {LastModifiedTo:o}", listEntityRequest.LastModifiedFrom, listEntityRequest.LastModifiedTo);
-
         var query = new EntityQuery
         {
             InstanceIdStartsWith = CoreFunctionNames.CatalogueScanState,
@@ -52,7 +47,7 @@ public class ListCatalogueScanStates
 
         if (page is null)
         {
-            return await Response(Enumerable.Empty<CatalogueScanStateDto>(), null).ConfigureAwait(false);
+            return await Response([], null).ConfigureAwait(false);
         }
 
         var entities = page.Values.Select(metatada =>
