@@ -123,31 +123,32 @@ public sealed partial class CatalogueScanStates : IDisposable
 
     private async Task<TableData<CatalogueScanStateDto>> LoadServerData(TableState tableState)
     {
-        Logger.LogInformation(
-            "LoadServerData - Before update - isFinalPage: {IsFinalPage}, tablePageIndex: {TablePageIndex}, PageSize: {PageSize}, loadedScanStates.Count: {LoadedScanStatesCount}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, lastOperation: {LastOperation}, tableState.Page: {TableStatePage}, tableState.PageSize: {TableStatePageSize}",
-            isFinalPage,
-            tablePageIndex,
-            PageSize,
-            loadedScanStates.Count,
-            GetMaxDataIndexForPage(tableState.Page),
-            lastOperation?.ToIsoDateString(),
-            tableState.Page,
-            tableState.PageSize
-        );
+        //Logger.LogInformation(
+        //    "LoadServerData - Before update - isFinalPage: {IsFinalPage}, tablePageIndex: {TablePageIndex}, PageSize: {PageSize}, loadedScanStates.Count: {LoadedScanStatesCount}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, lastOperation: {LastOperation}, tableState.Page: {TableStatePage}, tableState.PageSize: {TableStatePageSize}",
+        //    isFinalPage,
+        //    tablePageIndex,
+        //    PageSize,
+        //    loadedScanStates.Count,
+        //    GetMaxDataIndexForPage(tableState.Page),
+        //    lastOperation?.ToIsoDateString(),
+        //    tableState.Page,
+        //    tableState.PageSize
+        //);
 
         tablePageIndex = tableState.Page;
         PageSize = tableState.PageSize;
 
+        var shouldLoadData = !isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count;
         Logger.LogInformation(
             "LoadServerData - After update - isFinalPage: {isFinalPage}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, loadedScanStates.Count: {loadedScanStatesCount}, Final condition: {FinalCondition}",
             isFinalPage,
             GetMaxDataIndexForPage(tablePageIndex),
             loadedScanStates.Count,
-            !isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count
+            shouldLoadData
         );
 
         // If we haven't loaded the final page of data and the new page would include data that hasn't been loaded yet, load the new page.
-        if (!isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count)
+        if (shouldLoadData)
         {
             try
             {
