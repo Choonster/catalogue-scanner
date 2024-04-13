@@ -5,7 +5,7 @@ namespace CatalogueScanner.ConfigurationUI.Components.Shared
 {
     public partial class MudItemSelectList<T> : MudBaseInput<T>
     {
-        [Parameter] public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
+        [Parameter] public IEnumerable<T> Items { get; set; } = [];
 
         /// <summary>
         /// The outer div's classnames, seperated by space.
