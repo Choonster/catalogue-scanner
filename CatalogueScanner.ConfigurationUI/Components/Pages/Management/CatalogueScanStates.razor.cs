@@ -124,19 +124,27 @@ public sealed partial class CatalogueScanStates : IDisposable
     private async Task<TableData<CatalogueScanStateDto>> LoadServerData(TableState tableState)
     {
         Logger.LogInformation(
-            "LoadServerData - isFinalPage: {IsFinalPage}, tablePageIndex: {TablePageIndex}, PageSize: {PageSize}, loadedScanStates.Count: {LoadedScanStatesCount}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, lastOperation: {LastOperation}, tableState.Page: {TableStatePage}, tableState.PageSize: {TableStatePageSize}",
+            "LoadServerData - Before update - isFinalPage: {IsFinalPage}, tablePageIndex: {TablePageIndex}, PageSize: {PageSize}, loadedScanStates.Count: {LoadedScanStatesCount}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, lastOperation: {LastOperation}, tableState.Page: {TableStatePage}, tableState.PageSize: {TableStatePageSize}",
             isFinalPage,
             tablePageIndex,
             PageSize,
             loadedScanStates.Count,
             GetMaxDataIndexForPage(tableState.Page),
-            lastOperation,
+            lastOperation?.ToIsoDateString(),
             tableState.Page,
             tableState.PageSize
         );
 
         tablePageIndex = tableState.Page;
         PageSize = tableState.PageSize;
+
+        Logger.LogInformation(
+            "LoadServerData - After update - isFinalPage: {isFinalPage}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, loadedScanStates.Count: {loadedScanStatesCount}, Final condition: {FinalCondition}",
+            isFinalPage,
+            GetMaxDataIndexForPage(tablePageIndex),
+            loadedScanStates.Count,
+            !isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count
+        );
 
         // If we haven't loaded the final page of data and the new page would include data that hasn't been loaded yet, load the new page.
         if (!isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count)
@@ -147,7 +155,7 @@ public sealed partial class CatalogueScanStates : IDisposable
                 var lastOperationFrom = TimeProvider.ToUniversalDateTime(lastOperation?.Start);
                 var lastOperationTo = TimeProvider.ToUniversalDateTime(lastOperation?.End?.WithTime(23, 59, 59));
 
-                Logger.LogInformation("LoadServerData - Last Operation - {LastOperation}", lastOperation);
+                Logger.LogInformation("LoadServerData - Before request - lastOperationFrom: {LastOperationFrom}, lastOperationTo: {LastOperationTo}", lastOperationFrom, lastOperationTo);
 
                 var request = new ListEntityRequest(
                     pageInfo,
@@ -157,6 +165,8 @@ public sealed partial class CatalogueScanStates : IDisposable
 
                 var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true)
                     ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
+
+                Logger.LogInformation("LoadServerData - After request - result.Entities.Count: {ResultCount}, result.Page: {ResultPage}", result.Entities.Count(), result.Page);
 
                 loadedScanStates.AddRange(result.Entities);
 
