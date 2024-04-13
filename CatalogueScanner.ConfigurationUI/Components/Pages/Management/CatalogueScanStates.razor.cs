@@ -75,6 +75,8 @@ public sealed partial class CatalogueScanStates : IDisposable
 
         lastOperation = new(lastOperationFrom, lastOperationTo);
 
+        Logger.LogInformation("Last operation: {From:O} - {To:O}", lastOperationFrom, lastOperationTo);
+
         _ = InvokeAsync(StateHasChanged);
     }
 
