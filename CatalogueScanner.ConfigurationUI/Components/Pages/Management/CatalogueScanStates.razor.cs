@@ -108,6 +108,11 @@ public sealed partial class CatalogueScanStates : IDisposable
 
             await table.ReloadServerData().ConfigureAwait(true);
         }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "Exception in OnDateRangeChanged");
+            throw;
+        }
         finally
         {
             loading = false;
