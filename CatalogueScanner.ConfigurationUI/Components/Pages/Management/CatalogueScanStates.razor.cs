@@ -44,7 +44,7 @@ public sealed partial class CatalogueScanStates : IDisposable
             [ScanState.Failed] = S["Failed"],
         };
 
-        Logger.LogInformation("Has local time zone: {Value}", TimeProvider.IsLocalTimeZoneSet);
+        Logger.LogInformation("OnInitializedAsync - Has local time zone: {Value}", TimeProvider.IsLocalTimeZoneSet);
 
         if (TimeProvider.IsLocalTimeZoneSet)
         {
@@ -61,7 +61,7 @@ public sealed partial class CatalogueScanStates : IDisposable
 
     private void LocalTimeZoneChanged(object? sender, EventArgs e)
     {
-        Logger.LogInformation("Local time zone: {TimeZone}", TimeProvider.LocalTimeZone.DisplayName);
+        Logger.LogInformation("LocalTimeZoneChanged - Local time zone: {TimeZone}", TimeProvider.LocalTimeZone.DisplayName);
 
         if (lastOperation is not null)
         {
@@ -75,11 +75,11 @@ public sealed partial class CatalogueScanStates : IDisposable
 
         var lastOperationTo = TimeProvider.ToLocalDateTime(startOfWeek.GetNextDate(now).AddDays(-1));
 
-        lastOperation = new(lastOperationFrom, lastOperationTo);
+        var lastOperationLocal = new MudBlazor.DateRange(lastOperationFrom, lastOperationTo);
 
-        Logger.LogInformation("Last operation: {From} ({FromKind}) - {To} ({ToKind})", lastOperationFrom, lastOperationFrom.Kind, lastOperationTo, lastOperationTo.Kind);
+        Logger.LogInformation("LocalTimeZoneChanged - Last operation: {From} ({FromKind}) - {To} ({ToKind})", lastOperationFrom, lastOperationFrom.Kind, lastOperationTo, lastOperationTo.Kind);
 
-        _ = InvokeAsync(() => OnDateRangeChanged(lastOperation));
+        _ = InvokeAsync(() => OnDateRangeChanged(lastOperationLocal));
     }
 
     private async Task OnDateRangeChanged(MudBlazor.DateRange? lastOperationDateRange)
