@@ -19,7 +19,7 @@ public class BaseApiService
         HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Constants.Bearer, tokenProvider.AccessToken);
     }
 
-    protected async Task<TResponse?> GetAsync<TResponse>(string path, IDictionary<string, string?>? parameters = null, CancellationToken cancellationToken)
+    protected async Task<TResponse?> GetAsync<TResponse>(string path, IDictionary<string, string?>? parameters = null, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -32,7 +32,7 @@ public class BaseApiService
         return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken).ConfigureAwait(false);
     }
 
-    protected async Task<TResponse?> PostAsync<TRequest, TResponse>(string path, TRequest? request, CancellationToken cancellationToken)
+    protected async Task<TResponse?> PostAsync<TRequest, TResponse>(string path, TRequest? request, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
