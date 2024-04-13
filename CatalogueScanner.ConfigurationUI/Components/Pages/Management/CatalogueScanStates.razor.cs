@@ -79,7 +79,7 @@ public sealed partial class CatalogueScanStates : IDisposable
 
         Logger.LogInformation("Last operation: {From} ({FromKind}) - {To} ({ToKind})", lastOperationFrom, lastOperationFrom.Kind, lastOperationTo, lastOperationTo.Kind);
 
-        _ = InvokeAsync(StateHasChanged);
+        _ = InvokeAsync(() => OnDateRangeChanged(lastOperation));
     }
 
     private async Task OnDateRangeChanged(MudBlazor.DateRange? lastOperationDateRange)
