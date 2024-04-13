@@ -4,6 +4,8 @@ using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.Core.Utility;
 using MudBlazor;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CatalogueScanner.ConfigurationUI.Components.Pages.Management;
 
@@ -133,11 +135,13 @@ public sealed partial class CatalogueScanStates : IDisposable
                 var lastOperationFrom = TimeProvider.ToUniversalDateTime(lastOperation?.Start);
                 var lastOperationTo = TimeProvider.ToUniversalDateTime(lastOperation?.End?.WithTime(23, 59, 59));
 
+                Logger.LogInformation("LoadServerData - Last Operation - {LastOperation}", lastOperation);
+
                 var request = new ListEntityRequest(
                     pageInfo,
                     lastOperationFrom,
                     lastOperationTo
-                );
+                );                
 
                 var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true)
                     ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
