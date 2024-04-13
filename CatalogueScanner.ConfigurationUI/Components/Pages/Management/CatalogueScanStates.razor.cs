@@ -18,6 +18,8 @@ public sealed partial class CatalogueScanStates : IDisposable
 
     private int tablePageIndex;
 
+    private CancellationTokenSource cancellationTokenSource = new();
+
     private readonly List<CatalogueScanStateDto> loadedScanStates = [];
 
     private PageInfo pageInfo = new(PageSize: 10);
@@ -57,6 +59,7 @@ public sealed partial class CatalogueScanStates : IDisposable
     public void Dispose()
     {
         TimeProvider.LocalTimeZoneChanged -= LocalTimeZoneChanged;
+        cancellationTokenSource.Dispose();
     }
 
     private void LocalTimeZoneChanged(object? sender, EventArgs e)
@@ -86,6 +89,11 @@ public sealed partial class CatalogueScanStates : IDisposable
     {
         try
         {
+            await cancellationTokenSource.CancelAsync().ConfigureAwait(true);
+            cancellationTokenSource.Dispose();
+
+            cancellationTokenSource = new();
+
             loading = true;
 
             lastOperation = lastOperationDateRange;
@@ -123,6 +131,14 @@ public sealed partial class CatalogueScanStates : IDisposable
 
     private async Task<TableData<CatalogueScanStateDto>> LoadServerData(TableState tableState)
     {
+        var cancellationToken = cancellationTokenSource.Token;
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            Logger.LogInformation("LoadServerData - Cancellation requested at method start");
+            throw new OperationCanceledException();
+        }
+
         //Logger.LogInformation(
         //    "LoadServerData - Before update - isFinalPage: {IsFinalPage}, tablePageIndex: {TablePageIndex}, PageSize: {PageSize}, loadedScanStates.Count: {LoadedScanStatesCount}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, lastOperation: {LastOperation}, tableState.Page: {TableStatePage}, tableState.PageSize: {TableStatePageSize}",
         //    isFinalPage,
@@ -164,10 +180,16 @@ public sealed partial class CatalogueScanStates : IDisposable
                     lastOperationTo
                 );                
 
-                var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true)
+                var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request, cancellationToken).ConfigureAwait(true)
                     ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
 
                 Logger.LogInformation("LoadServerData - After request - lastOperationFrom: {LastOperationFrom}, lastOperationTo: {LastOperationTo}, result.Entities.Count: {ResultCount}, result.Page: {ResultPage}", lastOperationFrom, lastOperationTo, result.Entities.Count(), result.Page);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    Logger.LogInformation("LoadServerData - Cancellation requested after request");
+                    throw new OperationCanceledException();
+                }
 
                 loadedScanStates.AddRange(result.Entities);
 
