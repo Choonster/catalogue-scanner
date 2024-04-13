@@ -39,7 +39,7 @@ public class BaseApiService
         using var content = JsonContent.Create(request);
         await content.LoadIntoBufferAsync().ConfigureAwait(false);
 
-        var contentString = content.ReadAsStringAsync().ConfigureAwait(false);
+        var contentString = await content.ReadAsStringAsync().ConfigureAwait(false);
 
         logger.LogInformation("PostAsync: {Path} - {Request}", path, contentString);
 
