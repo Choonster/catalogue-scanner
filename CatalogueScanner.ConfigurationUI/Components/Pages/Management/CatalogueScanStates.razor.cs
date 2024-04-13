@@ -166,7 +166,7 @@ public sealed partial class CatalogueScanStates : IDisposable
                 var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true)
                     ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
 
-                Logger.LogInformation("LoadServerData - After request - result.Entities.Count: {ResultCount}, result.Page: {ResultPage}", result.Entities.Count(), result.Page);
+                Logger.LogInformation("LoadServerData - After request - lastOperationFrom: {LastOperationFrom}, lastOperationTo: {LastOperationTo}, result.Entities.Count: {ResultCount}, result.Page: {ResultPage}", lastOperationFrom, lastOperationTo, result.Entities.Count(), result.Page);
 
                 loadedScanStates.AddRange(result.Entities);
 
@@ -178,7 +178,7 @@ public sealed partial class CatalogueScanStates : IDisposable
             }
             catch (HttpRequestException e)
             {
-                await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "List Catalogue Scan States request failed").ConfigureAwait(false);
+                await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "List Catalogue Scan States request failed").ConfigureAwait(true);
             }
         }
 
@@ -202,7 +202,7 @@ public sealed partial class CatalogueScanStates : IDisposable
         }
         catch (HttpRequestException e)
         {
-            await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Reset Scan State request failed").ConfigureAwait(false);
+            await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Reset Scan State request failed").ConfigureAwait(true);
         }
         finally
         {
