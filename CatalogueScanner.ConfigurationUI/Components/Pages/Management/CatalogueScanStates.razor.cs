@@ -88,6 +88,8 @@ public sealed partial class CatalogueScanStates : IDisposable
 
             lastOperation = lastOperationDateRange;
 
+            Logger.LogInformation("OnDateRangeChanged - Last operation: {From} ({FromKind}) - {To} ({ToKind})", lastOperation?.Start, lastOperation?.Start?.Kind, lastOperation?.End, lastOperation?.End?.Kind);
+
             isFinalPage = false;
             tablePageIndex = 0;
             pageInfo = pageInfo with { ContinuationToken = null };
