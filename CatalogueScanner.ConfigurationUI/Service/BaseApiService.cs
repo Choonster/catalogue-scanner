@@ -37,11 +37,12 @@ public class BaseApiService
         // see https://github.com/Azure/azure-functions-host/issues/7930.
 
         using var content = JsonContent.Create(request);
-        await content.LoadIntoBufferAsync().ConfigureAwait(false);
 
         var contentString = await content.ReadAsStringAsync().ConfigureAwait(false);
 
         logger.LogInformation("PostAsync: {Path} - {Request}", path, contentString);
+
+        await content.LoadIntoBufferAsync().ConfigureAwait(false);
 
         var response = await HttpClient.PostAsync(new Uri(path, UriKind.Relative), content).ConfigureAwait(false);
 
