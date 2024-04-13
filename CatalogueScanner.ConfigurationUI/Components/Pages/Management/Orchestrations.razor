@@ -6,45 +6,45 @@
 
 @inject ManagementService ManagementService
 @inject HttpExceptionHandlingService HttpExceptionHandlingService
-@inject IMatToaster Toaster
+@inject ISnackbar Snackbar
 @inject TokenProvider TokenProvider
 @inject ClipboardService Clipboard
 
 <div class="loading-spinner-container">
-    <MatH3 Class="table-page-header">Orchestration Management</MatH3>
+    <MudText Typo="Typo.h3" Class="table-page-header">Orchestration Management</MudText>
 
     <section>
-        <EditForm class="inline-form-row" Model="this" OnValidSubmit="LoadCheckStatusEndpoints">
-            <MatInputTextComponent @bind-Value="instanceId" Label="Instance ID" Required />
+        <EditForm Model="this" OnValidSubmit="LoadCheckStatusEndpoints" class="inline-form-row">
+            <MudTextField Variant="Variant.Outlined" @bind-Value="instanceId" Label="Instance ID" Required />
 
-            <MatButton Type="submit">Load Check Status Endpoints</MatButton>
+            <MudButton ButtonType="ButtonType.Submit">Load Check Status Endpoints</MudButton>
         </EditForm>
 
         @if (endpoints is not null)
         {
-            <MatTable Items="endpoints" ShowPaging="false">
-                <MatTableHeader>
-                    <th>Name</th>
-                    <th>Value</th>
-                    <th></th>
-                </MatTableHeader>
+            <MudTable Items="endpoints">
+                <HeaderContent>
+                    <MudTh>Name</MudTh>
+                    <MudTh>Value</MudTh>
+                    <MudTh></MudTh>
+                </HeaderContent>
 
-                <MatTableRow Context="endpoint">
-                    <td>@endpoint.Key</td>
-                    <td>@endpoint.Value</td>
-                    <td>
+                <RowTemplate Context="endpoint">
+                    <MudTd>@endpoint.Key</MudTd>
+                    <MudTd>@endpoint.Value</MudTd>
+                    <MudTd>
                         @if (endpoint.Key.Contains("Uri"))
                         {
-                            <MatButton OnClick="@(args => CopyPowerShellRequest(endpoint.Key))">Copy PowerShell Request Script</MatButton>
+                            <MudButton OnClick="@(args => CopyPowerShellRequest(endpoint.Key))">Copy PowerShell Request Script</MudButton>
                         }
-                    </td>
-                </MatTableRow>
-            </MatTable>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
         }
     </section>
 
     <section>
-        <MatButton OnClick=@(args => CleanEntityStorage())>Clean Entity Storage</MatButton>
+        <MudButton OnClick=@(args => CleanEntityStorage())>Clean Entity Storage</MudButton>
     </section>
 
     @if (loading)

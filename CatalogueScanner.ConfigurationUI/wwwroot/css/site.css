@@ -13,27 +13,8 @@ app {
     height: 100%;
 }
 
-
-.mdc-dialog .full-page-dialog.mdc-dialog__surface {
-    width: 100vw;
-    height: 100%;
-    max-height: 100% !important;
-    max-width: 100% !important;
-}
-
-.mdc-dialog .full-page-dialog .mdc-dialog__content {
-    color: unset;
-    font-family: unset;
-    font-size: unset;
-    line-height: unset;
-    font-weight: unset;
-    letter-spacing: unset;
-    text-decoration: unset;
-    text-transform: unset;
-}
-
-.mdc-dialog .dialog-root-passthrough {
-    display: contents;
+.mud-typography-h3 {
+    margin-block: 0.5em;
 }
 
 
@@ -80,28 +61,18 @@ app {
     }
 
 
-#blazor-error-ui {
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
-}
-
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
-
-
 @media (min-width: 768px) {
     app {
         flex-direction: row;
+    }
+}
+
+@media (min-width : 960px) {
+    .mud-input-control {
+        max-width: 300px;
+    }
+
+    .mud-picker .mud-input-control {
+        max-width: unset;
     }
 }

@@ -3,18 +3,20 @@ using CatalogueScanner.Core.Dto.Api;
 using CatalogueScanner.Core.Dto.Api.Request;
 using CatalogueScanner.Core.Functions.Entity;
 using CatalogueScanner.Core.Utility;
-using MatBlazor;
+using MudBlazor;
 
 namespace CatalogueScanner.ConfigurationUI.Components.Pages.Management;
 
-public partial class CatalogueScanStates
+public sealed partial class CatalogueScanStates : IDisposable
 {
+    private MudTable<CatalogueScanStateDto> table = null!;
     private Dictionary<ScanState, string?> scanStateLabels = [];
 
     private bool loading;
 
-    private List<CatalogueScanStateDto> tableData = [];
     private int tablePageIndex;
+
+    private CancellationTokenSource cancellationTokenSource = new();
 
     private readonly List<CatalogueScanStateDto> loadedScanStates = [];
 
@@ -22,29 +24,12 @@ public partial class CatalogueScanStates
     private bool isFinalPage;
     private bool hasNoData;
 
-    private DateTime? lastOperationFrom;
-    private DateTime? lastOperationTo;
+    private MudBlazor.DateRange? lastOperation;
 
     private int PageSize
     {
         get => pageInfo.PageSize;
         set => pageInfo = pageInfo with { PageSize = value };
-    }
-
-    private int PaginatorLength
-    {
-        get
-        {
-            // If we've already loaeded the final page of data, return the real count
-            if (isFinalPage)
-            {
-                return loadedScanStates.Count;
-            }
-
-            // Otherwise return the equivalent of one more page than the currently loaded data
-            var currentPageCount = loadedScanStates.Count / PageSize;
-            return (currentPageCount + 1) * PageSize;
-        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -59,121 +44,176 @@ public partial class CatalogueScanStates
             [ScanState.Failed] = S["Failed"],
         };
 
-        var startOfWeek = new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Monday, TimeZoneInfo.Local);
-        var now = DateTimeOffset.Now;
-
-        lastOperationFrom = startOfWeek
-            .GetPreviousDate(now)
-            .LocalDateTime;
-
-        lastOperationTo = startOfWeek
-            .GetNextDate(now)
-            .LocalDateTime
-            .AddDays(-1);
-
-        await OnPage(new MatPaginatorPageEvent { PageIndex = 0, PageSize = PageSize, Length = 0 }).ConfigureAwait(true);
-    }
-
-    private async Task OnFromDateChanged(DateTime? lastOperationFrom)
-    {
-        this.lastOperationFrom = lastOperationFrom;
-
-        await OnDateRangeChanged().ConfigureAwait(true);
-    }
-
-    private async Task OnToDateChanged(DateTime? lastOperationTo)
-    {
-        this.lastOperationTo = lastOperationTo;
-
-        await OnDateRangeChanged().ConfigureAwait(true);
-    }
-
-    private async Task OnDateRangeChanged()
-    {
-        isFinalPage = false;
-        tablePageIndex = 0;
-        pageInfo = pageInfo with { ContinuationToken = null };
-
-        await LoadScanStates(resetData: true).ConfigureAwait(true);
-
-        UpdateTableData();
-    }
-
-    private async Task OnPage(MatPaginatorPageEvent e)
-    {
-        tablePageIndex = e.PageIndex;
-        PageSize = e.PageSize;
-
-        // If we haven't loaded the final page of data and the new page would include data that hasn't been loaded yet, load the new page.
-        if (!isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count)
+        if (TimeProvider.IsLocalTimeZoneSet)
         {
-            await LoadScanStates(resetData: false).ConfigureAwait(true);
+            LocalTimeZoneChanged(null, new EventArgs());
         }
 
-        UpdateTableData();
+        TimeProvider.LocalTimeZoneChanged += LocalTimeZoneChanged;
+    }
+
+    public void Dispose()
+    {
+        TimeProvider.LocalTimeZoneChanged -= LocalTimeZoneChanged;
+
+        cancellationTokenSource.Cancel();
+        cancellationTokenSource.Dispose();
+    }
+
+    private void LocalTimeZoneChanged(object? sender, EventArgs e)
+    {
+        if (lastOperation is not null)
+        {
+            return;
+        }
+
+        var startOfWeek = new TimeOfWeek(TimeSpan.Zero, DayOfWeek.Monday, TimeProvider.LocalTimeZone);
+        var now = TimeProvider.GetLocalNow();
+
+        var lastOperationFrom = TimeProvider.ToLocalDateTime(startOfWeek.GetPreviousDate(now));
+
+        var lastOperationTo = TimeProvider.ToLocalDateTime(startOfWeek.GetNextDate(now).AddDays(-1));
+
+        lastOperation = new MudBlazor.DateRange(lastOperationFrom, lastOperationTo);
+
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnDateRangeChanged(MudBlazor.DateRange? lastOperationDateRange)
+    {
+        try
+        {
+            loading = true;
+
+            // Cancel any pending requests for the previous date range and create a new source for this date range
+            await cancellationTokenSource.CancelAsync().ConfigureAwait(true);
+            cancellationTokenSource.Dispose();
+
+            cancellationTokenSource = new();
+
+            lastOperation = lastOperationDateRange;
+
+            isFinalPage = false;
+            tablePageIndex = 0;
+            pageInfo = pageInfo with { ContinuationToken = null };
+
+            loadedScanStates.Clear();
+
+            await table.ReloadServerData().ConfigureAwait(true);
+        }
+#pragma warning disable CA1031 // Do not catch general exception types
+        catch (Exception e)
+        {
+            await DispatchExceptionAsync(e).ConfigureAwait(true);
+        }
+#pragma warning restore CA1031 // Do not catch general exception types
+        finally
+        {
+            loading = false;
+        }
     }
 
     private int GetMaxDataIndexForPage(int pageIndex) => (pageIndex + 1) * PageSize - 1;
 
-    private void UpdateTableData()
+    private int GetTotalItems()
     {
-        tableData = loadedScanStates.Skip(tablePageIndex * PageSize)
-                                    .Take(PageSize)
-                                    .ToList();
+        // If we've already loaeded the final page of data, return the real count
+        if (isFinalPage)
+        {
+            return loadedScanStates.Count;
+        }
+
+        // Otherwise return the equivalent of one more page than the currently loaded data
+        var currentPageCount = loadedScanStates.Count / PageSize;
+        return (currentPageCount + 1) * PageSize;
     }
 
-    private async Task LoadScanStates(bool resetData)
+    private async Task<TableData<CatalogueScanStateDto>> LoadServerData(TableState tableState)
     {
-        loading = true;
+        var cancellationToken = cancellationTokenSource.Token;
 
-        try
+        if (cancellationToken.IsCancellationRequested)
         {
-            var request = new ListEntityRequest(
-                pageInfo,
-                lastOperationFrom,
-                lastOperationTo?.WithTime(23, 59, 59)
-            );
+            Logger.LoadServerDataCancellationRequested();
+            return Empty();
+        }
 
-            var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request).ConfigureAwait(true)
-                ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
+        if (lastOperation is null)
+        {
+            return Empty();
+        }
 
-            if (resetData)
+        tablePageIndex = tableState.Page;
+        PageSize = tableState.PageSize;
+
+        // If we haven't loaded the final page of data and the new page would include data that hasn't been loaded yet, load the new page.
+        if (!isFinalPage && GetMaxDataIndexForPage(tablePageIndex) >= loadedScanStates.Count)
+        {
+            try
             {
-                loadedScanStates.Clear();
+                // Convert to UTC before serialising to preserve the local time zone
+                var lastOperationFrom = TimeProvider.ToUniversalDateTime(lastOperation.Start);
+                var lastOperationTo = TimeProvider.ToUniversalDateTime(lastOperation.End?.WithTime(23, 59, 59));
+
+                var request = new ListEntityRequest(
+                    pageInfo,
+                    lastOperationFrom,
+                    lastOperationTo
+                );
+
+                var result = await CatalogueScanStateService.ListCatalogueScanStatesAsync(request, cancellationToken).ConfigureAwait(true)
+                    ?? throw new InvalidOperationException("List Catalogue Scan States request returned no response");
+
+                loadedScanStates.AddRange(result.Entities);
+
+                hasNoData = loadedScanStates.Count == 0;
+
+                pageInfo = pageInfo with { ContinuationToken = result.Page.ContinuationToken };
+
+                isFinalPage = pageInfo.ContinuationToken is null;
             }
-
-            loadedScanStates.AddRange(
-                result.Entities.Select(scanState => scanState with { LastModifiedTime = scanState.LastModifiedTime.ToLocalTime() })
-            );
-
-            hasNoData = loadedScanStates.Count == 0;
-
-            pageInfo = pageInfo with { ContinuationToken = result.Page.ContinuationToken };
-
-            isFinalPage = pageInfo.ContinuationToken is null;
+            catch (HttpRequestException e)
+            {
+                await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "List Catalogue Scan States request failed").ConfigureAwait(true);
+            }
+            catch (OperationCanceledException e)
+            {
+                Logger.LoadServerDataOperationCanceledException(e);
+                return Empty();
+            }
         }
-        catch (HttpRequestException e)
+
+        return new()
         {
-            await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "List Catalogue Scan States request failed").ConfigureAwait(false);
-        }
+            Items = loadedScanStates.Skip(tablePageIndex * PageSize)
+                                    .Take(PageSize)
+                                    .ToList(),
+            TotalItems = GetTotalItems(),
+        };
 
-        loading = false;
+        static TableData<CatalogueScanStateDto> Empty() => new()
+        {
+            Items = [],
+            TotalItems = 0,
+        };
     }
 
     private async Task ResetScanState(CatalogueScanStateDto scanState)
     {
-        loading = true;
-
         try
         {
+            loading = true;
+
             scanState = scanState with { ScanState = ScanState.NotStarted };
             await CatalogueScanStateService.UpdateCatalogueScanStateAsync(scanState).ConfigureAwait(true);
         }
         catch (HttpRequestException e)
         {
-            await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Reset Scan State request failed").ConfigureAwait(false);
+            await HttpExceptionHandlingService.HandleHttpExceptionAsync(e, "Reset Scan State request failed").ConfigureAwait(true);
         }
-
-        loading = false;
+        finally
+        {
+            loading = false;
+        }
     }
 }

@@ -1,11 +1,11 @@
-﻿using MatBlazor;
-using Microsoft.Identity.Web;
+﻿using Microsoft.Identity.Web;
 using Microsoft.JSInterop;
+using MudBlazor;
 using System.Net;
 
 namespace CatalogueScanner.ConfigurationUI.Service;
 
-public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogService matDialogService, ILogger<HttpExceptionHandlingService> logger, TokenProvider tokenProvider)
+public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IDialogService dialogService, ILogger<HttpExceptionHandlingService> logger, TokenProvider tokenProvider)
 {
     public async Task HandleHttpExceptionAsync(HttpRequestException exception, string friendlyErrorMessage)
     {
@@ -28,16 +28,16 @@ public class HttpExceptionHandlingService(IJSRuntime jsRuntime, IMatDialogServic
 
             fullMessage += $"\n\nToken: {tokenProvider.AccessToken}";
 
-            var shouldRefresh = await matDialogService.ConfirmAsync(fullMessage).ConfigureAwait(false);
+            var shouldRefresh = await dialogService.ShowMessageBox(friendlyErrorMessage, fullMessage, yesText: "Yes", noText: "No").ConfigureAwait(false);
 
-            if (shouldRefresh)
+            if (shouldRefresh == true)
             {
                 await jsRuntime.InvokeVoidAsync("blazorClearAppServicesAuthenticationSession").ConfigureAwait(false);
             }
         }
         else
         {
-            await matDialogService.AlertAsync(fullMessage).ConfigureAwait(false);
+            await dialogService.ShowMessageBox(friendlyErrorMessage, fullMessage).ConfigureAwait(false);
         }
     }
 }

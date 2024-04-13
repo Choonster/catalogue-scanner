@@ -1,1 +1,11 @@
-﻿
+﻿.date-range-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px
+}
+
+    .date-range-row ::deep .date-range-picker {
+        flex-grow: 0;
+        flex-shrink: 1;
+        margin-right: 10px;
+    }

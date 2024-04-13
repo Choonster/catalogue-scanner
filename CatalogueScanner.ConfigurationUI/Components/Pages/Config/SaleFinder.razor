@@ -12,35 +12,35 @@
 @inject IOptionsSnapshot<IgaOptions> IgaOptionsAccessor;
 
 <section>
-    <MatH3>Coles</MatH3>
+    <MudText Typo="Typo.h3">Coles</MudText>
 
-    <EditForm Model="ColesOptions" OnValidSubmit="SaveColesOptions">
-        <MatNumericUpDownField Label="Sale Finder Location ID" @bind-Value="ColesOptions.SaleFinderLocationId">
-        </MatNumericUpDownField>
+    <EditForm Model="ColesOptions" OnValidSubmit="SaveColesOptions" class="inline-form-row">
+        <MudNumericField Variant="Variant.Outlined" Label="Sale Finder Location ID" @bind-Value="ColesOptions.SaleFinderLocationId">
+        </MudNumericField>
 
-        <MatButton Type="submit">Save</MatButton>
+        <MudButton ButtonType="ButtonType.Submit">Save</MudButton>
     </EditForm>
 </section>
 
 <section>
-    <MatH3>Woolworths</MatH3>
+    <MudText Typo="Typo.h3">Woolworths</MudText>
 
-    <EditForm Model="WoolworthsOptions" OnValidSubmit="SaveWoolworthsOptions">
-        <MatNumericUpDownField Label="Sale Finder Location ID" @bind-Value="WoolworthsOptions.SaleFinderLocationId">
-        </MatNumericUpDownField>
+    <EditForm Model="WoolworthsOptions" OnValidSubmit="SaveWoolworthsOptions" class="inline-form-row">
+        <MudNumericField Variant="Variant.Outlined" Label="Sale Finder Location ID" @bind-Value="WoolworthsOptions.SaleFinderLocationId">
+        </MudNumericField>
 
-        <MatButton Type="submit">Save</MatButton>
+        <MudButton ButtonType="ButtonType.Submit">Save</MudButton>
     </EditForm>
 </section>
 
 <section>
-    <MatH3>IGA</MatH3>
+    <MudText Typo="Typo.h3">IGA</MudText>
 
-    <EditForm Model="IgaOptions" OnValidSubmit="SaveIgaOptions">
-        <MatNumericUpDownField Label="Sale Finder Location ID" @bind-Value="IgaOptions.SaleFinderLocationId">
-        </MatNumericUpDownField>
+    <EditForm Model="IgaOptions" OnValidSubmit="SaveIgaOptions" class="inline-form-row">
+        <MudNumericField Variant="Variant.Outlined" Label="Sale Finder Location ID" @bind-Value="IgaOptions.SaleFinderLocationId">
+        </MudNumericField>
 
-        <MatButton Type="submit">Save</MatButton>
+        <MudButton ButtonType="ButtonType.Submit">Save</MudButton>
     </EditForm>
 </section>
 

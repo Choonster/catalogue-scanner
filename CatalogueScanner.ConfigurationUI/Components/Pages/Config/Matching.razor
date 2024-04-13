@@ -9,12 +9,12 @@
 @inject NavigationManager NavigationManager;
 
 <div class="matching-header-row">
-    <MatH3 Class="matching-header table-page-header">Matching Options</MatH3>
+    <MudText Typo="Typo.h3" Class="matching-header table-page-header">Matching Options</MudText>
 
     <div class="matching-header-buttons">
-        <MatButton OnClick="AddSinglePropertyRule" Class="matching-add-single-button">Add Single Property Rule</MatButton>
-        <MatButton OnClick="AddCompoundRule" Class="matching-add-compound-button">Add Compound Rule</MatButton>
-        <MatButton Raised="true" Class="matching-save-button" OnClick="Save">Save</MatButton>
+        <MudButton OnClick="AddSinglePropertyRule" Color="Color.Primary" Class="matching-add-single-button">Add Single Property Rule</MudButton>
+        <MudButton OnClick="AddCompoundRule" Color="Color.Primary" Class="matching-add-compound-button">Add Compound Rule</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="matching-save-button" OnClick="Save">Save</MudButton>
     </div>
 </div>
 

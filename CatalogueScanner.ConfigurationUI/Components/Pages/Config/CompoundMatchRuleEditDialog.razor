@@ -1,19 +1,19 @@
-﻿<div class="dialog-root-passthrough">
-    <MatDialogTitle>Edit Compound Rule</MatDialogTitle>
-    <MatDialogContent>
+﻿<MudDialog>
+    <TitleContent>Edit Compound Rule</TitleContent>
+    <DialogContent>
         <div class="matching-header-row">
-            <MatSelectItem Label="Match Type" @bind-Value="CompoundRule.MatchType" Items="compoundMatchTypes"></MatSelectItem>
+            <MudItemSelectList Variant="Variant.Outlined" Label="Match Type" Class="match-type" @bind-Value="CompoundRule.MatchType" Items="compoundMatchTypes" />
 
             <div class="matching-header-buttons">
-                <MatButton OnClick="AddSinglePropertyRule" Class="matching-add-single-button">Add Single Property Rule</MatButton>
-                <MatButton OnClick="AddCompoundRule" Class="matching-add-compound-button">Add Compound Rule</MatButton>
+                <MudButton OnClick="AddSinglePropertyRule" Class="matching-add-single-button">Add Single Property Rule</MudButton>
+                <MudButton OnClick="AddCompoundRule" Class="matching-add-compound-button">Add Compound Rule</MudButton>
             </div>
         </div>
 
         <MatchRuleTable MatchRules="CompoundRule.ChildRules">
         </MatchRuleTable>
-    </MatDialogContent>
-    <MatDialogActions>
-        <MatButton @onclick="Close">Close</MatButton>
-    </MatDialogActions>
-</div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton @onclick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>

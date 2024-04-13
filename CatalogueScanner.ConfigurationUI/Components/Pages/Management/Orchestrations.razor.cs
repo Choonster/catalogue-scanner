@@ -1,5 +1,4 @@
-﻿using MatBlazor;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace CatalogueScanner.ConfigurationUI.Components.Pages.Management;
 
@@ -47,7 +46,7 @@ Invoke-RestMethod -Method {method.Method} -Headers $headers -Uri '{uri}'
 
         await Clipboard.WriteTextAsync(script).ConfigureAwait(false);
 
-        Toaster.Add("Script copied to clipboard", MatToastType.Info);
+        Snackbar.Add("Script copied to clipboard");
     }
 
     public async Task CleanEntityStorage()
