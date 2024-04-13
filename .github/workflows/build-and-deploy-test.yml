@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     uses: ./.github/workflows/build-application.yml
+    with:
+      build-configuration: Debug
 
   deploy-functions-app:
     uses: ./.github/workflows/deploy-functions-app.yml
