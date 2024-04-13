@@ -123,6 +123,18 @@ public sealed partial class CatalogueScanStates : IDisposable
 
     private async Task<TableData<CatalogueScanStateDto>> LoadServerData(TableState tableState)
     {
+        Logger.LogInformation(
+            "LoadServerData - isFinalPage: {IsFinalPage}, tablePageIndex: {TablePageIndex}, PageSize: {PageSize}, loadedScanStates.Count: {LoadedScanStatesCount}, GetMaxDataIndexForPage: {GetMaxDataIndexForPage}, lastOperation: {LastOperation}, tableState.Page: {TableStatePage}, tableState.PageSize: {TableStatePageSize}",
+            isFinalPage,
+            tablePageIndex,
+            PageSize,
+            loadedScanStates.Count,
+            GetMaxDataIndexForPage(tableState.Page),
+            lastOperation,
+            tableState.Page,
+            tableState.PageSize
+        );
+
         tablePageIndex = tableState.Page;
         PageSize = tableState.PageSize;
 
