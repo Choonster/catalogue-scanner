@@ -136,7 +136,7 @@ public sealed partial class CatalogueScanStates : IDisposable
         if (cancellationToken.IsCancellationRequested)
         {
             Logger.LogInformation("LoadServerData - Cancellation requested at method start");
-            throw new OperationCanceledException(cancellationToken);
+            return new();
         }
 
         //Logger.LogInformation(
@@ -188,7 +188,7 @@ public sealed partial class CatalogueScanStates : IDisposable
                 if (cancellationToken.IsCancellationRequested)
                 {
                     Logger.LogInformation("LoadServerData - Cancellation requested after request");
-                    throw new OperationCanceledException(cancellationToken);
+                    return new();
                 }
 
                 loadedScanStates.AddRange(result.Entities);
@@ -207,7 +207,7 @@ public sealed partial class CatalogueScanStates : IDisposable
             {
                 Logger.LogInformation(e, "LoadServerData - Cancellation requested in exception");
 
-                throw;
+                return new();
             }
         }
 
