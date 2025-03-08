@@ -8,7 +8,7 @@ namespace CatalogueScanner.WoolworthsOnline.Dto.WoolworthsOnline;
 public partial class GetPiesCategoriesResponse
 {
     [JsonInclude]
-    public IEnumerable<Category> Categories { get; internal set; } = new List<Category>();
+    public IEnumerable<Category> Categories { get; internal set; } = [];
 }
 
 public partial class Category
@@ -31,5 +31,5 @@ public partial class Category
     public bool IsBundle { get; set; }
 
     [JsonInclude]
-    public IEnumerable<Category> Children { get; internal set; } = new List<Category>();
+    public IEnumerable<Category> Children { get; internal set; } = [];
 }

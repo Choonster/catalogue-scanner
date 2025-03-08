@@ -17,7 +17,7 @@ public partial class Matching
 
     protected override void OnInitialized()
     {
-        matchRuleViewModels = new ObservableCollection<BaseMatchRuleViewModel>(MatchingOptions.Rules.ToViewModel());
+        matchRuleViewModels = [.. MatchingOptions.Rules.ToViewModel()];
 
         base.OnInitialized();
     }

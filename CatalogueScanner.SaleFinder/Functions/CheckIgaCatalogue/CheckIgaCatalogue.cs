@@ -53,9 +53,7 @@ public class CheckIgaCatalogue
 
         logger.FoundSaleIds(saleIds);
 
-        return saleIds
-            .Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, IgaStoreName, CurrencyCultures.AustralianDollar))
-            .ToArray();
+        return [.. saleIds.Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, IgaStoreName, CurrencyCultures.AustralianDollar))];
     }
 
     private static IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)

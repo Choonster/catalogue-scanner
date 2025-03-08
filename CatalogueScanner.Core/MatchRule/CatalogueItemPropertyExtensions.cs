@@ -8,7 +8,7 @@ namespace CatalogueScanner.Core.MatchRule;
 public static class CatalogueItemPropertyExtensions
 {
     // Maps enum values to the corresponding class properties
-    private static readonly IImmutableDictionary<CatalogueItemProperty, PropertyInfo> properties =
+    private static readonly ImmutableDictionary<CatalogueItemProperty, PropertyInfo> properties =
         Enum.GetValues(typeof(CatalogueItemProperty))
         .Cast<CatalogueItemProperty>()
         .ToImmutableDictionary(
@@ -17,10 +17,9 @@ public static class CatalogueItemPropertyExtensions
                 throw new InvalidOperationException($"Couldn't find property with name \"{property}\" on type {typeof(CatalogueItem).FullName}")
         );
 
-    private static readonly ImmutableHashSet<CatalogueItemProperty> numericProperties = properties
+    private static readonly ImmutableHashSet<CatalogueItemProperty> numericProperties = [.. properties
         .Where(pair => IsNumericType(GetUnderlyingType(pair.Value.PropertyType)))
-        .Select(pair => pair.Key)
-        .ToImmutableHashSet();
+        .Select(pair => pair.Key)];
 
     public static PropertyInfo GetPropertyInfo(this CatalogueItemProperty property) => properties[property];
 

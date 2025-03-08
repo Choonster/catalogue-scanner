@@ -24,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Net.Http.Headers" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.Net.Http.Headers" Version="8.0.13" />
 	</ItemGroup>
 
 </Project>

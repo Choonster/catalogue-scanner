@@ -15,7 +15,7 @@ public class NextData
     public bool Gssp { get; set; }
     public bool AppGip { get; set; }
     public string? Locale { get; set; }
-    public IEnumerable<string> Locales { get; } = new List<string>();
+    public IEnumerable<string> Locales { get; } = [];
     public string? DefaultLocale { get; set; }
 }
 
@@ -45,7 +45,7 @@ public class NextDataPagePropsData
     public string? Title { get; set; }
     public string? Language { get; set; }
     public string? Type { get; set; }
-    public IEnumerable<string> ItemsOrder { get; } = new List<string>();
+    public IEnumerable<string> ItemsOrder { get; } = [];
     public string? Path { get; set; }
     public string? HierarchyType { get; set; }
 }
@@ -99,26 +99,26 @@ public class ContentState
     public string? PageCategory { get; set; }
     public string? PageSubCategory { get; set; }
     public bool DisplayFilter { get; set; }
-    public IEnumerable<object> ExpandFilter { get; } = new List<object>();
+    public IEnumerable<object> ExpandFilter { get; } = [];
     public bool NextLevel { get; set; }
 }
 
 public class DrawerState
 {
-    public IEnumerable<object> Active { get; } = new List<object>();
+    public IEnumerable<object> Active { get; } = [];
     public object? State { get; set; }
 }
 
 public class EnquiryFormsState
 {
-    public IEnumerable<object> Ids { get; } = new List<object>();
+    public IEnumerable<object> Ids { get; } = [];
     public object? Entities { get; set; }
 }
 
 public class ListState
 {
     public object? Error { get; set; }
-    public IEnumerable<object> PatchListItemsQueue { get; } = new List<object>();
+    public IEnumerable<object> PatchListItemsQueue { get; } = [];
 }
 
 public class MpgsState
@@ -141,7 +141,7 @@ public class FormFieldValidity
 
 public class NotificationsState
 {
-    public IEnumerable<object> NotificationsNotifications { get; } = new List<object>();
+    public IEnumerable<object> NotificationsNotifications { get; } = [];
 }
 
 public class ShoppingMethodState
@@ -154,10 +154,10 @@ public class ShoppingMethodState
 public class TrolleyState
 {
     public object? Error { get; set; }
-    public IEnumerable<object> ItemsBeingUpdated { get; } = new List<object>();
+    public IEnumerable<object> ItemsBeingUpdated { get; } = [];
     public string? StoreId { get; set; }
     public TrolleyValidation? Validation { get; set; }
-    public IEnumerable<object> UpdateQueue { get; } = new List<object>();
+    public IEnumerable<object> UpdateQueue { get; } = [];
 }
 
 public class TrolleyValidation

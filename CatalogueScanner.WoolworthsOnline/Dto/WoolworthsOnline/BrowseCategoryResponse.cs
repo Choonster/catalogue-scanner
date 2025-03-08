@@ -10,7 +10,7 @@ public class BrowseCategoryResponse
     public SeoMetaTags? SeoMetaTags { get; set; }
 
     [JsonInclude]
-    public IEnumerable<Bundle> Bundles { get; internal set; } = new List<Bundle>();
+    public IEnumerable<Bundle> Bundles { get; internal set; } = [];
 
     public long TotalRecordCount { get; set; }
     public object? UpperDynamicContent { get; set; }
@@ -18,7 +18,7 @@ public class BrowseCategoryResponse
     public RichRelevancePlacement? RichRelevancePlacement { get; set; }
 
     [JsonInclude]
-    public IEnumerable<Aggregation> Aggregations { get; internal set; } = new List<Aggregation>();
+    public IEnumerable<Aggregation> Aggregations { get; internal set; } = [];
 
     public bool HasRewardsCard { get; set; }
     public bool HasTobaccoItems { get; set; }
@@ -35,7 +35,7 @@ public class Aggregation
     public object? Results { get; set; }
 
     [JsonInclude]
-    public IEnumerable<ResultsGrouped> ResultsGrouped { get; internal set; } = new List<ResultsGrouped>();
+    public IEnumerable<ResultsGrouped> ResultsGrouped { get; internal set; } = [];
 
     public string? State { get; set; }
     public long Rank { get; set; }
@@ -51,7 +51,7 @@ public class ResultsGrouped
     public string? Alphabet { get; set; }
 
     [JsonInclude]
-    public IEnumerable<Filter> Filters { get; internal set; } = new List<Filter>();
+    public IEnumerable<Filter> Filters { get; internal set; } = [];
 }
 
 public class Filter
@@ -73,7 +73,7 @@ public class ExtraOutputFields
 
 public class Bundle
 {
-    [JsonInclude] public IEnumerable<Product> Products { get; internal set; } = new List<Product>();
+    [JsonInclude] public IEnumerable<Product> Products { get; internal set; } = [];
     public string? Name { get; set; }
     public string? DisplayName { get; set; }
 }
@@ -164,7 +164,7 @@ public class Product
     public IDictionary<string, string> AdditionalAttributes { get; internal set; } = new Dictionary<string, string>();
 
     [JsonInclude]
-    public IEnumerable<Uri> DetailsImagePaths { get; internal set; } = new List<Uri>();
+    public IEnumerable<Uri> DetailsImagePaths { get; internal set; } = [];
 
     public string? Variety { get; set; }
 
@@ -225,13 +225,13 @@ public class RichRelevancePlacement
     public object? Message { get; set; }
 
     [JsonInclude]
-    public IEnumerable<object> Products { get; internal set; } = new List<object>();
+    public IEnumerable<object> Products { get; internal set; } = [];
 
     [JsonInclude]
-    public IEnumerable<object> Items { get; internal set; } = new List<object>();
+    public IEnumerable<object> Items { get; internal set; } = [];
 
     [JsonInclude]
-    public IEnumerable<object> StockcodesForDiscover { get; internal set; } = new List<object>();
+    public IEnumerable<object> StockcodesForDiscover { get; internal set; } = [];
 }
 
 public class SeoMetaTags
@@ -240,7 +240,7 @@ public class SeoMetaTags
     public string? MetaDescription { get; set; }
 
     [JsonInclude]
-    public IEnumerable<object> Groups { get; internal set; } = new List<object>();
+    public IEnumerable<object> Groups { get; internal set; } = [];
 }
 
 public class Rating

@@ -47,7 +47,7 @@ public static class ListCatalogueScanStates
 
         if (page is null)
         {
-            return await Response(Enumerable.Empty<CatalogueScanStateDto>(), null).ConfigureAwait(false);
+            return await Response([], null).ConfigureAwait(false);
         }
 
         var entities = page.Values.Select(metatada =>

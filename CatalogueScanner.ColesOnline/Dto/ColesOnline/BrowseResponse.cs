@@ -19,17 +19,17 @@ public class BrowseeResponsePageProps
 
 public class SearchResults
 {
-    public IEnumerable<string> DidYouMean { get; } = new List<string>();
+    public IEnumerable<string> DidYouMean { get; } = [];
     public long NoOfResults { get; set; }
     public long Start { get; set; }
     public long PageSize { get; set; }
     public string? Keyword { get; set; }
     public long ResultType { get; set; }
-    public IEnumerable<Filter> Filters { get; } = new List<Filter>();
-    public IEnumerable<Banner> Banners { get; } = new List<Banner>();
+    public IEnumerable<Filter> Filters { get; } = [];
+    public IEnumerable<Banner> Banners { get; } = [];
     public PageRestrictions? PageRestrictions { get; set; }
-    public IEnumerable<SearchResult> Results { get; } = new List<SearchResult>();
-    public IEnumerable<CatalogGroupView> CatalogGroupView { get; } = new List<CatalogGroupView>();
+    public IEnumerable<SearchResult> Results { get; } = [];
+    public IEnumerable<CatalogGroupView> CatalogGroupView { get; } = [];
     public ExcludedCatalogGroupView? ExcludedCatalogGroupView { get; set; }
 }
 
@@ -52,8 +52,8 @@ public class Banner
     public string? HeroImageAltText { get; set; }
 
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-    public IEnumerable<long> ProductIds { get; } = new List<long>();
-    public IEnumerable<AdditionalField> AdditionalFields { get; } = new List<AdditionalField>();
+    public IEnumerable<long> ProductIds { get; } = [];
+    public IEnumerable<AdditionalField> AdditionalFields { get; } = [];
 }
 
 public class AdditionalField
@@ -83,7 +83,7 @@ public class ExcludedCatalogGroupView
 public class Filter
 {
     public string? Name { get; set; }
-    public IEnumerable<FilterValue> Values { get; } = new List<FilterValue>();
+    public IEnumerable<FilterValue> Values { get; } = [];
 }
 
 public class FilterValue
@@ -122,11 +122,11 @@ public class Product : SearchResult
     public string? Size { get; set; }
     public bool Availability { get; set; }
     public AvailabilityType? AvailabilityType { get; set; }
-    public IEnumerable<ImageUri> ImageUris { get; } = new List<ImageUri>();
-    public IEnumerable<Location> Locations { get; } = new List<Location>();
+    public IEnumerable<ImageUri> ImageUris { get; } = [];
+    public IEnumerable<Location> Locations { get; } = [];
     public Restrictions? Restrictions { get; set; }
     public MerchandiseHeir? MerchandiseHeir { get; set; }
-    public IEnumerable<OnlineHeir> OnlineHeirs { get; } = new List<OnlineHeir>();
+    public IEnumerable<OnlineHeir> OnlineHeirs { get; } = [];
     public Pricing? Pricing { get; set; }
 }
 
@@ -150,13 +150,13 @@ public class SingleTile : SearchResult
     public string? HeroImageAltText { get; set; }
 
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
-    public IEnumerable<long> ProductIds { get; } = new List<long>();
+    public IEnumerable<long> ProductIds { get; } = [];
 
     public object? SecondaryBackgroundImage { get; set; }
     public object? SecondaryBackgroundImagePosition { get; set; }
     public object? SecondaryHeroImage { get; set; }
     public object? SecondaryHeroImageAltText { get; set; }
-    public IEnumerable<AdditionalField> AdditionalFields { get; } = new List<AdditionalField>();
+    public IEnumerable<AdditionalField> AdditionalFields { get; } = [];
 }
 
 public class ImageUri

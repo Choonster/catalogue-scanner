@@ -40,9 +40,7 @@ public class CheckBigWCatalogue(SaleFinderService saleFinderService, ILogger<Che
 
         logger.FoundSaleIds(saleIds);
 
-        return saleIds
-            .Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, BigWStoreName, CurrencyCultures.AustralianDollar))
-            .ToArray();
+        return [.. saleIds.Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, BigWStoreName, CurrencyCultures.AustralianDollar))];
     }
 
     private static IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)
