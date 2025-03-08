@@ -8,25 +8,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.ARM_DEPLOYMENT_TEST_CREDENTIALS }}
 
       - name: Deploy Bicep file
-        uses: azure/arm-deploy@v1
+        uses: azure/bicep-deploy@v2
         with:
-          resourceGroupName: ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
-          template: arm/main.bicep
-          parameters: arm/parameters/deployment-test.parameters.json
-          failOnStdErr: false
+          type: deployment
+          operation: create
+          resource-group-name: ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
+          template-file: arm/main.bicep
+          parameters-file: arm/parameters/deployment-test.parameters.json
 
       - name: Delete Resources
-        uses: azure/arm-deploy@v1
+        uses: azure/bicep-deploy@v2
         with:
-          resourceGroupName: ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
-          template: arm/empty.bicep
-          deploymentMode: Complete
+          type: deployment
+          operation: create
+          resource-group-name: ${{ secrets.ARM_DEPLOYMENT_TEST_RG }}
+          template-file: arm/empty.bicep
+          action-on-unmanage-resources: delete
           failOnStdErr: false

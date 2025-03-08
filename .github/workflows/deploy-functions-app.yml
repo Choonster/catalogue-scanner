@@ -51,12 +51,12 @@ jobs:
 
     steps:
       - name: Download Artifact
-        uses: Choonster/download-tartifact@162f0c1be0f868230472f2ea2b0be2273af4b062
+        uses: Choonster/download-tartifact@2d57c52b41c93c32cf6ff20b65b19508974cd161
         with:
           name: ${{ inputs.artifact-name }}
 
       - name: Azure Login
-        uses: Azure/login@v1
+        uses: Azure/login@v2
         with:
           client-id: ${{ secrets.azure-client-id }}
           tenant-id: ${{ secrets.azure-tenant-id }}
