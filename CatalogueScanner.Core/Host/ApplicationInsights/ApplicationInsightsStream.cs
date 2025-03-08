@@ -129,7 +129,7 @@ public class ApplicationInsightsStream : MemoryStream
             var exceptionDetailsInfo = ExceptionConverter.ConvertToExceptionDetailsInfo(exception, stackTrace);
 
             telemetryClient.TrackException(new ExceptionTelemetry(
-                new[] { exceptionDetailsInfo },
+                [exceptionDetailsInfo],
                 SeverityLevel.Error,
                 null,
                 new Dictionary<string, string>(),

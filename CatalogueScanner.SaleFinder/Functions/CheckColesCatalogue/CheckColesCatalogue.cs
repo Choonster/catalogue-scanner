@@ -53,9 +53,7 @@ public class CheckColesCatalogue
 
         logger.FoundSaleIds(saleIds);
 
-        return saleIds
-            .Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName, CurrencyCultures.AustralianDollar))
-            .ToArray();
+        return [.. saleIds.Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, ColesStoreName, CurrencyCultures.AustralianDollar))];
     }
 
     private static IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)

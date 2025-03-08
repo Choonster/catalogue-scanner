@@ -39,7 +39,7 @@ Directory.CreateDirectory(playwrightBrowsersPath);
 
 // Install the browser required by Playwright 
 #pragma warning disable CA1861 // Avoid constant arrays as arguments
-Microsoft.Playwright.Program.Main(new[] { "install", "chromium" });
+Microsoft.Playwright.Program.Main(["install", "chromium"]);
 #pragma warning restore CA1861 // Avoid constant arrays as arguments
 #endregion
 

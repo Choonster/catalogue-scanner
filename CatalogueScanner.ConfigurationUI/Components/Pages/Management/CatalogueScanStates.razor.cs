@@ -117,9 +117,7 @@ public partial class CatalogueScanStates
 
     private void UpdateTableData()
     {
-        tableData = loadedScanStates.Skip(tablePageIndex * PageSize)
-                                    .Take(PageSize)
-                                    .ToList();
+        tableData = [.. loadedScanStates.Skip(tablePageIndex * PageSize).Take(PageSize)];
     }
 
     private async Task LoadScanStates(bool resetData)

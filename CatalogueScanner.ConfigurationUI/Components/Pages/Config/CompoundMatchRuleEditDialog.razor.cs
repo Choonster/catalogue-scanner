@@ -7,7 +7,7 @@ namespace CatalogueScanner.ConfigurationUI.Components.Pages.Config;
 
 public partial class CompoundMatchRuleEditDialog
 {
-    private static readonly CompoundMatchType[] compoundMatchTypes = Enum.GetValues(typeof(CompoundMatchType)).Cast<CompoundMatchType>().ToArray();
+    private static readonly CompoundMatchType[] compoundMatchTypes = [.. Enum.GetValues(typeof(CompoundMatchType)).Cast<CompoundMatchType>()];
 
     [Parameter]
     public CompoundMatchRuleViewModel CompoundRule { get; set; } = new CompoundMatchRuleViewModel();

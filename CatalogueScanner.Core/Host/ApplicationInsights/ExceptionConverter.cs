@@ -56,22 +56,22 @@ internal static class ExceptionConverter
     {
         var methods = exceptionDetailsMethods.Value;
 
-        var exceptionDetails = methods.CreateWithoutStackInfo.Invoke(null, new[] { exception, null })
+        var exceptionDetails = methods.CreateWithoutStackInfo.Invoke(null, [exception, null])
             ?? throw new InvalidOperationException($"{methods.CreateWithoutStackInfo.Name} returned null");
 
         var frames = stackTrace.GetFrames();
 
-        var sanitizedTuple = methods.SanitizeStackFrame.Invoke(null, new object[] {
+        var sanitizedTuple = methods.SanitizeStackFrame.Invoke(null, [
             frames,
             methods.GetStackFrame.CreateDelegate(methods.ConverterDelegateType),
             methods.GetStackFrameLength.CreateDelegate(methods.LengthGetterDelegateType)
-        })
+        ])
             ?? throw new InvalidOperationException($"{methods.SanitizeStackFrame.Name} returned null");
 
         methods.ParsedStack.SetValue(exceptionDetails, methods.SanitizedTupleItem1.GetValue(sanitizedTuple));
         methods.HasFullStack.SetValue(exceptionDetails, methods.SanitizedTupleItem2.GetValue(sanitizedTuple));
 
-        var exceptionDetailsInfo = (ExceptionDetailsInfo?)methods.ExceptionDetailsInfoConstructor.Invoke(new[] { exceptionDetails })
+        var exceptionDetailsInfo = (ExceptionDetailsInfo?)methods.ExceptionDetailsInfoConstructor.Invoke([exceptionDetails])
             ?? throw new InvalidOperationException($"{typeof(ExceptionDetailsInfo).FullName} instance is null");
 
         return exceptionDetailsInfo;

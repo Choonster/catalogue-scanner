@@ -8,7 +8,7 @@ public class CompoundCatalogueItemMatchRule : ICatalogueItemMatchRule
 
     public CompoundMatchType MatchType { get; set; }
 
-    public ICollection<ICatalogueItemMatchRule> ChildRules { get; } = new List<ICatalogueItemMatchRule>();
+    public ICollection<ICatalogueItemMatchRule> ChildRules { get; } = [];
 
     public bool ItemMatches(CatalogueItem item) =>
         MatchType switch

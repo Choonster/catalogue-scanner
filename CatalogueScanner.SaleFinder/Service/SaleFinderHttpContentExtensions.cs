@@ -11,7 +11,7 @@ public static class SaleFinderHttpContentExtensions
     private const char OPENING_PARENTHESIS = '(';
     private const char CLOSING_PARENTHESIS = ')';
 
-    private static readonly int ClosingParenthesisUtf8ByteCount = Encoding.UTF8.GetByteCount(new[] { CLOSING_PARENTHESIS });
+    private static readonly int ClosingParenthesisUtf8ByteCount = Encoding.UTF8.GetByteCount([CLOSING_PARENTHESIS]);
 
     private static readonly ConcurrentDictionary<string, byte[]> CallbackUtf8ByteArrays = new();
 

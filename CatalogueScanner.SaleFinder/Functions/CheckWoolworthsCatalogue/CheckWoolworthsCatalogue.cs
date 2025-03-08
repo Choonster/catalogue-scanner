@@ -49,9 +49,7 @@ public class CheckWoolworthsCatalogue
 
         logger.FoundSaleIds(saleIds);
 
-        return saleIds
-            .Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName, CurrencyCultures.AustralianDollar))
-            .ToArray();
+        return [.. saleIds.Select(saleId => new SaleFinderCatalogueDownloadInformation(saleId, CatalaogueBaseUri, WoolworthsStoreName, CurrencyCultures.AustralianDollar))];
     }
 
     private static IEnumerable<int> FindSaleIds(CatalogueViewResponse viewResponse)

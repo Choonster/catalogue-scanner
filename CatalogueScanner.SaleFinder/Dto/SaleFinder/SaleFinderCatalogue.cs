@@ -31,14 +31,14 @@ public partial class SaleFinderCatalogue
 
     [JsonInclude]
     [JsonPropertyName("catalogue")]
-    public ICollection<Page> Pages { get; internal set; } = new List<Page>();
+    public ICollection<Page> Pages { get; internal set; } = [];
 }
 
 [JsonConverter(typeof(PageConverter))]
 public partial class Page
 {
     [JsonIgnore]
-    public IList<Item> Items { get; internal set; } = new List<Item>();
+    public IList<Item> Items { get; internal set; } = [];
 
     [JsonPropertyName("imagefile")]
     public string? ImageFile { get; set; }
@@ -74,7 +74,7 @@ public partial class Item
 
     [JsonInclude]
     [JsonConverter(typeof(SaleFinderJsonCollectionItemConverter<long, ICollection<long>, ExponentInt64Converter>))]
-    public ICollection<long> Coords { get; internal set; } = new List<long>();
+    public ICollection<long> Coords { get; internal set; } = [];
 
     public long? ItemId { get; set; }
     public string? Href { get; set; }
