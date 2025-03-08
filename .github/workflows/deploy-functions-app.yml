@@ -51,7 +51,7 @@ jobs:
 
     steps:
       - name: Download Artifact
-        uses: Choonster/download-tartifact@2d57c52b41c93c32cf6ff20b65b19508974cd161
+        uses: Choonster/download-tartifact@7943f2fe328922c4305add004824a70311af89fa
         with:
           name: ${{ inputs.artifact-name }}
 
