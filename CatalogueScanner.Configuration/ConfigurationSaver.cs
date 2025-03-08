@@ -33,7 +33,7 @@ public class ConfigurationSaver<TOptions> : IConfigurationSaver<TOptions>
 
         var existingSettingsDictionary = new Dictionary<string, string>();
 
-        await foreach (var setting in existingSettings)
+        await foreach (var setting in existingSettings.ConfigureAwait(false))
         {
             existingSettingsDictionary.Add(setting.Key, setting.Value);
         }

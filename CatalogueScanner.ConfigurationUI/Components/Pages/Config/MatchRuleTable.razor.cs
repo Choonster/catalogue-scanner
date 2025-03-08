@@ -12,9 +12,9 @@ namespace CatalogueScanner.ConfigurationUI.Components.Pages.Config;
 
 public partial class MatchRuleTable : ComponentBase
 {
-    private static readonly PropertyMatchType[] allPropertyMatchTypes = Enum.GetValues(typeof(PropertyMatchType)).Cast<PropertyMatchType>().ToArray();
-    private static readonly PropertyMatchType[] stringPropertyMatchType = allPropertyMatchTypes.Where(matchType => matchType.IsStringMatchType()).ToArray();
-    private static readonly CatalogueItemProperty[] properties = Enum.GetValues(typeof(CatalogueItemProperty)).Cast<CatalogueItemProperty>().ToArray();
+    private static readonly PropertyMatchType[] allPropertyMatchTypes = [.. Enum.GetValues(typeof(PropertyMatchType)).Cast<PropertyMatchType>()];
+    private static readonly PropertyMatchType[] stringPropertyMatchType = [.. allPropertyMatchTypes.Where(matchType => matchType.IsStringMatchType())];
+    private static readonly CatalogueItemProperty[] properties = [.. Enum.GetValues(typeof(CatalogueItemProperty)).Cast<CatalogueItemProperty>()];
 
     [Parameter]
     public ObservableCollection<BaseMatchRuleViewModel> MatchRules { get; set; } = [];
