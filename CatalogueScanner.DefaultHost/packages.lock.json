@@ -1254,7 +1254,8 @@
       "cataloguescanner.woolworthsonline": {
         "type": "Project",
         "dependencies": {
-          "CatalogueScanner.Core": "[1.0.0, )"
+          "CatalogueScanner.Core": "[1.0.0, )",
+          "Microsoft.Net.Http.Headers": "[8.0.0, )"
         }
       }
     }

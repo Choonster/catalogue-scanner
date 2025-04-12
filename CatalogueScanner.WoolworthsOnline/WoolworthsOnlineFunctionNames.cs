@@ -18,6 +18,11 @@ public static class WoolworthsOnlineFunctionNames
     public const string GetWoolworthsOnlineSpecialsDates = "GetWoolworthsOnlineSpecialsDates";
 
     /// <summary>
+    /// The name of the <see cref="Functions.GetWoolworthsOnlineCookies"/> activity function.
+    /// </summary>
+    public const string GetWoolworthsOnlineCookies = "GetWoolworthsOnlineCookies";
+
+    /// <summary>
     /// The name of the <see cref="Functions.GetWoolworthsOnlineSpecialsCategories"/> activity function.
     /// </summary>
     public const string GetWoolworthsOnlineSpecialsCategories = "GetWoolworthsOnlineSpecialsCategories";

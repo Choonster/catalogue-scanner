@@ -10,6 +10,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.DurableTask;
 using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace CatalogueScanner.WoolworthsOnline.Functions;
 
@@ -50,12 +51,12 @@ public static class ScanWoolworthsOnlineSpecials
             context.SetCustomStatus("Downloading");
             logger.Downloading(scanStateId.Key);
 
-            var categories = await context.CallActivityAsync<IEnumerable<WoolworthsOnlineCategory>>(
-                WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories
-            ).ConfigureAwait(true);
+            var cookies = await context.CallActivityAsync<CookieCollection>(WoolworthsOnlineFunctionNames.GetWoolworthsOnlineCookies).ConfigureAwait(true);
 
-            var retryOptions = new RetryPolicy(firstRetryInterval: TimeSpan.FromSeconds(30), maxNumberOfAttempts: 5);
-            var taskOptions = new TaskOptions(retryOptions);
+            var categories = await context.CallActivityAsync<IEnumerable<WoolworthsOnlineCategory>>(
+                WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsCategories,
+                cookies
+            ).ConfigureAwait(true);
 
             var itemPages = new List<IEnumerable<CatalogueItem>>();
 
@@ -63,20 +64,14 @@ public static class ScanWoolworthsOnlineSpecials
             {
                 var pageCount = await context.CallActivityAsync<int>(
                     WoolworthsOnlineFunctionNames.GetWoolworthsOnlineSpecialsPageCount,
-                    category.CategoryId,
-                    taskOptions
+                    new GetWoolworthsOnlineSpecialsPageCountInput(category.CategoryId, cookies)
                 ).ConfigureAwait(true);
 
                 var downloadTasks = Enumerable.Range(0, pageCount)
                     .Select(pageIndex =>
                         context.CallActivityAsync<IEnumerable<CatalogueItem>>(
                             WoolworthsOnlineFunctionNames.DownloadWoolworthsOnlineSpecialsPage,
-                            new DownloadWoolworthsOnlineSpecialsPageInput
-                            {
-                                CategoryId = category.CategoryId,
-                                PageNumber = pageIndex + 1,
-                            },
-                            taskOptions
+                            new DownloadWoolworthsOnlineSpecialsPageInput(category.CategoryId, pageIndex + 1, cookies)
                         )
                     )
                     .ToList();
